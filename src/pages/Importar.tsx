@@ -505,7 +505,7 @@ function parseCSVLine(line: string, delimiter: string = ","): string[] {
       } else {
         inQuotes = !inQuotes;
       }
-    } else if ((char === "," || char === ";") && !inQuotes) {
+    } else if (char === delimiter && !inQuotes) {
       values.push(current.trim());
       current = "";
     } else {
