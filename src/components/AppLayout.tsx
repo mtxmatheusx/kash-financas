@@ -35,7 +35,7 @@ export const AppLayout: React.FC = () => {
         </main>
       </motion.div>
 
-      {isPremium && <FloatingChat />}
+      <FloatingChat />
     </div>
   );
 };
