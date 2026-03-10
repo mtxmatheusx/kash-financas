@@ -31,6 +31,7 @@ const FloatingAiAssistant = ({
   subtitle,
   headerBadges = [{ label: "IA", variant: "primary" }],
   placeholder = "Ask anything...",
+  micProps,
 }: FloatingAiAssistantProps) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [message, setMessage] = useState('');
