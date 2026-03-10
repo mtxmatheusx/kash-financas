@@ -244,6 +244,20 @@ const FloatingAiAssistant = ({
                     >
                       <ImageIcon className="w-4 h-4" />
                     </button>
+                    {micProps && (
+                      <button
+                        onClick={micProps.onToggle}
+                        className={cn(
+                          "p-2 sm:p-2.5 rounded-lg transition-all active:scale-95",
+                          micProps.isListening
+                            ? "text-fin-expense bg-fin-expense/15 animate-pulse"
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                        )}
+                        aria-label={micProps.isListening ? "Parar gravação" : "Enviar por áudio"}
+                      >
+                        {micProps.isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                      </button>
+                    )}
                   </div>
                   <input
                     ref={fileInputRef}
