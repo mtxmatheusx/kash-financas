@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { PageTransition } from "@/components/PageTransition";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAccount } from "@/contexts/AccountContext";
-import { Plus, Search, Trash2, ArrowDownRight } from "lucide-react";
+import { Plus, Search, Trash2, ArrowDownRight, Percent } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +28,8 @@ const Despesas: React.FC = () => {
     entry_type: 'single' as 'single' | 'installment' | 'recurring',
     installments: '2',
     frequency: 'monthly' as 'monthly' | 'yearly',
+    is_percentage: false,
+    percentage: '',
   });
 
   const paidTotal = transactions.filter(t => t.status === 'paid').reduce((s, t) => s + t.amount, 0);
@@ -39,16 +41,25 @@ const Despesas: React.FC = () => {
   );
 
   const handleSubmit = () => {
-    const amount = parseAmountToReais(form.amount);
-    if (!form.description || !amount) return;
+    let amount: number;
+    if (form.is_percentage) {
+      const pct = parseFloat(form.percentage.replace(',', '.'));
+      if (!form.description || !pct || pct <= 0) return;
+      amount = (totals.income * pct) / 100;
+    } else {
+      amount = parseAmountToReais(form.amount);
+      if (!form.description || !amount) return;
+    }
     create({
       type: 'expense', amount, description: form.description,
       category: form.category, date: form.date, status: form.status,
       entry_type: form.entry_type, account_type: account.type,
+      is_percentage: form.is_percentage,
+      ...(form.is_percentage ? { percentage: parseFloat(form.percentage.replace(',', '.')) } : {}),
       ...(form.entry_type === 'installment' ? { installments: parseInt(form.installments) || 2 } : {}),
       ...(form.entry_type === 'recurring' ? { frequency: form.frequency } : {}),
     });
-    setForm({ description: '', amount: '', category: categories[0], date: new Date().toISOString().slice(0, 10), status: 'paid', entry_type: 'single', installments: '2', frequency: 'monthly' });
+    setForm({ description: '', amount: '', category: categories[0], date: new Date().toISOString().slice(0, 10), status: 'paid', entry_type: 'single', installments: '2', frequency: 'monthly', is_percentage: false, percentage: '' });
     setShowForm(false);
   };
 
@@ -99,6 +110,7 @@ const Despesas: React.FC = () => {
                         <p className="text-sm font-medium text-card-foreground truncate">{t.description}</p>
                         <p className="text-[11px] text-muted-foreground">
                           {t.category} · {new Date(t.date).toLocaleDateString('pt-BR')}
+                          {t.is_percentage && t.percentage && ` · ${t.percentage}% da receita`}
                           {t.entry_type === 'recurring' && ` · Recorrente ${t.frequency === 'yearly' ? '(Anual)' : '(Mensal)'}`}
                           {t.entry_type === 'installment' && ` · ${t.installments}x parcelas`}
                         </p>
@@ -134,9 +146,32 @@ const Despesas: React.FC = () => {
               <Input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Ex: Aluguel" />
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Valor</label>
-              <Input value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} placeholder="0,00" inputMode="decimal" />
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Modo de Valor</label>
+              <select value={form.is_percentage ? 'percentage' : 'fixed'} onChange={e => setForm({ ...form, is_percentage: e.target.value === 'percentage', amount: '', percentage: '' })}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                <option value="fixed">Valor Fixo (R$)</option>
+                <option value="percentage">% da Receita Total</option>
+              </select>
             </div>
+            {form.is_percentage ? (
+              <div>
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Porcentagem (%)</label>
+                <div className="relative">
+                  <Input value={form.percentage} onChange={e => setForm({ ...form, percentage: e.target.value })} placeholder="Ex: 10" inputMode="decimal" className="pr-10" />
+                  <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                </div>
+                {form.percentage && totals.income > 0 && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    = {formatBRL((totals.income * (parseFloat(form.percentage.replace(',', '.')) || 0)) / 100)} de {formatBRL(totals.income)}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div>
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Valor</label>
+                <Input value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} placeholder="0,00" inputMode="decimal" />
+              </div>
+            )}
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Categoria</label>
               <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}
