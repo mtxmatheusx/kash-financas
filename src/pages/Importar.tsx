@@ -87,6 +87,60 @@ function detectFieldLocal(header: string): string | null {
   return null;
 }
 
+// Smart sheet data extraction: finds actual header row, skips empty/merged rows
+function extractSheetData(ws: XLSX.WorkSheet): { headers: string[]; rawRows: Record<string, any>[] } {
+  // First try default parsing
+  const json = XLSX.utils.sheet_to_json<Record<string, any>>(ws, { defval: "" });
+  if (json.length === 0) return { headers: [], rawRows: [] };
+
+  let headers = Object.keys(json[0]);
+  let rawRows = json;
+
+  // Check if headers are mostly __EMPTY patterns (meaning the real header is not on row 1)
+  const emptyHeaderCount = headers.filter(h => /^__EMPTY/.test(String(h))).length;
+  const isHeaderBroken = emptyHeaderCount > headers.length * 0.5;
+
+  if (isHeaderBroken) {
+    // Scan rows to find the actual header row (first row with mostly non-empty string values)
+    const range = XLSX.utils.decode_range(ws["!ref"] || "A1");
+    let headerRowIdx = -1;
+
+    for (let r = range.s.r; r <= Math.min(range.s.r + 15, range.e.r); r++) {
+      let filledCells = 0;
+      let totalCells = 0;
+      for (let c = range.s.c; c <= range.e.c; c++) {
+        const cell = ws[XLSX.utils.encode_cell({ r, c })];
+        totalCells++;
+        if (cell && cell.v !== undefined && cell.v !== null && String(cell.v).trim() !== "") {
+          filledCells++;
+        }
+      }
+      // A good header row has at least 3 filled cells and > 40% fill rate
+      if (filledCells >= 3 && filledCells / totalCells > 0.4) {
+        headerRowIdx = r;
+        break;
+      }
+    }
+
+    if (headerRowIdx >= 0) {
+      // Re-parse with the correct header row
+      const reparsed = XLSX.utils.sheet_to_json<Record<string, any>>(ws, {
+        defval: "",
+        range: headerRowIdx,
+      });
+      if (reparsed.length > 0) {
+        headers = Object.keys(reparsed[0]);
+        rawRows = reparsed;
+      }
+    }
+  }
+
+  // Filter out __EMPTY* headers
+  headers = headers.filter(h => h && String(h).trim() !== "" && !/^__EMPTY/.test(String(h)));
+
+  return { headers, rawRows };
+}
+
 interface ParsedRow {
   description: string;
   amount: number;
@@ -244,22 +298,17 @@ const Importar: React.FC = () => {
         }
 
         const ws = wb.Sheets[wb.SheetNames[0]];
-        const json = XLSX.utils.sheet_to_json<Record<string, any>>(ws, { defval: "" });
-        if (json.length === 0) {
+        ({ headers, rawRows } = extractSheetData(ws));
+        if (rawRows.length === 0) {
           toast.error("Planilha vazia — nenhuma linha encontrada");
           return;
         }
-        headers = Object.keys(json[0]);
-        rawRows = json;
       }
 
       if (headers.length === 0) {
         toast.error("Não foi possível detectar colunas no arquivo");
         return;
       }
-
-      // Filter out completely empty headers
-      headers = headers.filter(h => h && String(h).trim() !== "" && h !== "__EMPTY");
 
       toast.success(`${rawRows.length} linhas carregadas de "${file.name}"`);
       await processSheetData(headers, rawRows);
@@ -273,14 +322,13 @@ const Importar: React.FC = () => {
     if (!workbookRef) return;
     setSelectedSheet(sheetName);
     const ws = workbookRef.Sheets[sheetName];
-    const json = XLSX.utils.sheet_to_json<Record<string, any>>(ws, { defval: "" });
-    if (json.length === 0) {
+    const { headers, rawRows } = extractSheetData(ws);
+    if (rawRows.length === 0) {
       toast.error("Aba vazia");
       return;
     }
-    let headers = Object.keys(json[0]).filter(h => h && String(h).trim() !== "" && h !== "__EMPTY");
-    toast.info(`Aba "${sheetName}": ${json.length} linhas`);
-    await processSheetData(headers, json);
+    toast.info(`Aba "${sheetName}": ${rawRows.length} linhas`);
+    await processSheetData(headers, rawRows);
   }, [workbookRef, processSheetData]);
 
   const processMapping = useCallback(() => {
