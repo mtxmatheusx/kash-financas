@@ -13,6 +13,7 @@ import Investimentos from "@/pages/Investimentos";
 import Metas from "@/pages/Metas";
 import Mensal from "@/pages/Mensal";
 import PlanejamentoFinanceiro from "@/pages/PlanejamentoFinanceiro";
+import DRE from "@/pages/DRE";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
