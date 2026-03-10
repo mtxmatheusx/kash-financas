@@ -36,7 +36,7 @@ const consultantConfig = {
     icon: TrendingUp,
     fallback: "CV",
     placeholder: "Pergunte sobre vendas, custos, estratégias...",
-    greeting: "Olá! Sou seu consultor de vendas com IA. Como posso ajudar seu negócio hoje?",
+    greeting: "Olá! 📊 Sou seu consultor de vendas com IA. Posso analisar sua margem de lucro, calcular quanto você precisa vender e sugerir estratégias de crescimento. Como posso ajudar?",
   },
 };
 
