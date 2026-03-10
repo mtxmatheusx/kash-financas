@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Paperclip, Send, Info, Bot, X, FileText, Image, Loader2 } from 'lucide-react';
+import { Paperclip, Send, Info, Bot, X, FileText, Image as ImageIcon, Loader2, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Attachment {
@@ -33,6 +33,7 @@ const FloatingAiAssistant = ({
   const maxChars = 2000;
   const chatRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
@@ -42,9 +43,7 @@ const FloatingAiAssistant = ({
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
+  const processFiles = (files: FileList) => {
     const newAttachments: Attachment[] = [];
     Array.from(files).forEach((file) => {
       const att: Attachment = { file };
@@ -54,7 +53,11 @@ const FloatingAiAssistant = ({
       newAttachments.push(att);
     });
     setAttachments((prev) => [...prev, ...newAttachments].slice(0, 5));
-    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) processFiles(e.target.files);
+    e.target.value = '';
   };
 
   const removeAttachment = (idx: number) => {
@@ -95,7 +98,6 @@ const FloatingAiAssistant = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Cleanup previews on unmount
   useEffect(() => {
     return () => {
       attachments.forEach((a) => { if (a.preview) URL.revokeObjectURL(a.preview); });
@@ -106,7 +108,7 @@ const FloatingAiAssistant = ({
 
   return (
     <div className="fixed bottom-[76px] right-3 sm:bottom-5 sm:right-5 z-50 flex flex-col items-end gap-3">
-      {/* Floating 3D Glowing AI Logo */}
+      {/* Floating Button */}
       <button
         className="floating-ai-button relative w-12 h-12 sm:w-14 sm:h-14 rounded-full cursor-pointer transition-all duration-500 flex items-center justify-center group"
         onClick={() => setIsChatOpen(!isChatOpen)}
@@ -129,7 +131,10 @@ const FloatingAiAssistant = ({
 
       {/* Chat Interface */}
       {isChatOpen && (
-        <div className="fixed inset-0 sm:absolute sm:inset-auto sm:bottom-20 sm:right-0 z-50 sm:z-auto" ref={chatRef}>
+        <div
+          className="fixed inset-0 sm:absolute sm:inset-auto sm:bottom-20 sm:right-0 z-50 sm:z-auto"
+          ref={chatRef}
+        >
           <div
             className="relative w-full h-full sm:w-[400px] sm:max-h-[560px] sm:h-auto sm:rounded-3xl overflow-hidden flex flex-col"
             style={{
@@ -140,8 +145,8 @@ const FloatingAiAssistant = ({
             }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-border/50">
-              <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-border/50 shrink-0">
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                 <div
                   className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shrink-0"
                   style={{ background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(258 60% 52%) 100%)' }}
@@ -150,12 +155,12 @@ const FloatingAiAssistant = ({
                 </div>
                 <span className="text-sm font-semibold text-foreground truncate">{title}</span>
               </div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                 {headerBadges.map((badge, i) => (
                   <span
                     key={i}
                     className={cn(
-                      "px-2 py-0.5 rounded-full text-[10px] font-semibold",
+                      "px-2 py-0.5 rounded-full text-[10px] font-semibold hidden sm:inline-flex",
                       badge.variant === "primary"
                         ? "bg-primary/15 text-primary"
                         : "bg-fin-investment/15 text-fin-investment"
@@ -166,9 +171,10 @@ const FloatingAiAssistant = ({
                 ))}
                 <button
                   onClick={() => setIsChatOpen(false)}
-                  className="p-1.5 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                  className="p-2 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
                 >
-                  <X className="w-4 h-4" />
+                  <ChevronDown className="w-5 h-5 sm:hidden" />
+                  <X className="w-4 h-4 hidden sm:block" />
                 </button>
               </div>
             </div>
@@ -180,18 +186,18 @@ const FloatingAiAssistant = ({
 
             {/* Attachments preview */}
             {attachments.length > 0 && (
-              <div className="px-3 sm:px-4 pt-2 flex gap-2 flex-wrap">
+              <div className="px-3 sm:px-4 pt-2 flex gap-2 flex-wrap shrink-0">
                 {attachments.map((att, idx) => (
-                  <div key={idx} className="relative group/att flex items-center gap-1.5 bg-muted/60 border border-border/50 rounded-lg px-2 py-1.5 text-xs text-foreground max-w-[140px]">
+                  <div key={idx} className="relative group/att flex items-center gap-1.5 bg-muted/60 border border-border/50 rounded-lg px-2 py-1.5 text-xs text-foreground max-w-[120px] sm:max-w-[140px]">
                     {att.preview ? (
                       <img src={att.preview} alt="" className="w-6 h-6 rounded object-cover shrink-0" />
                     ) : (
                       <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
                     )}
-                    <span className="truncate">{att.file.name}</span>
+                    <span className="truncate text-[11px]">{att.file.name}</span>
                     <button
                       onClick={() => removeAttachment(idx)}
-                      className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center opacity-0 group-hover/att:opacity-100 transition-opacity"
+                      className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center transition-opacity"
                     >
                       <X className="w-2.5 h-2.5" />
                     </button>
@@ -201,41 +207,35 @@ const FloatingAiAssistant = ({
             )}
 
             {/* Input Section */}
-            <div className="px-3 sm:px-4 pt-2 sm:pt-3">
-              <div className="relative">
-                <textarea
-                  value={message}
-                  onChange={handleInputChange}
-                  onKeyDown={handleKeyDown}
-                  placeholder={placeholder}
-                  rows={2}
-                  className="w-full bg-muted/50 border border-border/50 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-sm text-foreground placeholder:text-muted-foreground/60 resize-none outline-none focus:border-primary/50 transition-colors"
-                />
-              </div>
+            <div className="px-3 sm:px-4 pt-2 sm:pt-3 shrink-0">
+              <textarea
+                value={message}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                placeholder={placeholder}
+                rows={2}
+                className="w-full bg-muted/50 border border-border/50 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-sm text-foreground placeholder:text-muted-foreground/60 resize-none outline-none focus:border-primary/50 transition-colors"
+              />
             </div>
 
-            {/* Controls Section */}
-            <div className="px-3 sm:px-4 pb-3 sm:pb-4 pt-2">
+            {/* Controls */}
+            <div className="px-3 sm:px-4 pb-3 sm:pb-4 pt-2 shrink-0 safe-area-bottom">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5 sm:gap-2">
-                  <div className="flex items-center gap-1 p-0.5 sm:p-1 bg-muted/40 rounded-xl border border-border/50">
+                  <div className="flex items-center gap-0.5 p-0.5 bg-muted/40 rounded-xl border border-border/50">
                     <button
                       onClick={() => fileInputRef.current?.click()}
-                      className="group relative p-2 sm:p-2.5 rounded-lg transition-all duration-300 text-muted-foreground hover:text-foreground hover:bg-muted hover:scale-105"
+                      className="p-2 sm:p-2.5 rounded-lg transition-all text-muted-foreground hover:text-foreground hover:bg-muted active:scale-95"
+                      aria-label="Anexar arquivo"
                     >
                       <Paperclip className="w-4 h-4" />
-                      <div className="absolute -top-9 left-1/2 -translate-x-1/2 px-2 py-1 bg-popover text-popover-foreground text-[10px] rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg border border-border hidden sm:block">
-                        Anexar arquivo
-                      </div>
                     </button>
                     <button
-                      onClick={() => { fileInputRef.current?.setAttribute('accept', 'image/*'); fileInputRef.current?.click(); }}
-                      className="group relative p-2 sm:p-2.5 rounded-lg transition-all duration-300 text-muted-foreground hover:text-foreground hover:bg-muted hover:scale-105"
+                      onClick={() => imageInputRef.current?.click()}
+                      className="p-2 sm:p-2.5 rounded-lg transition-all text-muted-foreground hover:text-foreground hover:bg-muted active:scale-95"
+                      aria-label="Enviar imagem"
                     >
-                      <Image className="w-4 h-4" />
-                      <div className="absolute -top-9 left-1/2 -translate-x-1/2 px-2 py-1 bg-popover text-popover-foreground text-[10px] rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg border border-border hidden sm:block">
-                        Enviar imagem
-                      </div>
+                      <ImageIcon className="w-4 h-4" />
                     </button>
                   </div>
                   <input
@@ -243,19 +243,27 @@ const FloatingAiAssistant = ({
                     type="file"
                     multiple
                     className="hidden"
-                    accept="image/*,.pdf,.csv,.xlsx,.xls,.txt,.doc,.docx"
+                    accept=".pdf,.csv,.xlsx,.xls,.txt,.doc,.docx"
+                    onChange={handleFileChange}
+                  />
+                  <input
+                    ref={imageInputRef}
+                    type="file"
+                    multiple
+                    className="hidden"
+                    accept="image/*"
                     onChange={handleFileChange}
                   />
                 </div>
 
                 <div className="flex items-center gap-2 sm:gap-3">
-                  <div className="text-[10px] sm:text-xs font-medium text-muted-foreground">
-                    <span>{charCount}</span>/<span className="text-muted-foreground/70">{maxChars}</span>
-                  </div>
+                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground tabular-nums">
+                    {charCount}/{maxChars}
+                  </span>
                   <button
                     onClick={handleSend}
                     disabled={!hasContent || isLoading}
-                    className="group relative p-2.5 sm:p-3 rounded-xl text-primary-foreground transition-all duration-300 hover:scale-110 active:scale-95 disabled:opacity-40 disabled:hover:scale-100"
+                    className="p-2.5 sm:p-3 rounded-xl text-primary-foreground transition-all duration-300 hover:scale-110 active:scale-95 disabled:opacity-40 disabled:hover:scale-100"
                     style={{
                       background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(258 60% 52%) 100%)',
                       boxShadow: hasContent ? '0 4px 15px hsl(var(--primary) / 0.4)' : 'none',
@@ -264,13 +272,13 @@ const FloatingAiAssistant = ({
                     {isLoading ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
-                      <Send className="w-4 h-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:rotate-12" />
+                      <Send className="w-4 h-4" />
                     )}
                   </button>
                 </div>
               </div>
 
-              {/* Footer */}
+              {/* Footer - desktop only */}
               <div className="hidden sm:flex items-center justify-between mt-3 pt-3 border-t border-border/30 text-[10px] text-muted-foreground">
                 <div className="flex items-center gap-1.5">
                   <Info className="w-3 h-3" />
@@ -285,7 +293,7 @@ const FloatingAiAssistant = ({
               </div>
             </div>
 
-            {/* Subtle overlay gradient */}
+            {/* Subtle overlay */}
             <div
               className="absolute inset-0 sm:rounded-3xl pointer-events-none"
               style={{ background: 'linear-gradient(135deg, hsl(var(--primary) / 0.03), transparent, hsl(258 60% 52% / 0.03))' }}
@@ -294,7 +302,6 @@ const FloatingAiAssistant = ({
         </div>
       )}
 
-      {/* Keyframe animation */}
       <style>{`
         @keyframes popIn {
           0% { opacity: 0; transform: scale(0.8) translateY(20px); }
