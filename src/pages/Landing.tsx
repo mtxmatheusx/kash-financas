@@ -167,11 +167,11 @@ const steps = [
   { num: "03", icon: TrendingUp, isCustomIcon: false, title: "O Consultor", desc: "A IA cruza seus dados e sugere onde investir para vender mais.", accent: "hsl(348 100% 64%)" },
 ];
 
-const stats = [
-  { value: "10k+", label: "Usuários" },
-  { value: "R$ 2B+", label: "Gerenciados" },
-  { value: "99.9%", label: "Uptime" },
-  { value: "4.9★", label: "Avaliação" },
+const trustBadges = [
+  { icon: Lock, label: "Criptografia AES-256" },
+  { icon: Brain, label: "Powered by OpenAI" },
+  { icon: Database, label: "Cloud Database" },
+  { icon: WhatsAppIcon, label: "API Oficial", isCustom: true },
 ];
 
 /* ═══════════════════════════════════════════════════════ */
