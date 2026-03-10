@@ -27,7 +27,7 @@ const consultantConfig = {
     icon: Bot,
     fallback: "CF",
     placeholder: "Pergunte sobre investimentos, metas, orçamento...",
-    greeting: "Olá! Sou seu consultor financeiro com IA. Como posso te ajudar hoje?",
+    greeting: "Olá! 👋 Sou seu consultor financeiro com IA. Posso analisar seus gastos, simular investimentos e sugerir formas de economizar. O que gostaria de explorar?",
   },
   sales: {
     label: "Consultor de Vendas",
@@ -36,7 +36,7 @@ const consultantConfig = {
     icon: TrendingUp,
     fallback: "CV",
     placeholder: "Pergunte sobre vendas, custos, estratégias...",
-    greeting: "Olá! Sou seu consultor de vendas com IA. Como posso ajudar seu negócio hoje?",
+    greeting: "Olá! 📊 Sou seu consultor de vendas com IA. Posso analisar sua margem de lucro, calcular quanto você precisa vender e sugerir estratégias de crescimento. Como posso ajudar?",
   },
 };
 
