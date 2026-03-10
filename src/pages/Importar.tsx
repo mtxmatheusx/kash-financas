@@ -5,7 +5,11 @@ import { useAccount } from "@/contexts/AccountContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Upload, FileSpreadsheet, Check, AlertTriangle, ArrowRight, Download, Brain, Loader2, Sparkles, RefreshCw } from "lucide-react";
+import { Upload, FileSpreadsheet, Check, AlertTriangle, ArrowRight, Download, Brain, Loader2, Sparkles, RefreshCw, Trash2 } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
