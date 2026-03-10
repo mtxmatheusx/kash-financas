@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { PageTransition } from "@/components/PageTransition";
+import { WhatsAppAlertBanner } from "@/components/WhatsAppAlertBanner";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useInvestments } from "@/hooks/useInvestments";
 import { useGoals } from "@/hooks/useGoals";
