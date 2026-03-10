@@ -35,7 +35,6 @@ const menuItems: MenuItem[] = [
   { path: "/ebitda", label: "EBITDA", icon: Calculator, account: "business" },
   { path: "/importar", label: "Importar", icon: Upload },
 ];
-];
 
 interface Props {
   collapsed: boolean;
