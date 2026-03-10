@@ -38,7 +38,7 @@ const Receitas: React.FC = () => {
   );
 
   const handleSubmit = () => {
-    const amount = parseAmountToReais(form.amount);
+    const amount = amountCents / 100;
     if (!form.description || !amount) return;
     create({
       type: 'income', amount, description: form.description,
