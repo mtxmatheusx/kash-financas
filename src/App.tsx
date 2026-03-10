@@ -15,6 +15,7 @@ import Mensal from "@/pages/Mensal";
 import PlanejamentoFinanceiro from "@/pages/PlanejamentoFinanceiro";
 import DRE from "@/pages/DRE";
 import EBITDA from "@/pages/EBITDA";
+import Importar from "@/pages/Importar";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
