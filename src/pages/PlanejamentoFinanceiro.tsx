@@ -25,42 +25,42 @@ const PlanejamentoFinanceiro: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Compass className="w-6 h-6 text-primary" /> Planejamento Financeiro
+          <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2">
+            <Compass className="w-5 h-5 md:w-6 md:h-6 text-primary" /> Planejamento Financeiro
           </h1>
-          <p className="text-sm text-muted-foreground">Análise e recomendações para suas finanças</p>
+          <p className="text-xs md:text-sm text-muted-foreground">Análise e recomendações para suas finanças</p>
         </div>
 
         {/* Health Score */}
-        <div className="rounded-xl border border-border bg-card p-6 enterprise-shadow">
+        <div className="rounded-xl border border-border bg-card p-4 md:p-6 enterprise-shadow">
           <h3 className="text-sm font-semibold text-card-foreground mb-4">Saúde Financeira</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 gap-3 md:gap-6">
             <div className="text-center">
-              <div className={`text-4xl font-bold font-mono-fin ${savingsRate >= 20 ? 'text-fin-income' : savingsRate >= 0 ? 'text-fin-pending' : 'text-fin-expense'}`}>
+              <div className={`text-2xl md:text-4xl font-bold font-mono-fin ${savingsRate >= 20 ? 'text-fin-income' : savingsRate >= 0 ? 'text-fin-pending' : 'text-fin-expense'}`}>
                 {savingsRate.toFixed(0)}%
               </div>
-              <p className="text-xs text-muted-foreground mt-1">Taxa de poupança</p>
-              <p className="text-[11px] text-muted-foreground">Meta: ≥ 20%</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground mt-1">Taxa de poupança</p>
+              <p className="text-[10px] text-muted-foreground hidden md:block">Meta: ≥ 20%</p>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold font-mono-fin text-primary">
+              <div className="text-2xl md:text-4xl font-bold font-mono-fin text-primary">
                 {formatBRL(totals.balance)}
               </div>
-              <p className="text-xs text-muted-foreground mt-1">Saldo disponível</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground mt-1">Saldo</p>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold font-mono-fin text-fin-investment">
+              <div className="text-2xl md:text-4xl font-bold font-mono-fin text-fin-investment">
                 {formatBRL(investmentTotal)}
               </div>
-              <p className="text-xs text-muted-foreground mt-1">Patrimônio investido</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground mt-1">Investido</p>
             </div>
           </div>
         </div>
 
         {/* Recommendations */}
-        <div className="rounded-xl border border-border bg-card p-6 enterprise-shadow">
+        <div className="rounded-xl border border-border bg-card p-4 md:p-6 enterprise-shadow">
           <h3 className="text-sm font-semibold text-card-foreground mb-4">Recomendações</h3>
           <div className="space-y-3">
             {savingsRate < 20 && (
@@ -104,7 +104,7 @@ const PlanejamentoFinanceiro: React.FC = () => {
 
         {/* Top Expenses */}
         {topExpenses.length > 0 && (
-          <div className="rounded-xl border border-border bg-card p-6 enterprise-shadow">
+          <div className="rounded-xl border border-border bg-card p-4 md:p-6 enterprise-shadow">
             <h3 className="text-sm font-semibold text-card-foreground mb-4">Maiores Categorias de Gasto</h3>
             <div className="space-y-3">
               {topExpenses.map(([cat, amount]) => {
