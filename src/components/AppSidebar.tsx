@@ -10,7 +10,16 @@ import { useAccount } from "@/contexts/AccountContext";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const menuItems = [
+import type { AccountType } from "@/contexts/AccountContext";
+
+interface MenuItem {
+  path: string;
+  label: string;
+  icon: React.ElementType;
+  account?: AccountType; // undefined = both
+}
+
+const menuItems: MenuItem[] = [
   { path: "/", label: "Dashboard", icon: LayoutDashboard },
   { path: "/planejamento", label: "Planejamento", icon: Compass },
   { path: "/receitas", label: "Receitas", icon: TrendingUp },
@@ -18,8 +27,8 @@ const menuItems = [
   { path: "/investimentos", label: "Investimentos", icon: PieChart },
   { path: "/metas", label: "Metas", icon: Target },
   { path: "/mensal", label: "Visão Mensal", icon: CalendarRange },
-  { path: "/dre", label: "DRE", icon: FileText },
-  { path: "/ebitda", label: "EBITDA", icon: Calculator },
+  { path: "/dre", label: "DRE", icon: FileText, account: "business" },
+  { path: "/ebitda", label: "EBITDA", icon: Calculator, account: "business" },
   { path: "/importar", label: "Importar", icon: Upload },
 ];
 
@@ -91,7 +100,9 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
 
       {/* Nav Items */}
       <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
-        {menuItems.map(item => {
+        {menuItems
+          .filter(item => !item.account || item.account === account.type)
+          .map(item => {
           const isActive = location.pathname === item.path;
           return (
             <NavLink
