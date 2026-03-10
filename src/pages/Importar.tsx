@@ -358,7 +358,7 @@ const Importar: React.FC = () => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="__none__">— Não mapear —</SelectItem>
-                        {result.headers.map(h => (
+                        {result.headers.filter(h => h && h.trim() !== "").map(h => (
                           <SelectItem key={h} value={h}>{h}</SelectItem>
                         ))}
                       </SelectContent>
