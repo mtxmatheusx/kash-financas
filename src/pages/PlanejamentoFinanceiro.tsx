@@ -34,7 +34,7 @@ const PlanejamentoFinanceiro: React.FC = () => {
           <p className="text-xs md:text-sm text-muted-foreground">Análise e recomendações para suas finanças</p>
         </div>
 
-        {/* Health Score */}
+        <WhatsAppAlertBanner />
         <div className="rounded-xl border border-border bg-card p-4 md:p-6 enterprise-shadow">
           <h3 className="text-sm font-semibold text-card-foreground mb-4">Saúde Financeira</h3>
           <div className="grid grid-cols-3 gap-3 md:gap-6">
