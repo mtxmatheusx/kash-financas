@@ -147,10 +147,11 @@ export const FloatingChat: React.FC = () => {
   const [messages, setMessages] = useState<DisplayMsg[]>([{ role: "assistant", content: config.greeting }]);
   const [isLoading, setIsLoading] = useState(false);
   const [pendingTx, setPendingTx] = useState<ParsedTransaction | null>(null);
+  const [stagedMsg, setStagedMsg] = useState<{ text: string; images: string[] } | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   const { isListening, transcript, start: startListening, stop: stopListening, isSupported: micSupported } = useSpeechToText({
-    onResult: (text) => sendMessage(text),
+    onResult: (text) => stageMessage(text),
     onError: (err) => toast.error(err),
   });
 
@@ -160,6 +161,7 @@ export const FloatingChat: React.FC = () => {
     setConsultantType(type);
     setMessages([{ role: "assistant", content: consultantConfig[type].greeting }]);
     setPendingTx(null);
+    setStagedMsg(null);
   };
 
   const handleConfirmTx = useCallback(() => {
@@ -186,27 +188,33 @@ export const FloatingChat: React.FC = () => {
     setPendingTx(null);
   }, []);
 
-  const sendMessage = async (userText: string, attachments?: Attachment[]) => {
+  /** Stage a message for preview (don't send yet) */
+  const stageMessage = async (userText: string, attachments?: Attachment[]) => {
     if ((!userText.trim() && (!attachments || attachments.length === 0)) || isLoading) return;
 
-    // Convert image attachments to base64
     const imageFiles = attachments?.filter(a => a.file.type.startsWith("image/")) || [];
     const imageBase64: string[] = [];
-
     for (const att of imageFiles) {
       try {
         const b64 = await fileToBase64(att.file);
         imageBase64.push(b64);
-      } catch {
-        console.error("Failed to convert image to base64");
-      }
+      } catch { /* ignore */ }
     }
 
-    const displayText = userText.trim() || (imageBase64.length > 0 ? `📷 ${imageBase64.length} imagem(ns) enviada(s)` : "");
+    setStagedMsg({ text: userText.trim(), images: imageBase64 });
+  };
+
+  /** Confirm & send the staged message */
+  const confirmStagedMessage = async () => {
+    if (!stagedMsg) return;
+    const { text, images } = stagedMsg;
+    setStagedMsg(null);
+
+    const displayText = text || (images.length > 0 ? `📷 ${images.length} imagem(ns) enviada(s)` : "");
     const userMsg: DisplayMsg = {
       role: "user",
       content: displayText,
-      images: imageBase64.length > 0 ? imageBase64 : undefined,
+      images: images.length > 0 ? images : undefined,
     };
 
     const updatedMessages = [...messages, userMsg];
@@ -218,7 +226,7 @@ export const FloatingChat: React.FC = () => {
     let assistantSoFar = "";
 
     const apiMessages = toApiMessages(updatedMessages);
-    const parsePromise = userText.trim() ? parseTransaction(userText.trim()) : Promise.resolve(null);
+    const parsePromise = text ? parseTransaction(text) : Promise.resolve(null);
 
     try {
       await streamChat({
@@ -244,6 +252,8 @@ export const FloatingChat: React.FC = () => {
     const parsed = await parsePromise;
     if (parsed && parsed.amount > 0) setPendingTx(parsed);
   };
+
+  const discardStagedMessage = () => setStagedMsg(null);
 
   return (
     <FloatingAiAssistant
