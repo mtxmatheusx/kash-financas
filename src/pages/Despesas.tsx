@@ -48,7 +48,7 @@ const Despesas: React.FC = () => {
       if (!form.description || !pct || pct <= 0) return;
       amount = (totals.income * pct) / 100;
     } else {
-      amount = parseAmountToReais(form.amount);
+      amount = amountCents / 100;
       if (!form.description || !amount) return;
     }
     create({
