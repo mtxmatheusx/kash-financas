@@ -3,7 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard, TrendingUp, TrendingDown, PieChart, Target, CalendarRange,
-  Sun, Moon, LogOut, ChevronLeft, ChevronRight, Building2, Compass, FileText,
+  Sun, Moon, ChevronLeft, ChevronRight, Compass, FileText, Calculator,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAccount } from "@/contexts/AccountContext";
