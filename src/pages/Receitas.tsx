@@ -90,38 +90,60 @@ const Receitas: React.FC = () => {
           <Input placeholder="Buscar receitas..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10 h-9 md:h-10" />
         </div>
 
-        <div className="rounded-xl border border-border bg-card enterprise-shadow overflow-hidden">
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900 shadow-lg shadow-black/20 overflow-hidden font-['DM_Sans']">
+          {/* Table Header */}
+          <div className="grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center bg-zinc-900/50 px-4 md:px-6 py-3 border-b border-zinc-800/50">
+            <span className="text-[10px] md:text-xs font-medium text-zinc-400 uppercase tracking-wider">Descrição</span>
+            <span className="text-[10px] md:text-xs font-medium text-zinc-400 uppercase tracking-wider hidden md:block">Categoria</span>
+            <span className="text-[10px] md:text-xs font-medium text-zinc-400 uppercase tracking-wider text-center">Status</span>
+            <span className="text-[10px] md:text-xs font-medium text-zinc-400 uppercase tracking-wider text-right">Valor</span>
+            <span className="w-8" />
+          </div>
+
           {filtered.length > 0 ? (
-            <div className="divide-y divide-border">
+            <div>
               {filtered.map(t => (
-                <div key={t.id} className="p-3 md:p-4 hover:bg-accent/30 transition-colors">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-start gap-2.5 min-w-0 flex-1">
-                      <div className="w-2 h-2 rounded-full bg-fin-income mt-1.5 shrink-0" />
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium text-card-foreground truncate">{t.description}</p>
-                        <p className="text-[11px] text-muted-foreground">
-                          {t.category} · {new Date(t.date).toLocaleDateString('pt-BR')}
-                          {t.entry_type === 'recurring' && ` · Recorrente ${t.frequency === 'yearly' ? '(Anual)' : '(Mensal)'}`}
-                          {t.entry_type === 'installment' && ` · Contrato ${t.installments} meses`}
-                        </p>
-                      </div>
-                    </div>
-                    <button onClick={() => remove(t.id)} className="text-muted-foreground hover:text-fin-expense transition-colors shrink-0 p-1">
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                <div key={t.id} className="grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center px-4 md:px-6 py-3.5 md:py-4 border-b border-zinc-800/50 last:border-b-0 hover:bg-zinc-800/30 transition-colors duration-150 group">
+                  {/* Description + date */}
+                  <div className="min-w-0 pr-3">
+                    <p className="text-sm font-medium text-zinc-100 truncate">{t.description}</p>
+                    <p className="text-[11px] text-zinc-500 mt-0.5">
+                      {new Date(t.date).toLocaleDateString('pt-BR')}
+                      {t.entry_type === 'recurring' && ` · Recorrente ${t.frequency === 'yearly' ? '(Anual)' : '(Mensal)'}`}
+                      {t.entry_type === 'installment' && ` · Contrato ${t.installments} meses`}
+                      <span className="md:hidden"> · {t.category}</span>
+                    </p>
                   </div>
-                  <div className="flex items-center justify-between mt-1.5 ml-[18px]">
-                    <Badge variant="outline" className={cn("text-[10px] h-5", t.status === 'paid' ? "border-fin-income/30 text-fin-income" : "border-fin-pending/30 text-fin-pending")}>
+
+                  {/* Category (desktop) */}
+                  <span className="text-xs text-zinc-400 hidden md:block">{t.category}</span>
+
+                  {/* Status badge */}
+                  <div className="flex justify-center px-2">
+                    <span className={cn(
+                      "inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide",
+                      t.status === 'paid'
+                        ? "bg-fin-income/10 text-fin-income border border-fin-income/20"
+                        : "bg-fin-pending/10 text-fin-pending border border-fin-pending/20"
+                    )}>
                       {t.status === 'paid' ? 'Recebido' : 'Pendente'}
-                    </Badge>
-                    <span className="font-mono-fin text-sm font-semibold text-fin-income">+ {formatBRL(t.amount)}</span>
+                    </span>
                   </div>
+
+                  {/* Amount */}
+                  <span className="font-mono-fin text-sm font-semibold text-fin-income text-right pl-3 whitespace-nowrap">
+                    + {formatBRL(t.amount)}
+                  </span>
+
+                  {/* Delete */}
+                  <button onClick={() => remove(t.id)} className="ml-2 p-1.5 rounded-md text-zinc-600 hover:text-fin-expense hover:bg-zinc-800/50 transition-colors opacity-0 group-hover:opacity-100">
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground text-center py-12">
+            <p className="text-sm text-zinc-500 text-center py-16">
               {search ? 'Nenhuma receita encontrada' : 'Nenhuma receita registrada'}
             </p>
           )}
