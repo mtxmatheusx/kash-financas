@@ -135,7 +135,7 @@ const Receitas: React.FC = () => {
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Valor</label>
-              <Input value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} placeholder="0,00" inputMode="decimal" />
+              <CurrencyInput value={form.amount} onValueChange={(formatted, cents) => { setForm({ ...form, amount: formatted }); setAmountCents(cents); }} />
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Categoria</label>
