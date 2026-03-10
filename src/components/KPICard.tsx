@@ -16,23 +16,23 @@ interface KPICardProps {
 export const KPICard: React.FC<KPICardProps> = ({ title, value, subtitle, icon: Icon, color, trend }) => (
   <motion.div
     variants={staggerItem}
-    whileHover={{ y: -2, transition: { duration: 0.2 } }}
-    className="rounded-xl border border-border bg-card p-5 enterprise-shadow hover:enterprise-shadow-md transition-shadow"
+    whileHover={{ y: -2, transition: { duration: 0.15 } }}
+    className="rounded-xl border border-border bg-card p-4 cockpit-glow hover:border-primary/20 transition-all duration-200"
   >
-    <div className="flex items-start justify-between mb-3">
+    <div className="flex items-start justify-between mb-2.5">
       <motion.div
-        className={cn("w-10 h-10 rounded-lg flex items-center justify-center", color)}
-        whileHover={{ rotate: [0, -8, 8, 0], transition: { duration: 0.4 } }}
+        className={cn("w-9 h-9 rounded-lg flex items-center justify-center", color)}
+        whileHover={{ rotate: [0, -6, 6, 0], transition: { duration: 0.35 } }}
       >
-        <Icon className="w-5 h-5" />
+        <Icon className="w-4 h-4" />
       </motion.div>
       {trend && (
         <motion.span
-          initial={{ opacity: 0, x: 8 }}
+          initial={{ opacity: 0, x: 6 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.3, duration: 0.3 }}
+          transition={{ delay: 0.3, duration: 0.25 }}
           className={cn(
-            "text-xs font-medium px-2 py-0.5 rounded-full",
+            "text-[10px] font-semibold px-2 py-0.5 rounded-full",
             trend.value >= 0 ? "bg-fin-income/10 text-fin-income" : "bg-fin-expense/10 text-fin-expense"
           )}
         >
@@ -40,15 +40,15 @@ export const KPICard: React.FC<KPICardProps> = ({ title, value, subtitle, icon: 
         </motion.span>
       )}
     </div>
-    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">{title}</p>
+    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-0.5">{title}</p>
     <motion.p
-      className="text-xl font-bold font-display text-card-foreground"
-      initial={{ opacity: 0, y: 4 }}
+      className="text-lg font-bold font-display text-card-foreground tracking-tight"
+      initial={{ opacity: 0, y: 3 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.15, duration: 0.3 }}
+      transition={{ delay: 0.1, duration: 0.25 }}
     >
       {value}
     </motion.p>
-    {subtitle && <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>}
+    {subtitle && <p className="text-[10px] text-muted-foreground mt-0.5">{subtitle}</p>}
   </motion.div>
 );
