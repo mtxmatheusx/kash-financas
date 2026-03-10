@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { PageTransition } from "@/components/PageTransition";
+import { WhatsAppAlertBanner } from "@/components/WhatsAppAlertBanner";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useInvestments } from "@/hooks/useInvestments";
 import { useGoals } from "@/hooks/useGoals";
@@ -33,7 +34,7 @@ const PlanejamentoFinanceiro: React.FC = () => {
           <p className="text-xs md:text-sm text-muted-foreground">Análise e recomendações para suas finanças</p>
         </div>
 
-        {/* Health Score */}
+        <WhatsAppAlertBanner />
         <div className="rounded-xl border border-border bg-card p-4 md:p-6 enterprise-shadow">
           <h3 className="text-sm font-semibold text-card-foreground mb-4">Saúde Financeira</h3>
           <div className="grid grid-cols-3 gap-3 md:gap-6">

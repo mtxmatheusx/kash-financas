@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { PageTransition } from "@/components/PageTransition";
+import { WhatsAppAlertBanner } from "@/components/WhatsAppAlertBanner";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAccount } from "@/contexts/AccountContext";
 import { Plus, Search, Trash2, ArrowUpRight } from "lucide-react";
@@ -66,6 +67,8 @@ const Receitas: React.FC = () => {
             <Plus className="w-4 h-4" /> Nova Receita
           </Button>
         </div>
+
+        <WhatsAppAlertBanner />
 
         <div className="grid grid-cols-3 gap-3">
           <div className="rounded-xl border-l-4 border-l-fin-income border border-border bg-card p-3 md:p-4">
