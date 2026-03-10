@@ -16,12 +16,6 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const supabaseClient = createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    { auth: { persistSession: false } }
-  );
-
   try {
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
@@ -29,9 +23,25 @@ serve(async (req) => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header");
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError) throw new Error(`Auth error: ${userError.message}`);
+    // Create admin client for DB operations
+    const adminClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } }
+    );
+
+    // Create user client to validate the JWT
+    const userClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      { global: { headers: { Authorization: authHeader } }, auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } }
+    );
+
+    const { data: userData, error: userError } = await userClient.auth.getUser();
+    if (userError) {
+      logStep("Auth error", { message: userError.message });
+      throw new Error(`Auth error: ${userError.message}`);
+    }
     const user = userData.user;
     if (!user?.email) throw new Error("User not authenticated");
     logStep("User authenticated", { email: user.email });
@@ -42,10 +52,10 @@ serve(async (req) => {
     if (customers.data.length === 0) {
       logStep("No Stripe customer found");
       // Don't downgrade if user has active trial
-      const { data: profileData } = await supabaseClient.from("profiles").select("trial_end").eq("user_id", user.id).single();
+      const { data: profileData } = await adminClient.from("profiles").select("trial_end").eq("user_id", user.id).single();
       const hasActiveTrial = profileData?.trial_end && new Date(profileData.trial_end) > new Date();
       if (!hasActiveTrial) {
-        await supabaseClient.from("profiles").update({ subscription_tier: "free" }).eq("user_id", user.id);
+        await adminClient.from("profiles").update({ subscription_tier: "free" }).eq("user_id", user.id);
       }
       return new Response(JSON.stringify({ subscribed: false }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -61,13 +71,13 @@ serve(async (req) => {
       const sub = subscriptions.data[0];
       subscriptionEnd = new Date(sub.current_period_end * 1000).toISOString();
       logStep("Active subscription", { end: subscriptionEnd });
-      await supabaseClient.from("profiles").update({ subscription_tier: "premium" }).eq("user_id", user.id);
+      await adminClient.from("profiles").update({ subscription_tier: "premium" }).eq("user_id", user.id);
     } else {
       logStep("No active subscription");
-      const { data: profileData2 } = await supabaseClient.from("profiles").select("trial_end").eq("user_id", user.id).single();
+      const { data: profileData2 } = await adminClient.from("profiles").select("trial_end").eq("user_id", user.id).single();
       const hasActiveTrial2 = profileData2?.trial_end && new Date(profileData2.trial_end) > new Date();
       if (!hasActiveTrial2) {
-        await supabaseClient.from("profiles").update({ subscription_tier: "free" }).eq("user_id", user.id);
+        await adminClient.from("profiles").update({ subscription_tier: "free" }).eq("user_id", user.id);
       }
     }
 
