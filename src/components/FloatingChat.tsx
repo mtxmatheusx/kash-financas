@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from "react";
-import { Bot, TrendingUp, Mic, MicOff, ImageIcon } from "lucide-react";
+import { Bot, TrendingUp, Mic, MicOff, ImageIcon, Check, X, Send } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import {
@@ -147,10 +147,11 @@ export const FloatingChat: React.FC = () => {
   const [messages, setMessages] = useState<DisplayMsg[]>([{ role: "assistant", content: config.greeting }]);
   const [isLoading, setIsLoading] = useState(false);
   const [pendingTx, setPendingTx] = useState<ParsedTransaction | null>(null);
+  const [stagedMsg, setStagedMsg] = useState<{ text: string; images: string[] } | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   const { isListening, transcript, start: startListening, stop: stopListening, isSupported: micSupported } = useSpeechToText({
-    onResult: (text) => sendMessage(text),
+    onResult: (text) => stageMessage(text),
     onError: (err) => toast.error(err),
   });
 
@@ -160,6 +161,7 @@ export const FloatingChat: React.FC = () => {
     setConsultantType(type);
     setMessages([{ role: "assistant", content: consultantConfig[type].greeting }]);
     setPendingTx(null);
+    setStagedMsg(null);
   };
 
   const handleConfirmTx = useCallback(() => {
@@ -186,27 +188,33 @@ export const FloatingChat: React.FC = () => {
     setPendingTx(null);
   }, []);
 
-  const sendMessage = async (userText: string, attachments?: Attachment[]) => {
+  /** Stage a message for preview (don't send yet) */
+  const stageMessage = async (userText: string, attachments?: Attachment[]) => {
     if ((!userText.trim() && (!attachments || attachments.length === 0)) || isLoading) return;
 
-    // Convert image attachments to base64
     const imageFiles = attachments?.filter(a => a.file.type.startsWith("image/")) || [];
     const imageBase64: string[] = [];
-
     for (const att of imageFiles) {
       try {
         const b64 = await fileToBase64(att.file);
         imageBase64.push(b64);
-      } catch {
-        console.error("Failed to convert image to base64");
-      }
+      } catch { /* ignore */ }
     }
 
-    const displayText = userText.trim() || (imageBase64.length > 0 ? `📷 ${imageBase64.length} imagem(ns) enviada(s)` : "");
+    setStagedMsg({ text: userText.trim(), images: imageBase64 });
+  };
+
+  /** Confirm & send the staged message */
+  const confirmStagedMessage = async () => {
+    if (!stagedMsg) return;
+    const { text, images } = stagedMsg;
+    setStagedMsg(null);
+
+    const displayText = text || (images.length > 0 ? `📷 ${images.length} imagem(ns) enviada(s)` : "");
     const userMsg: DisplayMsg = {
       role: "user",
       content: displayText,
-      images: imageBase64.length > 0 ? imageBase64 : undefined,
+      images: images.length > 0 ? images : undefined,
     };
 
     const updatedMessages = [...messages, userMsg];
@@ -218,7 +226,7 @@ export const FloatingChat: React.FC = () => {
     let assistantSoFar = "";
 
     const apiMessages = toApiMessages(updatedMessages);
-    const parsePromise = userText.trim() ? parseTransaction(userText.trim()) : Promise.resolve(null);
+    const parsePromise = text ? parseTransaction(text) : Promise.resolve(null);
 
     try {
       await streamChat({
@@ -245,9 +253,11 @@ export const FloatingChat: React.FC = () => {
     if (parsed && parsed.amount > 0) setPendingTx(parsed);
   };
 
+  const discardStagedMessage = () => setStagedMsg(null);
+
   return (
     <FloatingAiAssistant
-      onSend={sendMessage}
+      onSend={stageMessage}
       isLoading={isLoading}
       title={config.label}
       placeholder={isListening ? "🎙️ Ouvindo..." : config.placeholder}
@@ -358,6 +368,45 @@ export const FloatingChat: React.FC = () => {
           )}
         </ChatMessageList>
       </div>
+
+      {/* Staged message preview */}
+      {stagedMsg && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mx-3 my-2 rounded-xl border border-primary/30 bg-primary/5 p-3 space-y-2"
+        >
+          <p className="text-[10px] font-semibold text-primary uppercase tracking-wider">Confirmar envio</p>
+
+          {stagedMsg.images.length > 0 && (
+            <div className="flex gap-1.5 flex-wrap">
+              {stagedMsg.images.map((img, i) => (
+                <img key={i} src={img} alt={`Preview ${i + 1}`} className="w-16 h-16 rounded-lg object-cover border border-border/40" />
+              ))}
+            </div>
+          )}
+
+          {stagedMsg.text && (
+            <p className="text-sm text-foreground line-clamp-3">{stagedMsg.text}</p>
+          )}
+
+          <div className="flex gap-2">
+            <button
+              onClick={discardStagedMessage}
+              className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg border border-border/50 text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            >
+              <X className="w-3 h-3" /> Descartar
+            </button>
+            <button
+              onClick={confirmStagedMessage}
+              className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-xs font-medium text-primary-foreground transition-colors"
+              style={{ background: "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(258 60% 52%) 100%)" }}
+            >
+              <Send className="w-3 h-3" /> Enviar
+            </button>
+          </div>
+        </motion.div>
+      )}
 
       {/* Pending transaction confirmation */}
       {pendingTx && (
