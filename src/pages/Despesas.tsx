@@ -110,6 +110,7 @@ const Despesas: React.FC = () => {
                         <p className="text-sm font-medium text-card-foreground truncate">{t.description}</p>
                         <p className="text-[11px] text-muted-foreground">
                           {t.category} · {new Date(t.date).toLocaleDateString('pt-BR')}
+                          {t.is_percentage && t.percentage && ` · ${t.percentage}% da receita`}
                           {t.entry_type === 'recurring' && ` · Recorrente ${t.frequency === 'yearly' ? '(Anual)' : '(Mensal)'}`}
                           {t.entry_type === 'installment' && ` · ${t.installments}x parcelas`}
                         </p>
