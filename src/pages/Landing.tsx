@@ -5,8 +5,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   ArrowRight, Shield, Zap, Brain, TrendingUp,
   Crown, Check, ChevronRight, Sparkles, AudioLines, Cpu, Lock, Database,
+  X as XIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Accordion, AccordionContent, AccordionItem, AccordionTrigger,
+} from "@/components/ui/accordion";
 
 /* ── Referral capture hook ── */
 const useReferralCapture = () => {
@@ -364,6 +368,69 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
+      {/* ═══ O JEITO VELHO vs O JEITO KASH ═══ */}
+      <section className="py-14 sm:py-28 px-4 sm:px-6 relative">
+        <div className="max-w-5xl mx-auto relative z-10">
+          <motion.div {...fadeUp()} className="text-center mb-10 sm:mb-16">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
+              Por que você abandona planilhas no 2º mês?
+            </h2>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
+            {/* Card Esquerdo — O Jeito Velho */}
+            <motion.div
+              {...fadeUp(0.1)}
+              className="rounded-xl sm:rounded-2xl border border-[hsl(0,0%,12%)] bg-[hsl(0,0%,3%)] p-5 sm:p-8"
+            >
+              <h3 className="text-base sm:text-lg font-extrabold text-[hsl(0,0%,55%)] mb-5 sm:mb-6">
+                Planilhas & Apps Bancários
+              </h3>
+              <ul className="space-y-3.5 sm:space-y-4">
+                {[
+                  "Exigem login e abrir outro app",
+                  "Categorização 100% manual",
+                  "Você esquece de anotar o cafezinho",
+                  "Geram ansiedade ao abrir",
+                ].map(item => (
+                  <li key={item} className="flex items-start gap-3 text-xs sm:text-sm text-[hsl(0,0%,45%)]">
+                    <XIcon className="w-4 h-4 text-[hsl(348,100%,64%)] shrink-0 mt-0.5" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            {/* Card Direito — O Jeito Kash */}
+            <motion.div
+              {...fadeUp(0.2)}
+              className="relative rounded-xl sm:rounded-2xl overflow-hidden"
+            >
+              <div className="absolute inset-0 rounded-xl sm:rounded-2xl border border-[hsl(160,100%,50%)/0.25] shadow-[0_0_30px_-5px_hsl(160,100%,50%,0.12)]" />
+              <div className="absolute inset-px rounded-[11px] sm:rounded-[15px] bg-[hsl(0,0%,3%)]" />
+              <div className="relative p-5 sm:p-8">
+                <h3 className="text-base sm:text-lg font-extrabold text-[hsl(160,100%,50%)] mb-5 sm:mb-6">
+                  O Seu Novo Copiloto
+                </h3>
+                <ul className="space-y-3.5 sm:space-y-4">
+                  {[
+                    "Zero downloads — vive no seu WhatsApp",
+                    "Mande um áudio no trânsito",
+                    "Categorização via IA em 3 segundos",
+                    "Te diz como vender mais hoje",
+                  ].map(item => (
+                    <li key={item} className="flex items-start gap-3 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
+                      <Check className="w-4 h-4 text-[hsl(160,100%,50%)] shrink-0 mt-0.5" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* ═══ PRICING ═══ */}
       <section className="py-14 sm:py-28 px-4 sm:px-6 relative">
         <GridOverlay />
@@ -443,26 +510,48 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      {/* ═══ SECURITY ═══ */}
+      {/* ═══ FAQ MATA-OBJEÇÕES ═══ */}
       <section className="py-14 sm:py-24 px-4 sm:px-6 relative">
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <motion.div {...fadeUp()}>
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-[hsl(160,100%,50%)/0.08] flex items-center justify-center mx-auto mb-5 sm:mb-6 neon-box-glow">
-              <Shield className="h-6 w-6 sm:h-7 sm:w-7 text-[hsl(160,100%,50%)]" />
-            </div>
-            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white mb-3 sm:mb-4">
-              Segurança bancária
+        <div className="max-w-2xl mx-auto relative z-10">
+          <motion.div {...fadeUp()} className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
+              Ainda tem dúvidas? Nós respondemos.
             </h2>
-            <p className="text-[hsl(0,0%,45%)] text-sm sm:text-lg max-w-xl mx-auto mb-6 sm:mb-8">
-              Criptografia de ponta. Seus dados nunca são compartilhados.
-            </p>
-            <div className="flex flex-wrap justify-center gap-2">
-              {["AES-256", "2FA", "Dados isolados", "Backups diários"].map(s => (
-                <span key={s} className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[hsl(0,0%,10%)] bg-[hsl(0,0%,3%)] text-[11px] sm:text-xs font-semibold text-[hsl(0,0%,50%)]">
-                  {s}
-                </span>
+          </motion.div>
+          <motion.div {...fadeUp(0.1)}>
+            <Accordion type="single" collapsible className="space-y-2">
+              {[
+                {
+                  q: "Preciso baixar algum aplicativo novo?",
+                  a: "Absolutamente zero. A Kash vive dentro do seu WhatsApp. Se você sabe mandar um áudio, você sabe usar a Kash.",
+                },
+                {
+                  q: "Como o Consultor de Vendas funciona?",
+                  a: "Não somos apenas um gestor de despesas. Nossa IA analisa seus custos fixos e variáveis e te entrega metas diárias de vendas e estratégias para manter sua margem de lucro intacta.",
+                },
+                {
+                  q: "É seguro compartilhar meus dados no WhatsApp?",
+                  a: "Utilizamos criptografia de ponta a ponta e a mesma infraestrutura de banco de dados (Cloud) de grandes corporações. A IA não tem acesso à sua conta bancária, ela apenas organiza o que você relata.",
+                },
+                {
+                  q: "E se eu quiser cancelar?",
+                  a: "Zero burocracia. O teste de 30 dias não exige cartão de crédito. Se você não economizar tempo e dinheiro, basta parar de mandar mensagens.",
+                },
+              ].map((item, i) => (
+                <AccordionItem
+                  key={i}
+                  value={`faq-${i}`}
+                  className="border border-[hsl(0,0%,10%)] rounded-xl bg-[hsl(0,0%,3%)] px-5 sm:px-6 data-[state=open]:border-[hsl(160,100%,50%)/0.15]"
+                >
+                  <AccordionTrigger className="text-sm sm:text-base font-semibold text-white hover:no-underline py-4 sm:py-5">
+                    {item.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-xs sm:text-sm text-[hsl(0,0%,50%)] leading-relaxed pb-4 sm:pb-5">
+                    {item.a}
+                  </AccordionContent>
+                </AccordionItem>
               ))}
-            </div>
+            </Accordion>
           </motion.div>
         </div>
       </section>
@@ -488,7 +577,7 @@ const Landing: React.FC = () => {
               Seu Copiloto Está Esperando
             </h2>
             <p className="text-[hsl(0,0%,48%)] text-sm sm:text-lg mb-6 sm:mb-8 max-w-lg mx-auto">
-              30 dias grátis. Sem cartão. Cancele quando quiser.
+              Ative agora sem cadastrar cartão. Se você não recuperar pelo menos 10x o valor da assinatura já no primeiro mês, o teste sai de graça.
             </p>
             <Link to={signupLink}>
               <motion.div whileTap={{ scale: 0.97 }} className="inline-block">
