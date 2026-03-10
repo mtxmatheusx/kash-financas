@@ -67,7 +67,7 @@ const Upgrade: React.FC = () => {
           <CardContent className="pt-6">
             <Crown className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
             <h2 className="text-xl font-bold text-foreground mb-2">Você é Premium!</h2>
-            <p className="text-muted-foreground mb-1">Aproveite todos os recursos do FinControl.</p>
+            <p className="text-muted-foreground mb-1">Aproveite todos os recursos do Kash.</p>
             {subscriptionEnd && (
               <p className="text-xs text-muted-foreground mb-4">
                 Próxima renovação: {new Date(subscriptionEnd).toLocaleDateString("pt-BR")}
