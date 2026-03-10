@@ -5,10 +5,11 @@ import { useAccount } from "@/contexts/AccountContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Upload, FileSpreadsheet, Check, AlertTriangle, X, ArrowRight, Download } from "lucide-react";
+import { Upload, FileSpreadsheet, Check, AlertTriangle, ArrowRight, Download, Brain, Loader2, Sparkles, RefreshCw } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
+import { supabase } from "@/integrations/supabase/client";
 
 const formatBRL = (v: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
@@ -41,26 +42,19 @@ function parseDate(value: any): string | null {
   if (typeof value === "number" && value > 1 && value < 100000) {
     const epoch = new Date(Date.UTC(1899, 11, 30));
     const date = new Date(epoch.getTime() + value * 86400000);
-    if (!isNaN(date.getTime())) {
-      return date.toISOString().slice(0, 10);
-    }
+    if (!isNaN(date.getTime())) return date.toISOString().slice(0, 10);
   }
 
-  if (value instanceof Date && !isNaN(value.getTime())) {
-    return value.toISOString().slice(0, 10);
-  }
+  if (value instanceof Date && !isNaN(value.getTime())) return value.toISOString().slice(0, 10);
 
   if (typeof value === "string") {
     const trimmed = value.trim();
-    // ISO
     if (/^\d{4}-\d{2}-\d{2}/.test(trimmed)) return trimmed.slice(0, 10);
-    // DD/MM/YYYY
     const dmyMatch = trimmed.match(/^(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{4})$/);
     if (dmyMatch) {
       const [, d, m, y] = dmyMatch;
       return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
     }
-    // DD/MM/YY
     const dmyShort = trimmed.match(/^(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{2})$/);
     if (dmyShort) {
       const [, d, m, y] = dmyShort;
@@ -76,7 +70,7 @@ function normalizeHeader(h: any): string {
   return String(h).trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ");
 }
 
-// Known header aliases
+// Fallback local aliases (used if AI is unavailable)
 const FIELD_ALIASES: Record<string, string[]> = {
   description: ["descricao", "descrição", "description", "historico", "histórico", "lancamento", "lançamento", "memo", "obs", "observacao"],
   amount: ["valor", "amount", "value", "quantia", "montante", "total"],
@@ -85,7 +79,7 @@ const FIELD_ALIASES: Record<string, string[]> = {
   type: ["tipo_transacao", "tipo transacao", "type", "entrada_saida", "natureza", "credit_debit", "credito_debito"],
 };
 
-function detectField(header: string): string | null {
+function detectFieldLocal(header: string): string | null {
   const norm = normalizeHeader(header);
   for (const [field, aliases] of Object.entries(FIELD_ALIASES)) {
     if (aliases.some(a => norm.includes(a))) return field;
@@ -106,10 +100,36 @@ interface ParsedRow {
 interface ImportResult {
   headers: string[];
   rawRows: Record<string, any>[];
-  mapping: Record<string, string>; // field -> header
+  mapping: Record<string, string>;
   parsed: ParsedRow[];
   duplicates: number;
   errors: number;
+}
+
+// CSV parser with quote awareness
+function parseCSVLine(line: string, delimiter: string = ","): string[] {
+  const values: string[] = [];
+  let current = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') {
+      if (inQuotes && i + 1 < line.length && line[i + 1] === '"') {
+        current += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === delimiter && !inQuotes) {
+      values.push(current.trim());
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+  values.push(current.trim());
+  return values;
 }
 
 const Importar: React.FC = () => {
@@ -123,6 +143,63 @@ const Importar: React.FC = () => {
   const [importing, setImporting] = useState(false);
   const [importCount, setImportCount] = useState(0);
   const [fileName, setFileName] = useState("");
+  const [aiMapping, setAiMapping] = useState(false);
+  const [aiConfidence, setAiConfidence] = useState<string | null>(null);
+  const [aiNotes, setAiNotes] = useState<string | null>(null);
+  const [sheetsAvailable, setSheetsAvailable] = useState<string[]>([]);
+  const [selectedSheet, setSelectedSheet] = useState<string>("");
+  const [workbookRef, setWorkbookRef] = useState<XLSX.WorkBook | null>(null);
+
+  const requestAiMapping = useCallback(async (headers: string[], rawRows: Record<string, any>[]) => {
+    setAiMapping(true);
+    try {
+      const sampleRows = rawRows.slice(0, 3);
+      const { data, error } = await supabase.functions.invoke("map-columns", {
+        body: { headers, sampleRows },
+      });
+
+      if (error) throw error;
+
+      if (data?.mapping) {
+        // Filter out empty values and validate against actual headers
+        const validMapping: Record<string, string> = {};
+        for (const [field, col] of Object.entries(data.mapping)) {
+          if (col && headers.includes(col as string)) {
+            validMapping[field] = col as string;
+          }
+        }
+        setMapping(validMapping);
+        setAiConfidence(data.confidence || null);
+        setAiNotes(data.notes || null);
+        toast.success("IA mapeou as colunas automaticamente!");
+        return validMapping;
+      }
+    } catch (err: any) {
+      console.error("AI mapping error:", err);
+      toast.error("IA indisponível — usando mapeamento por padrões");
+    } finally {
+      setAiMapping(false);
+    }
+    return null;
+  }, []);
+
+  const fallbackMapping = useCallback((headers: string[]) => {
+    const autoMap: Record<string, string> = {};
+    headers.forEach(h => {
+      const field = detectFieldLocal(h);
+      if (field && !autoMap[field]) autoMap[field] = h;
+    });
+    return autoMap;
+  }, []);
+
+  const processSheetData = useCallback(async (headers: string[], rawRows: Record<string, any>[]) => {
+    // Try AI first, fallback to local
+    const aiMap = await requestAiMapping(headers, rawRows);
+    const finalMap = aiMap || fallbackMapping(headers);
+    setMapping(finalMap);
+    setResult({ headers, rawRows, mapping: finalMap, parsed: [], duplicates: 0, errors: 0 });
+    setStep("mapping");
+  }, [requestAiMapping, fallbackMapping]);
 
   const handleFile = useCallback(async (file: File) => {
     try {
@@ -140,22 +217,32 @@ const Importar: React.FC = () => {
           return;
         }
 
-        // Detect delimiter: semicolon is common in Brazilian CSVs
         const firstLine = lines[0];
         const semicolonCount = (firstLine.match(/;/g) || []).length;
         const commaCount = (firstLine.match(/,/g) || []).length;
-        const delimiter = semicolonCount > commaCount ? ";" : ",";
+        const tabCount = (firstLine.match(/\t/g) || []).length;
+        const delimiter = tabCount > semicolonCount && tabCount > commaCount ? "\t" : semicolonCount > commaCount ? ";" : ",";
 
         headers = parseCSVLine(lines[0], delimiter);
         for (let i = 1; i < lines.length; i++) {
           const vals = parseCSVLine(lines[i], delimiter);
+          if (vals.every(v => !v.trim())) continue; // skip empty rows
           const row: Record<string, any> = {};
           headers.forEach((h, idx) => { row[h] = vals[idx] || ""; });
           rawRows.push(row);
         }
       } else {
+        // XLSX, XLS, ODS
         const buf = await file.arrayBuffer();
         const wb = XLSX.read(buf, { type: "array", cellDates: true });
+
+        // Multi-sheet support
+        if (wb.SheetNames.length > 1) {
+          setSheetsAvailable(wb.SheetNames);
+          setWorkbookRef(wb);
+          setSelectedSheet(wb.SheetNames[0]);
+        }
+
         const ws = wb.Sheets[wb.SheetNames[0]];
         const json = XLSX.utils.sheet_to_json<Record<string, any>>(ws, { defval: "" });
         if (json.length === 0) {
@@ -171,22 +258,30 @@ const Importar: React.FC = () => {
         return;
       }
 
-      // Auto-detect mapping
-      const autoMap: Record<string, string> = {};
-      headers.forEach(h => {
-        const field = detectField(h);
-        if (field && !autoMap[field]) autoMap[field] = h;
-      });
+      // Filter out completely empty headers
+      headers = headers.filter(h => h && String(h).trim() !== "" && h !== "__EMPTY");
 
       toast.success(`${rawRows.length} linhas carregadas de "${file.name}"`);
-      setMapping(autoMap);
-      setResult({ headers, rawRows, mapping: autoMap, parsed: [], duplicates: 0, errors: 0 });
-      setStep("mapping");
+      await processSheetData(headers, rawRows);
     } catch (err: any) {
       console.error("Import error:", err);
       toast.error(`Erro ao ler arquivo: ${err.message || "formato não suportado"}`);
     }
-  }, []);
+  }, [processSheetData]);
+
+  const switchSheet = useCallback(async (sheetName: string) => {
+    if (!workbookRef) return;
+    setSelectedSheet(sheetName);
+    const ws = workbookRef.Sheets[sheetName];
+    const json = XLSX.utils.sheet_to_json<Record<string, any>>(ws, { defval: "" });
+    if (json.length === 0) {
+      toast.error("Aba vazia");
+      return;
+    }
+    let headers = Object.keys(json[0]).filter(h => h && String(h).trim() !== "" && h !== "__EMPTY");
+    toast.info(`Aba "${sheetName}": ${json.length} linhas`);
+    await processSheetData(headers, json);
+  }, [workbookRef, processSheetData]);
 
   const processMapping = useCallback(() => {
     if (!result) return;
@@ -212,16 +307,12 @@ const Importar: React.FC = () => {
       const date = parseDate(rawDate);
 
       if (!description && !amount) { errors++; continue; }
-      if (!amount || amount === 0) { warnings.push("Valor inválido"); errors++; continue; }
-      if (!date) { warnings.push("Data inválida"); errors++; continue; }
+      if (!amount || amount === 0) { errors++; continue; }
+      if (!date) { errors++; continue; }
 
-      // Detect type
       let type: "income" | "expense" = "expense";
       if (rawType.includes("receita") || rawType.includes("entrada") || rawType.includes("credit") || rawType.includes("credito")) {
         type = "income";
-      } else if (amount > 0 && !rawType) {
-        // If no type column, positive = income, negative = expense
-        // Actually keep it ambiguous — default to expense unless clearly income
       }
 
       const absAmount = Math.abs(amount);
@@ -273,45 +364,24 @@ const Importar: React.FC = () => {
     setMapping({});
     setImportCount(0);
     setFileName("");
+    setAiConfidence(null);
+    setAiNotes(null);
+    setSheetsAvailable([]);
+    setSelectedSheet("");
+    setWorkbookRef(null);
     if (fileRef.current) fileRef.current.value = "";
   };
 
   const downloadTemplate = () => {
     const templateData = [
-      {
-        Data: "10/03/2025",
-        "Descrição": "Salário mensal",
-        Valor: "5000,00",
-        Categoria: "Salário",
-        Tipo: "Receita",
-      },
-      {
-        Data: "11/03/2025",
-        "Descrição": "Aluguel",
-        Valor: "1500,00",
-        Categoria: "Moradia",
-        Tipo: "Despesa",
-      },
-      {
-        Data: "12/03/2025",
-        "Descrição": "Supermercado",
-        Valor: "450,00",
-        Categoria: "Alimentação",
-        Tipo: "Despesa",
-      },
-      {
-        Data: "15/03/2025",
-        "Descrição": "Freelance",
-        Valor: "2000,00",
-        Categoria: "Renda Extra",
-        Tipo: "Receita",
-      },
+      { Data: "10/03/2025", "Descrição": "Salário mensal", Valor: "5000,00", Categoria: "Salário", Tipo: "Receita" },
+      { Data: "11/03/2025", "Descrição": "Aluguel", Valor: "1500,00", Categoria: "Moradia", Tipo: "Despesa" },
+      { Data: "12/03/2025", "Descrição": "Supermercado", Valor: "450,00", Categoria: "Alimentação", Tipo: "Despesa" },
+      { Data: "15/03/2025", "Descrição": "Freelance", Valor: "2000,00", Categoria: "Renda Extra", Tipo: "Receita" },
     ];
 
     const ws = XLSX.utils.json_to_sheet(templateData);
-    ws["!cols"] = [
-      { wch: 14 }, { wch: 30 }, { wch: 14 }, { wch: 18 }, { wch: 12 },
-    ];
+    ws["!cols"] = [{ wch: 14 }, { wch: 30 }, { wch: 14 }, { wch: 18 }, { wch: 12 }];
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Transações");
     XLSX.writeFile(wb, "modelo-importacao-kash.xlsx");
@@ -322,12 +392,12 @@ const Importar: React.FC = () => {
     <PageTransition>
       <div className="space-y-6 max-w-3xl mx-auto">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Importar Planilha</h1>
-          <p className="text-sm text-muted-foreground">Importe transações de arquivos CSV ou Excel (.xlsx)</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Importar Planilha</h1>
+          <p className="text-sm text-muted-foreground">Importe transações de qualquer planilha — a IA identifica as colunas automaticamente</p>
         </div>
 
         {/* Step Indicator */}
-        <div className="flex items-center gap-2 text-xs font-medium">
+        <div className="flex items-center gap-2 text-xs font-medium flex-wrap">
           {["Upload", "Mapeamento", "Pré-visualização", "Concluído"].map((label, i) => {
             const stepIndex = ["upload", "mapping", "preview", "done"].indexOf(step);
             return (
@@ -347,13 +417,13 @@ const Importar: React.FC = () => {
         {step === "upload" && (
           <div className="space-y-4">
             <div
-              className="rounded-xl border-2 border-dashed border-border bg-card p-12 text-center cursor-pointer hover:border-primary/50 transition-colors"
+              className="rounded-xl border-2 border-dashed border-border bg-card p-8 sm:p-12 text-center cursor-pointer hover:border-primary/50 transition-colors"
               onClick={() => fileRef.current?.click()}
             >
               <input
                 ref={fileRef}
                 type="file"
-                accept=".csv,.xlsx,.xls,.txt"
+                accept=".csv,.xlsx,.xls,.ods,.txt,.tsv"
                 className="hidden"
                 onChange={e => {
                   const f = e.target.files?.[0];
@@ -362,7 +432,21 @@ const Importar: React.FC = () => {
               />
               <Upload className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
               <p className="text-sm font-medium text-foreground">Clique para selecionar ou arraste o arquivo</p>
-              <p className="text-xs text-muted-foreground mt-1">Formatos aceitos: CSV, XLSX, XLS, TXT</p>
+              <p className="text-xs text-muted-foreground mt-1">CSV, XLSX, XLS, ODS, TXT, TSV</p>
+            </div>
+
+            {/* AI badge */}
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 flex items-start gap-3">
+              <Brain className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                  Mapeamento inteligente com IA
+                  <Sparkles className="w-3.5 h-3.5 text-primary" />
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  A IA analisa os cabeçalhos e dados da sua planilha para identificar automaticamente cada coluna — independente do formato ou idioma.
+                </p>
+              </div>
             </div>
 
             <div className="rounded-xl border border-border bg-card p-5">
@@ -371,7 +455,7 @@ const Importar: React.FC = () => {
                 <div className="flex-1">
                   <p className="text-sm font-medium text-foreground">Modelo de planilha</p>
                   <p className="text-xs text-muted-foreground mt-0.5 mb-3">
-                    Baixe o modelo, preencha com suas transações e importe de volta. O arquivo já contém as colunas corretas e exemplos de preenchimento.
+                    Baixe o modelo, preencha com suas transações e importe de volta.
                   </p>
                   <Button variant="outline" size="sm" className="gap-2" onClick={downloadTemplate}>
                     <Download className="w-3.5 h-3.5" /> Baixar modelo (.xlsx)
@@ -384,16 +468,60 @@ const Importar: React.FC = () => {
 
         {/* STEP: Mapping */}
         {step === "mapping" && result && (
-          <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-            <div className="flex items-center gap-2">
-              <FileSpreadsheet className="w-5 h-5 text-primary" />
-              <div>
-                <p className="text-sm font-medium text-foreground">{fileName}</p>
-                <p className="text-xs text-muted-foreground">{result.rawRows.length} linhas encontradas</p>
+          <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-4">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <div className="flex items-center gap-2">
+                <FileSpreadsheet className="w-5 h-5 text-primary" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">{fileName}</p>
+                  <p className="text-xs text-muted-foreground">{result.rawRows.length} linhas encontradas</p>
+                </div>
               </div>
+              {aiMapping && (
+                <div className="flex items-center gap-1.5 text-xs text-primary">
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  IA analisando...
+                </div>
+              )}
             </div>
 
-            <p className="text-sm text-muted-foreground">Associe as colunas da planilha aos campos do sistema:</p>
+            {/* Multi-sheet selector */}
+            {sheetsAvailable.length > 1 && (
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs text-muted-foreground">Abas:</span>
+                {sheetsAvailable.map(s => (
+                  <Button
+                    key={s}
+                    variant={s === selectedSheet ? "default" : "outline"}
+                    size="sm"
+                    className="text-xs h-7"
+                    onClick={() => switchSheet(s)}
+                  >
+                    {s}
+                  </Button>
+                ))}
+              </div>
+            )}
+
+            {/* AI confidence badge */}
+            {aiConfidence && (
+              <div className={cn(
+                "rounded-lg px-3 py-2 text-xs flex items-start gap-2",
+                aiConfidence === "high" ? "bg-fin-income/10 border border-fin-income/20" :
+                aiConfidence === "medium" ? "bg-fin-pending/10 border border-fin-pending/20" :
+                "bg-fin-expense/10 border border-fin-expense/20"
+              )}>
+                <Brain className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                <div>
+                  <span className="font-medium">
+                    IA: confiança {aiConfidence === "high" ? "alta" : aiConfidence === "medium" ? "média" : "baixa"}
+                  </span>
+                  {aiNotes && <p className="text-muted-foreground mt-0.5">{aiNotes}</p>}
+                </div>
+              </div>
+            )}
+
+            <p className="text-sm text-muted-foreground">Confira e ajuste o mapeamento das colunas:</p>
 
             <div className="space-y-3">
               {(["description", "amount", "date", "category", "type"] as const).map(field => {
@@ -434,16 +562,28 @@ const Importar: React.FC = () => {
             {result.rawRows.length > 0 && (
               <div className="text-xs text-muted-foreground border-t border-border pt-3">
                 <p className="font-medium mb-1">Amostra da primeira linha:</p>
-                <div className="grid grid-cols-2 gap-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                   {result.headers.slice(0, 8).map(h => (
-                    <div key={h}><span className="font-mono">{h}:</span> {String(result.rawRows[0][h]).substring(0, 30)}</div>
+                    <div key={h} className="truncate"><span className="font-mono">{h}:</span> {String(result.rawRows[0][h]).substring(0, 30)}</div>
                   ))}
                 </div>
               </div>
             )}
 
-            <div className="flex gap-2 pt-2">
+            <div className="flex gap-2 pt-2 flex-wrap">
               <Button variant="outline" onClick={reset}>Cancelar</Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5"
+                disabled={aiMapping}
+                onClick={() => requestAiMapping(result.headers, result.rawRows).then(m => {
+                  if (m) setMapping(m);
+                })}
+              >
+                <RefreshCw className={cn("w-3.5 h-3.5", aiMapping && "animate-spin")} />
+                Remapear com IA
+              </Button>
               <Button
                 onClick={processMapping}
                 disabled={!mapping.description || !mapping.amount || !mapping.date}
@@ -457,7 +597,6 @@ const Importar: React.FC = () => {
         {/* STEP: Preview */}
         {step === "preview" && result && (
           <div className="space-y-4">
-            {/* Stats */}
             <div className="grid grid-cols-3 gap-3">
               <div className="rounded-xl border border-border bg-card p-3 text-center">
                 <p className="text-2xl font-bold text-fin-income">{result.parsed.length}</p>
@@ -473,7 +612,6 @@ const Importar: React.FC = () => {
               </div>
             </div>
 
-            {/* Table preview */}
             <div className="rounded-xl border border-border bg-card overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -548,31 +686,5 @@ const Importar: React.FC = () => {
     </PageTransition>
   );
 };
-
-// CSV parser with quote awareness
-function parseCSVLine(line: string, delimiter: string = ","): string[] {
-  const values: string[] = [];
-  let current = "";
-  let inQuotes = false;
-
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
-    if (char === '"') {
-      if (inQuotes && i + 1 < line.length && line[i + 1] === '"') {
-        current += '"';
-        i++;
-      } else {
-        inQuotes = !inQuotes;
-      }
-    } else if (char === delimiter && !inQuotes) {
-      values.push(current.trim());
-      current = "";
-    } else {
-      current += char;
-    }
-  }
-  values.push(current.trim());
-  return values;
-}
 
 export default Importar;
