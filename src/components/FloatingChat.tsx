@@ -265,6 +265,10 @@ export const FloatingChat: React.FC = () => {
         { label: consultantType === "financial" ? "Financeiro" : "Vendas", variant: "primary" },
         { label: "IA", variant: "accent" },
       ]}
+      micProps={micSupported ? {
+        isListening,
+        onToggle: isListening ? stopListening : startListening,
+      } : undefined}
     >
       {/* Consultant Toggle */}
       <div className="px-4 pt-3 pb-1">
