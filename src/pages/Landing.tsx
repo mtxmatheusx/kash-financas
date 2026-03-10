@@ -5,8 +5,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   ArrowRight, Shield, Zap, Brain, TrendingUp,
   Crown, Check, ChevronRight, Sparkles, AudioLines, Cpu, Lock, Database,
+  X as XIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Accordion, AccordionContent, AccordionItem, AccordionTrigger,
+} from "@/components/ui/accordion";
 
 /* ── Referral capture hook ── */
 const useReferralCapture = () => {
