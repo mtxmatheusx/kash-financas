@@ -52,10 +52,10 @@ serve(async (req) => {
     if (customers.data.length === 0) {
       logStep("No Stripe customer found");
       // Don't downgrade if user has active trial
-      const { data: profileData } = await supabaseClient.from("profiles").select("trial_end").eq("user_id", user.id).single();
+      const { data: profileData } = await adminClient.from("profiles").select("trial_end").eq("user_id", user.id).single();
       const hasActiveTrial = profileData?.trial_end && new Date(profileData.trial_end) > new Date();
       if (!hasActiveTrial) {
-        await supabaseClient.from("profiles").update({ subscription_tier: "free" }).eq("user_id", user.id);
+        await adminClient.from("profiles").update({ subscription_tier: "free" }).eq("user_id", user.id);
       }
       return new Response(JSON.stringify({ subscribed: false }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
