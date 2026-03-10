@@ -507,6 +507,9 @@ const Landing: React.FC = () => {
                 </Link>
               </div>
             </motion.div>
+          </div>
+        </div>
+      </section>
 
       {/* ═══ FAQ MATA-OBJEÇÕES ═══ */}
       <section className="py-14 sm:py-24 px-4 sm:px-6 relative">
