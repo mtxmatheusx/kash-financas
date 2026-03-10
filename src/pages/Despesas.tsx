@@ -31,6 +31,7 @@ const Despesas: React.FC = () => {
     is_percentage: false,
     percentage: '',
   });
+  const [amountCents, setAmountCents] = useState(0);
 
   const paidTotal = transactions.filter(t => t.status === 'paid').reduce((s, t) => s + t.amount, 0);
   const pendingTotal = transactions.filter(t => t.status === 'pending').reduce((s, t) => s + t.amount, 0);
