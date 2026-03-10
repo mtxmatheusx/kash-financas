@@ -48,6 +48,7 @@ const Receitas: React.FC = () => {
       ...(form.entry_type === 'recurring' ? { frequency: form.frequency } : {}),
     });
     setForm({ description: '', amount: '', category: CATEGORIES[0], date: new Date().toISOString().slice(0, 10), status: 'paid', entry_type: 'single', installments: '2', frequency: 'monthly' });
+    setAmountCents(0);
     setShowForm(false);
   };
 
