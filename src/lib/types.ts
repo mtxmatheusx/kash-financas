@@ -7,7 +7,9 @@ export interface TransactionRow {
   date: string;
   status: 'paid' | 'pending';
   account_type: 'personal' | 'business';
-  entry_type?: 'single' | 'recurring';
+  entry_type?: 'single' | 'installment' | 'recurring';
+  installments?: number;
+  frequency?: 'monthly' | 'yearly';
   created_at: string;
 }
 

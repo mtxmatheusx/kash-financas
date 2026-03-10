@@ -24,7 +24,9 @@ const Despesas: React.FC = () => {
     description: '', amount: '', category: categories[0],
     date: new Date().toISOString().slice(0, 10),
     status: 'paid' as 'paid' | 'pending',
-    entry_type: 'single' as 'single' | 'recurring',
+    entry_type: 'single' as 'single' | 'installment' | 'recurring',
+    installments: '2',
+    frequency: 'monthly' as 'monthly' | 'yearly',
   });
 
   const paidTotal = transactions.filter(t => t.status === 'paid').reduce((s, t) => s + t.amount, 0);
@@ -42,8 +44,10 @@ const Despesas: React.FC = () => {
       type: 'expense', amount, description: form.description,
       category: form.category, date: form.date, status: form.status,
       entry_type: form.entry_type, account_type: account.type,
+      ...(form.entry_type === 'installment' ? { installments: parseInt(form.installments) || 2 } : {}),
+      ...(form.entry_type === 'recurring' ? { frequency: form.frequency } : {}),
     });
-    setForm({ description: '', amount: '', category: categories[0], date: new Date().toISOString().slice(0, 10), status: 'paid', entry_type: 'single' });
+    setForm({ description: '', amount: '', category: categories[0], date: new Date().toISOString().slice(0, 10), status: 'paid', entry_type: 'single', installments: '2', frequency: 'monthly' });
     setShowForm(false);
   };
 
@@ -62,7 +66,6 @@ const Despesas: React.FC = () => {
           </Button>
         </div>
 
-        {/* Summary Cards */}
         <div className="grid grid-cols-3 gap-3">
           <div className="rounded-xl border-l-4 border-l-fin-expense border border-border bg-card p-3 md:p-4">
             <p className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider">Total</p>
@@ -95,7 +98,8 @@ const Despesas: React.FC = () => {
                         <p className="text-sm font-medium text-card-foreground truncate">{t.description}</p>
                         <p className="text-[11px] text-muted-foreground">
                           {t.category} · {new Date(t.date).toLocaleDateString('pt-BR')}
-                          {t.entry_type === 'recurring' && ' · Recorrente'}
+                          {t.entry_type === 'recurring' && ` · Recorrente ${t.frequency === 'yearly' ? '(Anual)' : '(Mensal)'}`}
+                          {t.entry_type === 'installment' && ` · ${t.installments}x parcelas`}
                         </p>
                       </div>
                     </div>
@@ -149,12 +153,29 @@ const Despesas: React.FC = () => {
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Tipo de Pagamento</label>
-              <select value={form.entry_type} onChange={e => setForm({ ...form, entry_type: e.target.value as 'single' | 'recurring' })}
+              <select value={form.entry_type} onChange={e => setForm({ ...form, entry_type: e.target.value as 'single' | 'installment' | 'recurring' })}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                 <option value="single">Pagamento Único</option>
+                <option value="installment">Parcelado</option>
                 <option value="recurring">Recorrente</option>
               </select>
             </div>
+            {form.entry_type === 'installment' && (
+              <div>
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Nº de Parcelas</label>
+                <Input type="number" min="1" value={form.installments} onChange={e => setForm({ ...form, installments: e.target.value })} />
+              </div>
+            )}
+            {form.entry_type === 'recurring' && (
+              <div>
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Frequência</label>
+                <select value={form.frequency} onChange={e => setForm({ ...form, frequency: e.target.value as 'monthly' | 'yearly' })}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                  <option value="monthly">Mensal</option>
+                  <option value="yearly">Anual</option>
+                </select>
+              </div>
+            )}
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Data</label>
               <Input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
@@ -162,7 +183,7 @@ const Despesas: React.FC = () => {
           </div>
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button variant="outline" onClick={() => setShowForm(false)} className="w-full sm:w-auto">Cancelar</Button>
-            <Button onClick={handleSubmit} className="w-full sm:w-auto">Salvar</Button>
+            <Button onClick={handleSubmit} className="w-full sm:w-auto">Salvar Despesa</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
