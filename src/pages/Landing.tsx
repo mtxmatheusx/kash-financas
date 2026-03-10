@@ -447,26 +447,48 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      {/* ═══ SECURITY ═══ */}
+      {/* ═══ FAQ MATA-OBJEÇÕES ═══ */}
       <section className="py-14 sm:py-24 px-4 sm:px-6 relative">
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <motion.div {...fadeUp()}>
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-[hsl(160,100%,50%)/0.08] flex items-center justify-center mx-auto mb-5 sm:mb-6 neon-box-glow">
-              <Shield className="h-6 w-6 sm:h-7 sm:w-7 text-[hsl(160,100%,50%)]" />
-            </div>
-            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white mb-3 sm:mb-4">
-              Segurança bancária
+        <div className="max-w-2xl mx-auto relative z-10">
+          <motion.div {...fadeUp()} className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
+              Ainda tem dúvidas? Nós respondemos.
             </h2>
-            <p className="text-[hsl(0,0%,45%)] text-sm sm:text-lg max-w-xl mx-auto mb-6 sm:mb-8">
-              Criptografia de ponta. Seus dados nunca são compartilhados.
-            </p>
-            <div className="flex flex-wrap justify-center gap-2">
-              {["AES-256", "2FA", "Dados isolados", "Backups diários"].map(s => (
-                <span key={s} className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[hsl(0,0%,10%)] bg-[hsl(0,0%,3%)] text-[11px] sm:text-xs font-semibold text-[hsl(0,0%,50%)]">
-                  {s}
-                </span>
+          </motion.div>
+          <motion.div {...fadeUp(0.1)}>
+            <Accordion type="single" collapsible className="space-y-2">
+              {[
+                {
+                  q: "Preciso baixar algum aplicativo novo?",
+                  a: "Absolutamente zero. A Kash vive dentro do seu WhatsApp. Se você sabe mandar um áudio, você sabe usar a Kash.",
+                },
+                {
+                  q: "Como o Consultor de Vendas funciona?",
+                  a: "Não somos apenas um gestor de despesas. Nossa IA analisa seus custos fixos e variáveis e te entrega metas diárias de vendas e estratégias para manter sua margem de lucro intacta.",
+                },
+                {
+                  q: "É seguro compartilhar meus dados no WhatsApp?",
+                  a: "Utilizamos criptografia de ponta a ponta e a mesma infraestrutura de banco de dados (Cloud) de grandes corporações. A IA não tem acesso à sua conta bancária, ela apenas organiza o que você relata.",
+                },
+                {
+                  q: "E se eu quiser cancelar?",
+                  a: "Zero burocracia. O teste de 30 dias não exige cartão de crédito. Se você não economizar tempo e dinheiro, basta parar de mandar mensagens.",
+                },
+              ].map((item, i) => (
+                <AccordionItem
+                  key={i}
+                  value={`faq-${i}`}
+                  className="border border-[hsl(0,0%,10%)] rounded-xl bg-[hsl(0,0%,3%)] px-5 sm:px-6 data-[state=open]:border-[hsl(160,100%,50%)/0.15]"
+                >
+                  <AccordionTrigger className="text-sm sm:text-base font-semibold text-white hover:no-underline py-4 sm:py-5">
+                    {item.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-xs sm:text-sm text-[hsl(0,0%,50%)] leading-relaxed pb-4 sm:pb-5">
+                    {item.a}
+                  </AccordionContent>
+                </AccordionItem>
               ))}
-            </div>
+            </Accordion>
           </motion.div>
         </div>
       </section>
