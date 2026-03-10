@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.apply-referral]
 verify_jwt = false
+
+[functions.parse-transaction]
+verify_jwt = false
