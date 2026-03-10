@@ -146,8 +146,32 @@ const Despesas: React.FC = () => {
               <Input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Ex: Aluguel" />
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Valor</label>
-              <Input value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} placeholder="0,00" inputMode="decimal" />
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Modo de Valor</label>
+              <select value={form.is_percentage ? 'percentage' : 'fixed'} onChange={e => setForm({ ...form, is_percentage: e.target.value === 'percentage', amount: '', percentage: '' })}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                <option value="fixed">Valor Fixo (R$)</option>
+                <option value="percentage">% da Receita Total</option>
+              </select>
+            </div>
+            {form.is_percentage ? (
+              <div>
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Porcentagem (%)</label>
+                <div className="relative">
+                  <Input value={form.percentage} onChange={e => setForm({ ...form, percentage: e.target.value })} placeholder="Ex: 10" inputMode="decimal" className="pr-10" />
+                  <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                </div>
+                {form.percentage && totals.income > 0 && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    = {formatBRL((totals.income * (parseFloat(form.percentage.replace(',', '.')) || 0)) / 100)} de {formatBRL(totals.income)}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div>
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Valor</label>
+                <Input value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} placeholder="0,00" inputMode="decimal" />
+              </div>
+            )}
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Categoria</label>
