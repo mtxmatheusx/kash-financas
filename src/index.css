@@ -148,4 +148,38 @@
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
+
+  /* Landing page dark cockpit utilities */
+  .landing-dark {
+    --landing-bg: 0 0% 2%;
+    --landing-card: 0 0% 5%;
+    --landing-border: 0 0% 12%;
+    --landing-neon: 160 100% 50%;
+    --landing-cta: 348 100% 64%;
+    background-color: hsl(var(--landing-bg));
+    color: hsl(0 0% 93%);
+  }
+  .noise-texture {
+    position: relative;
+  }
+  .noise-texture::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .neon-glow {
+    text-shadow: 0 0 20px hsl(160 100% 50% / 0.5), 0 0 40px hsl(160 100% 50% / 0.2);
+  }
+  .neon-box-glow {
+    box-shadow: 0 0 20px hsl(160 100% 50% / 0.15), 0 0 60px hsl(160 100% 50% / 0.05), inset 0 1px 0 hsl(160 100% 50% / 0.1);
+  }
+  .cta-glow {
+    box-shadow: 0 0 30px hsl(348 100% 64% / 0.4), 0 4px 20px hsl(348 100% 64% / 0.3);
+  }
 }
