@@ -100,7 +100,9 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
 
       {/* Nav Items */}
       <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
-        {menuItems.map(item => {
+        {menuItems
+          .filter(item => !item.account || item.account === account.type)
+          .map(item => {
           const isActive = location.pathname === item.path;
           return (
             <NavLink

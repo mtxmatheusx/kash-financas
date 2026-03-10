@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AppSidebar } from "@/components/AppSidebar";
 import { MobileNav } from "@/components/MobileNav";
 import { TopBar } from "@/components/TopBar";
+import { FloatingChat } from "@/components/FloatingChat";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export const AppLayout: React.FC = () => {
@@ -31,6 +32,8 @@ export const AppLayout: React.FC = () => {
           </AnimatePresence>
         </main>
       </motion.div>
+
+      <FloatingChat />
     </div>
   );
 };
