@@ -23,10 +23,10 @@ export const AppLayout: React.FC = () => {
         initial={false}
         animate={{ marginLeft: isMobile ? 0 : collapsed ? 72 : 256 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="min-h-screen pb-20 md:pb-0"
+        className="min-h-screen pb-[72px] md:pb-0"
       >
         <TopBar />
-        <main className="p-4 md:p-6 lg:p-8 max-w-[1400px] mx-auto">
+        <main className="px-3 py-3 md:p-6 lg:p-8 max-w-[1400px] mx-auto">
           <AnimatePresence mode="wait">
             <motion.div key={location.pathname}>
               <Outlet />
@@ -35,7 +35,10 @@ export const AppLayout: React.FC = () => {
         </main>
       </motion.div>
 
-      <FloatingChat />
+      {/* Chat button positioned above mobile nav */}
+      <div className="md:bottom-5 md:right-5">
+        <FloatingChat />
+      </div>
     </div>
   );
 };
