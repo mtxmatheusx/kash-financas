@@ -3,6 +3,7 @@ import { PageTransition } from "@/components/PageTransition";
 import { useTransactions } from "@/hooks/useTransactions";
 import { CalendarRange } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { createAnimatedBarShape } from "@/components/AnimatedBar";
 import { cn } from "@/lib/utils";
 
 const formatBRL = (v: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
@@ -120,8 +121,8 @@ const Mensal: React.FC = () => {
               <XAxis dataKey="name" tick={{ fill: 'hsl(220, 9%, 46%)', fontSize: 12 }} />
               <YAxis tick={{ fill: 'hsl(220, 9%, 46%)', fontSize: 12 }} tickFormatter={v => `${(v/1000).toFixed(0)}k`} />
               <Tooltip formatter={(v: number) => formatBRL(v)} />
-              <Bar dataKey="income" name="Receitas" fill="hsl(152, 69%, 41%)" radius={[4, 4, 0, 0]} animationBegin={0} animationDuration={1000} animationEasing="ease-out" />
-              <Bar dataKey="expense" name="Despesas" fill="hsl(0, 72%, 51%)" radius={[4, 4, 0, 0]} animationBegin={300} animationDuration={1000} animationEasing="ease-out" />
+              <Bar dataKey="income" name="Receitas" fill="hsl(152, 69%, 41%)" radius={[4, 4, 0, 0]} shape={createAnimatedBarShape("horizontal")} isAnimationActive={false} />
+              <Bar dataKey="expense" name="Despesas" fill="hsl(0, 72%, 51%)" radius={[4, 4, 0, 0]} shape={createAnimatedBarShape("horizontal")} isAnimationActive={false} />
             </BarChart>
           </ResponsiveContainer>
         </div>
