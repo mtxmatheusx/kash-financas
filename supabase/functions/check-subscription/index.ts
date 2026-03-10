@@ -11,6 +11,15 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CHECK-SUBSCRIPTION] ${step}${details ? ` - ${JSON.stringify(details)}` : ''}`);
 };
 
+function decodeJwtPayload(token: string): Record<string, unknown> {
+  const parts = token.split(".");
+  if (parts.length !== 3) throw new Error("Invalid JWT");
+  const payload = parts[1];
+  const padded = payload + "=".repeat((4 - (payload.length % 4)) % 4);
+  const decoded = atob(padded.replace(/-/g, "+").replace(/_/g, "/"));
+  return JSON.parse(decoded);
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -21,29 +30,33 @@ serve(async (req) => {
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
 
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) throw new Error("No authorization header");
-
-    const token = authHeader.replace("Bearer ", "");
-
-    // Create user client to validate JWT via getClaims
-    const userClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-      { global: { headers: { Authorization: authHeader } }, auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } }
-    );
-
-    const { data: claimsData, error: claimsError } = await userClient.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
-      logStep("Auth error", { message: claimsError?.message || "No claims" });
-      throw new Error(`Auth error: ${claimsError?.message || "Invalid token"}`);
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Missing auth" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    const userId = claimsData.claims.sub as string;
-    const email = claimsData.claims.email as string;
-    if (!userId || !email) throw new Error("User not authenticated");
+    const token = authHeader.replace("Bearer ", "");
+    const claims = decodeJwtPayload(token);
+    const userId = claims.sub as string;
+    const email = claims.email as string;
+
+    if (!userId || !email) {
+      return new Response(JSON.stringify({ error: "Invalid token" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Check expiration
+    const exp = claims.exp as number;
+    if (exp && exp * 1000 < Date.now()) {
+      return new Response(JSON.stringify({ error: "Token expired" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     logStep("User authenticated", { email });
 
-    // Admin client for DB operations
     const adminClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
