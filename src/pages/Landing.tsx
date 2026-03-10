@@ -3,12 +3,12 @@ import { Link, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  ArrowRight, BarChart3, Shield, Zap, TrendingUp, PieChart,
-  Target, CalendarRange, Crown, Check, ChevronRight,
+  ArrowRight, Shield, Zap, MessageCircle, Brain, TrendingUp,
+  Crown, Check, ChevronRight, Sparkles, AudioLines,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FloatingChat } from "@/components/FloatingChat";
 
+/* ── Animations ── */
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 30 },
   whileInView: { opacity: 1, y: 0 },
@@ -16,41 +16,25 @@ const fadeUp = (delay = 0) => ({
   transition: { duration: 0.6, delay, ease: "easeOut" as const },
 });
 
-const features = [
-  { icon: TrendingUp, title: "Receitas & Despesas", desc: "Controle completo de entradas e saídas com categorização inteligente." },
-  { icon: PieChart, title: "Investimentos", desc: "Acompanhe sua carteira e veja o retorno de cada aplicação.", premium: true },
-  { icon: Target, title: "Metas Financeiras", desc: "Defina objetivos e acompanhe seu progresso em tempo real.", premium: true },
-  { icon: CalendarRange, title: "Visão Mensal", desc: "Comparativo mês a mês para entender suas tendências.", premium: true },
-  { icon: BarChart3, title: "DRE & EBITDA", desc: "Relatórios empresariais completos para tomada de decisão.", premium: true },
-  { icon: Zap, title: "Consultor IA", desc: "Assistente inteligente para dúvidas financeiras e de vendas.", premium: true },
-];
-
-const stats = [
-  { value: "10k+", label: "Usuários ativos" },
-  { value: "R$ 2B+", label: "Gerenciados" },
-  { value: "99.9%", label: "Uptime" },
-  { value: "4.9★", label: "Avaliação" },
-];
-
-/* Floating particles component */
+/* ── Floating particles ── */
 const Particles: React.FC = () => (
   <div className="absolute inset-0 overflow-hidden pointer-events-none">
-    {Array.from({ length: 30 }).map((_, i) => (
+    {Array.from({ length: 20 }).map((_, i) => (
       <motion.div
         key={i}
-        className="absolute w-1 h-1 rounded-full bg-primary/30"
+        className="absolute w-1 h-1 rounded-full"
         style={{
           left: `${Math.random() * 100}%`,
           top: `${Math.random() * 100}%`,
+          backgroundColor: i % 3 === 0 ? "hsl(160 100% 50% / 0.4)" : "hsl(217 91% 60% / 0.3)",
         }}
         animate={{
           y: [0, -30 - Math.random() * 40, 0],
-          x: [0, (Math.random() - 0.5) * 20, 0],
-          opacity: [0.2, 0.6, 0.2],
-          scale: [1, 1.5, 1],
+          opacity: [0.1, 0.5, 0.1],
+          scale: [1, 1.8, 1],
         }}
         transition={{
-          duration: 4 + Math.random() * 4,
+          duration: 5 + Math.random() * 5,
           repeat: Infinity,
           delay: Math.random() * 3,
           ease: "easeInOut",
@@ -60,29 +44,69 @@ const Particles: React.FC = () => (
   </div>
 );
 
-/* Grid overlay */
+/* ── Grid overlay ── */
 const GridOverlay: React.FC = () => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.03]">
+  <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.02]">
     <div
       className="absolute inset-0"
       style={{
         backgroundImage: `
-          linear-gradient(hsl(var(--primary)) 1px, transparent 1px),
-          linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)
+          linear-gradient(hsl(160 100% 50%) 1px, transparent 1px),
+          linear-gradient(90deg, hsl(160 100% 50%) 1px, transparent 1px)
         `,
-        backgroundSize: "60px 60px",
+        backgroundSize: "80px 80px",
       }}
     />
   </div>
 );
 
+/* ── Stats ── */
+const stats = [
+  { value: "10k+", label: "Usuários ativos" },
+  { value: "R$ 2B+", label: "Gerenciados" },
+  { value: "99.9%", label: "Uptime" },
+  { value: "4.9★", label: "Avaliação" },
+];
+
+/* ── Steps ── */
+const steps = [
+  {
+    num: "01",
+    icon: MessageCircle,
+    title: "Fale no WhatsApp",
+    desc: "Manda um áudio: \"Gastei 50 reais de gasolina agora\". Ou digita, ou manda foto do recibo. Simples assim.",
+    accent: "hsl(160 100% 50%)",
+  },
+  {
+    num: "02",
+    icon: Brain,
+    title: "IA Categoriza Tudo",
+    desc: "Nossa IA categoriza, ajusta o saldo e injeta no seu dashboard em milissegundos. Zero trabalho manual.",
+    accent: "hsl(217 91% 60%)",
+  },
+  {
+    num: "03",
+    icon: TrendingUp,
+    title: "Receba Estratégias",
+    desc: "A IA cruza seus dados e sugere onde cortar gastos ou onde investir para lucrar mais amanhã.",
+    accent: "hsl(348 100% 64%)",
+  },
+];
+
+/* ── WhatsApp icon SVG ── */
+const WhatsAppIcon: React.FC<{ className?: string }> = ({ className }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+);
+
 const Landing: React.FC = () => {
-  const { user, loading, isPremium } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+      <div className="min-h-screen flex items-center justify-center bg-[hsl(0,0%,2%)]">
+        <div className="animate-spin h-8 w-8 border-4 border-[hsl(160,100%,50%)] border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -90,23 +114,25 @@ const Landing: React.FC = () => {
   if (user) return <Navigate to="/dashboard" replace />;
 
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-      {/* Nav - glassmorphism */}
-      <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-2xl bg-background/60 border-b border-border/30">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/25">
-              <span className="text-primary-foreground font-bold text-sm">K</span>
+    <div className="landing-dark noise-texture min-h-screen overflow-x-hidden">
+      {/* ═══ NAV ═══ */}
+      <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-2xl bg-[hsl(0,0%,2%)/0.8] border-b border-[hsl(0,0%,12%)/0.5]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2.5 relative z-10">
+            <div className="w-8 h-8 rounded-lg bg-[hsl(160,100%,50%)] flex items-center justify-center shadow-lg shadow-[hsl(160,100%,50%)/0.3]">
+              <span className="text-[hsl(0,0%,2%)] font-bold text-sm">K</span>
             </div>
-            <span className="font-semibold text-foreground tracking-tight">Kash</span>
+            <span className="font-semibold tracking-tight text-white">Kash</span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 relative z-10">
             <Link to="/login">
-              <Button variant="ghost" size="sm">Entrar</Button>
+              <Button variant="ghost" size="sm" className="text-[hsl(0,0%,70%)] hover:text-white hover:bg-[hsl(0,0%,10%)]">
+                Entrar
+              </Button>
             </Link>
             <Link to="/signup">
-              <Button size="sm" className="shadow-lg shadow-primary/25">
-                Começar grátis
+              <Button size="sm" className="bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white cta-glow border-0">
+                Ativar Copiloto
                 <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
               </Button>
             </Link>
@@ -114,77 +140,81 @@ const Landing: React.FC = () => {
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="relative pt-32 pb-24 px-6 min-h-[90vh] flex items-center">
+      {/* ═══ HERO ═══ */}
+      <section className="relative pt-28 sm:pt-36 pb-20 sm:pb-28 px-4 sm:px-6 min-h-[90vh] flex items-center">
         <GridOverlay />
         <Particles />
 
-        {/* Animated gradient orbs */}
+        {/* Orbs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
-            className="absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full blur-[120px]"
-            style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.15), transparent 70%)" }}
-            animate={{ scale: [1, 1.1, 1], opacity: [0.6, 1, 0.6] }}
+            className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] sm:w-[900px] h-[500px] sm:h-[700px] rounded-full blur-[120px]"
+            style={{ background: "radial-gradient(circle, hsl(160 100% 50% / 0.08), transparent 70%)" }}
+            animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           />
           <motion.div
-            className="absolute top-40 -right-20 w-[500px] h-[500px] rounded-full blur-[100px]"
-            style={{ background: "radial-gradient(circle, hsl(258 60% 52% / 0.1), transparent 70%)" }}
-            animate={{ scale: [1, 1.15, 1], x: [0, -20, 0] }}
+            className="absolute top-40 -right-20 w-[400px] sm:w-[500px] h-[400px] sm:h-[500px] rounded-full blur-[100px]"
+            style={{ background: "radial-gradient(circle, hsl(217 91% 60% / 0.08), transparent 70%)" }}
+            animate={{ scale: [1, 1.15, 1] }}
             transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
           />
           <motion.div
-            className="absolute -bottom-20 -left-20 w-[400px] h-[400px] rounded-full blur-[100px]"
-            style={{ background: "radial-gradient(circle, hsl(152 69% 41% / 0.08), transparent 70%)" }}
+            className="absolute -bottom-20 -left-20 w-[300px] sm:w-[400px] h-[300px] sm:h-[400px] rounded-full blur-[100px]"
+            style={{ background: "radial-gradient(circle, hsl(348 100% 64% / 0.06), transparent 70%)" }}
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 4 }}
           />
         </div>
 
-        <div className="max-w-4xl mx-auto text-center relative">
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          {/* Badge */}
           <motion.div {...fadeUp(0)}>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-sm text-xs font-medium text-primary mb-8 shadow-lg shadow-primary/5">
-              <motion.span
-                className="w-1.5 h-1.5 rounded-full bg-primary"
-                animate={{ opacity: [1, 0.3, 1], scale: [1, 0.8, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
-              Novo: Consultor IA integrado
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[hsl(160,100%,50%)/0.2] bg-[hsl(160,100%,50%)/0.05] backdrop-blur-sm text-xs font-medium text-[hsl(160,100%,50%)] mb-8 neon-box-glow">
+              <WhatsAppIcon className="w-3.5 h-3.5" />
+              Novo: Copiloto por WhatsApp
               <ChevronRight className="h-3 w-3" />
             </div>
           </motion.div>
 
+          {/* Headline */}
           <motion.h1
             {...fadeUp(0.1)}
-            className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.08] mb-6"
+            className="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight leading-[1.08] mb-6"
           >
-            Finanças com
+            <span className="text-white">O Controle Financeiro</span>
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary to-[hsl(258,60%,52%)]">
-              clareza.
+            <span className="text-white">Que Vive </span>
+            <span className="neon-glow text-[hsl(160,100%,50%)]">
+              Onde Você Já Está.
             </span>
           </motion.h1>
 
+          {/* Subheadline */}
           <motion.p
             {...fadeUp(0.2)}
-            className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
+            className="text-base sm:text-lg lg:text-xl text-[hsl(0,0%,55%)] max-w-2xl mx-auto mb-10 leading-relaxed"
           >
-            Kash é a plataforma financeira que simplifica o controle das suas receitas,
-            despesas e investimentos — pessoal ou empresarial.
+            Chega de planilhas abandonadas no segundo mês. Envie um áudio no WhatsApp.
+            A Kash organiza, categoriza e te dá estratégias para{" "}
+            <span className="text-[hsl(160,100%,50%)]">lucrar mais</span>.
+            Sem baixar apps. Sem curva de aprendizado.
           </motion.p>
 
-          <motion.div {...fadeUp(0.3)} className="flex items-center justify-center gap-4">
+          {/* CTAs */}
+          <motion.div {...fadeUp(0.3)} className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/signup">
-              <Button size="lg" className="text-base px-8 h-12 shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 transition-shadow">
-                Criar conta gratuita
+              <Button size="lg" className="text-base px-8 h-13 bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 cta-glow hover:scale-105 transition-all duration-200 w-full sm:w-auto">
+                <Sparkles className="mr-2 h-4 w-4" />
+                Ativar Meu Copiloto (30 Dias Grátis)
+              </Button>
+            </Link>
+            <a href="#como-funciona">
+              <Button size="lg" variant="outline" className="text-base px-8 h-13 border-[hsl(160,100%,50%)/0.3] text-[hsl(160,100%,50%)] hover:bg-[hsl(160,100%,50%)/0.05] bg-transparent w-full sm:w-auto">
+                Ver como funciona
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-            </Link>
-            <Link to="/login">
-              <Button size="lg" variant="outline" className="text-base px-8 h-12 backdrop-blur-sm bg-background/50 border-border/50">
-                Já tenho conta
-              </Button>
-            </Link>
+            </a>
           </motion.div>
 
           {/* Glow line */}
@@ -192,133 +222,204 @@ const Landing: React.FC = () => {
             {...fadeUp(0.5)}
             className="mt-16 h-px w-full max-w-md mx-auto"
             style={{
-              background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.5), transparent)",
+              background: "linear-gradient(90deg, transparent, hsl(160 100% 50% / 0.4), transparent)",
             }}
           />
         </div>
       </section>
 
-      {/* Stats - glass cards */}
-      <section className="py-16 px-6 relative">
-        <GridOverlay />
-        <div className="max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {stats.map((s, i) => (
-            <motion.div
-              key={s.label}
-              {...fadeUp(i * 0.1)}
-              className="text-center p-6 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/20 hover:bg-card/80 transition-all duration-300"
-            >
-              <p className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">{s.value}</p>
-              <p className="text-sm text-muted-foreground mt-1">{s.label}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* Features - glass cards with glow */}
-      <section className="py-24 px-6 relative">
-        <Particles />
-        <div className="max-w-6xl mx-auto relative">
-          <motion.div {...fadeUp()} className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
-              Tudo que você precisa
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-              Do básico ao avançado, Kash tem as ferramentas certas para cada etapa da sua jornada financeira.
-            </p>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {features.map((f, i) => (
+      {/* ═══ STATS ═══ */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 relative">
+        <div className="max-w-4xl mx-auto">
+          <motion.p {...fadeUp()} className="text-center text-[hsl(0,0%,40%)] text-sm uppercase tracking-[0.2em] mb-8 font-medium">
+            Confiado por milhares de brasileiros
+          </motion.p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+            {stats.map((s, i) => (
               <motion.div
-                key={f.title}
-                {...fadeUp(i * 0.08)}
-                whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className="group relative rounded-2xl border border-border/50 bg-card/60 backdrop-blur-sm p-6 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300"
+                key={s.label}
+                {...fadeUp(i * 0.1)}
+                className="text-center p-5 sm:p-6 rounded-2xl border border-[hsl(0,0%,12%)] bg-[hsl(0,0%,4%)] hover:border-[hsl(160,100%,50%)/0.2] transition-all duration-300"
               >
-                {/* Subtle corner glow on hover */}
-                <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                <div className="relative">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 group-hover:shadow-lg group-hover:shadow-primary/20 transition-all duration-300">
-                    <f.icon className="w-5 h-5 text-primary" />
-                  </div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="font-semibold text-foreground">{f.title}</h3>
-                    {f.premium && (
-                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                        Premium
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
-                </div>
+                <p className="text-2xl sm:text-4xl font-bold text-white tracking-tight font-mono-fin">{s.value}</p>
+                <p className="text-xs sm:text-sm text-[hsl(0,0%,45%)] mt-1">{s.label}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Pricing - glass with gradients */}
-      <section className="py-24 px-6 relative">
-        <GridOverlay />
-        <div className="max-w-3xl mx-auto relative">
-          <motion.div {...fadeUp()} className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
-              Simples e transparente
+      {/* ═══ 3 STEPS ═══ */}
+      <section id="como-funciona" className="py-20 sm:py-28 px-4 sm:px-6 relative">
+        <Particles />
+        <div className="max-w-5xl mx-auto relative z-10">
+          <motion.div {...fadeUp()} className="text-center mb-14 sm:mb-20">
+            <span className="inline-block text-xs font-semibold uppercase tracking-[0.25em] text-[hsl(160,100%,50%)] mb-4">
+              Esforço Zero
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-4">
+              3 passos. Nenhum esforço.
             </h2>
-            <p className="text-muted-foreground text-lg">
-              Comece grátis, evolua quando quiser.
+            <p className="text-[hsl(0,0%,50%)] text-base sm:text-lg max-w-xl mx-auto">
+              Enquanto outros apps pedem que você abra planilhas, a Kash vive no seu WhatsApp.
             </p>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-3 gap-5 sm:gap-6">
+            {steps.map((step, i) => (
+              <motion.div
+                key={step.title}
+                {...fadeUp(i * 0.15)}
+                whileHover={{ y: -6, transition: { duration: 0.2 } }}
+                className="group relative rounded-2xl border border-[hsl(0,0%,12%)] bg-[hsl(0,0%,4%)] p-6 sm:p-8 hover:border-[hsl(160,100%,50%)/0.2] transition-all duration-300"
+              >
+                {/* Corner glow */}
+                <div
+                  className="absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{ background: `linear-gradient(135deg, ${step.accent}15, transparent 50%)` }}
+                />
+                <div className="relative">
+                  <span className="text-xs font-mono-fin font-bold text-[hsl(0,0%,25%)] tracking-widest mb-4 block">
+                    {step.num}
+                  </span>
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-all duration-300"
+                    style={{ backgroundColor: `${step.accent}15` }}
+                  >
+                    <step.icon className="w-6 h-6" style={{ color: step.accent }} />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
+                  <p className="text-sm text-[hsl(0,0%,50%)] leading-relaxed">{step.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* WhatsApp simulation */}
+          <motion.div
+            {...fadeUp(0.3)}
+            className="mt-12 sm:mt-16 max-w-md mx-auto rounded-2xl border border-[hsl(0,0%,12%)] bg-[hsl(0,0%,4%)] p-5 sm:p-6"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 rounded-full bg-[hsl(142,70%,45%)] flex items-center justify-center">
+                <WhatsAppIcon className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-white">Kash Copiloto</p>
+                <p className="text-[10px] text-[hsl(0,0%,40%)]">online</p>
+              </div>
+            </div>
+            <div className="space-y-2.5">
+              <div className="flex justify-end">
+                <div className="bg-[hsl(142,40%,18%)] rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[80%]">
+                  <div className="flex items-center gap-2 text-sm text-[hsl(0,0%,85%)]">
+                    <AudioLines className="w-4 h-4 text-[hsl(160,100%,50%)]" />
+                    <span className="text-xs">"Gastei 50 reais de gasolina"</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-start">
+                <div className="bg-[hsl(0,0%,10%)] rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[85%]">
+                  <p className="text-sm text-[hsl(0,0%,85%)]">
+                    ✅ <span className="font-semibold">R$ 50,00</span> registrado em{" "}
+                    <span className="text-[hsl(160,100%,50%)]">Transporte</span>.
+                    Você já gastou R$ 320 nessa categoria este mês — 15% acima do mês passado.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══ PRICING ═══ */}
+      <section className="py-20 sm:py-28 px-4 sm:px-6 relative">
+        <GridOverlay />
+        <div className="max-w-3xl mx-auto relative z-10">
+          <motion.div {...fadeUp()} className="text-center mb-6">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-4">
+              Quanto custa ter dois consultores?
+            </h2>
+            <p className="text-[hsl(0,0%,50%)] text-base sm:text-lg max-w-xl mx-auto mb-3">
+              Consultor financeiro + consultor de vendas ={" "}
+              <span className="line-through text-[hsl(0,0%,35%)]">R$ 5.000/mês</span>
+            </p>
+            <p className="text-[hsl(160,100%,50%)] font-semibold text-lg">
+              Com a Kash, a partir de R$ 0.
+            </p>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 gap-5 sm:gap-6 mt-10 sm:mt-14">
+            {/* Free */}
             <motion.div
               {...fadeUp(0.1)}
-              className="rounded-2xl border border-border/50 bg-card/60 backdrop-blur-sm p-8"
+              className="rounded-2xl border border-[hsl(0,0%,12%)] bg-[hsl(0,0%,4%)] p-7 sm:p-8"
             >
-              <h3 className="text-xl font-bold mb-1">Gratuito</h3>
-              <p className="text-sm text-muted-foreground mb-4">Para começar a organizar</p>
-              <p className="text-4xl font-bold mb-6">R$ 0<span className="text-sm font-normal text-muted-foreground">/mês</span></p>
+              <h3 className="text-xl font-bold text-white mb-1">Gratuito</h3>
+              <p className="text-sm text-[hsl(0,0%,45%)] mb-5">Registre e organize seus gastos</p>
+              <p className="text-4xl sm:text-5xl font-bold text-white mb-6 font-mono-fin">
+                R$ 0<span className="text-sm font-normal text-[hsl(0,0%,40%)]">/mês</span>
+              </p>
               <ul className="space-y-3 mb-8">
-                {["Dashboard", "Receitas", "Despesas"].map(f => (
-                  <li key={f} className="flex items-center gap-2 text-sm">
-                    <Check className="h-4 w-4 text-primary shrink-0" />
+                {[
+                  "Dashboard inteligente",
+                  "Controle de receitas e despesas",
+                  "Categorização automática",
+                  "Registro por WhatsApp",
+                ].map(f => (
+                  <li key={f} className="flex items-center gap-2.5 text-sm text-[hsl(0,0%,70%)]">
+                    <Check className="h-4 w-4 text-[hsl(160,100%,50%)] shrink-0" />
                     {f}
                   </li>
                 ))}
               </ul>
               <Link to="/signup">
-                <Button variant="outline" className="w-full backdrop-blur-sm">Começar grátis</Button>
+                <Button className="w-full h-12 text-base bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 cta-glow">
+                  Começar Teste de 30 Dias
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
               </Link>
             </motion.div>
 
+            {/* Premium */}
             <motion.div
               {...fadeUp(0.2)}
-              className="relative rounded-2xl p-8 overflow-hidden"
+              className="relative rounded-2xl overflow-hidden"
             >
-              {/* Animated border gradient */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/20 via-primary/5 to-[hsl(258,60%,52%)]/10" />
-              <div className="absolute inset-px rounded-[15px] bg-card/90 backdrop-blur-xl" />
+              {/* Neon border */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[hsl(160,100%,50%)/0.2] via-[hsl(217,91%,60%)/0.1] to-[hsl(160,100%,50%)/0.05]" />
+              <div className="absolute inset-px rounded-[15px] bg-[hsl(0,0%,4%)]" />
 
-              <div className="absolute -top-3 right-6 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full shadow-lg shadow-primary/30 z-10">
-                Popular
+              <div className="absolute -top-px right-6 bg-[hsl(160,100%,50%)] text-[hsl(0,0%,2%)] text-xs font-bold px-3 py-1.5 rounded-b-lg shadow-lg shadow-[hsl(160,100%,50%)/0.3] z-10 uppercase tracking-wider">
+                Recomendado
               </div>
-              <div className="relative">
-                <h3 className="text-xl font-bold mb-1 flex items-center gap-2">
-                  <Crown className="h-5 w-5 text-yellow-500" /> Premium
+
+              <div className="relative p-7 sm:p-8">
+                <h3 className="text-xl font-bold text-white mb-1 flex items-center gap-2">
+                  <Crown className="h-5 w-5 text-[hsl(45,100%,60%)]" /> Premium
                 </h3>
-                <p className="text-sm text-muted-foreground mb-4">Acesso completo</p>
-                <p className="text-4xl font-bold mb-6">R$ 29,90<span className="text-sm font-normal text-muted-foreground">/mês</span></p>
+                <p className="text-sm text-[hsl(0,0%,45%)] mb-5">Consultor de Vendas IA ativado</p>
+                <p className="text-4xl sm:text-5xl font-bold text-white mb-6 font-mono-fin">
+                  R$ 29<span className="text-lg">,90</span>
+                  <span className="text-sm font-normal text-[hsl(0,0%,40%)]">/mês</span>
+                </p>
                 <ul className="space-y-3 mb-8">
-                  {["Tudo do gratuito", "Investimentos & Metas", "Visão Mensal", "DRE & EBITDA", "Consultor IA", "Suporte prioritário"].map(f => (
-                    <li key={f} className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-primary shrink-0" />
+                  {[
+                    "Tudo do gratuito",
+                    "Consultor de Vendas IA",
+                    "Estratégias personalizadas",
+                    "Acompanhamento de investimentos",
+                    "Metas e planejamento financeiro",
+                    "Suporte prioritário",
+                  ].map(f => (
+                    <li key={f} className="flex items-center gap-2.5 text-sm text-[hsl(0,0%,70%)]">
+                      <Check className="h-4 w-4 text-[hsl(160,100%,50%)] shrink-0" />
                       {f}
                     </li>
                   ))}
                 </ul>
                 <Link to="/signup">
-                  <Button className="w-full shadow-lg shadow-primary/25">
+                  <Button className="w-full h-12 text-base border border-[hsl(160,100%,50%)/0.3] bg-[hsl(160,100%,50%)/0.1] hover:bg-[hsl(160,100%,50%)/0.2] text-[hsl(160,100%,50%)] neon-box-glow">
                     <Crown className="h-4 w-4 mr-2" /> Assinar Premium
                   </Button>
                 </Link>
@@ -328,24 +429,24 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      {/* Security */}
-      <section className="py-24 px-6 relative">
+      {/* ═══ SECURITY ═══ */}
+      <section className="py-20 sm:py-28 px-4 sm:px-6 relative">
         <Particles />
-        <div className="max-w-4xl mx-auto text-center relative">
+        <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.div {...fadeUp()}>
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6 shadow-lg shadow-primary/10">
-              <Shield className="h-8 w-8 text-primary" />
+            <div className="w-16 h-16 rounded-2xl bg-[hsl(160,100%,50%)/0.1] flex items-center justify-center mx-auto mb-6 neon-box-glow">
+              <Shield className="h-8 w-8 text-[hsl(160,100%,50%)]" />
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
-              Segurança em primeiro lugar
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">
+              Segurança de nível bancário
             </h2>
-            <p className="text-muted-foreground text-lg max-w-xl mx-auto mb-10 leading-relaxed">
+            <p className="text-[hsl(0,0%,50%)] text-base sm:text-lg max-w-xl mx-auto mb-10 leading-relaxed">
               Seus dados são protegidos com criptografia de ponta e infraestrutura
-              de nível empresarial. Nunca compartilhamos suas informações.
+              enterprise. Nunca compartilhamos suas informações.
             </p>
             <div className="flex flex-wrap justify-center gap-3">
-              {["Criptografia AES-256", "Autenticação segura", "Dados isolados por usuário", "Backups automáticos"].map(s => (
-                <span key={s} className="px-4 py-2 rounded-full border border-border/50 bg-card/60 backdrop-blur-sm text-sm text-muted-foreground hover:border-primary/20 hover:text-foreground transition-all duration-300">
+              {["Criptografia AES-256", "Autenticação 2FA", "Dados isolados", "Backups diários"].map(s => (
+                <span key={s} className="px-4 py-2 rounded-full border border-[hsl(0,0%,12%)] bg-[hsl(0,0%,4%)] text-sm text-[hsl(0,0%,55%)] hover:border-[hsl(160,100%,50%)/0.2] hover:text-white transition-all duration-300">
                   {s}
                 </span>
               ))}
@@ -354,35 +455,43 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="py-24 px-6">
+      {/* ═══ FINAL CTA ═══ */}
+      <section className="py-20 sm:py-28 px-4 sm:px-6">
         <motion.div
           {...fadeUp()}
-          className="max-w-3xl mx-auto text-center rounded-3xl p-12 sm:p-16 relative overflow-hidden"
+          className="max-w-3xl mx-auto text-center rounded-3xl p-10 sm:p-16 relative overflow-hidden"
         >
-          {/* Animated gradient background */}
+          {/* Animated gradient */}
           <motion.div
             className="absolute inset-0"
             style={{
-              background: "linear-gradient(135deg, hsl(var(--primary)), hsl(258 60% 52%), hsl(var(--primary)))",
+              background: "linear-gradient(135deg, hsl(160 100% 50% / 0.15), hsl(217 91% 60% / 0.1), hsl(160 100% 50% / 0.15))",
               backgroundSize: "200% 200%",
             }}
             animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
             transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
           />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_60%)]" />
-          <GridOverlay />
+          <div className="absolute inset-0 bg-[hsl(0,0%,3%)/0.6] backdrop-blur-xl" />
+          <div className="absolute inset-px rounded-[23px] border border-[hsl(160,100%,50%)/0.1]" />
 
-          <div className="relative">
-            <h2 className="text-3xl sm:text-4xl font-bold text-primary-foreground tracking-tight mb-4">
-              Comece a controlar suas finanças hoje
+          <div className="relative z-10">
+            <motion.div
+              animate={{ rotate: [0, 5, -5, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="inline-block mb-6"
+            >
+              <Zap className="h-10 w-10 text-[hsl(160,100%,50%)]" />
+            </motion.div>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">
+              Seu Copiloto Financeiro Está Esperando
             </h2>
-            <p className="text-primary-foreground/80 text-lg mb-8 max-w-lg mx-auto">
-              Junte-se a milhares de pessoas que já transformaram sua relação com dinheiro.
+            <p className="text-[hsl(0,0%,55%)] text-base sm:text-lg mb-8 max-w-lg mx-auto">
+              30 dias grátis. Sem cartão. Cancele quando quiser.
             </p>
             <Link to="/signup">
-              <Button size="lg" variant="secondary" className="text-base px-8 h-12 shadow-xl hover:shadow-2xl transition-shadow">
-                Criar conta gratuita
+              <Button size="lg" className="text-base px-8 h-13 bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 cta-glow hover:scale-105 transition-all duration-200">
+                <Sparkles className="mr-2 h-4 w-4" />
+                Ativar Meu Copiloto Grátis
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -390,26 +499,25 @@ const Landing: React.FC = () => {
         </motion.div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border/30 py-12 px-6 backdrop-blur-sm">
+      {/* ═══ FOOTER ═══ */}
+      <footer className="border-t border-[hsl(0,0%,8%)] py-10 sm:py-12 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center shadow-md shadow-primary/20">
-              <span className="text-primary-foreground font-bold text-xs">K</span>
+            <div className="w-7 h-7 rounded-md bg-[hsl(160,100%,50%)] flex items-center justify-center shadow-md shadow-[hsl(160,100%,50%)/0.2]">
+              <span className="text-[hsl(0,0%,2%)] font-bold text-xs">K</span>
             </div>
-            <span className="font-semibold text-sm text-foreground">Kash</span>
+            <span className="font-semibold text-sm text-white">Kash</span>
           </div>
-          <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <Link to="/login" className="hover:text-foreground transition-colors">Entrar</Link>
-            <Link to="/signup" className="hover:text-foreground transition-colors">Criar conta</Link>
-            <Link to="/upgrade" className="hover:text-foreground transition-colors">Planos</Link>
+          <div className="flex items-center gap-6 text-sm text-[hsl(0,0%,40%)]">
+            <Link to="/login" className="hover:text-white transition-colors">Entrar</Link>
+            <Link to="/signup" className="hover:text-white transition-colors">Criar conta</Link>
+            <Link to="/upgrade" className="hover:text-white transition-colors">Planos</Link>
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-[hsl(0,0%,30%)]">
             © {new Date().getFullYear()} Kash. Todos os direitos reservados.
           </p>
         </div>
       </footer>
-      {isPremium && <FloatingChat />}
     </div>
   );
 };
