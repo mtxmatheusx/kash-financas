@@ -21,41 +21,44 @@ serve(async (req) => {
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
 
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("No authorization header");
+    if (!authHeader?.startsWith("Bearer ")) throw new Error("No authorization header");
 
-    // Create admin client for DB operations
-    const adminClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } }
-    );
+    const token = authHeader.replace("Bearer ", "");
 
-    // Create user client to validate the JWT
+    // Create user client to validate JWT via getClaims
     const userClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? "",
       { global: { headers: { Authorization: authHeader } }, auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } }
     );
 
-    const { data: userData, error: userError } = await userClient.auth.getUser();
-    if (userError) {
-      logStep("Auth error", { message: userError.message });
-      throw new Error(`Auth error: ${userError.message}`);
+    const { data: claimsData, error: claimsError } = await userClient.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      logStep("Auth error", { message: claimsError?.message || "No claims" });
+      throw new Error(`Auth error: ${claimsError?.message || "Invalid token"}`);
     }
-    const user = userData.user;
-    if (!user?.email) throw new Error("User not authenticated");
-    logStep("User authenticated", { email: user.email });
+
+    const userId = claimsData.claims.sub as string;
+    const email = claimsData.claims.email as string;
+    if (!userId || !email) throw new Error("User not authenticated");
+    logStep("User authenticated", { email });
+
+    // Admin client for DB operations
+    const adminClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } }
+    );
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+    const customers = await stripe.customers.list({ email, limit: 1 });
 
     if (customers.data.length === 0) {
       logStep("No Stripe customer found");
-      // Don't downgrade if user has active trial
-      const { data: profileData } = await adminClient.from("profiles").select("trial_end").eq("user_id", user.id).single();
+      const { data: profileData } = await adminClient.from("profiles").select("trial_end").eq("user_id", userId).single();
       const hasActiveTrial = profileData?.trial_end && new Date(profileData.trial_end) > new Date();
       if (!hasActiveTrial) {
-        await adminClient.from("profiles").update({ subscription_tier: "free" }).eq("user_id", user.id);
+        await adminClient.from("profiles").update({ subscription_tier: "free" }).eq("user_id", userId);
       }
       return new Response(JSON.stringify({ subscribed: false }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -71,13 +74,13 @@ serve(async (req) => {
       const sub = subscriptions.data[0];
       subscriptionEnd = new Date(sub.current_period_end * 1000).toISOString();
       logStep("Active subscription", { end: subscriptionEnd });
-      await adminClient.from("profiles").update({ subscription_tier: "premium" }).eq("user_id", user.id);
+      await adminClient.from("profiles").update({ subscription_tier: "premium" }).eq("user_id", userId);
     } else {
       logStep("No active subscription");
-      const { data: profileData2 } = await adminClient.from("profiles").select("trial_end").eq("user_id", user.id).single();
+      const { data: profileData2 } = await adminClient.from("profiles").select("trial_end").eq("user_id", userId).single();
       const hasActiveTrial2 = profileData2?.trial_end && new Date(profileData2.trial_end) > new Date();
       if (!hasActiveTrial2) {
-        await adminClient.from("profiles").update({ subscription_tier: "free" }).eq("user_id", user.id);
+        await adminClient.from("profiles").update({ subscription_tier: "free" }).eq("user_id", userId);
       }
     }
 
