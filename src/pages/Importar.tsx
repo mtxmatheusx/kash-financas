@@ -244,22 +244,17 @@ const Importar: React.FC = () => {
         }
 
         const ws = wb.Sheets[wb.SheetNames[0]];
-        const json = XLSX.utils.sheet_to_json<Record<string, any>>(ws, { defval: "" });
-        if (json.length === 0) {
+        ({ headers, rawRows } = extractSheetData(ws));
+        if (rawRows.length === 0) {
           toast.error("Planilha vazia — nenhuma linha encontrada");
           return;
         }
-        headers = Object.keys(json[0]);
-        rawRows = json;
       }
 
       if (headers.length === 0) {
         toast.error("Não foi possível detectar colunas no arquivo");
         return;
       }
-
-      // Filter out completely empty headers
-      headers = headers.filter(h => h && String(h).trim() !== "" && h !== "__EMPTY");
 
       toast.success(`${rawRows.length} linhas carregadas de "${file.name}"`);
       await processSheetData(headers, rawRows);
