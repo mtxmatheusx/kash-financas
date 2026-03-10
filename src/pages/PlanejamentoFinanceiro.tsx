@@ -104,7 +104,7 @@ const PlanejamentoFinanceiro: React.FC = () => {
 
         {/* Top Expenses */}
         {topExpenses.length > 0 && (
-          <div className="rounded-xl border border-border bg-card p-6 enterprise-shadow">
+          <div className="rounded-xl border border-border bg-card p-4 md:p-6 enterprise-shadow">
             <h3 className="text-sm font-semibold text-card-foreground mb-4">Maiores Categorias de Gasto</h3>
             <div className="space-y-3">
               {topExpenses.map(([cat, amount]) => {
