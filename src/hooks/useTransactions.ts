@@ -1,55 +1,46 @@
-import { useState, useCallback, useEffect } from 'react';
-import { Transaction, AppMode } from '@/lib/types';
+import { useState, useCallback, useEffect, useMemo } from 'react';
+import { TransactionRow } from '@/lib/types';
+import { useAccount } from '@/contexts/AccountContext';
 
-const STORAGE_KEY = 'financas-vereda-transactions';
+const STORAGE_KEY = 'fincontrol-transactions';
 
-function loadTransactions(): Transaction[] {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch {
-    return [];
-  }
+function load(): TransactionRow[] {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
 }
+function save(data: TransactionRow[]) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
 
-function saveTransactions(transactions: Transaction[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
-}
+export function useTransactions(typeFilter?: 'income' | 'expense') {
+  const [all, setAll] = useState<TransactionRow[]>(load);
+  const { account } = useAccount();
 
-export function useTransactions() {
-  const [transactions, setTransactions] = useState<Transaction[]>(loadTransactions);
-  const [mode, setMode] = useState<AppMode>('personal');
+  useEffect(() => { save(all); }, [all]);
 
-  useEffect(() => {
-    saveTransactions(transactions);
-  }, [transactions]);
+  const transactions = useMemo(() => {
+    let filtered = all.filter(t => t.account_type === account.type);
+    if (typeFilter) filtered = filtered.filter(t => t.type === typeFilter);
+    return filtered.sort((a, b) => b.date.localeCompare(a.date));
+  }, [all, account.type, typeFilter]);
 
-  const addTransaction = useCallback((tx: Omit<Transaction, 'id' | 'createdAt'>) => {
-    const newTx: Transaction = {
-      ...tx,
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-    };
-    setTransactions(prev => [newTx, ...prev]);
+  const create = useCallback((tx: Omit<TransactionRow, 'id' | 'created_at'>) => {
+    const newTx: TransactionRow = { ...tx, id: crypto.randomUUID(), created_at: new Date().toISOString() };
+    setAll(prev => [newTx, ...prev]);
   }, []);
 
-  const deleteTransaction = useCallback((id: string) => {
-    setTransactions(prev => prev.filter(t => t.id !== id));
+  const update = useCallback((id: string, data: Partial<TransactionRow>) => {
+    setAll(prev => prev.map(t => t.id === id ? { ...t, ...data } : t));
   }, []);
 
-  const filteredTransactions = transactions.filter(t => t.mode === mode);
+  const remove = useCallback((id: string) => {
+    setAll(prev => prev.filter(t => t.id !== id));
+  }, []);
 
-  const balance = filteredTransactions.reduce((acc, t) => {
-    return t.type === 'income' ? acc + t.amount : acc - t.amount;
-  }, 0);
+  const totals = useMemo(() => {
+    const income = all.filter(t => t.account_type === account.type && t.type === 'income')
+      .reduce((s, t) => s + t.amount, 0);
+    const expense = all.filter(t => t.account_type === account.type && t.type === 'expense')
+      .reduce((s, t) => s + t.amount, 0);
+    return { income, expense, balance: income - expense };
+  }, [all, account.type]);
 
-  return {
-    transactions: filteredTransactions,
-    allTransactions: transactions,
-    balance,
-    mode,
-    setMode,
-    addTransaction,
-    deleteTransaction,
-  };
+  return { transactions, create, update, remove, totals, allTransactions: all };
 }

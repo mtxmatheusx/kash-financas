@@ -1,38 +1,32 @@
-export type TransactionType = 'income' | 'expense';
-export type AppMode = 'personal' | 'business';
-
-export const PERSONAL_EXPENSE_CATEGORIES = [
-  'Alimentação', 'Transporte', 'Casa', 'Saúde', 'Lazer', 'Outros'
-] as const;
-
-export const PERSONAL_INCOME_CATEGORIES = [
-  'Salário', 'Freelance', 'Outros'
-] as const;
-
-export const BUSINESS_EXPENSE_CATEGORIES = [
-  'Fornecedores', 'Impostos', 'Funcionários', 'Marketing', 'Infraestrutura', 'Outros'
-] as const;
-
-export const BUSINESS_INCOME_CATEGORIES = [
-  'Vendas', 'Serviços', 'Outros'
-] as const;
-
-export interface Transaction {
+export interface TransactionRow {
   id: string;
-  type: TransactionType;
+  type: 'income' | 'expense';
   amount: number;
+  description: string;
   category: string;
-  mode: AppMode;
-  date: string; // ISO date string
-  createdAt: string;
+  date: string;
+  status: 'paid' | 'pending';
+  account_type: 'personal' | 'business';
+  created_at: string;
 }
 
-export interface WeeklySummary {
-  weekStart: string;
-  weekEnd: string;
-  totalIncome: number;
-  totalExpense: number;
-  balance: number;
-  topCategory: string;
-  topCategoryPercent: number;
+export interface InvestmentRow {
+  id: string;
+  name: string;
+  type: string;
+  amount: number;
+  current_value: number;
+  date: string;
+  account_type: 'personal' | 'business';
+  created_at: string;
+}
+
+export interface GoalRow {
+  id: string;
+  name: string;
+  target_amount: number;
+  current_amount: number;
+  deadline: string;
+  account_type: 'personal' | 'business';
+  created_at: string;
 }
