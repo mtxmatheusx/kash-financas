@@ -8,7 +8,7 @@ import {
   ChatBubbleMessage,
 } from "@/components/ui/chat-bubble";
 import { ChatMessageList } from "@/components/ui/chat-message-list";
-import { FloatingAiAssistant } from "@/components/ui/glowing-ai-chat-assistant";
+import { FloatingAiAssistant, type Attachment } from "@/components/ui/glowing-ai-chat-assistant";
 import { useAccount } from "@/contexts/AccountContext";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -144,7 +144,7 @@ export const FloatingChat: React.FC = () => {
     setMessages([{ role: "assistant", content: consultantConfig[type].greeting }]);
   };
 
-  const sendMessage = async (userText: string) => {
+  const sendMessage = async (userText: string, attachments?: Attachment[]) => {
     if (!userText.trim() || isLoading) return;
 
     const userMsg: Msg = { role: "user", content: userText.trim() };
