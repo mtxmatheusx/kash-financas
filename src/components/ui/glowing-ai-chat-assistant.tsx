@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Paperclip, Send, Info, Bot, X, FileText, Image as ImageIcon, Loader2, ChevronDown } from 'lucide-react';
+import { Paperclip, Send, Info, Bot, X, FileText, Image as ImageIcon, Loader2, ChevronDown, Mic, MicOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Attachment {
