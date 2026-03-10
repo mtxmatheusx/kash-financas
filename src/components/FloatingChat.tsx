@@ -1,12 +1,6 @@
 import React, { useState, FormEvent, useEffect } from "react";
-import { Send, Bot, TrendingUp, Sparkles } from "lucide-react";
+import { Send, Bot, TrendingUp, Sparkles, X, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  ExpandableChat,
-  ExpandableChatHeader,
-  ExpandableChatBody,
-  ExpandableChatFooter,
-} from "@/components/ui/expandable-chat";
 import {
   ChatBubble,
   ChatBubbleAvatar,
@@ -14,6 +8,7 @@ import {
 } from "@/components/ui/chat-bubble";
 import { ChatMessageList } from "@/components/ui/chat-message-list";
 import { Button } from "@/components/ui/button";
+import { MorphPanel } from "@/components/ui/ai-input";
 import { useAccount } from "@/contexts/AccountContext";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +29,12 @@ const consultantConfig = {
     fallback: "CF",
     placeholder: "Pergunte sobre investimentos, metas, orçamento...",
     greeting: "Olá! Sou seu consultor financeiro. Como posso te ajudar a organizar suas finanças hoje?",
+    orbTones: {
+      base: "oklch(95% 0.02 264.695)",
+      accent1: "oklch(75% 0.15 145)",
+      accent2: "oklch(80% 0.12 200)",
+      accent3: "oklch(78% 0.14 170)",
+    },
     tips: [
       "Uma boa regra é a 50/30/20: 50% para necessidades, 30% para desejos e 20% para poupança/investimentos.",
       "Antes de investir, monte sua reserva de emergência equivalente a 6 meses de despesas fixas.",
@@ -51,6 +52,12 @@ const consultantConfig = {
     fallback: "CV",
     placeholder: "Pergunte sobre vendas, custos, estratégias...",
     greeting: "Olá! Sou seu consultor de vendas. Como posso ajudar a impulsionar seu negócio hoje?",
+    orbTones: {
+      base: "oklch(95% 0.02 264.695)",
+      accent1: "oklch(75% 0.15 350)",
+      accent2: "oklch(80% 0.12 280)",
+      accent3: "oklch(78% 0.14 310)",
+    },
     tips: [
       "Monitore seu fluxo de caixa semanalmente para antecipar períodos de baixa liquidez.",
       "Invista em marketing digital — o CAC tende a ser menor que no marketing tradicional.",
@@ -99,21 +106,9 @@ function getAIResponse(message: string, type: ConsultantType): string {
   return config.tips[Math.floor(Math.random() * config.tips.length)];
 }
 
-const placeholderSuggestions: Record<ConsultantType, string[]> = {
-  financial: [
-    "Como montar uma reserva de emergência?",
-    "Qual o melhor investimento para iniciantes?",
-    "Como organizar minhas despesas mensais?",
-  ],
-  sales: [
-    "Como aumentar meu faturamento?",
-    "Estratégias para reduzir custos operacionais",
-    "Como definir metas de vendas eficientes?",
-  ],
-};
-
 export const FloatingChat: React.FC = () => {
   const { account } = useAccount();
+  const [isOpen, setIsOpen] = useState(false);
   const [consultantType, setConsultantType] = useState<ConsultantType>(
     account.type === "business" ? "sales" : "financial"
   );
@@ -125,51 +120,23 @@ export const FloatingChat: React.FC = () => {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [animatingPlaceholder, setAnimatingPlaceholder] = useState("");
-  const [placeholderIndex, setPlaceholderIndex] = useState(0);
 
-  // Animated placeholder
-  useEffect(() => {
-    const suggestions = placeholderSuggestions[consultantType];
-    const currentSuggestion = suggestions[placeholderIndex % suggestions.length];
-    let charIndex = 0;
-    setAnimatingPlaceholder("");
-
-    const typeInterval = setInterval(() => {
-      if (charIndex <= currentSuggestion.length) {
-        setAnimatingPlaceholder(currentSuggestion.slice(0, charIndex));
-        charIndex++;
-      } else {
-        clearInterval(typeInterval);
-        setTimeout(() => {
-          setPlaceholderIndex((prev) => prev + 1);
-        }, 2000);
-      }
-    }, 40);
-
-    return () => clearInterval(typeInterval);
-  }, [placeholderIndex, consultantType]);
-
-  // Reset chat when switching consultant
   const switchConsultant = (type: ConsultantType) => {
     if (type === consultantType) return;
     setConsultantType(type);
     setMessages([
       { id: 1, content: consultantConfig[type].greeting, sender: "ai" },
     ]);
-    setPlaceholderIndex(0);
   };
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (!input.trim()) return;
+  const handleSendMessage = (value: string) => {
+    const userMessage = value.trim();
+    if (!userMessage) return;
 
-    const userMessage = input.trim();
     setMessages((prev) => [
       ...prev,
       { id: prev.length + 1, content: userMessage, sender: "user" },
     ]);
-    setInput("");
     setIsLoading(true);
 
     setTimeout(() => {
@@ -182,6 +149,13 @@ export const FloatingChat: React.FC = () => {
     }, 800);
   };
 
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+    handleSendMessage(input);
+    setInput("");
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -190,156 +164,170 @@ export const FloatingChat: React.FC = () => {
   };
 
   return (
-    <ExpandableChat
-      size="md"
-      position="bottom-right"
-      icon={
-        <motion.div
-          key={consultantType}
-          initial={{ rotate: -180, opacity: 0 }}
-          animate={{ rotate: 0, opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          <ConsultantIcon className="h-6 w-6" />
-        </motion.div>
-      }
-    >
-      <ExpandableChatHeader>
-        <div className="flex flex-col gap-3 w-full">
-          <div className="flex items-center gap-2">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={consultantType}
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.8, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="h-9 w-9 rounded-full bg-primary flex items-center justify-center"
-              >
-                <ConsultantIcon className="h-4 w-4 text-primary-foreground" />
-              </motion.div>
-            </AnimatePresence>
-            <div className="flex-1">
-              <AnimatePresence mode="wait">
-                <motion.p
-                  key={consultantType}
-                  initial={{ y: -8, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: 8, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="text-sm font-semibold text-foreground"
-                >
-                  {config.label}
-                </motion.p>
-              </AnimatePresence>
-              <p className="text-xs text-muted-foreground">{config.subtitle}</p>
-            </div>
-            <div className="flex items-center gap-1">
-              <Sparkles className="h-3 w-3 text-muted-foreground" />
-              <span className="text-[10px] text-muted-foreground font-medium">IA</span>
-            </div>
-          </div>
-
-          {/* Consultant Type Selector */}
-          <div className="flex gap-1 bg-muted rounded-lg p-1">
-            {(["financial", "sales"] as const).map((type) => {
-              const Icon = consultantConfig[type].icon;
-              const isActive = consultantType === type;
-              return (
-                <button
-                  key={type}
-                  onClick={() => switchConsultant(type)}
-                  className={cn(
-                    "relative flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition-colors",
-                    isActive
-                      ? "text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  {isActive && (
+    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
+      {/* Chat Panel */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="w-[380px] max-h-[520px] bg-background border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+          >
+            {/* Header */}
+            <div className="p-4 border-b border-border">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2.5">
+                  <AnimatePresence mode="wait">
                     <motion.div
-                      layoutId="consultant-selector"
-                      className="absolute inset-0 bg-primary rounded-md"
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
-                    />
-                  )}
-                  <span className="relative z-10 flex items-center gap-1.5">
-                    <Icon className="h-3.5 w-3.5" />
-                    {consultantConfig[type].shortLabel}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </ExpandableChatHeader>
+                      key={consultantType}
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.8, opacity: 0 }}
+                      className="h-9 w-9 rounded-full bg-primary flex items-center justify-center"
+                    >
+                      <ConsultantIcon className="h-4 w-4 text-primary-foreground" />
+                    </motion.div>
+                  </AnimatePresence>
+                  <div>
+                    <AnimatePresence mode="wait">
+                      <motion.p
+                        key={consultantType}
+                        initial={{ y: -6, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: 6, opacity: 0 }}
+                        className="text-sm font-semibold text-foreground"
+                      >
+                        {config.label}
+                      </motion.p>
+                    </AnimatePresence>
+                    <p className="text-xs text-muted-foreground">{config.subtitle}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    <Sparkles className="h-3 w-3 text-muted-foreground" />
+                    <span className="text-[10px] text-muted-foreground font-medium">IA</span>
+                  </div>
+                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setIsOpen(false)}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
 
-      <ExpandableChatBody>
-        <ChatMessageList smooth>
-          <AnimatePresence>
-            {messages.map((message) => (
-              <motion.div
-                key={message.id}
-                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.25 }}
-              >
-                <ChatBubble
-                  variant={message.sender === "user" ? "sent" : "received"}
-                  layout="ai"
-                >
-                  {message.sender === "ai" && (
-                    <ChatBubbleAvatar fallback={config.fallback} />
-                  )}
-                  <ChatBubbleMessage variant={message.sender === "user" ? "sent" : "received"}>
-                    {message.content}
-                  </ChatBubbleMessage>
-                </ChatBubble>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+              {/* Consultant Toggle */}
+              <div className="flex gap-1 bg-muted rounded-lg p-1">
+                {(["financial", "sales"] as const).map((type) => {
+                  const Icon = consultantConfig[type].icon;
+                  const isActive = consultantType === type;
+                  return (
+                    <button
+                      key={type}
+                      onClick={() => switchConsultant(type)}
+                      className={cn(
+                        "relative flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition-colors",
+                        isActive
+                          ? "text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      {isActive && (
+                        <motion.div
+                          layoutId="consultant-selector"
+                          className="absolute inset-0 bg-primary rounded-md"
+                          transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                        />
+                      )}
+                      <span className="relative z-10 flex items-center gap-1.5">
+                        <Icon className="h-3.5 w-3.5" />
+                        {consultantConfig[type].shortLabel}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
-          {isLoading && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <ChatBubble variant="received" layout="ai">
-                <ChatBubbleAvatar fallback={config.fallback} />
-                <ChatBubbleMessage isLoading />
-              </ChatBubble>
-            </motion.div>
-          )}
-        </ChatMessageList>
-      </ExpandableChatBody>
+            {/* Messages */}
+            <div className="flex-1 overflow-hidden min-h-[250px]">
+              <ChatMessageList smooth>
+                <AnimatePresence>
+                  {messages.map((message) => (
+                    <motion.div
+                      key={message.id}
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ duration: 0.25 }}
+                    >
+                      <ChatBubble
+                        variant={message.sender === "user" ? "sent" : "received"}
+                        layout="ai"
+                      >
+                        {message.sender === "ai" && (
+                          <ChatBubbleAvatar fallback={config.fallback} />
+                        )}
+                        <ChatBubbleMessage variant={message.sender === "user" ? "sent" : "received"}>
+                          {message.content}
+                        </ChatBubbleMessage>
+                      </ChatBubble>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
 
-      <ExpandableChatFooter>
-        <form onSubmit={handleSubmit} className="relative">
-          <div className="flex items-center gap-2 bg-muted rounded-xl px-3 py-2 border border-border/50 focus-within:border-primary/50 transition-colors">
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={animatingPlaceholder || config.placeholder}
-              rows={1}
-              className="flex-1 bg-transparent text-sm resize-none outline-none placeholder:text-muted-foreground/60 min-h-[20px] max-h-[80px]"
-            />
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button
-                type="submit"
-                size="icon"
-                disabled={!input.trim() || isLoading}
-                className="h-8 w-8 rounded-lg shrink-0"
-              >
-                <Send className="h-3.5 w-3.5" />
-              </Button>
-            </motion.div>
-          </div>
-        </form>
-      </ExpandableChatFooter>
-    </ExpandableChat>
+                {isLoading && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                    <ChatBubble variant="received" layout="ai">
+                      <ChatBubbleAvatar fallback={config.fallback} />
+                      <ChatBubbleMessage isLoading />
+                    </ChatBubble>
+                  </motion.div>
+                )}
+              </ChatMessageList>
+            </div>
+
+            {/* Input */}
+            <div className="p-3 border-t border-border">
+              <form onSubmit={handleSubmit} className="relative">
+                <div className="flex items-center gap-2 bg-muted rounded-xl px-3 py-2 border border-border/50 focus-within:border-primary/50 transition-colors">
+                  <textarea
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder={config.placeholder}
+                    rows={1}
+                    className="flex-1 bg-transparent text-sm resize-none outline-none placeholder:text-muted-foreground/60 min-h-[20px] max-h-[80px]"
+                  />
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button type="submit" size="icon" disabled={!input.trim() || isLoading} className="h-8 w-8 rounded-lg shrink-0">
+                      <Send className="h-3.5 w-3.5" />
+                    </Button>
+                  </motion.div>
+                </div>
+              </form>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Morph Panel Toggle (AI Input style) */}
+      {!isOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="cursor-pointer"
+          onClick={() => setIsOpen(true)}
+        >
+          <MorphPanel
+            label={consultantType === "sales" ? "Consultor de Vendas" : "Consultor Financeiro"}
+            placeholder={config.placeholder}
+            onSubmit={(value) => {
+              setIsOpen(true);
+              setTimeout(() => handleSendMessage(value), 300);
+            }}
+          />
+        </motion.div>
+      )}
+    </div>
   );
 };
