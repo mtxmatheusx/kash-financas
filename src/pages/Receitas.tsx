@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { parseAmountToReais } from "@/lib/currency";
+import { CurrencyInput } from "@/components/CurrencyInput";
 
 const formatBRL = (v: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 
@@ -27,6 +27,7 @@ const Receitas: React.FC = () => {
     installments: '2',
     frequency: 'monthly' as 'monthly' | 'yearly',
   });
+  const [amountCents, setAmountCents] = useState(0);
 
   const paidTotal = transactions.filter(t => t.status === 'paid').reduce((s, t) => s + t.amount, 0);
   const pendingTotal = transactions.filter(t => t.status === 'pending').reduce((s, t) => s + t.amount, 0);
@@ -37,7 +38,7 @@ const Receitas: React.FC = () => {
   );
 
   const handleSubmit = () => {
-    const amount = parseAmountToReais(form.amount);
+    const amount = amountCents / 100;
     if (!form.description || !amount) return;
     create({
       type: 'income', amount, description: form.description,
@@ -47,6 +48,7 @@ const Receitas: React.FC = () => {
       ...(form.entry_type === 'recurring' ? { frequency: form.frequency } : {}),
     });
     setForm({ description: '', amount: '', category: CATEGORIES[0], date: new Date().toISOString().slice(0, 10), status: 'paid', entry_type: 'single', installments: '2', frequency: 'monthly' });
+    setAmountCents(0);
     setShowForm(false);
   };
 
@@ -133,7 +135,7 @@ const Receitas: React.FC = () => {
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Valor</label>
-              <Input value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} placeholder="0,00" inputMode="decimal" />
+              <CurrencyInput value={form.amount} onValueChange={(formatted, cents) => { setForm({ ...form, amount: formatted }); setAmountCents(cents); }} />
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Categoria</label>

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { parseAmountToReais } from "@/lib/currency";
+import { CurrencyInput } from "@/components/CurrencyInput";
 
 const formatBRL = (v: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 
@@ -31,6 +31,7 @@ const Despesas: React.FC = () => {
     is_percentage: false,
     percentage: '',
   });
+  const [amountCents, setAmountCents] = useState(0);
 
   const paidTotal = transactions.filter(t => t.status === 'paid').reduce((s, t) => s + t.amount, 0);
   const pendingTotal = transactions.filter(t => t.status === 'pending').reduce((s, t) => s + t.amount, 0);
@@ -47,7 +48,7 @@ const Despesas: React.FC = () => {
       if (!form.description || !pct || pct <= 0) return;
       amount = (totals.income * pct) / 100;
     } else {
-      amount = parseAmountToReais(form.amount);
+      amount = amountCents / 100;
       if (!form.description || !amount) return;
     }
     create({
@@ -60,6 +61,7 @@ const Despesas: React.FC = () => {
       ...(form.entry_type === 'recurring' ? { frequency: form.frequency } : {}),
     });
     setForm({ description: '', amount: '', category: categories[0], date: new Date().toISOString().slice(0, 10), status: 'paid', entry_type: 'single', installments: '2', frequency: 'monthly', is_percentage: false, percentage: '' });
+    setAmountCents(0);
     setShowForm(false);
   };
 
@@ -169,7 +171,7 @@ const Despesas: React.FC = () => {
             ) : (
               <div>
                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Valor</label>
-                <Input value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} placeholder="0,00" inputMode="decimal" />
+                <CurrencyInput value={form.amount} onValueChange={(formatted, cents) => { setForm({ ...form, amount: formatted }); setAmountCents(cents); }} />
               </div>
             )}
             <div>
