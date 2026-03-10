@@ -1,0 +1,1 @@
+UPDATE public.profiles SET subscription_tier = 'premium' WHERE email = 'mtxagenciacriativa@gmail.com';
