@@ -172,7 +172,6 @@ const Despesas: React.FC = () => {
                 <Input value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} placeholder="0,00" inputMode="decimal" />
               </div>
             )}
-            </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Categoria</label>
               <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}
