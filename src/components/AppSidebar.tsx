@@ -68,7 +68,7 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
             animate={{ opacity: 1 }}
             className="ml-3 font-semibold text-sidebar-foreground text-sm"
           >
-            FinControl
+            Kash
           </motion.span>
         )}
       </div>

@@ -94,7 +94,7 @@ const Upgrade: React.FC = () => {
       >
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground">Escolha seu plano</h1>
-          <p className="text-muted-foreground mt-2">Desbloqueie todo o potencial do FinControl</p>
+          <p className="text-muted-foreground mt-2">Desbloqueie todo o potencial do Kash</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
