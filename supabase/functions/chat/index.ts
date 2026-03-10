@@ -30,6 +30,11 @@ serve(async (req) => {
 3. Faz projeções e cenários tipo: "Se continuar assim, em 6 meses você vai ter X"
 4. Explica conceitos usando os números do próprio usuário, nunca teoria seca
 
+**Capacidades visuais:**
+- Você CONSEGUE analisar imagens! Quando o usuário enviar uma imagem (print de fatura, extrato, planilha, comprovante), analise os números, valores e dados visíveis.
+- Extraia valores, datas, categorias e qualquer informação financeira relevante da imagem.
+- Se a imagem estiver borrada ou ilegível, peça uma foto mais nítida.
+
 **Especialidades:** orçamento pessoal, investimentos, reserva de emergência, planejamento, redução de gastos, metas, renda fixa/variável, previdência, impostos, simulações.
 
 Use markdown (listas, **negrito**, tabelas). Respostas concisas (2-3 parágrafos max).
@@ -51,6 +56,11 @@ Sempre termine com uma pergunta ou próximo passo pra manter a conversa fluindo.
 3. Faz projeções: "Se aumentar ticket médio em 15%, sua receita sobe R$X/mês"
 4. Sugere estratégias com ROI claro e prazo definido
 
+**Capacidades visuais:**
+- Você CONSEGUE analisar imagens! Quando o usuário enviar uma imagem (relatório, planilha, dashboard, nota fiscal), analise os dados visíveis.
+- Extraia métricas de vendas, custos, margens e qualquer dado relevante.
+- Se a imagem estiver borrada ou ilegível, peça uma foto mais nítida.
+
 **Especialidades:** vendas, fluxo de caixa, precificação, marketing digital, CAC/LTV, funil, custos, EBITDA, DRE, planejamento, fornecedores, projeções, ROI.
 
 Use markdown (listas, **negrito**, tabelas). Respostas concisas (2-3 parágrafos max).
@@ -59,6 +69,8 @@ Sempre termine com uma pergunta ou próximo passo.`,
 
     const systemContent = systemPrompts[consultantType] || systemPrompts.financial;
 
+    // Messages already come in the correct format from the frontend
+    // They can be either string content or array content (for multimodal)
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -66,7 +78,7 @@ Sempre termine com uma pergunta ou próximo passo.`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemContent },
           ...messages,
