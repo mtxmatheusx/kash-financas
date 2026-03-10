@@ -69,6 +69,8 @@ const Receitas: React.FC = () => {
         </div>
 
         <WhatsAppAlertBanner />
+
+        <div className="grid grid-cols-3 gap-3">
           <div className="rounded-xl border-l-4 border-l-fin-income border border-border bg-card p-3 md:p-4">
             <p className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider">Total</p>
             <p className="text-base md:text-xl font-bold text-foreground mt-1">{formatBRL(totals.income)}</p>
