@@ -13,34 +13,32 @@ const useReferralCapture = () => {
   const [searchParams] = useSearchParams();
   useEffect(() => {
     const ref = searchParams.get("ref");
-    if (ref) {
-      localStorage.setItem("kash_referral_code", ref);
-    }
+    if (ref) localStorage.setItem("kash_referral_code", ref);
   }, [searchParams]);
 };
 
 /* ── Animations ── */
 const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 30 },
+  initial: { opacity: 0, y: 24 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-50px" },
-  transition: { duration: 0.6, delay, ease: "easeOut" as const },
+  viewport: { once: true, margin: "-40px" },
+  transition: { duration: 0.5, delay, ease: "easeOut" as const },
 });
 
-/* ── Particles ── */
+/* ── Particles — fewer on mobile ── */
 const Particles: React.FC = () => (
   <div className="absolute inset-0 overflow-hidden pointer-events-none">
-    {Array.from({ length: 16 }).map((_, i) => (
+    {Array.from({ length: 8 }).map((_, i) => (
       <motion.div
         key={i}
         className="absolute w-1 h-1 rounded-full"
         style={{
           left: `${Math.random() * 100}%`,
           top: `${Math.random() * 100}%`,
-          backgroundColor: i % 3 === 0 ? "hsl(160 100% 50% / 0.35)" : "hsl(217 91% 60% / 0.25)",
+          backgroundColor: i % 3 === 0 ? "hsl(160 100% 50% / 0.3)" : "hsl(217 91% 60% / 0.2)",
         }}
-        animate={{ y: [0, -30 - Math.random() * 40, 0], opacity: [0.1, 0.5, 0.1], scale: [1, 1.8, 1] }}
-        transition={{ duration: 5 + Math.random() * 5, repeat: Infinity, delay: Math.random() * 3, ease: "easeInOut" }}
+        animate={{ y: [0, -25, 0], opacity: [0.1, 0.4, 0.1] }}
+        transition={{ duration: 6 + Math.random() * 4, repeat: Infinity, delay: Math.random() * 3, ease: "easeInOut" }}
       />
     ))}
   </div>
@@ -66,7 +64,42 @@ const WhatsAppIcon: React.FC<{ className?: string; style?: React.CSSProperties }
   </svg>
 );
 
-/* ── iPhone Mockup placeholder ── */
+/* ── Compact WhatsApp Preview (mobile) ── */
+const MobileWhatsAppPreview: React.FC = () => (
+  <motion.div
+    {...fadeUp(0.4)}
+    className="mt-10 mx-auto max-w-sm rounded-2xl border border-[hsl(0,0%,12%)] bg-[hsl(0,0%,4%)] p-4 lg:hidden"
+  >
+    <div className="flex items-center gap-2.5 mb-3">
+      <div className="w-7 h-7 rounded-full bg-[hsl(142,70%,45%)] flex items-center justify-center">
+        <WhatsAppIcon className="w-3.5 h-3.5 text-white" />
+      </div>
+      <div>
+        <p className="text-[11px] font-semibold text-white">Kash Copiloto</p>
+        <p className="text-[9px] text-[hsl(160,100%,50%)]">online</p>
+      </div>
+    </div>
+    <div className="space-y-2">
+      <div className="flex justify-end">
+        <div className="bg-[hsl(142,40%,18%)] rounded-2xl rounded-tr-sm px-3 py-2 max-w-[80%]">
+          <div className="flex items-center gap-1.5 text-[11px] text-[hsl(0,0%,85%)]">
+            <AudioLines className="w-3 h-3 text-[hsl(160,100%,50%)]" />
+            <span>"Gastei 50 de gasolina"</span>
+          </div>
+        </div>
+      </div>
+      <div className="flex justify-start">
+        <div className="bg-[hsl(0,0%,10%)] rounded-2xl rounded-tl-sm px-3 py-2 max-w-[85%]">
+          <p className="text-[11px] text-[hsl(0,0%,85%)] leading-relaxed">
+            ✅ <span className="font-semibold">R$ 50,00</span> → <span className="text-[hsl(160,100%,50%)]">Transporte</span>. 15% acima do mês passado. 📊
+          </p>
+        </div>
+      </div>
+    </div>
+  </motion.div>
+);
+
+/* ── iPhone Mockup (desktop) ── */
 const IPhoneMockup: React.FC = () => (
   <motion.div
     initial={{ opacity: 0, x: 40, rotateY: -8 }}
@@ -75,17 +108,10 @@ const IPhoneMockup: React.FC = () => (
     transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
     className="relative flex items-center justify-center"
   >
-    {/* Glow behind phone */}
-    <div className="absolute w-[280px] h-[400px] sm:w-[320px] sm:h-[500px] rounded-full blur-[80px] bg-[hsl(160,100%,50%)/0.08]" />
-
-    {/* Phone frame */}
-    <div className="relative w-[260px] h-[520px] sm:w-[290px] sm:h-[580px] rounded-[40px] border-2 border-[hsl(0,0%,15%)] bg-[hsl(0,0%,6%)] shadow-2xl shadow-[hsl(0,0%,0%)/0.6] overflow-hidden">
-      {/* Notch */}
+    <div className="absolute w-[320px] h-[500px] rounded-full blur-[80px] bg-[hsl(160,100%,50%)/0.08]" />
+    <div className="relative w-[290px] h-[580px] rounded-[40px] border-2 border-[hsl(0,0%,15%)] bg-[hsl(0,0%,6%)] shadow-2xl shadow-[hsl(0,0%,0%)/0.6] overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120px] h-[28px] bg-[hsl(0,0%,2%)] rounded-b-2xl z-20" />
-
-      {/* Screen content — WhatsApp dark simulation */}
       <div className="absolute inset-[3px] rounded-[37px] overflow-hidden bg-[hsl(200,5%,8%)]">
-        {/* WA header */}
         <div className="bg-[hsl(200,8%,12%)] px-4 pt-10 pb-3 flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-[hsl(160,100%,50%)/0.15] flex items-center justify-center">
             <span className="text-[hsl(160,100%,50%)] text-xs font-bold">K</span>
@@ -95,10 +121,7 @@ const IPhoneMockup: React.FC = () => (
             <p className="text-[9px] text-[hsl(160,100%,50%)]">online</p>
           </div>
         </div>
-
-        {/* Chat bubbles */}
         <div className="p-3 space-y-2.5 mt-2">
-          {/* User audio */}
           <div className="flex justify-end">
             <div className="bg-[hsl(142,40%,18%)] rounded-2xl rounded-tr-sm px-3 py-2 max-w-[85%]">
               <div className="flex items-center gap-2 text-[11px] text-[hsl(0,0%,85%)]">
@@ -108,33 +131,25 @@ const IPhoneMockup: React.FC = () => (
               <p className="text-[8px] text-[hsl(0,0%,50%)] text-right mt-0.5">10:32</p>
             </div>
           </div>
-
-          {/* Bot response */}
           <div className="flex justify-start">
             <div className="bg-[hsl(0,0%,12%)] rounded-2xl rounded-tl-sm px-3 py-2 max-w-[90%]">
               <p className="text-[11px] text-[hsl(0,0%,85%)] leading-relaxed">
-                ✅ <span className="font-semibold">R$ 50,00</span> →{" "}
-                <span className="text-[hsl(160,100%,50%)]">Transporte</span><br />
-                Gasto 15% acima do mês passado nessa categoria. 📊
+                ✅ <span className="font-semibold">R$ 50,00</span> → <span className="text-[hsl(160,100%,50%)]">Transporte</span><br />
+                Gasto 15% acima do mês passado. 📊
               </p>
               <p className="text-[8px] text-[hsl(0,0%,50%)] text-right mt-0.5">10:32</p>
             </div>
           </div>
-
-          {/* User text */}
           <div className="flex justify-end">
             <div className="bg-[hsl(142,40%,18%)] rounded-2xl rounded-tr-sm px-3 py-2 max-w-[80%]">
               <p className="text-[11px] text-[hsl(0,0%,85%)]">Onde posso cortar?</p>
               <p className="text-[8px] text-[hsl(0,0%,50%)] text-right mt-0.5">10:33</p>
             </div>
           </div>
-
-          {/* Bot strategy */}
           <div className="flex justify-start">
             <div className="bg-[hsl(0,0%,12%)] rounded-2xl rounded-tl-sm px-3 py-2 max-w-[90%]">
               <p className="text-[11px] text-[hsl(0,0%,85%)] leading-relaxed">
                 💡 Delivery: R$ 380 (+40%). Cozinhar 3x/semana economiza ~R$ 250/mês.
-                Quer que eu crie uma meta?
               </p>
               <p className="text-[8px] text-[hsl(0,0%,50%)] text-right mt-0.5">10:33</p>
             </div>
@@ -147,41 +162,19 @@ const IPhoneMockup: React.FC = () => (
 
 /* ── Steps data ── */
 const steps = [
-  {
-    num: "01",
-    icon: WhatsAppIcon,
-    isCustomIcon: true,
-    title: "O Gatilho",
-    desc: "Você manda um áudio: \"Gastei 50 reais de gasolina agora\".",
-    accent: "hsl(160 100% 50%)",
-  },
-  {
-    num: "02",
-    icon: Cpu,
-    isCustomIcon: false,
-    title: "A Máquina",
-    desc: "Nossa IA categoriza e atualiza seu dashboard financeiro em milissegundos.",
-    accent: "hsl(217 91% 60%)",
-  },
-  {
-    num: "03",
-    icon: TrendingUp,
-    isCustomIcon: false,
-    title: "O Consultor",
-    desc: "A IA cruza seus dados e sugere onde investir para aumentar suas vendas amanhã.",
-    accent: "hsl(348 100% 64%)",
-  },
+  { num: "01", icon: WhatsAppIcon, isCustomIcon: true, title: "O Gatilho", desc: "Manda um áudio: \"Gastei 50 reais de gasolina agora\".", accent: "hsl(160 100% 50%)" },
+  { num: "02", icon: Cpu, isCustomIcon: false, title: "A Máquina", desc: "Nossa IA categoriza e atualiza seu dashboard em milissegundos.", accent: "hsl(217 91% 60%)" },
+  { num: "03", icon: TrendingUp, isCustomIcon: false, title: "O Consultor", desc: "A IA cruza seus dados e sugere onde investir para vender mais.", accent: "hsl(348 100% 64%)" },
 ];
 
-/* ── Stats ── */
 const stats = [
-  { value: "10k+", label: "Usuários ativos" },
+  { value: "10k+", label: "Usuários" },
   { value: "R$ 2B+", label: "Gerenciados" },
   { value: "99.9%", label: "Uptime" },
   { value: "4.9★", label: "Avaliação" },
 ];
 
-/* ════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════ */
 const Landing: React.FC = () => {
   const { user, loading } = useAuth();
   useReferralCapture();
@@ -200,58 +193,54 @@ const Landing: React.FC = () => {
 
   return (
     <div className="landing-dark noise-texture min-h-screen overflow-x-hidden font-['DM_Sans']">
+
       {/* ═══ NAV ═══ */}
       <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-2xl bg-[hsl(0,0%,2%)/0.85] border-b border-[hsl(0,0%,12%)/0.4]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5 relative z-10">
-            <div className="w-8 h-8 rounded-lg bg-[hsl(160,100%,50%)] flex items-center justify-center shadow-lg shadow-[hsl(160,100%,50%)/0.3]">
-              <span className="text-[hsl(0,0%,2%)] font-extrabold text-sm">K</span>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2 relative z-10">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[hsl(160,100%,50%)] flex items-center justify-center shadow-lg shadow-[hsl(160,100%,50%)/0.3]">
+              <span className="text-[hsl(0,0%,2%)] font-extrabold text-xs sm:text-sm">K</span>
             </div>
-            <span className="font-bold tracking-tight text-white text-lg">Kash</span>
+            <span className="font-bold tracking-tight text-white text-base sm:text-lg">Kash</span>
           </Link>
-          <div className="flex items-center gap-3 relative z-10">
+          <div className="flex items-center gap-2 sm:gap-3 relative z-10">
             <Link to="/login">
-              <Button variant="ghost" size="sm" className="text-[hsl(0,0%,60%)] hover:text-white hover:bg-[hsl(0,0%,10%)]">
+              <Button variant="ghost" size="sm" className="text-[hsl(0,0%,60%)] hover:text-white hover:bg-[hsl(0,0%,10%)] text-xs sm:text-sm px-2 sm:px-3">
                 Entrar
               </Button>
             </Link>
             <Link to={signupLink}>
-              <Button size="sm" className="bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white cta-glow border-0 font-semibold">
-                Ativar Copiloto
-                <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+              <Button size="sm" className="bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white cta-glow border-0 font-semibold text-xs sm:text-sm px-3 sm:px-4">
+                <span className="hidden sm:inline">Ativar Copiloto</span>
+                <span className="sm:hidden">Começar</span>
+                <ArrowRight className="ml-1 h-3 w-3 sm:h-3.5 sm:w-3.5" />
               </Button>
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* ═══ HERO — 50/50 Split ═══ */}
-      <section className="relative pt-24 sm:pt-32 pb-16 sm:pb-24 px-4 sm:px-6 min-h-[92vh] flex items-center">
+      {/* ═══ HERO ═══ */}
+      <section className="relative pt-20 sm:pt-32 pb-12 sm:pb-24 px-4 sm:px-6 min-h-[auto] sm:min-h-[92vh] flex items-center">
         <GridOverlay />
         <Particles />
 
-        {/* Orbs */}
+        {/* Orbs — smaller on mobile */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
-            className="absolute top-10 left-1/4 w-[500px] sm:w-[700px] h-[400px] sm:h-[600px] rounded-full blur-[120px]"
+            className="absolute top-10 left-1/4 w-[300px] sm:w-[700px] h-[250px] sm:h-[600px] rounded-full blur-[80px] sm:blur-[120px]"
             style={{ background: "radial-gradient(circle, hsl(160 100% 50% / 0.07), transparent 70%)" }}
             animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           />
-          <motion.div
-            className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full blur-[100px]"
-            style={{ background: "radial-gradient(circle, hsl(348 100% 64% / 0.05), transparent 70%)" }}
-            animate={{ scale: [1, 1.2, 1] }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-          />
         </div>
 
-        <div className="max-w-6xl mx-auto relative z-10 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div className="max-w-6xl mx-auto relative z-10 grid lg:grid-cols-2 gap-8 lg:gap-16 items-center w-full">
           {/* Left — Copy */}
-          <div>
+          <div className="text-center lg:text-left">
             <motion.div {...fadeUp(0)}>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[hsl(160,100%,50%)/0.2] bg-[hsl(160,100%,50%)/0.05] backdrop-blur-sm text-xs font-semibold text-[hsl(160,100%,50%)] mb-6 neon-box-glow">
-                <WhatsAppIcon className="w-3.5 h-3.5" />
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[hsl(160,100%,50%)/0.2] bg-[hsl(160,100%,50%)/0.05] backdrop-blur-sm text-[11px] font-semibold text-[hsl(160,100%,50%)] mb-5 sm:mb-6 neon-box-glow">
+                <WhatsAppIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 Copiloto por WhatsApp
                 <ChevronRight className="h-3 w-3" />
               </div>
@@ -259,7 +248,7 @@ const Landing: React.FC = () => {
 
             <motion.h1
               {...fadeUp(0.1)}
-              className="text-4xl sm:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.05] mb-5"
+              className="text-[2rem] leading-[1.1] sm:text-5xl xl:text-6xl font-extrabold tracking-tight sm:leading-[1.05] mb-4 sm:mb-5"
             >
               <span className="text-white">O Controle Financeiro</span>
               <br />
@@ -269,30 +258,32 @@ const Landing: React.FC = () => {
 
             <motion.p
               {...fadeUp(0.2)}
-              className="text-base sm:text-lg text-[hsl(0,0%,50%)] max-w-lg mb-8 leading-relaxed"
+              className="text-sm sm:text-lg text-[hsl(0,0%,50%)] max-w-lg mx-auto lg:mx-0 mb-6 sm:mb-8 leading-relaxed"
             >
-              Chega de planilhas abandonadas no segundo mês. Envie um áudio no WhatsApp.
-              A Kash organiza, categoriza e te dá estratégias de vendas para{" "}
+              Chega de planilhas abandonadas. Envie um áudio no WhatsApp.
+              A Kash organiza, categoriza e te dá estratégias para{" "}
               <span className="text-[hsl(160,100%,50%)] font-semibold">lucrar mais</span>.
-              Sem baixar apps. Sem curva de aprendizado.
             </motion.p>
 
-            <motion.div {...fadeUp(0.3)}>
+            <motion.div {...fadeUp(0.3)} className="space-y-3">
               <Link to={signupLink}>
                 <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 15 }}>
-                  <Button size="lg" className="text-base px-8 h-14 bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 cta-glow font-bold w-full sm:w-auto">
-                    <Sparkles className="mr-2 h-5 w-5" />
+                  <Button size="lg" className="text-sm sm:text-base px-6 sm:px-8 h-12 sm:h-14 bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 cta-glow font-bold w-full sm:w-auto">
+                    <Sparkles className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                     Ativar Meu Copiloto (30 Dias Grátis)
                   </Button>
                 </motion.div>
               </Link>
-              <p className="text-xs text-[hsl(0,0%,35%)] mt-3">
-                Apenas R$ 29,90/mês após o teste. Indique um sócio e ganhe +60 dias.
+              <p className="text-[11px] text-[hsl(0,0%,35%)]">
+                R$ 29,90/mês após o teste. Indique um sócio e ganhe +60 dias.
               </p>
             </motion.div>
+
+            {/* Mobile WhatsApp preview */}
+            <MobileWhatsAppPreview />
           </div>
 
-          {/* Right — iPhone Mockup */}
+          {/* Right — Desktop iPhone Mockup */}
           <div className="hidden lg:flex justify-center">
             <IPhoneMockup />
           </div>
@@ -300,70 +291,68 @@ const Landing: React.FC = () => {
       </section>
 
       {/* ═══ STATS ═══ */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6 relative">
+      <section className="py-10 sm:py-16 px-4 sm:px-6 relative">
         <div className="max-w-4xl mx-auto">
-          <motion.p {...fadeUp()} className="text-center text-[hsl(0,0%,35%)] text-[11px] uppercase tracking-[0.25em] mb-8 font-semibold">
+          <motion.p {...fadeUp()} className="text-center text-[hsl(0,0%,35%)] text-[10px] sm:text-[11px] uppercase tracking-[0.25em] mb-6 sm:mb-8 font-semibold">
             Confiado por milhares de brasileiros
           </motion.p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
             {stats.map((s, i) => (
               <motion.div
                 key={s.label}
                 {...fadeUp(i * 0.08)}
-                className="text-center p-5 rounded-2xl border border-[hsl(0,0%,10%)] bg-[hsl(0,0%,4%)] hover:border-[hsl(160,100%,50%)/0.15] transition-all duration-300"
+                className="text-center p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-[hsl(0,0%,10%)] bg-[hsl(0,0%,4%)]"
               >
-                <p className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight font-mono-fin">{s.value}</p>
-                <p className="text-[11px] text-[hsl(0,0%,40%)] mt-1">{s.label}</p>
+                <p className="text-xl sm:text-3xl font-extrabold text-white tracking-tight font-mono-fin">{s.value}</p>
+                <p className="text-[10px] sm:text-[11px] text-[hsl(0,0%,40%)] mt-0.5">{s.label}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══ 3 STEPS — "Controle em 3 Segundos" ═══ */}
-      <section id="como-funciona" className="py-20 sm:py-28 px-4 sm:px-6 relative">
+      {/* ═══ 3 STEPS ═══ */}
+      <section id="como-funciona" className="py-14 sm:py-28 px-4 sm:px-6 relative">
         <Particles />
         <div className="max-w-5xl mx-auto relative z-10">
-          <motion.div {...fadeUp()} className="text-center mb-14 sm:mb-20">
-            <span className="inline-block text-xs font-bold uppercase tracking-[0.3em] text-[hsl(160,100%,50%)] mb-4">
+          <motion.div {...fadeUp()} className="text-center mb-10 sm:mb-20">
+            <span className="inline-block text-[10px] sm:text-xs font-bold uppercase tracking-[0.3em] text-[hsl(160,100%,50%)] mb-3 sm:mb-4">
               Esforço Zero
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
               Controle em 3 Segundos.
             </h2>
           </motion.div>
 
-          <div className="space-y-4 sm:space-y-5">
+          <div className="space-y-3 sm:space-y-5">
             {steps.map((step, i) => (
               <motion.div
                 key={step.title}
-                {...fadeUp(i * 0.12)}
-                whileHover={{ x: 6, transition: { duration: 0.2 } }}
-                className="group relative flex items-start sm:items-center gap-5 sm:gap-6 rounded-2xl border border-[hsl(0,0%,10%)] bg-[hsl(0,0%,3%)] p-5 sm:p-7 hover:border-[hsl(160,100%,50%)/0.15] transition-all duration-300 overflow-hidden"
+                {...fadeUp(i * 0.1)}
+                className="group relative flex items-start gap-4 sm:gap-6 rounded-xl sm:rounded-2xl border border-[hsl(0,0%,10%)] bg-[hsl(0,0%,3%)] p-4 sm:p-7 active:scale-[0.99] sm:hover:border-[hsl(160,100%,50%)/0.15] transition-all duration-300 overflow-hidden"
               >
-                {/* Glow edge */}
                 <div
-                  className="absolute left-0 top-0 bottom-0 w-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  className="absolute left-0 top-0 bottom-0 w-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 hidden sm:block"
                   style={{ background: `linear-gradient(180deg, transparent, ${step.accent}, transparent)` }}
                 />
 
                 <div
-                  className="shrink-0 w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300"
+                  className="shrink-0 w-11 h-11 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl flex items-center justify-center"
                   style={{ backgroundColor: `${step.accent}12` }}
                 >
                   {step.isCustomIcon ? (
-                    <WhatsAppIcon className="w-6 h-6" style={{ color: step.accent } as React.CSSProperties} />
+                    <WhatsAppIcon className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: step.accent } as React.CSSProperties} />
                   ) : (
-                    <step.icon className="w-6 h-6" style={{ color: step.accent }} />
+                    <step.icon className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: step.accent }} />
                   )}
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-1">
-                    <span className="text-[10px] font-mono-fin font-bold text-[hsl(0,0%,22%)] tracking-widest">{step.num}</span>
-                    <h3 className="text-lg font-extrabold text-white">{step.title}</h3>
+                  <div className="flex items-center gap-2 sm:gap-3 mb-0.5 sm:mb-1">
+                    <span className="text-[9px] sm:text-[10px] font-mono-fin font-bold text-[hsl(0,0%,22%)] tracking-widest">{step.num}</span>
+                    <h3 className="text-base sm:text-lg font-extrabold text-white">{step.title}</h3>
                   </div>
-                  <p className="text-sm text-[hsl(0,0%,48%)] leading-relaxed">{step.desc}</p>
+                  <p className="text-xs sm:text-sm text-[hsl(0,0%,48%)] leading-relaxed">{step.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -372,41 +361,40 @@ const Landing: React.FC = () => {
       </section>
 
       {/* ═══ PRICING ═══ */}
-      <section className="py-20 sm:py-28 px-4 sm:px-6 relative">
+      <section className="py-14 sm:py-28 px-4 sm:px-6 relative">
         <GridOverlay />
         <div className="max-w-3xl mx-auto relative z-10">
           <motion.div {...fadeUp()} className="text-center mb-6">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1] mb-4">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1] mb-3 sm:mb-4">
               Quanto custa ter dois consultores?
             </h2>
-            <p className="text-[hsl(0,0%,45%)] text-base sm:text-lg max-w-xl mx-auto mb-2">
-              Consultor financeiro + consultor de vendas ={" "}
-              <span className="line-through text-[hsl(0,0%,30%)]">R$ 5.000/mês</span>
+            <p className="text-[hsl(0,0%,45%)] text-sm sm:text-lg max-w-xl mx-auto mb-1.5">
+              Consultor financeiro + vendas = <span className="line-through text-[hsl(0,0%,30%)]">R$ 5.000/mês</span>
             </p>
-            <p className="text-[hsl(160,100%,50%)] font-bold text-lg">
+            <p className="text-[hsl(160,100%,50%)] font-bold text-base sm:text-lg">
               Com a Kash, a partir de R$ 0.
             </p>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 gap-5 mt-10 sm:mt-14">
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-5 mt-8 sm:mt-14">
             {/* Free */}
-            <motion.div {...fadeUp(0.1)} className="rounded-2xl border border-[hsl(0,0%,10%)] bg-[hsl(0,0%,3%)] p-7 sm:p-8">
-              <h3 className="text-xl font-extrabold text-white mb-1">Gratuito</h3>
-              <p className="text-sm text-[hsl(0,0%,42%)] mb-5">Registre e organize seus gastos</p>
-              <p className="text-5xl font-extrabold text-white mb-6 font-mono-fin">
-                R$ 0<span className="text-sm font-normal text-[hsl(0,0%,35%)]">/mês</span>
+            <motion.div {...fadeUp(0.1)} className="rounded-xl sm:rounded-2xl border border-[hsl(0,0%,10%)] bg-[hsl(0,0%,3%)] p-5 sm:p-8">
+              <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1">Gratuito</h3>
+              <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">Registre e organize seus gastos</p>
+              <p className="text-4xl sm:text-5xl font-extrabold text-white mb-5 sm:mb-6 font-mono-fin">
+                R$ 0<span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">/mês</span>
               </p>
-              <ul className="space-y-3 mb-8">
-                {["Dashboard inteligente", "Controle de receitas e despesas", "Categorização automática", "Registro por WhatsApp"].map(f => (
-                  <li key={f} className="flex items-center gap-2.5 text-sm text-[hsl(0,0%,65%)]">
-                    <Check className="h-4 w-4 text-[hsl(160,100%,50%)] shrink-0" />
+              <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
+                {["Dashboard inteligente", "Receitas e despesas", "Categorização automática", "Registro por WhatsApp"].map(f => (
+                  <li key={f} className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
+                    <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />
                     {f}
                   </li>
                 ))}
               </ul>
               <Link to={signupLink}>
-                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 15 }}>
-                  <Button className="w-full h-13 text-base bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 cta-glow font-bold">
+                <motion.div whileTap={{ scale: 0.97 }}>
+                  <Button className="w-full h-11 sm:h-13 text-sm sm:text-base bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 cta-glow font-bold">
                     Começar Teste de 30 Dias
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -415,33 +403,33 @@ const Landing: React.FC = () => {
             </motion.div>
 
             {/* Premium */}
-            <motion.div {...fadeUp(0.2)} className="relative rounded-2xl overflow-hidden">
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[hsl(160,100%,50%)/0.15] via-[hsl(217,91%,60%)/0.08] to-transparent" />
-              <div className="absolute inset-px rounded-[15px] bg-[hsl(0,0%,3%)]" />
+            <motion.div {...fadeUp(0.2)} className="relative rounded-xl sm:rounded-2xl overflow-hidden">
+              <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[hsl(160,100%,50%)/0.15] via-[hsl(217,91%,60%)/0.08] to-transparent" />
+              <div className="absolute inset-px rounded-[11px] sm:rounded-[15px] bg-[hsl(0,0%,3%)]" />
 
-              <div className="absolute -top-px right-6 bg-[hsl(160,100%,50%)] text-[hsl(0,0%,2%)] text-[10px] font-extrabold px-3 py-1.5 rounded-b-lg shadow-lg shadow-[hsl(160,100%,50%)/0.3] z-10 uppercase tracking-[0.15em]">
+              <div className="absolute -top-px right-5 sm:right-6 bg-[hsl(160,100%,50%)] text-[hsl(0,0%,2%)] text-[9px] sm:text-[10px] font-extrabold px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-b-lg shadow-lg shadow-[hsl(160,100%,50%)/0.3] z-10 uppercase tracking-[0.15em]">
                 Recomendado
               </div>
 
-              <div className="relative p-7 sm:p-8">
-                <h3 className="text-xl font-extrabold text-white mb-1 flex items-center gap-2">
-                  <Crown className="h-5 w-5 text-[hsl(45,100%,60%)]" /> Premium
+              <div className="relative p-5 sm:p-8">
+                <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1 flex items-center gap-2">
+                  <Crown className="h-4 w-4 sm:h-5 sm:w-5 text-[hsl(45,100%,60%)]" /> Premium
                 </h3>
-                <p className="text-sm text-[hsl(0,0%,42%)] mb-5">Consultor de Vendas IA ativado</p>
-                <p className="text-5xl font-extrabold text-white mb-6 font-mono-fin">
-                  R$ 29<span className="text-lg">,90</span>
-                  <span className="text-sm font-normal text-[hsl(0,0%,35%)]">/mês</span>
+                <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">Consultor de Vendas IA ativado</p>
+                <p className="text-4xl sm:text-5xl font-extrabold text-white mb-5 sm:mb-6 font-mono-fin">
+                  R$ 29<span className="text-base sm:text-lg">,90</span>
+                  <span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">/mês</span>
                 </p>
-                <ul className="space-y-3 mb-8">
-                  {["Tudo do gratuito", "Consultor de Vendas IA", "Estratégias personalizadas", "Acompanhamento de investimentos", "Metas e planejamento", "Suporte prioritário"].map(f => (
-                    <li key={f} className="flex items-center gap-2.5 text-sm text-[hsl(0,0%,65%)]">
-                      <Check className="h-4 w-4 text-[hsl(160,100%,50%)] shrink-0" />
+                <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
+                  {["Tudo do gratuito", "Consultor de Vendas IA", "Estratégias personalizadas", "Investimentos e metas", "Suporte prioritário"].map(f => (
+                    <li key={f} className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
+                      <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />
                       {f}
                     </li>
                   ))}
                 </ul>
                 <Link to={signupLink}>
-                  <Button className="w-full h-13 text-base border border-[hsl(160,100%,50%)/0.3] bg-[hsl(160,100%,50%)/0.08] hover:bg-[hsl(160,100%,50%)/0.15] text-[hsl(160,100%,50%)] neon-box-glow font-bold">
+                  <Button className="w-full h-11 sm:h-13 text-sm sm:text-base border border-[hsl(160,100%,50%)/0.3] bg-[hsl(160,100%,50%)/0.08] hover:bg-[hsl(160,100%,50%)/0.15] text-[hsl(160,100%,50%)] neon-box-glow font-bold">
                     <Crown className="h-4 w-4 mr-2" /> Assinar Premium
                   </Button>
                 </Link>
@@ -452,21 +440,21 @@ const Landing: React.FC = () => {
       </section>
 
       {/* ═══ SECURITY ═══ */}
-      <section className="py-20 sm:py-24 px-4 sm:px-6 relative">
+      <section className="py-14 sm:py-24 px-4 sm:px-6 relative">
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.div {...fadeUp()}>
-            <div className="w-14 h-14 rounded-2xl bg-[hsl(160,100%,50%)/0.08] flex items-center justify-center mx-auto mb-6 neon-box-glow">
-              <Shield className="h-7 w-7 text-[hsl(160,100%,50%)]" />
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-[hsl(160,100%,50%)/0.08] flex items-center justify-center mx-auto mb-5 sm:mb-6 neon-box-glow">
+              <Shield className="h-6 w-6 sm:h-7 sm:w-7 text-[hsl(160,100%,50%)]" />
             </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-4">
-              Segurança de nível bancário
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white mb-3 sm:mb-4">
+              Segurança bancária
             </h2>
-            <p className="text-[hsl(0,0%,45%)] text-base sm:text-lg max-w-xl mx-auto mb-8">
-              Criptografia de ponta, infraestrutura enterprise. Seus dados nunca são compartilhados.
+            <p className="text-[hsl(0,0%,45%)] text-sm sm:text-lg max-w-xl mx-auto mb-6 sm:mb-8">
+              Criptografia de ponta. Seus dados nunca são compartilhados.
             </p>
-            <div className="flex flex-wrap justify-center gap-2.5">
+            <div className="flex flex-wrap justify-center gap-2">
               {["AES-256", "2FA", "Dados isolados", "Backups diários"].map(s => (
-                <span key={s} className="px-4 py-2 rounded-full border border-[hsl(0,0%,10%)] bg-[hsl(0,0%,3%)] text-xs font-semibold text-[hsl(0,0%,50%)] hover:border-[hsl(160,100%,50%)/0.15] hover:text-white transition-all duration-300">
+                <span key={s} className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[hsl(0,0%,10%)] bg-[hsl(0,0%,3%)] text-[11px] sm:text-xs font-semibold text-[hsl(0,0%,50%)]">
                   {s}
                 </span>
               ))}
@@ -476,10 +464,10 @@ const Landing: React.FC = () => {
       </section>
 
       {/* ═══ FINAL CTA ═══ */}
-      <section className="py-20 sm:py-28 px-4 sm:px-6">
+      <section className="py-14 sm:py-28 px-4 sm:px-6">
         <motion.div
           {...fadeUp()}
-          className="max-w-3xl mx-auto text-center rounded-3xl p-10 sm:p-16 relative overflow-hidden"
+          className="max-w-3xl mx-auto text-center rounded-2xl sm:rounded-3xl p-8 sm:p-16 relative overflow-hidden"
         >
           <motion.div
             className="absolute inset-0"
@@ -488,24 +476,21 @@ const Landing: React.FC = () => {
             transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
           />
           <div className="absolute inset-0 bg-[hsl(0,0%,2%)/0.7] backdrop-blur-xl" />
-          <div className="absolute inset-px rounded-[23px] border border-[hsl(160,100%,50%)/0.08]" />
+          <div className="absolute inset-px rounded-[15px] sm:rounded-[23px] border border-[hsl(160,100%,50%)/0.08]" />
 
           <div className="relative z-10">
-            <motion.div animate={{ rotate: [0, 5, -5, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="inline-block mb-6">
-              <Zap className="h-10 w-10 text-[hsl(160,100%,50%)]" />
-            </motion.div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">
-              Seu Copiloto Financeiro Está Esperando
+            <Zap className="h-8 w-8 sm:h-10 sm:w-10 text-[hsl(160,100%,50%)] mx-auto mb-5 sm:mb-6" />
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">
+              Seu Copiloto Está Esperando
             </h2>
-            <p className="text-[hsl(0,0%,48%)] text-base sm:text-lg mb-8 max-w-lg mx-auto">
+            <p className="text-[hsl(0,0%,48%)] text-sm sm:text-lg mb-6 sm:mb-8 max-w-lg mx-auto">
               30 dias grátis. Sem cartão. Cancele quando quiser.
             </p>
             <Link to={signupLink}>
-              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 15 }} className="inline-block">
-                <Button size="lg" className="text-base px-8 h-14 bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 cta-glow font-bold">
-                  <Sparkles className="mr-2 h-5 w-5" />
+              <motion.div whileTap={{ scale: 0.97 }} className="inline-block">
+                <Button size="lg" className="text-sm sm:text-base px-6 sm:px-8 h-12 sm:h-14 bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 cta-glow font-bold">
+                  <Sparkles className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                   Ativar Meu Copiloto Grátis
-                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </motion.div>
             </Link>
@@ -514,21 +499,21 @@ const Landing: React.FC = () => {
       </section>
 
       {/* ═══ FOOTER ═══ */}
-      <footer className="border-t border-[hsl(0,0%,7%)] py-10 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-md bg-[hsl(160,100%,50%)] flex items-center justify-center shadow-md shadow-[hsl(160,100%,50%)/0.2]">
-              <span className="text-[hsl(0,0%,2%)] font-extrabold text-xs">K</span>
+      <footer className="border-t border-[hsl(0,0%,7%)] py-8 sm:py-10 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto flex flex-col items-center gap-4 sm:flex-row sm:justify-between sm:gap-6">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-[hsl(160,100%,50%)] flex items-center justify-center">
+              <span className="text-[hsl(0,0%,2%)] font-extrabold text-[10px] sm:text-xs">K</span>
             </div>
             <span className="font-bold text-sm text-white">Kash</span>
           </div>
-          <div className="flex items-center gap-6 text-sm text-[hsl(0,0%,35%)]">
+          <div className="flex items-center gap-5 sm:gap-6 text-xs sm:text-sm text-[hsl(0,0%,35%)]">
             <Link to="/login" className="hover:text-white transition-colors">Entrar</Link>
             <Link to={signupLink} className="hover:text-white transition-colors">Criar conta</Link>
             <Link to="/upgrade" className="hover:text-white transition-colors">Planos</Link>
           </div>
           <p className="text-[10px] text-[hsl(0,0%,25%)]">
-            © {new Date().getFullYear()} Kash. Todos os direitos reservados.
+            © {new Date().getFullYear()} Kash
           </p>
         </div>
       </footer>
