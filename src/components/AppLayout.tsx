@@ -6,11 +6,13 @@ import { MobileNav } from "@/components/MobileNav";
 import { TopBar } from "@/components/TopBar";
 import { FloatingChat } from "@/components/FloatingChat";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const AppLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const isMobile = useIsMobile();
   const location = useLocation();
+  const { isPremium } = useAuth();
 
   return (
     <div className="min-h-screen bg-background">
@@ -33,7 +35,7 @@ export const AppLayout: React.FC = () => {
         </main>
       </motion.div>
 
-      <FloatingChat />
+      {isPremium && <FloatingChat />}
     </div>
   );
 };
