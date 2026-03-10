@@ -7,6 +7,11 @@ interface Attachment {
   preview?: string;
 }
 
+interface MicProps {
+  isListening: boolean;
+  onToggle: () => void;
+}
+
 interface FloatingAiAssistantProps {
   onSend?: (message: string, attachments?: Attachment[]) => void;
   isLoading?: boolean;
@@ -15,6 +20,7 @@ interface FloatingAiAssistantProps {
   subtitle?: string;
   headerBadges?: { label: string; variant: 'primary' | 'accent' }[];
   placeholder?: string;
+  micProps?: MicProps;
 }
 
 const FloatingAiAssistant = ({
