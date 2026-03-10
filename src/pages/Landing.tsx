@@ -290,21 +290,25 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      {/* ═══ STATS ═══ */}
-      <section className="py-10 sm:py-16 px-4 sm:px-6 relative">
-        <div className="max-w-4xl mx-auto">
-          <motion.p {...fadeUp()} className="text-center text-[hsl(0,0%,35%)] text-[10px] sm:text-[11px] uppercase tracking-[0.25em] mb-6 sm:mb-8 font-semibold">
-            Confiado por milhares de brasileiros
+      {/* ═══ TRUST BANNER ═══ */}
+      <section className="py-8 sm:py-12 px-4 sm:px-6 relative">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.p {...fadeUp()} className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-[hsl(0,0%,35%)] font-medium mb-5 sm:mb-6">
+            Infraestrutura de nível bancário, movida a inteligência artificial
           </motion.p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
-            {stats.map((s, i) => (
+          <div className="flex items-center justify-center gap-6 sm:gap-10 flex-wrap">
+            {trustBadges.map((badge, i) => (
               <motion.div
-                key={s.label}
-                {...fadeUp(i * 0.08)}
-                className="text-center p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-[hsl(0,0%,10%)] bg-[hsl(0,0%,4%)]"
+                key={badge.label}
+                {...fadeUp(i * 0.06)}
+                className="flex items-center gap-2 opacity-40"
               >
-                <p className="text-xl sm:text-3xl font-extrabold text-white tracking-tight font-mono-fin">{s.value}</p>
-                <p className="text-[10px] sm:text-[11px] text-[hsl(0,0%,40%)] mt-0.5">{s.label}</p>
+                {badge.isCustom ? (
+                  <WhatsAppIcon className="w-4 h-4 text-[hsl(0,0%,45%)]" />
+                ) : (
+                  <badge.icon className="w-4 h-4 text-[hsl(0,0%,45%)]" />
+                )}
+                <span className="text-[10px] sm:text-[11px] text-[hsl(0,0%,45%)] font-medium whitespace-nowrap">{badge.label}</span>
               </motion.div>
             ))}
           </div>
