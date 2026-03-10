@@ -491,7 +491,7 @@ const Importar: React.FC = () => {
 };
 
 // CSV parser with quote awareness
-function parseCSVLine(line: string): string[] {
+function parseCSVLine(line: string, delimiter: string = ","): string[] {
   const values: string[] = [];
   let current = "";
   let inQuotes = false;
