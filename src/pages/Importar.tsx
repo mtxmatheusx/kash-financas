@@ -61,7 +61,7 @@ function parseDate(value: any): string | null {
       return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
     }
     // DD/MM/YY
-    const dmyShort = trimmed.match(/^(\d{1,2})[/\\-.](\d{1,2})[/\\-.](\d{2})$/);
+    const dmyShort = trimmed.match(/^(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{2})$/);
     if (dmyShort) {
       const [, d, m, y] = dmyShort;
       const fullYear = parseInt(y) > 50 ? `19${y}` : `20${y}`;
