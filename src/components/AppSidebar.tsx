@@ -14,7 +14,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 import type { AccountType } from "@/contexts/AccountContext";
 
-const FREE_PATHS = ["/", "/receitas", "/despesas"];
+const FREE_PATHS = ["/dashboard", "/receitas", "/despesas"];
 
 interface MenuItem {
   path: string;
@@ -24,7 +24,7 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-  { path: "/", label: "Dashboard", icon: LayoutDashboard },
+  { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { path: "/planejamento", label: "Planejamento", icon: Compass },
   { path: "/receitas", label: "Receitas", icon: TrendingUp },
   { path: "/despesas", label: "Despesas", icon: TrendingDown },
