@@ -369,7 +369,44 @@ export const FloatingChat: React.FC = () => {
         </ChatMessageList>
       </div>
 
-      {/* Pending transaction confirmation */}
+      {/* Staged message preview */}
+      {stagedMsg && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mx-3 my-2 rounded-xl border border-primary/30 bg-primary/5 p-3 space-y-2"
+        >
+          <p className="text-[10px] font-semibold text-primary uppercase tracking-wider">Confirmar envio</p>
+
+          {stagedMsg.images.length > 0 && (
+            <div className="flex gap-1.5 flex-wrap">
+              {stagedMsg.images.map((img, i) => (
+                <img key={i} src={img} alt={`Preview ${i + 1}`} className="w-16 h-16 rounded-lg object-cover border border-border/40" />
+              ))}
+            </div>
+          )}
+
+          {stagedMsg.text && (
+            <p className="text-sm text-foreground line-clamp-3">{stagedMsg.text}</p>
+          )}
+
+          <div className="flex gap-2">
+            <button
+              onClick={discardStagedMessage}
+              className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg border border-border/50 text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            >
+              <X className="w-3 h-3" /> Descartar
+            </button>
+            <button
+              onClick={confirmStagedMessage}
+              className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-xs font-medium text-primary-foreground transition-colors"
+              style={{ background: "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(258 60% 52%) 100%)" }}
+            >
+              <Send className="w-3 h-3" /> Enviar
+            </button>
+          </div>
+        </motion.div>
+      )
       {pendingTx && (
         <TransactionConfirmCard
           transaction={pendingTx}
