@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Crown, Lock } from "lucide-react";
+import { Check, Crown, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const freeFeatures = [
@@ -27,7 +28,37 @@ const premiumFeatures = [
 
 const Upgrade: React.FC = () => {
   const navigate = useNavigate();
-  const { isPremium } = useAuth();
+  const { isPremium, subscriptionEnd } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  const handleCheckout = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout");
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao iniciar checkout");
+    }
+    setLoading(false);
+  };
+
+  const handleManage = async () => {
+    setPortalLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("customer-portal");
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao abrir portal");
+    }
+    setPortalLoading(false);
+  };
 
   if (isPremium) {
     return (
@@ -35,9 +66,19 @@ const Upgrade: React.FC = () => {
         <Card className="w-full max-w-md text-center">
           <CardContent className="pt-6">
             <Crown className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-foreground mb-2">Você já é Premium!</h2>
-            <p className="text-muted-foreground mb-4">Aproveite todos os recursos do FinControl.</p>
-            <Button onClick={() => navigate("/")}>Ir para o Dashboard</Button>
+            <h2 className="text-xl font-bold text-foreground mb-2">Você é Premium!</h2>
+            <p className="text-muted-foreground mb-1">Aproveite todos os recursos do FinControl.</p>
+            {subscriptionEnd && (
+              <p className="text-xs text-muted-foreground mb-4">
+                Próxima renovação: {new Date(subscriptionEnd).toLocaleDateString("pt-BR")}
+              </p>
+            )}
+            <div className="flex gap-3 justify-center">
+              <Button onClick={() => navigate("/")}>Ir para o Dashboard</Button>
+              <Button variant="outline" onClick={handleManage} disabled={portalLoading}>
+                {portalLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Gerenciar assinatura"}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -101,9 +142,13 @@ const Upgrade: React.FC = () => {
                   </li>
                 ))}
               </ul>
-              <Button className="w-full mt-6" onClick={() => toast.info("Integração de pagamento em breve!")}>
-                <Crown className="h-4 w-4 mr-2" />
-                Assinar Premium
+              <Button className="w-full mt-6" onClick={handleCheckout} disabled={loading}>
+                {loading ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <Crown className="h-4 w-4 mr-2" />
+                )}
+                {loading ? "Redirecionando..." : "Assinar Premium"}
               </Button>
             </CardContent>
           </Card>
