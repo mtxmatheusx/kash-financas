@@ -18,6 +18,7 @@ const menuItems = [
   { path: "/investimentos", label: "Investimentos", icon: PieChart },
   { path: "/metas", label: "Metas", icon: Target },
   { path: "/mensal", label: "Visão Mensal", icon: CalendarRange },
+  { path: "/dre", label: "DRE", icon: FileText },
 ];
 
 interface Props {
