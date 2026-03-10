@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { PageTransition } from "@/components/PageTransition";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAccount } from "@/contexts/AccountContext";
-import { ArrowUpRight, X, Search, Trash2 } from "lucide-react";
+import { Plus, Search, Trash2, ArrowUpRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
-const formatBRL = (v: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
+const formatBRL = (v: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 
 const CATEGORIES = ['Salário', 'Freelance', 'Vendas', 'Serviços', 'Aluguel', 'Dividendos', 'Outros'];
 
@@ -19,8 +19,9 @@ const Receitas: React.FC = () => {
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
-    description: '', amount: '', category: '',
-    date: '', status: 'paid' as 'paid' | 'pending',
+    description: '', amount: '', category: CATEGORIES[0],
+    date: new Date().toISOString().slice(0, 10),
+    status: 'paid' as 'paid' | 'pending',
     entry_type: 'single' as 'single' | 'recurring',
   });
 
@@ -34,34 +35,29 @@ const Receitas: React.FC = () => {
 
   const handleSubmit = () => {
     const amount = parseFloat(form.amount.replace(',', '.'));
-    if (!form.description || !amount || !form.category || !form.date) return;
+    if (!form.description || !amount) return;
     create({
       type: 'income', amount, description: form.description,
       category: form.category, date: form.date, status: form.status,
       entry_type: form.entry_type, account_type: account.type,
     });
-    setForm({ description: '', amount: '', category: '', date: '', status: 'paid', entry_type: 'single' });
+    setForm({ description: '', amount: '', category: CATEGORIES[0], date: new Date().toISOString().slice(0, 10), status: 'paid', entry_type: 'single' });
     setShowForm(false);
   };
 
   return (
     <PageTransition>
       <div className="space-y-4 md:space-y-6">
-        {/* Header */}
         <div className="space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-xl md:text-2xl font-bold text-foreground">Receitas</h1>
+            <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2">
+              <ArrowUpRight className="w-5 h-5 md:w-6 md:h-6 text-fin-income" /> Receitas
+            </h1>
             <p className="text-xs md:text-sm text-muted-foreground">Gestão de entradas</p>
           </div>
-          {showForm ? (
-            <Button onClick={() => setShowForm(false)} variant="destructive" size="sm" className="gap-2 w-full sm:w-auto">
-              <X className="w-4 h-4" /> Cancelar
-            </Button>
-          ) : (
-            <Button onClick={() => setShowForm(true)} size="sm" className="gap-2 w-full sm:w-auto bg-fin-income hover:bg-fin-income/90 text-white">
-              <ArrowUpRight className="w-4 h-4" /> Nova Receita
-            </Button>
-          )}
+          <Button onClick={() => setShowForm(true)} size="sm" className="gap-2 w-full sm:w-auto">
+            <Plus className="w-4 h-4" /> Nova Receita
+          </Button>
         </div>
 
         {/* Summary Cards */}
@@ -80,66 +76,11 @@ const Receitas: React.FC = () => {
           </div>
         </div>
 
-        {/* Inline Form */}
-        {showForm && (
-          <div className="rounded-xl border border-border bg-card p-4 md:p-6 space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Valor (R$)</label>
-                <Input value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} placeholder="0" inputMode="decimal" className="mt-1" />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Descrição</label>
-                <Input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Ex: Freelance design" className="mt-1" />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Data</label>
-                <Input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} className="mt-1" />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
-              <div>
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Categoria</label>
-                <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}
-                  className="w-full mt-1 rounded-md border border-input bg-background px-3 py-2 text-sm">
-                  <option value="">Selecione</option>
-                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</label>
-                <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as 'paid' | 'pending' })}
-                  className="w-full mt-1 rounded-md border border-input bg-background px-3 py-2 text-sm">
-                  <option value="paid">Recebido</option>
-                  <option value="pending">Pendente</option>
-                </select>
-              </div>
-              <div className="flex flex-col sm:flex-row sm:items-end gap-2">
-                <div className="flex-1">
-                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-                    📅 Tipo de Entrada
-                  </label>
-                  <select value={form.entry_type} onChange={e => setForm({ ...form, entry_type: e.target.value as 'single' | 'recurring' })}
-                    className="w-full mt-1 rounded-md border border-input bg-background px-3 py-2 text-sm">
-                    <option value="single">Entrada Única</option>
-                    <option value="recurring">Recorrente</option>
-                  </select>
-                </div>
-                <Button onClick={handleSubmit} className="gap-2 bg-fin-income hover:bg-fin-income/90 text-white shrink-0">
-                  <ArrowUpRight className="w-4 h-4" /> Salvar Receita
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input placeholder="Buscar receitas..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10 h-9 md:h-10" />
         </div>
 
-        {/* List */}
         <div className="rounded-xl border border-border bg-card enterprise-shadow overflow-hidden">
           {filtered.length > 0 ? (
             <div className="divide-y divide-border">
@@ -161,15 +102,10 @@ const Receitas: React.FC = () => {
                     </button>
                   </div>
                   <div className="flex items-center justify-between mt-1.5 ml-[18px]">
-                    <Badge variant="outline" className={cn(
-                      "text-[10px] h-5",
-                      t.status === 'paid' ? "border-fin-income/30 text-fin-income" : "border-fin-pending/30 text-fin-pending"
-                    )}>
+                    <Badge variant="outline" className={cn("text-[10px] h-5", t.status === 'paid' ? "border-fin-income/30 text-fin-income" : "border-fin-pending/30 text-fin-pending")}>
                       {t.status === 'paid' ? 'Recebido' : 'Pendente'}
                     </Badge>
-                    <span className="font-mono-fin text-sm font-semibold text-fin-income">
-                      + {formatBRL(t.amount)}
-                    </span>
+                    <span className="font-mono-fin text-sm font-semibold text-fin-income">+ {formatBRL(t.amount)}</span>
                   </div>
                 </div>
               ))}
@@ -181,6 +117,53 @@ const Receitas: React.FC = () => {
           )}
         </div>
       </div>
+
+      <Dialog open={showForm} onOpenChange={setShowForm}>
+        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg">
+          <DialogHeader><DialogTitle>Nova Receita</DialogTitle></DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Descrição</label>
+              <Input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Ex: Salário mensal" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Valor</label>
+              <Input value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} placeholder="0,00" inputMode="decimal" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Categoria</label>
+              <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</label>
+              <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as 'paid' | 'pending' })}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                <option value="paid">Recebido</option>
+                <option value="pending">Pendente</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Tipo de Entrada</label>
+              <select value={form.entry_type} onChange={e => setForm({ ...form, entry_type: e.target.value as 'single' | 'recurring' })}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                <option value="single">Entrada Única</option>
+                <option value="recurring">Recorrente</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Data</label>
+              <Input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
+            </div>
+          </div>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => setShowForm(false)} className="w-full sm:w-auto">Cancelar</Button>
+            <Button onClick={handleSubmit} className="w-full sm:w-auto">Salvar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </PageTransition>
   );
 };
