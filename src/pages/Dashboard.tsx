@@ -70,7 +70,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className="space-y-5">
+      <div className="space-y-3 md:space-y-5">
         {/* Header */}
         <motion.div {...fadeIn(0)} className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -84,7 +84,7 @@ const Dashboard: React.FC = () => {
 
         {/* KPIs */}
         <motion.div
-          className="grid grid-cols-2 lg:grid-cols-4 gap-3"
+          className="grid grid-cols-2 gap-2.5 md:gap-3 lg:grid-cols-4"
           variants={staggerContainer}
           initial="initial"
           animate="animate"
@@ -100,7 +100,7 @@ const Dashboard: React.FC = () => {
         </motion.div>
 
         {/* Charts - cockpit style */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 md:gap-3">
           <motion.div
             {...slideUp(0.15)}
             className="rounded-xl border border-border bg-card p-4 cockpit-glow"

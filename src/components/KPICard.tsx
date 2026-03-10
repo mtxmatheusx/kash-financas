@@ -17,7 +17,7 @@ export const KPICard: React.FC<KPICardProps> = ({ title, value, subtitle, icon: 
   <motion.div
     variants={staggerItem}
     whileHover={{ y: -2, transition: { duration: 0.15 } }}
-    className="rounded-xl border border-border bg-card p-4 cockpit-glow hover:border-primary/20 transition-all duration-200"
+    className="rounded-xl border border-border bg-card p-3 md:p-4 cockpit-glow hover:border-primary/20 transition-all duration-200"
   >
     <div className="flex items-start justify-between mb-2.5">
       <motion.div
@@ -42,7 +42,7 @@ export const KPICard: React.FC<KPICardProps> = ({ title, value, subtitle, icon: 
     </div>
     <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-0.5">{title}</p>
     <motion.p
-      className="text-lg font-bold font-display text-card-foreground tracking-tight"
+      className="text-base md:text-lg font-bold font-display text-card-foreground tracking-tight"
       initial={{ opacity: 0, y: 3 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1, duration: 0.25 }}
