@@ -60,7 +60,7 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
       {/* Logo */}
       <div className="h-16 flex items-center px-4 border-b border-sidebar-border">
         <div className="w-8 h-8 rounded-lg bg-sidebar-primary flex items-center justify-center">
-          <span className="text-sidebar-primary-foreground font-bold text-sm">F</span>
+          <span className="text-sidebar-primary-foreground font-bold text-sm">K</span>
         </div>
         {!collapsed && (
           <motion.span
@@ -68,7 +68,7 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
             animate={{ opacity: 1 }}
             className="ml-3 font-semibold text-sidebar-foreground text-sm"
           >
-            FinControl
+            Kash
           </motion.span>
         )}
       </div>
