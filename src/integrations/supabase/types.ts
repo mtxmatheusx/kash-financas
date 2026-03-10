@@ -14,6 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
+      goals: {
+        Row: {
+          account_type: Database["public"]["Enums"]["account_type"]
+          created_at: string
+          current_amount: number
+          deadline: string
+          id: string
+          name: string
+          target_amount: number
+          user_id: string
+        }
+        Insert: {
+          account_type?: Database["public"]["Enums"]["account_type"]
+          created_at?: string
+          current_amount?: number
+          deadline?: string
+          id?: string
+          name?: string
+          target_amount?: number
+          user_id: string
+        }
+        Update: {
+          account_type?: Database["public"]["Enums"]["account_type"]
+          created_at?: string
+          current_amount?: number
+          deadline?: string
+          id?: string
+          name?: string
+          target_amount?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      investments: {
+        Row: {
+          account_type: Database["public"]["Enums"]["account_type"]
+          amount: number
+          created_at: string
+          current_value: number
+          date: string
+          id: string
+          name: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          account_type?: Database["public"]["Enums"]["account_type"]
+          amount?: number
+          created_at?: string
+          current_value?: number
+          date?: string
+          id?: string
+          name?: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          account_type?: Database["public"]["Enums"]["account_type"]
+          amount?: number
+          created_at?: string
+          current_value?: number
+          date?: string
+          id?: string
+          name?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -21,6 +90,9 @@ export type Database = {
           display_name: string | null
           email: string | null
           id: string
+          preferred_account_type:
+            | Database["public"]["Enums"]["account_type"]
+            | null
           referral_code: string | null
           referred_by: string | null
           subscription_tier: Database["public"]["Enums"]["subscription_tier"]
@@ -34,6 +106,9 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           id?: string
+          preferred_account_type?:
+            | Database["public"]["Enums"]["account_type"]
+            | null
           referral_code?: string | null
           referred_by?: string | null
           subscription_tier?: Database["public"]["Enums"]["subscription_tier"]
@@ -47,6 +122,9 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           id?: string
+          preferred_account_type?:
+            | Database["public"]["Enums"]["account_type"]
+            | null
           referral_code?: string | null
           referred_by?: string | null
           subscription_tier?: Database["public"]["Enums"]["subscription_tier"]
@@ -63,6 +141,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      transactions: {
+        Row: {
+          account_type: Database["public"]["Enums"]["account_type"]
+          amount: number
+          category: string
+          created_at: string
+          date: string
+          description: string
+          entry_type: Database["public"]["Enums"]["entry_type"] | null
+          frequency: Database["public"]["Enums"]["frequency_type"] | null
+          id: string
+          installments: number | null
+          is_percentage: boolean | null
+          percentage: number | null
+          status: Database["public"]["Enums"]["transaction_status"]
+          type: Database["public"]["Enums"]["transaction_type"]
+          user_id: string
+        }
+        Insert: {
+          account_type?: Database["public"]["Enums"]["account_type"]
+          amount?: number
+          category?: string
+          created_at?: string
+          date?: string
+          description?: string
+          entry_type?: Database["public"]["Enums"]["entry_type"] | null
+          frequency?: Database["public"]["Enums"]["frequency_type"] | null
+          id?: string
+          installments?: number | null
+          is_percentage?: boolean | null
+          percentage?: number | null
+          status?: Database["public"]["Enums"]["transaction_status"]
+          type: Database["public"]["Enums"]["transaction_type"]
+          user_id: string
+        }
+        Update: {
+          account_type?: Database["public"]["Enums"]["account_type"]
+          amount?: number
+          category?: string
+          created_at?: string
+          date?: string
+          description?: string
+          entry_type?: Database["public"]["Enums"]["entry_type"] | null
+          frequency?: Database["public"]["Enums"]["frequency_type"] | null
+          id?: string
+          installments?: number | null
+          is_percentage?: boolean | null
+          percentage?: number | null
+          status?: Database["public"]["Enums"]["transaction_status"]
+          type?: Database["public"]["Enums"]["transaction_type"]
+          user_id?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
@@ -101,8 +233,13 @@ export type Database = {
       }
     }
     Enums: {
+      account_type: "personal" | "business"
       app_role: "admin" | "moderator" | "user"
+      entry_type: "single" | "installment" | "recurring"
+      frequency_type: "monthly" | "yearly"
       subscription_tier: "free" | "premium"
+      transaction_status: "paid" | "pending"
+      transaction_type: "income" | "expense"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -230,8 +367,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      account_type: ["personal", "business"],
       app_role: ["admin", "moderator", "user"],
+      entry_type: ["single", "installment", "recurring"],
+      frequency_type: ["monthly", "yearly"],
       subscription_tier: ["free", "premium"],
+      transaction_status: ["paid", "pending"],
+      transaction_type: ["income", "expense"],
     },
   },
 } as const
