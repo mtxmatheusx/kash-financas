@@ -64,7 +64,11 @@ serve(async (req) => {
       await supabaseClient.from("profiles").update({ subscription_tier: "premium" }).eq("user_id", user.id);
     } else {
       logStep("No active subscription");
-      await supabaseClient.from("profiles").update({ subscription_tier: "free" }).eq("user_id", user.id);
+      const { data: profileData2 } = await supabaseClient.from("profiles").select("trial_end").eq("user_id", user.id).single();
+      const hasActiveTrial2 = profileData2?.trial_end && new Date(profileData2.trial_end) > new Date();
+      if (!hasActiveTrial2) {
+        await supabaseClient.from("profiles").update({ subscription_tier: "free" }).eq("user_id", user.id);
+      }
     }
 
     return new Response(JSON.stringify({
