@@ -8,6 +8,7 @@ import { AccountProvider } from "@/contexts/AccountContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AppLayout } from "@/components/AppLayout";
+import Landing from "@/pages/Landing";
 import Dashboard from "@/pages/Dashboard";
 import Receitas from "@/pages/Receitas";
 import Despesas from "@/pages/Despesas";
@@ -27,8 +28,6 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Free pages: Dashboard, Receitas, Despesas
-// Premium pages: everything else
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
@@ -40,6 +39,7 @@ const App = () => (
             <BrowserRouter>
               <Routes>
                 {/* Public routes */}
+                <Route path="/" element={<Landing />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -49,7 +49,7 @@ const App = () => (
                 {/* Protected routes */}
                 <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
                   {/* Free tier */}
-                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/receitas" element={<Receitas />} />
                   <Route path="/despesas" element={<Despesas />} />
 
