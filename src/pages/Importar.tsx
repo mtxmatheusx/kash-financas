@@ -515,6 +515,55 @@ const Importar: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {/* Reset imported data */}
+            <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-5">
+              <div className="flex items-start gap-3">
+                <Trash2 className="w-5 h-5 text-destructive mt-0.5 shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-foreground">Resetar dados importados</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 mb-3">
+                    Remove todas as transações, investimentos e metas da conta atual. Esta ação não pode ser desfeita.
+                  </p>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" size="sm" className="gap-2">
+                        <Trash2 className="w-3.5 h-3.5" /> Resetar todos os dados
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Isso removerá permanentemente todas as transações, investimentos e metas da conta <strong>{account.type === "personal" ? "Pessoal" : "Empresarial"}</strong>. Esta ação não pode ser desfeita.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          onClick={() => {
+                            const keys = ['fincontrol-transactions', 'fincontrol-investments', 'fincontrol-goals'];
+                            const currentAccount = account.type;
+                            keys.forEach(key => {
+                              try {
+                                const data = JSON.parse(localStorage.getItem(key) || '[]');
+                                const filtered = data.filter((item: any) => item.account_type !== currentAccount);
+                                localStorage.setItem(key, JSON.stringify(filtered));
+                              } catch { localStorage.setItem(key, '[]'); }
+                            });
+                            toast.success('Todos os dados da conta foram resetados. Recarregue a página para ver as mudanças.');
+                            setTimeout(() => window.location.reload(), 1000);
+                          }}
+                        >
+                          Sim, resetar tudo
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
