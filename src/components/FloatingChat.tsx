@@ -1,6 +1,7 @@
-import React, { useState, FormEvent, useEffect } from "react";
-import { Send, Bot, TrendingUp, Sparkles, X, MessageCircle } from "lucide-react";
+import React, { useState, FormEvent, useRef, useEffect } from "react";
+import { Send, Bot, TrendingUp, Sparkles, X, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import ReactMarkdown from "react-markdown";
 import {
   ChatBubble,
   ChatBubbleAvatar,
@@ -11,99 +12,118 @@ import { Button } from "@/components/ui/button";
 import { MorphPanel } from "@/components/ui/ai-input";
 import { useAccount } from "@/contexts/AccountContext";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 type ConsultantType = "financial" | "sales";
+type Msg = { role: "user" | "assistant"; content: string };
 
-interface Message {
-  id: number;
-  content: string;
-  sender: "user" | "ai";
-}
+const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
 const consultantConfig = {
   financial: {
     label: "Consultor Financeiro",
     shortLabel: "Financeiro",
-    subtitle: "Dicas para suas finanças",
+    subtitle: "IA para suas finanças",
     icon: Bot,
     fallback: "CF",
     placeholder: "Pergunte sobre investimentos, metas, orçamento...",
-    greeting: "Olá! Sou seu consultor financeiro. Como posso te ajudar a organizar suas finanças hoje?",
-    orbTones: {
-      base: "oklch(95% 0.02 264.695)",
-      accent1: "oklch(75% 0.15 145)",
-      accent2: "oklch(80% 0.12 200)",
-      accent3: "oklch(78% 0.14 170)",
-    },
-    tips: [
-      "Uma boa regra é a 50/30/20: 50% para necessidades, 30% para desejos e 20% para poupança/investimentos.",
-      "Antes de investir, monte sua reserva de emergência equivalente a 6 meses de despesas fixas.",
-      "Revise suas assinaturas mensais — muitas vezes pagamos por serviços que não usamos.",
-      "Considere diversificar seus investimentos entre renda fixa e variável conforme seu perfil de risco.",
-      "Defina metas financeiras SMART: Específicas, Mensuráveis, Atingíveis, Relevantes e com Prazo.",
-      "Acompanhe seus gastos diariamente. Pequenos gastos recorrentes podem representar um grande valor ao final do mês.",
-    ],
+    greeting: "Olá! Sou seu consultor financeiro com IA. Como posso te ajudar hoje?",
   },
   sales: {
     label: "Consultor de Vendas",
     shortLabel: "Vendas",
-    subtitle: "Estratégias para seu negócio",
+    subtitle: "IA para seu negócio",
     icon: TrendingUp,
     fallback: "CV",
     placeholder: "Pergunte sobre vendas, custos, estratégias...",
-    greeting: "Olá! Sou seu consultor de vendas. Como posso ajudar a impulsionar seu negócio hoje?",
-    orbTones: {
-      base: "oklch(95% 0.02 264.695)",
-      accent1: "oklch(75% 0.15 350)",
-      accent2: "oklch(80% 0.12 280)",
-      accent3: "oklch(78% 0.14 310)",
-    },
-    tips: [
-      "Monitore seu fluxo de caixa semanalmente para antecipar períodos de baixa liquidez.",
-      "Invista em marketing digital — o CAC tende a ser menor que no marketing tradicional.",
-      "Considere implementar upselling e cross-selling para aumentar o ticket médio.",
-      "Analise sua margem EBITDA regularmente — ela mostra a real eficiência operacional.",
-      "Diversifique sua base de clientes. Nenhum cliente deveria representar mais de 20% da receita.",
-      "Crie um funil de vendas bem definido e acompanhe as taxas de conversão.",
-      "Revise periodicamente seus custos fixos e busque renegociar contratos com fornecedores.",
-    ],
+    greeting: "Olá! Sou seu consultor de vendas com IA. Como posso ajudar seu negócio hoje?",
   },
 };
 
-function getAIResponse(message: string, type: ConsultantType): string {
-  const config = consultantConfig[type];
-  const lower = message.toLowerCase();
+async function streamChat({
+  messages,
+  consultantType,
+  onDelta,
+  onDone,
+  onError,
+  signal,
+}: {
+  messages: Msg[];
+  consultantType: ConsultantType;
+  onDelta: (text: string) => void;
+  onDone: () => void;
+  onError: (err: string) => void;
+  signal?: AbortSignal;
+}) {
+  const resp = await fetch(CHAT_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+    },
+    body: JSON.stringify({ messages, consultantType }),
+    signal,
+  });
 
-  if (lower.includes("reserva") || lower.includes("emergência")) {
-    return type === "sales"
-      ? "Para empresas, recomendo manter uma reserva de capital de giro equivalente a pelo menos 3 meses de custos operacionais fixos."
-      : "A reserva de emergência ideal é de 6 a 12 meses das suas despesas fixas mensais. Comece com CDB com liquidez diária ou Tesouro Selic.";
-  }
-  if (lower.includes("investir") || lower.includes("investimento")) {
-    return type === "sales"
-      ? "Para o caixa da empresa, considere CDBs de curto prazo e fundos DI. Para crescimento, reinvista no negócio focando em áreas com maior ROI."
-      : "Para começar a investir, primeiro defina seu perfil (conservador, moderado ou arrojado). Renda fixa é um bom ponto de partida.";
-  }
-  if (lower.includes("venda") || lower.includes("faturamento") || lower.includes("receita")) {
-    return type === "sales"
-      ? "Para aumentar o faturamento, foque em: 1) Retenção de clientes atuais, 2) Aumento do ticket médio via upsell, 3) Expansão para novos canais de venda."
-      : "Para aumentar sua renda, considere: renda extra com freelancing, investimentos que geram renda passiva, ou desenvolvimento de novas habilidades.";
-  }
-  if (lower.includes("custo") || lower.includes("despesa") || lower.includes("gasto")) {
-    return type === "sales"
-      ? "Analise seus custos usando a classificação ABC: foque nos 20% de itens que representam 80% dos custos. Renegocie contratos e busque alternativas."
-      : "Categorize seus gastos e identifique onde cortar. Gastos com alimentação fora e transporte costumam ter maior margem de economia.";
-  }
-  if (lower.includes("meta") || lower.includes("objetivo") || lower.includes("planej")) {
-    return type === "sales"
-      ? "Defina metas de vendas mensais, trimestrais e anuais. Use KPIs como taxa de conversão, CAC, LTV e margem de contribuição."
-      : "Use o método SMART para suas metas financeiras. Ex: 'Economizar R$ 10.000 em 12 meses investindo R$ 834/mês em renda fixa'.";
-  }
-  if (lower.includes("olá") || lower.includes("oi") || lower.includes("boa")) {
-    return config.greeting;
+  if (!resp.ok) {
+    const data = await resp.json().catch(() => ({}));
+    onError(data.error || "Erro ao conectar com IA");
+    return;
   }
 
-  return config.tips[Math.floor(Math.random() * config.tips.length)];
+  if (!resp.body) { onError("Sem resposta"); return; }
+
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let textBuffer = "";
+  let streamDone = false;
+
+  while (!streamDone) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    textBuffer += decoder.decode(value, { stream: true });
+
+    let newlineIndex: number;
+    while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
+      let line = textBuffer.slice(0, newlineIndex);
+      textBuffer = textBuffer.slice(newlineIndex + 1);
+
+      if (line.endsWith("\r")) line = line.slice(0, -1);
+      if (line.startsWith(":") || line.trim() === "") continue;
+      if (!line.startsWith("data: ")) continue;
+
+      const jsonStr = line.slice(6).trim();
+      if (jsonStr === "[DONE]") { streamDone = true; break; }
+
+      try {
+        const parsed = JSON.parse(jsonStr);
+        const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+        if (content) onDelta(content);
+      } catch {
+        textBuffer = line + "\n" + textBuffer;
+        break;
+      }
+    }
+  }
+
+  // Final flush
+  if (textBuffer.trim()) {
+    for (let raw of textBuffer.split("\n")) {
+      if (!raw) continue;
+      if (raw.endsWith("\r")) raw = raw.slice(0, -1);
+      if (raw.startsWith(":") || raw.trim() === "") continue;
+      if (!raw.startsWith("data: ")) continue;
+      const jsonStr = raw.slice(6).trim();
+      if (jsonStr === "[DONE]") continue;
+      try {
+        const parsed = JSON.parse(jsonStr);
+        const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+        if (content) onDelta(content);
+      } catch { /* ignore */ }
+    }
+  }
+
+  onDone();
 }
 
 export const FloatingChat: React.FC = () => {
@@ -115,44 +135,66 @@ export const FloatingChat: React.FC = () => {
   const config = consultantConfig[consultantType];
   const ConsultantIcon = config.icon;
 
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 1, content: config.greeting, sender: "ai" },
+  const [messages, setMessages] = useState<Msg[]>([
+    { role: "assistant", content: config.greeting },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
 
   const switchConsultant = (type: ConsultantType) => {
     if (type === consultantType) return;
+    abortRef.current?.abort();
     setConsultantType(type);
-    setMessages([
-      { id: 1, content: consultantConfig[type].greeting, sender: "ai" },
-    ]);
+    setMessages([{ role: "assistant", content: consultantConfig[type].greeting }]);
   };
 
-  const handleSendMessage = (value: string) => {
-    const userMessage = value.trim();
-    if (!userMessage) return;
+  const sendMessage = async (userText: string) => {
+    if (!userText.trim() || isLoading) return;
 
-    setMessages((prev) => [
-      ...prev,
-      { id: prev.length + 1, content: userMessage, sender: "user" },
-    ]);
+    const userMsg: Msg = { role: "user", content: userText.trim() };
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
     setIsLoading(true);
 
-    setTimeout(() => {
-      const response = getAIResponse(userMessage, consultantType);
-      setMessages((prev) => [
-        ...prev,
-        { id: prev.length + 1, content: response, sender: "ai" },
-      ]);
+    const controller = new AbortController();
+    abortRef.current = controller;
+    let assistantSoFar = "";
+
+    try {
+      await streamChat({
+        messages: updatedMessages,
+        consultantType,
+        signal: controller.signal,
+        onDelta: (chunk) => {
+          assistantSoFar += chunk;
+          const current = assistantSoFar;
+          setMessages((prev) => {
+            const last = prev[prev.length - 1];
+            if (last?.role === "assistant" && prev.length > updatedMessages.length) {
+              return prev.map((m, i) => i === prev.length - 1 ? { ...m, content: current } : m);
+            }
+            return [...prev, { role: "assistant", content: current }];
+          });
+        },
+        onDone: () => setIsLoading(false),
+        onError: (err) => {
+          toast.error(err);
+          setIsLoading(false);
+        },
+      });
+    } catch (e: any) {
+      if (e.name !== "AbortError") {
+        toast.error("Erro ao conectar com o consultor IA");
+      }
       setIsLoading(false);
-    }, 800);
+    }
   };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
-    handleSendMessage(input);
+    sendMessage(input);
     setInput("");
   };
 
@@ -165,7 +207,6 @@ export const FloatingChat: React.FC = () => {
 
   return (
     <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
-      {/* Chat Panel */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -207,8 +248,8 @@ export const FloatingChat: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1">
-                    <Sparkles className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-[10px] text-muted-foreground font-medium">IA</span>
+                    <Sparkles className="h-3 w-3 text-primary" />
+                    <span className="text-[10px] text-primary font-medium">IA</span>
                   </div>
                   <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setIsOpen(false)}>
                     <X className="h-4 w-4" />
@@ -227,9 +268,7 @@ export const FloatingChat: React.FC = () => {
                       onClick={() => switchConsultant(type)}
                       className={cn(
                         "relative flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition-colors",
-                        isActive
-                          ? "text-primary-foreground"
-                          : "text-muted-foreground hover:text-foreground"
+                        isActive ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                       )}
                     >
                       {isActive && (
@@ -253,29 +292,35 @@ export const FloatingChat: React.FC = () => {
             <div className="flex-1 overflow-hidden min-h-[250px]">
               <ChatMessageList smooth>
                 <AnimatePresence>
-                  {messages.map((message) => (
+                  {messages.map((message, index) => (
                     <motion.div
-                      key={message.id}
+                      key={index}
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       transition={{ duration: 0.25 }}
                     >
                       <ChatBubble
-                        variant={message.sender === "user" ? "sent" : "received"}
+                        variant={message.role === "user" ? "sent" : "received"}
                         layout="ai"
                       >
-                        {message.sender === "ai" && (
+                        {message.role === "assistant" && (
                           <ChatBubbleAvatar fallback={config.fallback} />
                         )}
-                        <ChatBubbleMessage variant={message.sender === "user" ? "sent" : "received"}>
-                          {message.content}
+                        <ChatBubbleMessage variant={message.role === "user" ? "sent" : "received"}>
+                          {message.role === "assistant" ? (
+                            <div className="prose prose-sm dark:prose-invert max-w-none text-sm [&>p]:mb-2 [&>ul]:mb-2 [&>ol]:mb-2">
+                              <ReactMarkdown>{message.content}</ReactMarkdown>
+                            </div>
+                          ) : (
+                            message.content
+                          )}
                         </ChatBubbleMessage>
                       </ChatBubble>
                     </motion.div>
                   ))}
                 </AnimatePresence>
 
-                {isLoading && (
+                {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                     <ChatBubble variant="received" layout="ai">
                       <ChatBubbleAvatar fallback={config.fallback} />
@@ -300,7 +345,7 @@ export const FloatingChat: React.FC = () => {
                   />
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                     <Button type="submit" size="icon" disabled={!input.trim() || isLoading} className="h-8 w-8 rounded-lg shrink-0">
-                      <Send className="h-3.5 w-3.5" />
+                      {isLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
                     </Button>
                   </motion.div>
                 </div>
@@ -310,7 +355,7 @@ export const FloatingChat: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Morph Panel Toggle (AI Input style) */}
+      {/* Toggle Button */}
       {!isOpen && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -323,7 +368,7 @@ export const FloatingChat: React.FC = () => {
             placeholder={config.placeholder}
             onSubmit={(value) => {
               setIsOpen(true);
-              setTimeout(() => handleSendMessage(value), 300);
+              setTimeout(() => sendMessage(value), 300);
             }}
           />
         </motion.div>
