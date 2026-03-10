@@ -14,11 +14,13 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 import type { AccountType } from "@/contexts/AccountContext";
 
+const FREE_PATHS = ["/", "/receitas", "/despesas"];
+
 interface MenuItem {
   path: string;
   label: string;
   icon: React.ElementType;
-  account?: AccountType; // undefined = both
+  account?: AccountType;
 }
 
 const menuItems: MenuItem[] = [
@@ -32,6 +34,7 @@ const menuItems: MenuItem[] = [
   { path: "/dre", label: "DRE", icon: FileText, account: "business" },
   { path: "/ebitda", label: "EBITDA", icon: Calculator, account: "business" },
   { path: "/importar", label: "Importar", icon: Upload },
+];
 ];
 
 interface Props {
