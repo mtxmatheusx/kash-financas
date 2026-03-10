@@ -20,6 +20,7 @@ const menuItems = [
   { path: "/mensal", label: "Visão Mensal", icon: CalendarRange },
   { path: "/dre", label: "DRE", icon: FileText },
   { path: "/ebitda", label: "EBITDA", icon: Calculator },
+  { path: "/importar", label: "Importar", icon: Upload },
 ];
 
 interface Props {
