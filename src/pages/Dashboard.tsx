@@ -124,7 +124,7 @@ const Dashboard: React.FC = () => {
                   <XAxis type="number" tick={{ fill: 'hsl(220, 9%, 46%)' }} tickFormatter={v => `${(v/1000).toFixed(0)}k`} />
                   <YAxis dataKey="name" type="category" tick={{ fill: 'hsl(220, 9%, 46%)', fontSize: 12 }} width={100} />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="value" name="Total" fill="hsl(217, 91%, 60%)" radius={[0, 4, 4, 0]} />
+                  <Bar dataKey="value" name="Total" fill="hsl(217, 91%, 60%)" radius={[0, 4, 4, 0]} animationBegin={200} animationDuration={1000} animationEasing="ease-out" />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
