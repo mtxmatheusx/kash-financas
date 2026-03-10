@@ -1,6 +1,6 @@
-import React, { useState, FormEvent, useRef, useEffect } from "react";
-import { Send, Bot, TrendingUp, Sparkles, X, Loader2 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, FormEvent, useRef } from "react";
+import { Bot, TrendingUp, Sparkles, Loader2 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import {
   ChatBubble,
@@ -8,8 +8,7 @@ import {
   ChatBubbleMessage,
 } from "@/components/ui/chat-bubble";
 import { ChatMessageList } from "@/components/ui/chat-message-list";
-import { Button } from "@/components/ui/button";
-import { MorphPanel } from "@/components/ui/ai-input";
+import { FloatingAiAssistant } from "@/components/ui/glowing-ai-chat-assistant";
 import { useAccount } from "@/contexts/AccountContext";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -106,7 +105,6 @@ async function streamChat({
     }
   }
 
-  // Final flush
   if (textBuffer.trim()) {
     for (let raw of textBuffer.split("\n")) {
       if (!raw) continue;
@@ -128,17 +126,14 @@ async function streamChat({
 
 export const FloatingChat: React.FC = () => {
   const { account } = useAccount();
-  const [isOpen, setIsOpen] = useState(false);
   const [consultantType, setConsultantType] = useState<ConsultantType>(
     account.type === "business" ? "sales" : "financial"
   );
   const config = consultantConfig[consultantType];
-  const ConsultantIcon = config.icon;
 
   const [messages, setMessages] = useState<Msg[]>([
     { role: "assistant", content: config.greeting },
   ]);
-  const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -191,188 +186,94 @@ export const FloatingChat: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (!input.trim()) return;
-    sendMessage(input);
-    setInput("");
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit(e as unknown as FormEvent);
-    }
-  };
-
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="w-[380px] max-h-[520px] bg-background border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden"
-          >
-            {/* Header */}
-            <div className="p-4 border-b border-border">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2.5">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={consultantType}
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ scale: 0.8, opacity: 0 }}
-                      className="h-9 w-9 rounded-full bg-primary flex items-center justify-center"
-                    >
-                      <ConsultantIcon className="h-4 w-4 text-primary-foreground" />
-                    </motion.div>
-                  </AnimatePresence>
-                  <div>
-                    <AnimatePresence mode="wait">
-                      <motion.p
-                        key={consultantType}
-                        initial={{ y: -6, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: 6, opacity: 0 }}
-                        className="text-sm font-semibold text-foreground"
-                      >
-                        {config.label}
-                      </motion.p>
-                    </AnimatePresence>
-                    <p className="text-xs text-muted-foreground">{config.subtitle}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1">
-                    <Sparkles className="h-3 w-3 text-primary" />
-                    <span className="text-[10px] text-primary font-medium">IA</span>
-                  </div>
-                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setIsOpen(false)}>
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-
-              {/* Consultant Toggle */}
-              <div className="flex gap-1 bg-muted rounded-lg p-1">
-                {(["financial", "sales"] as const).map((type) => {
-                  const Icon = consultantConfig[type].icon;
-                  const isActive = consultantType === type;
-                  return (
-                    <button
-                      key={type}
-                      onClick={() => switchConsultant(type)}
-                      className={cn(
-                        "relative flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition-colors",
-                        isActive ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
-                      )}
-                    >
-                      {isActive && (
-                        <motion.div
-                          layoutId="consultant-selector"
-                          className="absolute inset-0 bg-primary rounded-md"
-                          transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
-                        />
-                      )}
-                      <span className="relative z-10 flex items-center gap-1.5">
-                        <Icon className="h-3.5 w-3.5" />
-                        {consultantConfig[type].shortLabel}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Messages */}
-            <div className="flex-1 overflow-hidden min-h-[250px]">
-              <ChatMessageList smooth>
-                <AnimatePresence>
-                  {messages.map((message, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ duration: 0.25 }}
-                    >
-                      <ChatBubble
-                        variant={message.role === "user" ? "sent" : "received"}
-                        layout="ai"
-                      >
-                        {message.role === "assistant" && (
-                          <ChatBubbleAvatar fallback={config.fallback} />
-                        )}
-                        <ChatBubbleMessage variant={message.role === "user" ? "sent" : "received"}>
-                          {message.role === "assistant" ? (
-                            <div className="prose prose-sm dark:prose-invert max-w-none text-sm [&>p]:mb-2 [&>ul]:mb-2 [&>ol]:mb-2">
-                              <ReactMarkdown>{message.content}</ReactMarkdown>
-                            </div>
-                          ) : (
-                            message.content
-                          )}
-                        </ChatBubbleMessage>
-                      </ChatBubble>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-
-                {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                    <ChatBubble variant="received" layout="ai">
-                      <ChatBubbleAvatar fallback={config.fallback} />
-                      <ChatBubbleMessage isLoading />
-                    </ChatBubble>
-                  </motion.div>
+    <FloatingAiAssistant
+      onSend={sendMessage}
+      isLoading={isLoading}
+      title={config.label}
+      placeholder={config.placeholder}
+      headerBadges={[
+        { label: consultantType === "financial" ? "Financeiro" : "Vendas", variant: "primary" },
+        { label: "IA", variant: "accent" },
+      ]}
+    >
+      {/* Consultant Toggle */}
+      <div className="px-4 pt-3 pb-1">
+        <div className="flex gap-1 bg-muted rounded-lg p-1">
+          {(["financial", "sales"] as const).map((type) => {
+            const Icon = consultantConfig[type].icon;
+            const isActive = consultantType === type;
+            return (
+              <button
+                key={type}
+                onClick={() => switchConsultant(type)}
+                className={cn(
+                  "relative flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition-colors",
+                  isActive ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 )}
-              </ChatMessageList>
-            </div>
-
-            {/* Input */}
-            <div className="p-3 border-t border-border">
-              <form onSubmit={handleSubmit} className="relative">
-                <div className="flex items-center gap-2 bg-muted rounded-xl px-3 py-2 border border-border/50 focus-within:border-primary/50 transition-colors">
-                  <textarea
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder={config.placeholder}
-                    rows={1}
-                    className="flex-1 bg-transparent text-sm resize-none outline-none placeholder:text-muted-foreground/60 min-h-[20px] max-h-[80px]"
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="consultant-selector-glow"
+                    className="absolute inset-0 rounded-md"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(258 60% 52%) 100%)',
+                    }}
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
                   />
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Button type="submit" size="icon" disabled={!input.trim() || isLoading} className="h-8 w-8 rounded-lg shrink-0">
-                      {isLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
-                    </Button>
-                  </motion.div>
-                </div>
-              </form>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                )}
+                <span className="relative z-10 flex items-center gap-1.5">
+                  <Icon className="h-3.5 w-3.5" />
+                  {consultantConfig[type].shortLabel}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
-      {/* Toggle Button */}
-      {!isOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="cursor-pointer"
-          onClick={() => setIsOpen(true)}
-        >
-          <MorphPanel
-            label={consultantType === "sales" ? "Consultor de Vendas" : "Consultor Financeiro"}
-            placeholder={config.placeholder}
-            onSubmit={(value) => {
-              setIsOpen(true);
-              setTimeout(() => sendMessage(value), 300);
-            }}
-          />
-        </motion.div>
-      )}
-    </div>
+      {/* Messages */}
+      <div className="flex-1 overflow-hidden">
+        <ChatMessageList smooth>
+          <AnimatePresence>
+            {messages.map((message, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.25 }}
+              >
+                <ChatBubble
+                  variant={message.role === "user" ? "sent" : "received"}
+                  layout="ai"
+                >
+                  {message.role === "assistant" && (
+                    <ChatBubbleAvatar fallback={config.fallback} />
+                  )}
+                  <ChatBubbleMessage variant={message.role === "user" ? "sent" : "received"}>
+                    {message.role === "assistant" ? (
+                      <div className="prose prose-sm dark:prose-invert max-w-none text-sm [&>p]:mb-2 [&>ul]:mb-2 [&>ol]:mb-2">
+                        <ReactMarkdown>{message.content}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      message.content
+                    )}
+                  </ChatBubbleMessage>
+                </ChatBubble>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+
+          {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+              <ChatBubble variant="received" layout="ai">
+                <ChatBubbleAvatar fallback={config.fallback} />
+                <ChatBubbleMessage isLoading />
+              </ChatBubble>
+            </motion.div>
+          )}
+        </ChatMessageList>
+      </div>
+    </FloatingAiAssistant>
   );
 };
