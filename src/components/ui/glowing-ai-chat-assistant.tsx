@@ -1,10 +1,15 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Paperclip, Send, Info, Bot, X, FileText, Image as ImageIcon, Loader2, ChevronDown } from 'lucide-react';
+import { Paperclip, Send, Info, Bot, X, FileText, Image as ImageIcon, Loader2, ChevronDown, Mic, MicOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Attachment {
   file: File;
   preview?: string;
+}
+
+interface MicProps {
+  isListening: boolean;
+  onToggle: () => void;
 }
 
 interface FloatingAiAssistantProps {
@@ -15,6 +20,7 @@ interface FloatingAiAssistantProps {
   subtitle?: string;
   headerBadges?: { label: string; variant: 'primary' | 'accent' }[];
   placeholder?: string;
+  micProps?: MicProps;
 }
 
 const FloatingAiAssistant = ({
@@ -25,6 +31,7 @@ const FloatingAiAssistant = ({
   subtitle,
   headerBadges = [{ label: "IA", variant: "primary" }],
   placeholder = "Ask anything...",
+  micProps,
 }: FloatingAiAssistantProps) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [message, setMessage] = useState('');
@@ -237,6 +244,20 @@ const FloatingAiAssistant = ({
                     >
                       <ImageIcon className="w-4 h-4" />
                     </button>
+                    {micProps && (
+                      <button
+                        onClick={micProps.onToggle}
+                        className={cn(
+                          "p-2 sm:p-2.5 rounded-lg transition-all active:scale-95",
+                          micProps.isListening
+                            ? "text-fin-expense bg-fin-expense/15 animate-pulse"
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                        )}
+                        aria-label={micProps.isListening ? "Parar gravação" : "Enviar por áudio"}
+                      >
+                        {micProps.isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                      </button>
+                    )}
                   </div>
                   <input
                     ref={fileInputRef}
