@@ -44,6 +44,7 @@ interface Props {
 export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
   const { theme, toggleTheme } = useTheme();
   const { account, setAccountType } = useAccount();
+  const { isPremium, signOut, profile } = useAuth();
   const isMobile = useIsMobile();
   const location = useLocation();
 
