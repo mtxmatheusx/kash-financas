@@ -101,8 +101,8 @@ const Dashboard: React.FC = () => {
                   <XAxis dataKey="month" className="text-xs" tick={{ fill: 'hsl(220, 9%, 46%)' }} />
                   <YAxis className="text-xs" tick={{ fill: 'hsl(220, 9%, 46%)' }} tickFormatter={v => `${(v/1000).toFixed(0)}k`} />
                   <Tooltip content={<CustomTooltip />} />
-                  <Area type="monotone" dataKey="income" name="Receitas" stroke="hsl(152, 69%, 41%)" fill="hsl(152, 69%, 41%)" fillOpacity={0.1} strokeWidth={2} />
-                  <Area type="monotone" dataKey="expense" name="Despesas" stroke="hsl(0, 72%, 51%)" fill="hsl(0, 72%, 51%)" fillOpacity={0.1} strokeWidth={2} />
+                  <Area type="monotone" dataKey="income" name="Receitas" stroke="hsl(152, 69%, 41%)" fill="hsl(152, 69%, 41%)" fillOpacity={0.1} strokeWidth={2} animationBegin={0} animationDuration={1200} animationEasing="ease-out" />
+                  <Area type="monotone" dataKey="expense" name="Despesas" stroke="hsl(0, 72%, 51%)" fill="hsl(0, 72%, 51%)" fillOpacity={0.1} strokeWidth={2} animationBegin={300} animationDuration={1200} animationEasing="ease-out" />
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
@@ -124,7 +124,7 @@ const Dashboard: React.FC = () => {
                   <XAxis type="number" tick={{ fill: 'hsl(220, 9%, 46%)' }} tickFormatter={v => `${(v/1000).toFixed(0)}k`} />
                   <YAxis dataKey="name" type="category" tick={{ fill: 'hsl(220, 9%, 46%)', fontSize: 12 }} width={100} />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="value" name="Total" fill="hsl(217, 91%, 60%)" radius={[0, 4, 4, 0]} />
+                  <Bar dataKey="value" name="Total" fill="hsl(217, 91%, 60%)" radius={[0, 4, 4, 0]} animationBegin={200} animationDuration={1000} animationEasing="ease-out" />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
