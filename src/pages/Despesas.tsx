@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { PageTransition } from "@/components/PageTransition";
+import { WhatsAppAlertBanner } from "@/components/WhatsAppAlertBanner";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAccount } from "@/contexts/AccountContext";
 import { Plus, Search, Trash2, ArrowDownRight, Percent } from "lucide-react";
