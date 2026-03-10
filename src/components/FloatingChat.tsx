@@ -406,7 +406,9 @@ export const FloatingChat: React.FC = () => {
             </button>
           </div>
         </motion.div>
-      )
+      )}
+
+      {/* Pending transaction confirmation */}
       {pendingTx && (
         <TransactionConfirmCard
           transaction={pendingTx}
