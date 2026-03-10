@@ -42,7 +42,7 @@ export const KPICard: React.FC<KPICardProps> = ({ title, value, subtitle, icon: 
     </div>
     <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-0.5">{title}</p>
     <motion.p
-      className="text-lg font-bold font-display text-card-foreground tracking-tight"
+      className="text-base md:text-lg font-bold font-display text-card-foreground tracking-tight"
       initial={{ opacity: 0, y: 3 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1, duration: 0.25 }}
