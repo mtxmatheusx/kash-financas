@@ -409,6 +409,7 @@ const Landing: React.FC = () => {
           </p>
         </div>
       </footer>
+      {isPremium && <FloatingChat />}
     </div>
   );
 };
