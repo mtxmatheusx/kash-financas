@@ -37,7 +37,7 @@ const Receitas: React.FC = () => {
   );
 
   const handleSubmit = () => {
-    const amount = parseFloat(form.amount.replace(',', '.'));
+    const amount = parseAmountToReais(form.amount);
     if (!form.description || !amount) return;
     create({
       type: 'income', amount, description: form.description,

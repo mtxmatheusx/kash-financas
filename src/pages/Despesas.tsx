@@ -39,7 +39,7 @@ const Despesas: React.FC = () => {
   );
 
   const handleSubmit = () => {
-    const amount = parseFloat(form.amount.replace(',', '.'));
+    const amount = parseAmountToReais(form.amount);
     if (!form.description || !amount) return;
     create({
       type: 'expense', amount, description: form.description,
