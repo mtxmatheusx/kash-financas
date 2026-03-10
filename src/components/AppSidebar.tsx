@@ -142,6 +142,11 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
 
       {/* Footer */}
       <div className="p-3 border-t border-sidebar-border space-y-1">
+        {!collapsed && profile && (
+          <div className="px-3 py-2 text-xs text-sidebar-muted truncate">
+            {profile.display_name || profile.email}
+          </div>
+        )}
         <button
           onClick={toggleTheme}
           className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full"
@@ -155,6 +160,13 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
         >
           {collapsed ? <ChevronRight className="w-[18px] h-[18px]" /> : <ChevronLeft className="w-[18px] h-[18px]" />}
           {!collapsed && <span>Recolher</span>}
+        </button>
+        <button
+          onClick={signOut}
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full"
+        >
+          <LogOut className="w-[18px] h-[18px]" />
+          {!collapsed && <span>Sair</span>}
         </button>
       </div>
     </motion.aside>
