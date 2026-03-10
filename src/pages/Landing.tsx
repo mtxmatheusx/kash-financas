@@ -450,13 +450,13 @@ const Landing: React.FC = () => {
           <div className="grid sm:grid-cols-2 gap-4 sm:gap-5 mt-8 sm:mt-14">
             {/* Free */}
             <motion.div {...fadeUp(0.1)} className="rounded-xl sm:rounded-2xl border border-[hsl(0,0%,10%)] bg-[hsl(0,0%,3%)] p-5 sm:p-8">
-              <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1">Gratuito</h3>
-              <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">Registre e organize seus gastos</p>
+              <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1">Básico</h3>
+              <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">Apenas registro manual, sem IA de vendas</p>
               <p className="text-4xl sm:text-5xl font-extrabold text-white mb-5 sm:mb-6 font-mono-fin">
                 R$ 0<span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">/mês</span>
               </p>
               <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
-                {["Dashboard inteligente", "Receitas e despesas", "Categorização automática", "Registro por WhatsApp"].map(f => (
+                {["Dashboard inteligente", "Receitas e despesas", "Registro manual"].map(f => (
                   <li key={f} className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
                     <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />
                     {f}
@@ -465,9 +465,8 @@ const Landing: React.FC = () => {
               </ul>
               <Link to={signupLink}>
                 <motion.div whileTap={{ scale: 0.97 }}>
-                  <Button className="w-full h-11 sm:h-13 text-sm sm:text-base bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 cta-glow font-bold">
-                    Começar Teste de 30 Dias
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                  <Button variant="outline" className="w-full h-11 sm:h-13 text-sm sm:text-base border-[hsl(0,0%,20%)] bg-transparent hover:bg-[hsl(0,0%,8%)] text-[hsl(0,0%,60%)] font-bold">
+                    Criar Conta Básica
                   </Button>
                 </motion.div>
               </Link>
@@ -484,15 +483,15 @@ const Landing: React.FC = () => {
 
               <div className="relative p-5 sm:p-8">
                 <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1 flex items-center gap-2">
-                  <Crown className="h-4 w-4 sm:h-5 sm:w-5 text-[hsl(45,100%,60%)]" /> Premium
+                  <Crown className="h-4 w-4 sm:h-5 sm:w-5 text-[hsl(45,100%,60%)]" /> Copiloto Premium
                 </h3>
-                <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">Consultor de Vendas IA ativado</p>
+                <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">Consultor IA ativado, metas diárias, zero limites</p>
                 <p className="text-4xl sm:text-5xl font-extrabold text-white mb-5 sm:mb-6 font-mono-fin">
                   R$ 29<span className="text-base sm:text-lg">,90</span>
                   <span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">/mês</span>
                 </p>
                 <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
-                  {["Tudo do gratuito", "Consultor de Vendas IA", "Estratégias personalizadas", "Investimentos e metas", "Suporte prioritário"].map(f => (
+                  {["Tudo do básico", "Consultor de Vendas IA", "Estratégias personalizadas", "Investimentos e metas", "Suporte prioritário"].map(f => (
                     <li key={f} className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
                       <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />
                       {f}
@@ -500,15 +499,14 @@ const Landing: React.FC = () => {
                   ))}
                 </ul>
                 <Link to={signupLink}>
-                  <Button className="w-full h-11 sm:h-13 text-sm sm:text-base border border-[hsl(160,100%,50%)/0.3] bg-[hsl(160,100%,50%)/0.08] hover:bg-[hsl(160,100%,50%)/0.15] text-[hsl(160,100%,50%)] neon-box-glow font-bold">
-                    <Crown className="h-4 w-4 mr-2" /> Assinar Premium
-                  </Button>
+                  <motion.div whileTap={{ scale: 0.97 }}>
+                    <Button className="w-full h-11 sm:h-13 text-sm sm:text-base bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 cta-glow font-bold">
+                      <Sparkles className="mr-2 h-4 w-4" /> Começar 30 Dias Grátis
+                    </Button>
+                  </motion.div>
                 </Link>
               </div>
             </motion.div>
-          </div>
-        </div>
-      </section>
 
       {/* ═══ FAQ MATA-OBJEÇÕES ═══ */}
       <section className="py-14 sm:py-24 px-4 sm:px-6 relative">

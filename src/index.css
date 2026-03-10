@@ -152,7 +152,7 @@
   /* Landing page dark cockpit utilities */
   .landing-dark {
     --landing-bg: 0 0% 2%;
-    --landing-card: 0 0% 5%;
+    --landing-card: 0 0% 3%;
     --landing-border: 0 0% 12%;
     --landing-neon: 160 100% 50%;
     --landing-cta: 348 100% 64%;
