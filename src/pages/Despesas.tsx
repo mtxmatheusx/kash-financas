@@ -41,16 +41,25 @@ const Despesas: React.FC = () => {
   );
 
   const handleSubmit = () => {
-    const amount = parseAmountToReais(form.amount);
-    if (!form.description || !amount) return;
+    let amount: number;
+    if (form.is_percentage) {
+      const pct = parseFloat(form.percentage.replace(',', '.'));
+      if (!form.description || !pct || pct <= 0) return;
+      amount = (totals.income * pct) / 100;
+    } else {
+      amount = parseAmountToReais(form.amount);
+      if (!form.description || !amount) return;
+    }
     create({
       type: 'expense', amount, description: form.description,
       category: form.category, date: form.date, status: form.status,
       entry_type: form.entry_type, account_type: account.type,
+      is_percentage: form.is_percentage,
+      ...(form.is_percentage ? { percentage: parseFloat(form.percentage.replace(',', '.')) } : {}),
       ...(form.entry_type === 'installment' ? { installments: parseInt(form.installments) || 2 } : {}),
       ...(form.entry_type === 'recurring' ? { frequency: form.frequency } : {}),
     });
-    setForm({ description: '', amount: '', category: categories[0], date: new Date().toISOString().slice(0, 10), status: 'paid', entry_type: 'single', installments: '2', frequency: 'monthly' });
+    setForm({ description: '', amount: '', category: categories[0], date: new Date().toISOString().slice(0, 10), status: 'paid', entry_type: 'single', installments: '2', frequency: 'monthly', is_percentage: false, percentage: '' });
     setShowForm(false);
   };
 
