@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from "react";
-import { Bot, TrendingUp, Mic, MicOff } from "lucide-react";
+import { Bot, TrendingUp, Mic, MicOff, ImageIcon } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import {
@@ -17,7 +17,21 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 type ConsultantType = "financial" | "sales";
-type Msg = { role: "user" | "assistant"; content: string };
+
+// Multimodal content types for the API
+type TextContent = { type: "text"; text: string };
+type ImageContent = { type: "image_url"; image_url: { url: string } };
+type MultimodalContent = TextContent | ImageContent;
+
+// API message format
+type ApiMsg = { role: "user" | "assistant"; content: string | MultimodalContent[] };
+
+// Display message (what we show in the UI)
+type DisplayMsg = {
+  role: "user" | "assistant";
+  content: string;
+  images?: string[]; // base64 data URLs for display
+};
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 const PARSE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/parse-transaction`;
@@ -28,23 +42,47 @@ const consultantConfig = {
     shortLabel: "Financeiro",
     icon: Bot,
     fallback: "CF",
-    placeholder: "Pergunte sobre investimentos, metas, orçamento...",
-    greeting: "Olá! 👋 Sou seu consultor financeiro com IA. Posso analisar seus gastos, simular investimentos e **registrar transações por você** — basta me dizer algo como \"gastei 50 de gasolina\" ou enviar um áudio! 🎙️",
+    placeholder: "Pergunte ou envie uma imagem (fatura, extrato)...",
+    greeting: "Olá! 👋 Sou seu consultor financeiro com IA. Posso analisar seus gastos, simular investimentos e **registrar transações por você**.\n\n📸 Envie uma foto de fatura, extrato ou comprovante e eu analiso!\n🎙️ Ou mande um áudio como \"gastei 50 de gasolina\".",
   },
   sales: {
     label: "Consultor de Vendas",
     shortLabel: "Vendas",
     icon: TrendingUp,
     fallback: "CV",
-    placeholder: "Pergunte sobre vendas, custos, estratégias...",
-    greeting: "Olá! 📊 Sou seu consultor de vendas com IA. Além de estratégias, posso **registrar receitas e despesas** — diga \"recebi 5000 de freelance\" ou mande um áudio! 🎙️",
+    placeholder: "Pergunte ou envie uma imagem (relatório, NF)...",
+    greeting: "Olá! 📊 Sou seu consultor de vendas com IA. Posso **registrar receitas e despesas** e analisar dados.\n\n📸 Envie uma foto de relatório, planilha ou nota fiscal!\n🎙️ Ou diga \"recebi 5000 de freelance\".",
   },
 };
+
+/** Convert a File to a base64 data URL */
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+/** Build API messages from display messages */
+function toApiMessages(displayMsgs: DisplayMsg[]): ApiMsg[] {
+  return displayMsgs.map((m) => {
+    if (m.role === "assistant") return { role: "assistant", content: m.content };
+    if (m.images && m.images.length > 0) {
+      const content: MultimodalContent[] = [];
+      if (m.content) content.push({ type: "text", text: m.content });
+      m.images.forEach((url) => content.push({ type: "image_url", image_url: { url } }));
+      return { role: "user", content };
+    }
+    return { role: "user", content: m.content };
+  });
+}
 
 async function streamChat({
   messages, consultantType, onDelta, onDone, onError, signal,
 }: {
-  messages: Msg[]; consultantType: ConsultantType;
+  messages: ApiMsg[]; consultantType: ConsultantType;
   onDelta: (text: string) => void; onDone: () => void; onError: (err: string) => void; signal?: AbortSignal;
 }) {
   const resp = await fetch(CHAT_URL, {
@@ -106,17 +144,13 @@ export const FloatingChat: React.FC = () => {
     account.type === "business" ? "sales" : "financial"
   );
   const config = consultantConfig[consultantType];
-  const [messages, setMessages] = useState<Msg[]>([{ role: "assistant", content: config.greeting }]);
+  const [messages, setMessages] = useState<DisplayMsg[]>([{ role: "assistant", content: config.greeting }]);
   const [isLoading, setIsLoading] = useState(false);
   const [pendingTx, setPendingTx] = useState<ParsedTransaction | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
-  // Speech-to-text
   const { isListening, transcript, start: startListening, stop: stopListening, isSupported: micSupported } = useSpeechToText({
-    onResult: (text) => {
-      // Auto-send the transcript
-      sendMessage(text);
-    },
+    onResult: (text) => sendMessage(text),
     onError: (err) => toast.error(err),
   });
 
@@ -152,9 +186,29 @@ export const FloatingChat: React.FC = () => {
     setPendingTx(null);
   }, []);
 
-  const sendMessage = async (userText: string, _attachments?: Attachment[]) => {
-    if (!userText.trim() || isLoading) return;
-    const userMsg: Msg = { role: "user", content: userText.trim() };
+  const sendMessage = async (userText: string, attachments?: Attachment[]) => {
+    if ((!userText.trim() && (!attachments || attachments.length === 0)) || isLoading) return;
+
+    // Convert image attachments to base64
+    const imageFiles = attachments?.filter(a => a.file.type.startsWith("image/")) || [];
+    const imageBase64: string[] = [];
+
+    for (const att of imageFiles) {
+      try {
+        const b64 = await fileToBase64(att.file);
+        imageBase64.push(b64);
+      } catch {
+        console.error("Failed to convert image to base64");
+      }
+    }
+
+    const displayText = userText.trim() || (imageBase64.length > 0 ? `📷 ${imageBase64.length} imagem(ns) enviada(s)` : "");
+    const userMsg: DisplayMsg = {
+      role: "user",
+      content: displayText,
+      images: imageBase64.length > 0 ? imageBase64 : undefined,
+    };
+
     const updatedMessages = [...messages, userMsg];
     setMessages(updatedMessages);
     setIsLoading(true);
@@ -163,12 +217,12 @@ export const FloatingChat: React.FC = () => {
     abortRef.current = controller;
     let assistantSoFar = "";
 
-    // Fire both chat + parse in parallel
-    const parsePromise = parseTransaction(userText.trim());
+    const apiMessages = toApiMessages(updatedMessages);
+    const parsePromise = userText.trim() ? parseTransaction(userText.trim()) : Promise.resolve(null);
 
     try {
       await streamChat({
-        messages: updatedMessages, consultantType, signal: controller.signal,
+        messages: apiMessages, consultantType, signal: controller.signal,
         onDelta: (chunk) => {
           assistantSoFar += chunk;
           const current = assistantSoFar;
@@ -187,11 +241,8 @@ export const FloatingChat: React.FC = () => {
       setIsLoading(false);
     }
 
-    // Check parsed transaction
     const parsed = await parsePromise;
-    if (parsed && parsed.amount > 0) {
-      setPendingTx(parsed);
-    }
+    if (parsed && parsed.amount > 0) setPendingTx(parsed);
   };
 
   return (
@@ -273,6 +324,19 @@ export const FloatingChat: React.FC = () => {
                 <ChatBubble variant={message.role === "user" ? "sent" : "received"} layout="ai">
                   {message.role === "assistant" && <ChatBubbleAvatar fallback={config.fallback} />}
                   <ChatBubbleMessage variant={message.role === "user" ? "sent" : "received"}>
+                    {/* Show image thumbnails for user messages */}
+                    {message.role === "user" && message.images && message.images.length > 0 && (
+                      <div className="flex gap-1.5 flex-wrap mb-2">
+                        {message.images.map((img, i) => (
+                          <img
+                            key={i}
+                            src={img}
+                            alt={`Anexo ${i + 1}`}
+                            className="w-20 h-20 rounded-lg object-cover border border-primary-foreground/20"
+                          />
+                        ))}
+                      </div>
+                    )}
                     {message.role === "assistant" ? (
                       <div className="prose prose-sm dark:prose-invert max-w-none text-sm [&>p]:mb-2 [&>ul]:mb-2 [&>ol]:mb-2">
                         <ReactMarkdown>{message.content}</ReactMarkdown>
