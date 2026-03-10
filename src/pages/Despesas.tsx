@@ -103,24 +103,23 @@ const Despesas: React.FC = () => {
           <Input placeholder="Buscar despesas..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10 h-9 md:h-10" />
         </div>
 
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900 shadow-lg shadow-black/20 overflow-hidden font-['DM_Sans']">
+        <div className="rounded-xl border border-border bg-card shadow-lg overflow-hidden">
           {/* Table Header */}
-          <div className="grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center bg-zinc-900/50 px-4 md:px-6 py-3 border-b border-zinc-800/50">
-            <span className="text-[10px] md:text-xs font-medium text-zinc-400 uppercase tracking-wider">Descrição</span>
-            <span className="text-[10px] md:text-xs font-medium text-zinc-400 uppercase tracking-wider hidden md:block">Categoria</span>
-            <span className="text-[10px] md:text-xs font-medium text-zinc-400 uppercase tracking-wider text-center">Status</span>
-            <span className="text-[10px] md:text-xs font-medium text-zinc-400 uppercase tracking-wider text-right">Valor</span>
+          <div className="grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center bg-muted/50 px-4 md:px-6 py-3 border-b border-border/50">
+            <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider">Descrição</span>
+            <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:block">Categoria</span>
+            <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider text-center">Status</span>
+            <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider text-right">Valor</span>
             <span className="w-8" />
           </div>
 
           {filtered.length > 0 ? (
             <div>
               {filtered.map(t => (
-                <div key={t.id} className="grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center px-4 md:px-6 py-3.5 md:py-4 border-b border-zinc-800/50 last:border-b-0 hover:bg-zinc-800/30 transition-colors duration-150 group">
-                  {/* Description + date */}
+                <div key={t.id} className="grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center px-4 md:px-6 py-3.5 md:py-4 border-b border-border/50 last:border-b-0 hover:bg-muted/30 transition-colors duration-150 group">
                   <div className="min-w-0 pr-3">
-                    <p className="text-sm font-medium text-zinc-100 truncate">{t.description}</p>
-                    <p className="text-[11px] text-zinc-500 mt-0.5">
+                    <p className="text-sm font-medium text-foreground truncate">{t.description}</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">
                       {new Date(t.date).toLocaleDateString('pt-BR')}
                       {t.is_percentage && t.percentage && ` · ${t.percentage}% da receita`}
                       {t.entry_type === 'recurring' && ` · Recorrente ${t.frequency === 'yearly' ? '(Anual)' : '(Mensal)'}`}
@@ -129,10 +128,8 @@ const Despesas: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* Category (desktop) */}
-                  <span className="text-xs text-zinc-400 hidden md:block">{t.category}</span>
+                  <span className="text-xs text-muted-foreground hidden md:block">{t.category}</span>
 
-                  {/* Status badge */}
                   <div className="flex justify-center px-2">
                     <span className={cn(
                       "inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide",
@@ -144,20 +141,18 @@ const Despesas: React.FC = () => {
                     </span>
                   </div>
 
-                  {/* Amount */}
                   <span className="font-mono-fin text-sm font-semibold text-fin-expense text-right pl-3 whitespace-nowrap">
                     − {formatBRL(t.amount)}
                   </span>
 
-                  {/* Delete */}
-                  <button onClick={() => remove(t.id)} className="ml-2 p-1.5 rounded-md text-zinc-600 hover:text-fin-expense hover:bg-zinc-800/50 transition-colors opacity-0 group-hover:opacity-100">
+                  <button onClick={() => remove(t.id)} className="ml-2 p-1.5 rounded-md text-muted-foreground hover:text-fin-expense hover:bg-muted/50 transition-colors opacity-0 group-hover:opacity-100">
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-sm text-zinc-500 text-center py-16">
+            <p className="text-sm text-muted-foreground text-center py-16">
               {search ? 'Nenhuma despesa encontrada' : 'Nenhuma despesa registrada'}
             </p>
           )}
