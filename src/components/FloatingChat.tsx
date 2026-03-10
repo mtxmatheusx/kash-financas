@@ -257,7 +257,7 @@ export const FloatingChat: React.FC = () => {
 
   return (
     <FloatingAiAssistant
-      onSend={sendMessage}
+      onSend={stageMessage}
       isLoading={isLoading}
       title={config.label}
       placeholder={isListening ? "🎙️ Ouvindo..." : config.placeholder}
