@@ -109,6 +109,7 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
           .filter(item => !item.account || item.account === account.type)
           .map(item => {
           const isActive = location.pathname === item.path;
+          const isLocked = !isPremium && !FREE_PATHS.includes(item.path);
           return (
             <NavLink
               key={item.path}
@@ -117,7 +118,8 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all relative",
                 isActive
                   ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                  : "text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                  : "text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50",
+                isLocked && "opacity-60"
               )}
             >
               {isActive && (
@@ -127,7 +129,12 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
                 />
               )}
               <item.icon className="w-[18px] h-[18px] shrink-0" />
-              {!collapsed && <span className="font-medium">{item.label}</span>}
+              {!collapsed && (
+                <span className="font-medium flex-1">{item.label}</span>
+              )}
+              {!collapsed && isLocked && (
+                <Crown className="w-3.5 h-3.5 text-yellow-500 shrink-0" />
+              )}
             </NavLink>
           );
         })}
