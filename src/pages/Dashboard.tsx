@@ -100,7 +100,7 @@ const Dashboard: React.FC = () => {
         </motion.div>
 
         {/* Charts - cockpit style */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 md:gap-3">
           <motion.div
             {...slideUp(0.15)}
             className="rounded-xl border border-border bg-card p-4 cockpit-glow"
