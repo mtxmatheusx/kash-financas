@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from "react";
-import { Bot, TrendingUp, Mic, MicOff, ImageIcon } from "lucide-react";
+import { Bot, TrendingUp, Mic, MicOff, ImageIcon, Check, X, Send } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import {
