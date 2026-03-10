@@ -144,7 +144,7 @@ export const FloatingChat: React.FC = () => {
     setMessages([{ role: "assistant", content: consultantConfig[type].greeting }]);
   };
 
-  const sendMessage = async (userText: string) => {
+  const sendMessage = async (userText: string, attachments?: Attachment[]) => {
     if (!userText.trim() || isLoading) return;
 
     const userMsg: Msg = { role: "user", content: userText.trim() };
