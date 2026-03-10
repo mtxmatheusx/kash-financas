@@ -31,7 +31,10 @@ serve(async (req) => {
 
     const token = authHeader.replace("Bearer ", "");
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError) throw new Error(`Auth error: ${userError.message}`);
+    if (userError) {
+      logStep("Auth error details", { message: userError.message, status: userError.status });
+      throw new Error(`Auth error: ${userError.message}`);
+    }
     const user = userData.user;
     if (!user?.email) throw new Error("User not authenticated");
     logStep("User authenticated", { email: user.email });
