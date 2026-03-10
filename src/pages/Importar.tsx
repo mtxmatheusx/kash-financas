@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Upload, FileSpreadsheet, Check, AlertTriangle, X, ArrowRight } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 import * as XLSX from "xlsx";
 
 const formatBRL = (v: number) =>
@@ -125,44 +125,67 @@ const Importar: React.FC = () => {
   const [fileName, setFileName] = useState("");
 
   const handleFile = useCallback(async (file: File) => {
-    setFileName(file.name);
-    const ext = file.name.split(".").pop()?.toLowerCase();
+    try {
+      setFileName(file.name);
+      const ext = file.name.split(".").pop()?.toLowerCase();
 
-    let rawRows: Record<string, any>[] = [];
-    let headers: string[] = [];
+      let rawRows: Record<string, any>[] = [];
+      let headers: string[] = [];
 
-    if (ext === "csv") {
-      const text = await file.text();
-      const lines = text.split(/\r?\n/).filter(l => l.trim());
-      if (lines.length < 2) return;
+      if (ext === "csv" || ext === "txt") {
+        const text = await file.text();
+        const lines = text.split(/\r?\n/).filter(l => l.trim());
+        if (lines.length < 2) {
+          toast.error("Arquivo vazio ou com apenas uma linha");
+          return;
+        }
 
-      headers = parseCSVLine(lines[0]);
-      for (let i = 1; i < lines.length; i++) {
-        const vals = parseCSVLine(lines[i]);
-        const row: Record<string, any> = {};
-        headers.forEach((h, idx) => { row[h] = vals[idx] || ""; });
-        rawRows.push(row);
+        // Detect delimiter: semicolon is common in Brazilian CSVs
+        const firstLine = lines[0];
+        const semicolonCount = (firstLine.match(/;/g) || []).length;
+        const commaCount = (firstLine.match(/,/g) || []).length;
+        const delimiter = semicolonCount > commaCount ? ";" : ",";
+
+        headers = parseCSVLine(lines[0], delimiter);
+        for (let i = 1; i < lines.length; i++) {
+          const vals = parseCSVLine(lines[i], delimiter);
+          const row: Record<string, any> = {};
+          headers.forEach((h, idx) => { row[h] = vals[idx] || ""; });
+          rawRows.push(row);
+        }
+      } else {
+        const buf = await file.arrayBuffer();
+        const wb = XLSX.read(buf, { type: "array", cellDates: true });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json<Record<string, any>>(ws, { defval: "" });
+        if (json.length === 0) {
+          toast.error("Planilha vazia — nenhuma linha encontrada");
+          return;
+        }
+        headers = Object.keys(json[0]);
+        rawRows = json;
       }
-    } else {
-      const buf = await file.arrayBuffer();
-      const wb = XLSX.read(buf, { type: "array", cellDates: true });
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const json = XLSX.utils.sheet_to_json<Record<string, any>>(ws, { defval: "" });
-      if (json.length === 0) return;
-      headers = Object.keys(json[0]);
-      rawRows = json;
+
+      if (headers.length === 0) {
+        toast.error("Não foi possível detectar colunas no arquivo");
+        return;
+      }
+
+      // Auto-detect mapping
+      const autoMap: Record<string, string> = {};
+      headers.forEach(h => {
+        const field = detectField(h);
+        if (field && !autoMap[field]) autoMap[field] = h;
+      });
+
+      toast.success(`${rawRows.length} linhas carregadas de "${file.name}"`);
+      setMapping(autoMap);
+      setResult({ headers, rawRows, mapping: autoMap, parsed: [], duplicates: 0, errors: 0 });
+      setStep("mapping");
+    } catch (err: any) {
+      console.error("Import error:", err);
+      toast.error(`Erro ao ler arquivo: ${err.message || "formato não suportado"}`);
     }
-
-    // Auto-detect mapping
-    const autoMap: Record<string, string> = {};
-    headers.forEach(h => {
-      const field = detectField(h);
-      if (field && !autoMap[field]) autoMap[field] = h;
-    });
-
-    setMapping(autoMap);
-    setResult({ headers, rawRows, mapping: autoMap, parsed: [], duplicates: 0, errors: 0 });
-    setStep("mapping");
   }, []);
 
   const processMapping = useCallback(() => {
@@ -468,7 +491,7 @@ const Importar: React.FC = () => {
 };
 
 // CSV parser with quote awareness
-function parseCSVLine(line: string): string[] {
+function parseCSVLine(line: string, delimiter: string = ","): string[] {
   const values: string[] = [];
   let current = "";
   let inQuotes = false;
@@ -482,7 +505,7 @@ function parseCSVLine(line: string): string[] {
       } else {
         inQuotes = !inQuotes;
       }
-    } else if ((char === "," || char === ";") && !inQuotes) {
+    } else if (char === delimiter && !inQuotes) {
       values.push(current.trim());
       current = "";
     } else {
