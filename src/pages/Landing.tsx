@@ -7,6 +7,7 @@ import {
   Target, CalendarRange, Crown, Check, ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FloatingChat } from "@/components/FloatingChat";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 30 },
@@ -76,7 +77,7 @@ const GridOverlay: React.FC = () => (
 );
 
 const Landing: React.FC = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, isPremium } = useAuth();
 
   if (loading) {
     return (
@@ -408,6 +409,7 @@ const Landing: React.FC = () => {
           </p>
         </div>
       </footer>
+      {isPremium && <FloatingChat />}
     </div>
   );
 };
