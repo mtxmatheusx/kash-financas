@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   ArrowRight, Shield, Zap, Brain, TrendingUp,
-  Crown, Check, ChevronRight, Sparkles, AudioLines, Cpu,
+  Crown, Check, ChevronRight, Sparkles, AudioLines, Cpu, Lock, Database,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
