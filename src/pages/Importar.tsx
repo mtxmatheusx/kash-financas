@@ -322,14 +322,13 @@ const Importar: React.FC = () => {
     if (!workbookRef) return;
     setSelectedSheet(sheetName);
     const ws = workbookRef.Sheets[sheetName];
-    const json = XLSX.utils.sheet_to_json<Record<string, any>>(ws, { defval: "" });
-    if (json.length === 0) {
+    const { headers, rawRows } = extractSheetData(ws);
+    if (rawRows.length === 0) {
       toast.error("Aba vazia");
       return;
     }
-    let headers = Object.keys(json[0]).filter(h => h && String(h).trim() !== "" && h !== "__EMPTY");
-    toast.info(`Aba "${sheetName}": ${json.length} linhas`);
-    await processSheetData(headers, json);
+    toast.info(`Aba "${sheetName}": ${rawRows.length} linhas`);
+    await processSheetData(headers, rawRows);
   }, [workbookRef, processSheetData]);
 
   const processMapping = useCallback(() => {
