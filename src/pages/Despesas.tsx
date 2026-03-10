@@ -28,6 +28,8 @@ const Despesas: React.FC = () => {
     entry_type: 'single' as 'single' | 'installment' | 'recurring',
     installments: '2',
     frequency: 'monthly' as 'monthly' | 'yearly',
+    is_percentage: false,
+    percentage: '',
   });
 
   const paidTotal = transactions.filter(t => t.status === 'paid').reduce((s, t) => s + t.amount, 0);
