@@ -27,30 +27,31 @@ const Metas: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="space-y-4 md:space-y-6">
+        {/* Header - stacked on mobile */}
+        <div className="space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <Target className="w-6 h-6 text-fin-goals" /> Metas Financeiras
+            <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2">
+              <Target className="w-5 h-5 md:w-6 md:h-6 text-fin-goals" /> Metas
             </h1>
-            <p className="text-sm text-muted-foreground">{goals.length} meta(s) ativa(s)</p>
+            <p className="text-xs md:text-sm text-muted-foreground">{goals.length} meta(s) ativa(s)</p>
           </div>
-          <Button onClick={() => setShowForm(true)} className="gap-2">
+          <Button onClick={() => setShowForm(true)} size="sm" className="gap-2 w-full sm:w-auto">
             <Plus className="w-4 h-4" /> Nova Meta
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
           {goals.map(g => {
             const pct = g.target_amount > 0 ? Math.min((g.current_amount / g.target_amount) * 100, 100) : 0;
             return (
-              <div key={g.id} className="rounded-xl border border-border bg-card p-5 enterprise-shadow">
+              <div key={g.id} className="rounded-xl border border-border bg-card p-4 md:p-5 enterprise-shadow">
                 <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <p className="text-sm font-semibold text-card-foreground">{g.name}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-card-foreground truncate">{g.name}</p>
                     <p className="text-[11px] text-muted-foreground">Prazo: {new Date(g.deadline).toLocaleDateString('pt-BR')}</p>
                   </div>
-                  <button onClick={() => remove(g.id)} className="text-muted-foreground hover:text-fin-expense">
+                  <button onClick={() => remove(g.id)} className="text-muted-foreground hover:text-fin-expense p-1 shrink-0">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
@@ -88,7 +89,7 @@ const Metas: React.FC = () => {
       </div>
 
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent>
+        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg">
           <DialogHeader><DialogTitle>Nova Meta</DialogTitle></DialogHeader>
           <div className="space-y-4 py-4">
             <div>
@@ -108,9 +109,9 @@ const Metas: React.FC = () => {
               <Input type="date" value={form.deadline} onChange={e => setForm({ ...form, deadline: e.target.value })} />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowForm(false)}>Cancelar</Button>
-            <Button onClick={handleSubmit}>Salvar</Button>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => setShowForm(false)} className="w-full sm:w-auto">Cancelar</Button>
+            <Button onClick={handleSubmit} className="w-full sm:w-auto">Salvar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

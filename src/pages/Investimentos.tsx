@@ -28,37 +28,38 @@ const Investimentos: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="space-y-4 md:space-y-6">
+        {/* Header - stacked on mobile */}
+        <div className="space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <PieChart className="w-6 h-6 text-fin-investment" /> Investimentos
+            <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2">
+              <PieChart className="w-5 h-5 md:w-6 md:h-6 text-fin-investment" /> Investimentos
             </h1>
-            <p className="text-sm text-muted-foreground">Total investido: {formatBRL(total)}</p>
+            <p className="text-xs md:text-sm text-muted-foreground">Total investido: {formatBRL(total)}</p>
           </div>
-          <Button onClick={() => setShowForm(true)} className="gap-2">
+          <Button onClick={() => setShowForm(true)} size="sm" className="gap-2 w-full sm:w-auto">
             <Plus className="w-4 h-4" /> Novo Investimento
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
           {investments.map(inv => {
             const gain = inv.current_value - inv.amount;
             const gainPct = inv.amount > 0 ? ((gain / inv.amount) * 100).toFixed(1) : '0';
             return (
-              <div key={inv.id} className="rounded-xl border border-border bg-card p-5 enterprise-shadow">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <p className="text-sm font-semibold text-card-foreground">{inv.name}</p>
+              <div key={inv.id} className="rounded-xl border border-border bg-card p-4 md:p-5 enterprise-shadow">
+                <div className="flex items-start justify-between mb-2">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-card-foreground truncate">{inv.name}</p>
                     <p className="text-[11px] text-muted-foreground">{inv.type}</p>
                   </div>
-                  <button onClick={() => remove(inv.id)} className="text-muted-foreground hover:text-fin-expense">
+                  <button onClick={() => remove(inv.id)} className="text-muted-foreground hover:text-fin-expense p-1 shrink-0">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
                 <p className="text-lg font-bold font-mono-fin text-card-foreground">{formatBRL(inv.current_value)}</p>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs text-muted-foreground">Investido: {formatBRL(inv.amount)}</span>
+                  <span className="text-[11px] text-muted-foreground">Investido: {formatBRL(inv.amount)}</span>
                   <span className={`text-xs font-semibold ${gain >= 0 ? 'text-fin-income' : 'text-fin-expense'}`}>
                     {gain >= 0 ? '+' : ''}{gainPct}%
                   </span>
@@ -73,7 +74,7 @@ const Investimentos: React.FC = () => {
       </div>
 
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent>
+        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg">
           <DialogHeader><DialogTitle>Novo Investimento</DialogTitle></DialogHeader>
           <div className="space-y-4 py-4">
             <div>
@@ -100,9 +101,9 @@ const Investimentos: React.FC = () => {
               <Input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowForm(false)}>Cancelar</Button>
-            <Button onClick={handleSubmit}>Salvar</Button>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => setShowForm(false)} className="w-full sm:w-auto">Cancelar</Button>
+            <Button onClick={handleSubmit} className="w-full sm:w-auto">Salvar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

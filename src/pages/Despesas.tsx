@@ -40,44 +40,49 @@ const Despesas: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="space-y-4 md:space-y-6">
+        {/* Header - stacked on mobile */}
+        <div className="space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <ArrowDownRight className="w-6 h-6 text-fin-expense" /> Despesas
+            <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2">
+              <ArrowDownRight className="w-5 h-5 md:w-6 md:h-6 text-fin-expense" /> Despesas
             </h1>
-            <p className="text-sm text-muted-foreground">Total: {formatBRL(totals.expense)}</p>
+            <p className="text-xs md:text-sm text-muted-foreground">Total: {formatBRL(totals.expense)}</p>
           </div>
-          <Button onClick={() => setShowForm(true)} className="gap-2">
+          <Button onClick={() => setShowForm(true)} size="sm" className="gap-2 w-full sm:w-auto">
             <Plus className="w-4 h-4" /> Nova Despesa
           </Button>
         </div>
 
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Buscar despesas..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" />
+          <Input placeholder="Buscar despesas..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10 h-9 md:h-10" />
         </div>
 
         <div className="rounded-xl border border-border bg-card enterprise-shadow overflow-hidden">
           {filtered.length > 0 ? (
             <div className="divide-y divide-border">
               {filtered.map(t => (
-                <div key={t.id} className="flex items-center justify-between p-4 hover:bg-accent/30 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-fin-expense" />
-                    <div>
-                      <p className="text-sm font-medium text-card-foreground">{t.description}</p>
-                      <p className="text-[11px] text-muted-foreground">{t.category} · {new Date(t.date).toLocaleDateString('pt-BR')}</p>
+                <div key={t.id} className="p-3 md:p-4 hover:bg-accent/30 transition-colors">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-start gap-2.5 min-w-0 flex-1">
+                      <div className="w-2 h-2 rounded-full bg-fin-expense mt-1.5 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-card-foreground truncate">{t.description}</p>
+                        <p className="text-[11px] text-muted-foreground">
+                          {t.category} · {new Date(t.date).toLocaleDateString('pt-BR')}
+                        </p>
+                      </div>
                     </div>
+                    <button onClick={() => remove(t.id)} className="text-muted-foreground hover:text-fin-expense transition-colors shrink-0 p-1">
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <Badge variant="outline" className="border-fin-expense/30 text-fin-expense text-xs">
+                  <div className="flex items-center justify-between mt-1.5 ml-[18px]">
+                    <Badge variant="outline" className="border-fin-expense/30 text-fin-expense text-[10px] h-5">
                       {t.status === 'paid' ? 'Pago' : 'Pendente'}
                     </Badge>
                     <span className="font-mono-fin text-sm font-semibold text-fin-expense">− {formatBRL(t.amount)}</span>
-                    <button onClick={() => remove(t.id)} className="text-muted-foreground hover:text-fin-expense transition-colors">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
                   </div>
                 </div>
               ))}
@@ -91,7 +96,7 @@ const Despesas: React.FC = () => {
       </div>
 
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent>
+        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg">
           <DialogHeader><DialogTitle>Nova Despesa</DialogTitle></DialogHeader>
           <div className="space-y-4 py-4">
             <div>
@@ -114,9 +119,9 @@ const Despesas: React.FC = () => {
               <Input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowForm(false)}>Cancelar</Button>
-            <Button onClick={handleSubmit}>Salvar</Button>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => setShowForm(false)} className="w-full sm:w-auto">Cancelar</Button>
+            <Button onClick={handleSubmit} className="w-full sm:w-auto">Salvar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
