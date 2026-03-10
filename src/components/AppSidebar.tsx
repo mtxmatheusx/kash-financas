@@ -4,19 +4,23 @@ import { motion } from "framer-motion";
 import {
   LayoutDashboard, TrendingUp, TrendingDown, PieChart, Target, CalendarRange,
   Sun, Moon, ChevronLeft, ChevronRight, Compass, FileText, Calculator, Upload,
+  Crown, LogOut,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAccount } from "@/contexts/AccountContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 import type { AccountType } from "@/contexts/AccountContext";
 
+const FREE_PATHS = ["/", "/receitas", "/despesas"];
+
 interface MenuItem {
   path: string;
   label: string;
   icon: React.ElementType;
-  account?: AccountType; // undefined = both
+  account?: AccountType;
 }
 
 const menuItems: MenuItem[] = [
@@ -40,6 +44,7 @@ interface Props {
 export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
   const { theme, toggleTheme } = useTheme();
   const { account, setAccountType } = useAccount();
+  const { isPremium, signOut, profile } = useAuth();
   const isMobile = useIsMobile();
   const location = useLocation();
 
@@ -104,6 +109,7 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
           .filter(item => !item.account || item.account === account.type)
           .map(item => {
           const isActive = location.pathname === item.path;
+          const isLocked = !isPremium && !FREE_PATHS.includes(item.path);
           return (
             <NavLink
               key={item.path}
@@ -112,7 +118,8 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all relative",
                 isActive
                   ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                  : "text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                  : "text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50",
+                isLocked && "opacity-60"
               )}
             >
               {isActive && (
@@ -122,7 +129,12 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
                 />
               )}
               <item.icon className="w-[18px] h-[18px] shrink-0" />
-              {!collapsed && <span className="font-medium">{item.label}</span>}
+              {!collapsed && (
+                <span className="font-medium flex-1">{item.label}</span>
+              )}
+              {!collapsed && isLocked && (
+                <Crown className="w-3.5 h-3.5 text-yellow-500 shrink-0" />
+              )}
             </NavLink>
           );
         })}
@@ -130,6 +142,11 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
 
       {/* Footer */}
       <div className="p-3 border-t border-sidebar-border space-y-1">
+        {!collapsed && profile && (
+          <div className="px-3 py-2 text-xs text-sidebar-muted truncate">
+            {profile.display_name || profile.email}
+          </div>
+        )}
         <button
           onClick={toggleTheme}
           className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full"
@@ -143,6 +160,13 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
         >
           {collapsed ? <ChevronRight className="w-[18px] h-[18px]" /> : <ChevronLeft className="w-[18px] h-[18px]" />}
           {!collapsed && <span>Recolher</span>}
+        </button>
+        <button
+          onClick={signOut}
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full"
+        >
+          <LogOut className="w-[18px] h-[18px]" />
+          {!collapsed && <span>Sair</span>}
         </button>
       </div>
     </motion.aside>
