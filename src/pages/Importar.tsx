@@ -276,6 +276,48 @@ const Importar: React.FC = () => {
     if (fileRef.current) fileRef.current.value = "";
   };
 
+  const downloadTemplate = () => {
+    const templateData = [
+      {
+        Data: "10/03/2025",
+        "Descrição": "Salário mensal",
+        Valor: "5000,00",
+        Categoria: "Salário",
+        Tipo: "Receita",
+      },
+      {
+        Data: "11/03/2025",
+        "Descrição": "Aluguel",
+        Valor: "1500,00",
+        Categoria: "Moradia",
+        Tipo: "Despesa",
+      },
+      {
+        Data: "12/03/2025",
+        "Descrição": "Supermercado",
+        Valor: "450,00",
+        Categoria: "Alimentação",
+        Tipo: "Despesa",
+      },
+      {
+        Data: "15/03/2025",
+        "Descrição": "Freelance",
+        Valor: "2000,00",
+        Categoria: "Renda Extra",
+        Tipo: "Receita",
+      },
+    ];
+
+    const ws = XLSX.utils.json_to_sheet(templateData);
+    ws["!cols"] = [
+      { wch: 14 }, { wch: 30 }, { wch: 14 }, { wch: 18 }, { wch: 12 },
+    ];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Transações");
+    XLSX.writeFile(wb, "modelo-importacao-kash.xlsx");
+    toast.success("Modelo baixado com sucesso!");
+  };
+
   return (
     <PageTransition>
       <div className="space-y-6 max-w-3xl mx-auto">
