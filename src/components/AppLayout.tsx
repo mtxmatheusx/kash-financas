@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { AppSidebar } from "@/components/AppSidebar";
 import { MobileNav } from "@/components/MobileNav";
@@ -9,6 +9,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 export const AppLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const isMobile = useIsMobile();
+  const location = useLocation();
 
   return (
     <div className="min-h-screen bg-background">
@@ -24,7 +25,9 @@ export const AppLayout: React.FC = () => {
         <TopBar />
         <main className="p-4 md:p-6 lg:p-8 max-w-[1400px] mx-auto">
           <AnimatePresence mode="wait">
-            <Outlet />
+            <motion.div key={location.pathname}>
+              <Outlet />
+            </motion.div>
           </AnimatePresence>
         </main>
       </motion.div>

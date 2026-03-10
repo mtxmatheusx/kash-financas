@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
-import { PageTransition } from "@/components/PageTransition";
+import { motion } from "framer-motion";
+import { PageTransition, staggerContainer, staggerItem, slideUp, fadeIn } from "@/components/PageTransition";
 import { KPICard } from "@/components/KPICard";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useInvestments } from "@/hooks/useInvestments";
@@ -63,13 +64,19 @@ const Dashboard: React.FC = () => {
   return (
     <PageTransition>
       <div className="space-y-6">
-        <div>
+        {/* Header */}
+        <motion.div {...fadeIn(0)}>
           <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
           <p className="text-sm text-muted-foreground">Visão geral das suas finanças</p>
-        </div>
+        </motion.div>
 
-        {/* KPIs */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* KPIs with stagger */}
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+        >
           <KPICard title="Saldo" value={formatBRL(totals.balance)} icon={Wallet}
             color="bg-primary/10 text-primary" />
           <KPICard title="Receitas" value={formatBRL(totals.income)} icon={TrendingUp}
@@ -78,11 +85,14 @@ const Dashboard: React.FC = () => {
             color="bg-fin-expense/10 text-fin-expense" />
           <KPICard title="Investimentos" value={formatBRL(investmentTotal)} icon={PiggyBank}
             color="bg-fin-investment/10 text-fin-investment" />
-        </div>
+        </motion.div>
 
-        {/* Charts */}
+        {/* Charts with slide-up */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div className="rounded-xl border border-border bg-card p-5 enterprise-shadow">
+          <motion.div
+            {...slideUp(0.2)}
+            className="rounded-xl border border-border bg-card p-5 enterprise-shadow"
+          >
             <h3 className="text-sm font-semibold text-card-foreground mb-4">Receitas vs Despesas</h3>
             {monthlyData.length > 0 ? (
               <ResponsiveContainer width="100%" height={240}>
@@ -100,9 +110,12 @@ const Dashboard: React.FC = () => {
                 Adicione transações para ver o gráfico
               </div>
             )}
-          </div>
+          </motion.div>
 
-          <div className="rounded-xl border border-border bg-card p-5 enterprise-shadow">
+          <motion.div
+            {...slideUp(0.3)}
+            className="rounded-xl border border-border bg-card p-5 enterprise-shadow"
+          >
             <h3 className="text-sm font-semibold text-card-foreground mb-4">Top Categorias (Despesas)</h3>
             {categoryData.length > 0 ? (
               <ResponsiveContainer width="100%" height={240}>
@@ -119,16 +132,29 @@ const Dashboard: React.FC = () => {
                 Adicione despesas para ver o gráfico
               </div>
             )}
-          </div>
+          </motion.div>
         </div>
 
-        {/* Recent Transactions */}
-        <div className="rounded-xl border border-border bg-card p-5 enterprise-shadow">
+        {/* Recent Transactions with stagger */}
+        <motion.div
+          {...slideUp(0.35)}
+          className="rounded-xl border border-border bg-card p-5 enterprise-shadow"
+        >
           <h3 className="text-sm font-semibold text-card-foreground mb-4">Transações Recentes</h3>
           {transactions.length > 0 ? (
-            <div className="space-y-2">
+            <motion.div
+              className="space-y-2"
+              variants={staggerContainer}
+              initial="initial"
+              animate="animate"
+            >
               {transactions.slice(0, 8).map(t => (
-                <div key={t.id} className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-accent/50 transition-colors">
+                <motion.div
+                  key={t.id}
+                  variants={staggerItem}
+                  whileHover={{ x: 4, backgroundColor: "hsl(var(--accent) / 0.5)", transition: { duration: 0.15 } }}
+                  className="flex items-center justify-between py-2.5 px-3 rounded-lg transition-colors cursor-default"
+                >
                   <div className="flex items-center gap-3">
                     <div className={`w-2 h-2 rounded-full ${t.type === 'income' ? 'bg-fin-income' : 'bg-fin-expense'}`} />
                     <div>
@@ -139,13 +165,13 @@ const Dashboard: React.FC = () => {
                   <span className={`font-mono-fin text-sm font-semibold ${t.type === 'income' ? 'text-fin-income' : 'text-fin-expense'}`}>
                     {t.type === 'income' ? '+' : '−'} {formatBRL(t.amount)}
                   </span>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           ) : (
             <p className="text-sm text-muted-foreground text-center py-8">Nenhuma transação registrada</p>
           )}
-        </div>
+        </motion.div>
       </div>
     </PageTransition>
   );
