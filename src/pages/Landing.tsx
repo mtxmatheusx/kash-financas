@@ -368,6 +368,69 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
+      {/* ═══ O JEITO VELHO vs O JEITO KASH ═══ */}
+      <section className="py-14 sm:py-28 px-4 sm:px-6 relative">
+        <div className="max-w-5xl mx-auto relative z-10">
+          <motion.div {...fadeUp()} className="text-center mb-10 sm:mb-16">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
+              Por que você abandona planilhas no 2º mês?
+            </h2>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
+            {/* Card Esquerdo — O Jeito Velho */}
+            <motion.div
+              {...fadeUp(0.1)}
+              className="rounded-xl sm:rounded-2xl border border-[hsl(0,0%,12%)] bg-[hsl(0,0%,3%)] p-5 sm:p-8"
+            >
+              <h3 className="text-base sm:text-lg font-extrabold text-[hsl(0,0%,55%)] mb-5 sm:mb-6">
+                Planilhas & Apps Bancários
+              </h3>
+              <ul className="space-y-3.5 sm:space-y-4">
+                {[
+                  "Exigem login e abrir outro app",
+                  "Categorização 100% manual",
+                  "Você esquece de anotar o cafezinho",
+                  "Geram ansiedade ao abrir",
+                ].map(item => (
+                  <li key={item} className="flex items-start gap-3 text-xs sm:text-sm text-[hsl(0,0%,45%)]">
+                    <XIcon className="w-4 h-4 text-[hsl(348,100%,64%)] shrink-0 mt-0.5" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            {/* Card Direito — O Jeito Kash */}
+            <motion.div
+              {...fadeUp(0.2)}
+              className="relative rounded-xl sm:rounded-2xl overflow-hidden"
+            >
+              <div className="absolute inset-0 rounded-xl sm:rounded-2xl border border-[hsl(160,100%,50%)/0.25] shadow-[0_0_30px_-5px_hsl(160,100%,50%,0.12)]" />
+              <div className="absolute inset-px rounded-[11px] sm:rounded-[15px] bg-[hsl(0,0%,3%)]" />
+              <div className="relative p-5 sm:p-8">
+                <h3 className="text-base sm:text-lg font-extrabold text-[hsl(160,100%,50%)] mb-5 sm:mb-6">
+                  O Seu Novo Copiloto
+                </h3>
+                <ul className="space-y-3.5 sm:space-y-4">
+                  {[
+                    "Zero downloads — vive no seu WhatsApp",
+                    "Mande um áudio no trânsito",
+                    "Categorização via IA em 3 segundos",
+                    "Te diz como vender mais hoje",
+                  ].map(item => (
+                    <li key={item} className="flex items-start gap-3 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
+                      <Check className="w-4 h-4 text-[hsl(160,100%,50%)] shrink-0 mt-0.5" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* ═══ PRICING ═══ */}
       <section className="py-14 sm:py-28 px-4 sm:px-6 relative">
         <GridOverlay />
