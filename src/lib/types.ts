@@ -10,6 +10,8 @@ export interface TransactionRow {
   entry_type?: 'single' | 'installment' | 'recurring';
   installments?: number;
   frequency?: 'monthly' | 'yearly';
+  is_percentage?: boolean;
+  percentage?: number;
   created_at: string;
 }
 

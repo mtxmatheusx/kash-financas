@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { PageTransition } from "@/components/PageTransition";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAccount } from "@/contexts/AccountContext";
-import { Plus, Search, Trash2, ArrowDownRight } from "lucide-react";
+import { Plus, Search, Trash2, ArrowDownRight, Percent } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
