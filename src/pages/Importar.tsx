@@ -55,7 +55,7 @@ function parseDate(value: any): string | null {
     // ISO
     if (/^\d{4}-\d{2}-\d{2}/.test(trimmed)) return trimmed.slice(0, 10);
     // DD/MM/YYYY
-    const dmyMatch = trimmed.match(/^(\d{1,2})[/\\-.](\d{1,2})[/\\-.](\d{4})$/);
+    const dmyMatch = trimmed.match(/^(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{4})$/);
     if (dmyMatch) {
       const [, d, m, y] = dmyMatch;
       return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
