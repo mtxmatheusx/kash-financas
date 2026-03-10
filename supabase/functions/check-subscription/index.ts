@@ -41,8 +41,12 @@ serve(async (req) => {
 
     if (customers.data.length === 0) {
       logStep("No Stripe customer found");
-      // Ensure profile is free
-      await supabaseClient.from("profiles").update({ subscription_tier: "free" }).eq("user_id", user.id);
+      // Don't downgrade if user has active trial
+      const { data: profileData } = await supabaseClient.from("profiles").select("trial_end").eq("user_id", user.id).single();
+      const hasActiveTrial = profileData?.trial_end && new Date(profileData.trial_end) > new Date();
+      if (!hasActiveTrial) {
+        await supabaseClient.from("profiles").update({ subscription_tier: "free" }).eq("user_id", user.id);
+      }
       return new Response(JSON.stringify({ subscribed: false }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -60,7 +64,11 @@ serve(async (req) => {
       await supabaseClient.from("profiles").update({ subscription_tier: "premium" }).eq("user_id", user.id);
     } else {
       logStep("No active subscription");
-      await supabaseClient.from("profiles").update({ subscription_tier: "free" }).eq("user_id", user.id);
+      const { data: profileData2 } = await supabaseClient.from("profiles").select("trial_end").eq("user_id", user.id).single();
+      const hasActiveTrial2 = profileData2?.trial_end && new Date(profileData2.trial_end) > new Date();
+      if (!hasActiveTrial2) {
+        await supabaseClient.from("profiles").update({ subscription_tier: "free" }).eq("user_id", user.id);
+      }
     }
 
     return new Response(JSON.stringify({

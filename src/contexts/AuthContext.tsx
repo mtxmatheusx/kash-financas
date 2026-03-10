@@ -11,6 +11,8 @@ interface Profile {
   email: string | null;
   avatar_url: string | null;
   subscription_tier: SubscriptionTier;
+  trial_end: string | null;
+  referral_code: string | null;
 }
 
 interface AuthContextType {
@@ -19,6 +21,8 @@ interface AuthContextType {
   profile: Profile | null;
   loading: boolean;
   isPremium: boolean;
+  isTrialing: boolean;
+  trialDaysLeft: number | null;
   subscriptionEnd: string | null;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -31,6 +35,8 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   loading: true,
   isPremium: false,
+  isTrialing: false,
+  trialDaysLeft: null,
   subscriptionEnd: null,
   signOut: async () => {},
   refreshProfile: async () => {},
@@ -65,7 +71,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data?.subscription_end) {
         setSubscriptionEnd(data.subscription_end);
       }
-      // Refresh profile to get updated tier from DB
       if (user) await fetchProfile(user.id);
     } catch (e) {
       console.error("check-subscription failed:", e);
@@ -106,7 +111,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  // Check subscription on login and periodically
   useEffect(() => {
     if (!user) return;
     checkSubscription();
@@ -122,10 +126,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setSubscriptionEnd(null);
   };
 
-  const isPremium = profile?.subscription_tier === "premium";
+  // Trial logic
+  const now = new Date();
+  const trialEnd = profile?.trial_end ? new Date(profile.trial_end) : null;
+  const isTrialActive = trialEnd ? trialEnd > now : false;
+  const trialDaysLeft = trialEnd ? Math.max(0, Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))) : null;
+
+  // Premium if: has Stripe subscription OR trial is active
+  const hasStripeSubscription = profile?.subscription_tier === "premium" && !!subscriptionEnd;
+  const isPremium = hasStripeSubscription || isTrialActive;
 
   return (
-    <AuthContext.Provider value={{ user, session, profile, loading, isPremium, subscriptionEnd, signOut, refreshProfile, checkSubscription }}>
+    <AuthContext.Provider value={{
+      user, session, profile, loading, isPremium,
+      isTrialing: isTrialActive && !hasStripeSubscription,
+      trialDaysLeft,
+      subscriptionEnd, signOut, refreshProfile, checkSubscription
+    }}>
       {children}
     </AuthContext.Provider>
   );

@@ -21,7 +21,10 @@ export type Database = {
           display_name: string | null
           email: string | null
           id: string
+          referral_code: string | null
+          referred_by: string | null
           subscription_tier: Database["public"]["Enums"]["subscription_tier"]
+          trial_end: string | null
           updated_at: string
           user_id: string
         }
@@ -31,7 +34,10 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           id?: string
+          referral_code?: string | null
+          referred_by?: string | null
           subscription_tier?: Database["public"]["Enums"]["subscription_tier"]
+          trial_end?: string | null
           updated_at?: string
           user_id: string
         }
@@ -41,11 +47,22 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           id?: string
+          referral_code?: string | null
+          referred_by?: string | null
           subscription_tier?: Database["public"]["Enums"]["subscription_tier"]
+          trial_end?: string | null
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -70,6 +87,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_referral: {
+        Args: { new_user_id: string; referrer_code: string }
+        Returns: boolean
+      }
+      generate_referral_code: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
