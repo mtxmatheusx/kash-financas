@@ -77,7 +77,7 @@ const GridOverlay: React.FC = () => (
 );
 
 const Landing: React.FC = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, isPremium } = useAuth();
 
   if (loading) {
     return (
