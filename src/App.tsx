@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AccountProvider } from "@/contexts/AccountContext";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AppLayout } from "@/components/AppLayout";
 import Dashboard from "@/pages/Dashboard";
 import Receitas from "@/pages/Receitas";
@@ -16,36 +18,57 @@ import PlanejamentoFinanceiro from "@/pages/PlanejamentoFinanceiro";
 import DRE from "@/pages/DRE";
 import EBITDA from "@/pages/EBITDA";
 import Importar from "@/pages/Importar";
+import Login from "@/pages/Login";
+import Signup from "@/pages/Signup";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ResetPassword from "@/pages/ResetPassword";
+import Upgrade from "@/pages/Upgrade";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// Free pages: Dashboard, Receitas, Despesas
+// Premium pages: everything else
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
-      <AccountProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route element={<AppLayout />}>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/receitas" element={<Receitas />} />
-                <Route path="/despesas" element={<Despesas />} />
-                <Route path="/investimentos" element={<Investimentos />} />
-                <Route path="/metas" element={<Metas />} />
-                <Route path="/mensal" element={<Mensal />} />
-                <Route path="/planejamento" element={<PlanejamentoFinanceiro />} />
-                <Route path="/dre" element={<DRE />} />
-                <Route path="/ebitda" element={<EBITDA />} />
-                <Route path="/importar" element={<Importar />} />
-              </Route>
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AccountProvider>
+      <AuthProvider>
+        <AccountProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                {/* Public routes */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/upgrade" element={<Upgrade />} />
+
+                {/* Protected routes */}
+                <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+                  {/* Free tier */}
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/receitas" element={<Receitas />} />
+                  <Route path="/despesas" element={<Despesas />} />
+
+                  {/* Premium tier */}
+                  <Route path="/investimentos" element={<ProtectedRoute requirePremium><Investimentos /></ProtectedRoute>} />
+                  <Route path="/metas" element={<ProtectedRoute requirePremium><Metas /></ProtectedRoute>} />
+                  <Route path="/mensal" element={<ProtectedRoute requirePremium><Mensal /></ProtectedRoute>} />
+                  <Route path="/planejamento" element={<ProtectedRoute requirePremium><PlanejamentoFinanceiro /></ProtectedRoute>} />
+                  <Route path="/dre" element={<ProtectedRoute requirePremium><DRE /></ProtectedRoute>} />
+                  <Route path="/ebitda" element={<ProtectedRoute requirePremium><EBITDA /></ProtectedRoute>} />
+                  <Route path="/importar" element={<ProtectedRoute requirePremium><Importar /></ProtectedRoute>} />
+                </Route>
+
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </AccountProvider>
+      </AuthProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );
