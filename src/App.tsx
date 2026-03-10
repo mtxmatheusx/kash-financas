@@ -14,6 +14,7 @@ import Metas from "@/pages/Metas";
 import Mensal from "@/pages/Mensal";
 import PlanejamentoFinanceiro from "@/pages/PlanejamentoFinanceiro";
 import DRE from "@/pages/DRE";
+import EBITDA from "@/pages/EBITDA";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
                 <Route path="/mensal" element={<Mensal />} />
                 <Route path="/planejamento" element={<PlanejamentoFinanceiro />} />
                 <Route path="/dre" element={<DRE />} />
+                <Route path="/ebitda" element={<EBITDA />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
