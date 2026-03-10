@@ -514,7 +514,7 @@ const Landing: React.FC = () => {
               Seu Copiloto Está Esperando
             </h2>
             <p className="text-[hsl(0,0%,48%)] text-sm sm:text-lg mb-6 sm:mb-8 max-w-lg mx-auto">
-              30 dias grátis. Sem cartão. Cancele quando quiser.
+              Ative agora sem cadastrar cartão. Se você não recuperar pelo menos 10x o valor da assinatura já no primeiro mês, o teste sai de graça.
             </p>
             <Link to={signupLink}>
               <motion.div whileTap={{ scale: 0.97 }} className="inline-block">
