@@ -84,7 +84,7 @@ const Dashboard: React.FC = () => {
 
         {/* KPIs */}
         <motion.div
-          className="grid grid-cols-2 lg:grid-cols-4 gap-3"
+          className="grid grid-cols-2 gap-2.5 md:gap-3 lg:grid-cols-4"
           variants={staggerContainer}
           initial="initial"
           animate="animate"
