@@ -303,23 +303,40 @@ const Importar: React.FC = () => {
 
         {/* STEP: Upload */}
         {step === "upload" && (
-          <div
-            className="rounded-xl border-2 border-dashed border-border bg-card p-12 text-center cursor-pointer hover:border-primary/50 transition-colors"
-            onClick={() => fileRef.current?.click()}
-          >
-            <input
-              ref={fileRef}
-              type="file"
-              accept=".csv,.xlsx,.xls"
-              className="hidden"
-              onChange={e => {
-                const f = e.target.files?.[0];
-                if (f) handleFile(f);
-              }}
-            />
-            <Upload className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-            <p className="text-sm font-medium text-foreground">Clique para selecionar ou arraste o arquivo</p>
-            <p className="text-xs text-muted-foreground mt-1">Formatos aceitos: CSV, XLSX, XLS</p>
+          <div className="space-y-4">
+            <div
+              className="rounded-xl border-2 border-dashed border-border bg-card p-12 text-center cursor-pointer hover:border-primary/50 transition-colors"
+              onClick={() => fileRef.current?.click()}
+            >
+              <input
+                ref={fileRef}
+                type="file"
+                accept=".csv,.xlsx,.xls,.txt"
+                className="hidden"
+                onChange={e => {
+                  const f = e.target.files?.[0];
+                  if (f) handleFile(f);
+                }}
+              />
+              <Upload className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+              <p className="text-sm font-medium text-foreground">Clique para selecionar ou arraste o arquivo</p>
+              <p className="text-xs text-muted-foreground mt-1">Formatos aceitos: CSV, XLSX, XLS, TXT</p>
+            </div>
+
+            <div className="rounded-xl border border-border bg-card p-5">
+              <div className="flex items-start gap-3">
+                <Download className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-foreground">Modelo de planilha</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 mb-3">
+                    Baixe o modelo, preencha com suas transações e importe de volta. O arquivo já contém as colunas corretas e exemplos de preenchimento.
+                  </p>
+                  <Button variant="outline" size="sm" className="gap-2" onClick={downloadTemplate}>
+                    <Download className="w-3.5 h-3.5" /> Baixar modelo (.xlsx)
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
