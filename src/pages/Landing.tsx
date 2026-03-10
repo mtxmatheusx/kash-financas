@@ -7,6 +7,7 @@ import {
   Target, CalendarRange, Crown, Check, ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FloatingChat } from "@/components/FloatingChat";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 30 },
