@@ -5,7 +5,7 @@ import { useAccount } from "@/contexts/AccountContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Upload, FileSpreadsheet, Check, AlertTriangle, X, ArrowRight } from "lucide-react";
+import { Upload, FileSpreadsheet, Check, AlertTriangle, X, ArrowRight, Download } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
@@ -276,6 +276,48 @@ const Importar: React.FC = () => {
     if (fileRef.current) fileRef.current.value = "";
   };
 
+  const downloadTemplate = () => {
+    const templateData = [
+      {
+        Data: "10/03/2025",
+        "Descrição": "Salário mensal",
+        Valor: "5000,00",
+        Categoria: "Salário",
+        Tipo: "Receita",
+      },
+      {
+        Data: "11/03/2025",
+        "Descrição": "Aluguel",
+        Valor: "1500,00",
+        Categoria: "Moradia",
+        Tipo: "Despesa",
+      },
+      {
+        Data: "12/03/2025",
+        "Descrição": "Supermercado",
+        Valor: "450,00",
+        Categoria: "Alimentação",
+        Tipo: "Despesa",
+      },
+      {
+        Data: "15/03/2025",
+        "Descrição": "Freelance",
+        Valor: "2000,00",
+        Categoria: "Renda Extra",
+        Tipo: "Receita",
+      },
+    ];
+
+    const ws = XLSX.utils.json_to_sheet(templateData);
+    ws["!cols"] = [
+      { wch: 14 }, { wch: 30 }, { wch: 14 }, { wch: 18 }, { wch: 12 },
+    ];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Transações");
+    XLSX.writeFile(wb, "modelo-importacao-kash.xlsx");
+    toast.success("Modelo baixado com sucesso!");
+  };
+
   return (
     <PageTransition>
       <div className="space-y-6 max-w-3xl mx-auto">
@@ -303,23 +345,40 @@ const Importar: React.FC = () => {
 
         {/* STEP: Upload */}
         {step === "upload" && (
-          <div
-            className="rounded-xl border-2 border-dashed border-border bg-card p-12 text-center cursor-pointer hover:border-primary/50 transition-colors"
-            onClick={() => fileRef.current?.click()}
-          >
-            <input
-              ref={fileRef}
-              type="file"
-              accept=".csv,.xlsx,.xls"
-              className="hidden"
-              onChange={e => {
-                const f = e.target.files?.[0];
-                if (f) handleFile(f);
-              }}
-            />
-            <Upload className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-            <p className="text-sm font-medium text-foreground">Clique para selecionar ou arraste o arquivo</p>
-            <p className="text-xs text-muted-foreground mt-1">Formatos aceitos: CSV, XLSX, XLS</p>
+          <div className="space-y-4">
+            <div
+              className="rounded-xl border-2 border-dashed border-border bg-card p-12 text-center cursor-pointer hover:border-primary/50 transition-colors"
+              onClick={() => fileRef.current?.click()}
+            >
+              <input
+                ref={fileRef}
+                type="file"
+                accept=".csv,.xlsx,.xls,.txt"
+                className="hidden"
+                onChange={e => {
+                  const f = e.target.files?.[0];
+                  if (f) handleFile(f);
+                }}
+              />
+              <Upload className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+              <p className="text-sm font-medium text-foreground">Clique para selecionar ou arraste o arquivo</p>
+              <p className="text-xs text-muted-foreground mt-1">Formatos aceitos: CSV, XLSX, XLS, TXT</p>
+            </div>
+
+            <div className="rounded-xl border border-border bg-card p-5">
+              <div className="flex items-start gap-3">
+                <Download className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-foreground">Modelo de planilha</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 mb-3">
+                    Baixe o modelo, preencha com suas transações e importe de volta. O arquivo já contém as colunas corretas e exemplos de preenchimento.
+                  </p>
+                  <Button variant="outline" size="sm" className="gap-2" onClick={downloadTemplate}>
+                    <Download className="w-3.5 h-3.5" /> Baixar modelo (.xlsx)
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
