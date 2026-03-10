@@ -299,26 +299,7 @@ export const FloatingChat: React.FC = () => {
         </div>
       </div>
 
-      {/* Mic button */}
-      {micSupported && (
-        <div className="px-4 pb-1">
-          <button
-            onClick={isListening ? stopListening : startListening}
-            className={cn(
-              "w-full flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-medium transition-all",
-              isListening
-                ? "bg-fin-expense/15 text-fin-expense border border-fin-expense/30 animate-pulse"
-                : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted border border-border/50"
-            )}
-          >
-            {isListening ? (
-              <><MicOff className="w-3.5 h-3.5" /> Parar gravação{transcript && `: "${transcript}"`}</>
-            ) : (
-              <><Mic className="w-3.5 h-3.5" /> Enviar por áudio</>
-            )}
-          </button>
-        </div>
-      )}
+      {/* Mic button is now in the chat controls bar */}
 
       {/* Messages */}
       <div className="flex-1 overflow-hidden">
