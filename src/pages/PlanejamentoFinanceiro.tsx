@@ -60,7 +60,7 @@ const PlanejamentoFinanceiro: React.FC = () => {
         </div>
 
         {/* Recommendations */}
-        <div className="rounded-xl border border-border bg-card p-6 enterprise-shadow">
+        <div className="rounded-xl border border-border bg-card p-4 md:p-6 enterprise-shadow">
           <h3 className="text-sm font-semibold text-card-foreground mb-4">Recomendações</h3>
           <div className="space-y-3">
             {savingsRate < 20 && (
