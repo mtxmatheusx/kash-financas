@@ -70,7 +70,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className="space-y-5">
+      <div className="space-y-3 md:space-y-5">
         {/* Header */}
         <motion.div {...fadeIn(0)} className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
