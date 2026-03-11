@@ -87,11 +87,18 @@ const Despesas: React.FC = () => {
 
   const handleSubmit = () => {
     let amount: number;
+    const pct = form.is_percentage ? parseFloat(form.percentage.replace(',', '.')) : 0;
+
     if (form.is_percentage) {
-      const pct = parseFloat(form.percentage.replace(',', '.'));
       if (!form.description || !pct || pct <= 0) return;
-      const base = form.percentage_base === 'monthly' ? monthlyIncome : totals.income;
-      amount = (base * pct) / 100;
+      // For 'monthly' base with recurring, the hook calculates per-month amounts
+      // For single or 'total' base, calculate here
+      if (form.percentage_base === 'monthly' && form.entry_type === 'recurring') {
+        amount = 0; // placeholder — hook will calculate per month
+      } else {
+        const base = form.percentage_base === 'monthly' ? monthlyIncome : totals.income;
+        amount = (base * pct) / 100;
+      }
     } else {
       amount = amountCents / 100;
       if (!form.description || !amount) return;
@@ -107,7 +114,8 @@ const Despesas: React.FC = () => {
       entry_type: form.entry_type,
       account_type: account.type,
       is_percentage: form.is_percentage,
-      ...(form.is_percentage ? { percentage: parseFloat(form.percentage.replace(',', '.')) } : {}),
+      percentage_base: form.percentage_base,
+      ...(form.is_percentage ? { percentage: pct } : {}),
       ...(form.entry_type === 'installment' ? { installments: parseInt(form.installments) || 2 } : {}),
       ...(form.entry_type === 'recurring' ? { frequency: form.frequency, recurring_months: parseInt(form.recurring_months) || 12 } : {}),
     };
