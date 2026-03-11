@@ -9,7 +9,22 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { messages, consultantType } = await req.json();
+    const { messages, consultantType, country } = await req.json();
+    
+    // Build country context block for system prompts
+    const countryContext = country
+      ? `\n\n**CONTEXTO DO USUÁRIO:**
+- País: ${country.name} (${country.code})
+- Moeda local: ${country.currency}
+- Idioma: ${country.language}
+
+**REGRAS OBRIGATÓRIAS:**
+- SEMPRE use a moeda local (${country.currency}) em todos os exemplos e valores
+- Referencie investimentos, impostos e regulamentações do país ${country.name}
+- Responda no idioma ${country.language}
+- Use exemplos de mercado e produtos financeiros específicos de ${country.name}
+- NÃO use referências financeiras de outros países a menos que o usuário peça comparações`
+      : "";
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
