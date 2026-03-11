@@ -102,6 +102,7 @@ export const FinancialInsights: React.FC<FinancialInsightsProps> = ({
           goals: goals?.map(g => ({ name: g.name, target_amount: g.target_amount, current_amount: g.current_amount, deadline: g.deadline })) || [],
           preferences: prefs.map(p => p.preference),
           language,
+          currency,
         },
       });
       if (!error && data?.insights?.length > 0) setInsights(data.insights);
