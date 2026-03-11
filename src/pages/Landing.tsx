@@ -118,7 +118,7 @@ const IPhoneMockup: React.FC = () => (
       <div className="absolute inset-[3px] rounded-[37px] overflow-hidden bg-[hsl(200,5%,8%)]">
         <div className="bg-[hsl(200,8%,12%)] px-4 pt-10 pb-3 flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-[hsl(160,100%,50%)/0.15] flex items-center justify-center">
-            <span className="text-[hsl(160,100%,50%)] text-xs font-bold">K</span>
+            <span className="text-[hsl(160,100%,50%)] text-xs font-bold">F</span>
           </div>
           <div>
             <p className="text-[11px] font-semibold text-white">Kash Copiloto</p>
