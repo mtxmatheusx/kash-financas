@@ -247,6 +247,84 @@ export type Database = {
         }
         Relationships: []
       }
+      user_settings: {
+        Row: {
+          bank_account: string | null
+          bank_agency: string | null
+          bank_name: string | null
+          city_registration: string | null
+          company_name: string | null
+          created_at: string
+          document_number: string | null
+          document_type: string | null
+          evolution_api_key: string | null
+          evolution_api_url: string | null
+          evolution_instance: string | null
+          id: string
+          n8n_webhook_url: string | null
+          notify_due_dates: boolean | null
+          notify_due_days_before: number | null
+          notify_email: boolean | null
+          notify_whatsapp: boolean | null
+          pix_key: string | null
+          pix_key_type: string | null
+          state_registration: string | null
+          tax_regime: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bank_account?: string | null
+          bank_agency?: string | null
+          bank_name?: string | null
+          city_registration?: string | null
+          company_name?: string | null
+          created_at?: string
+          document_number?: string | null
+          document_type?: string | null
+          evolution_api_key?: string | null
+          evolution_api_url?: string | null
+          evolution_instance?: string | null
+          id?: string
+          n8n_webhook_url?: string | null
+          notify_due_dates?: boolean | null
+          notify_due_days_before?: number | null
+          notify_email?: boolean | null
+          notify_whatsapp?: boolean | null
+          pix_key?: string | null
+          pix_key_type?: string | null
+          state_registration?: string | null
+          tax_regime?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bank_account?: string | null
+          bank_agency?: string | null
+          bank_name?: string | null
+          city_registration?: string | null
+          company_name?: string | null
+          created_at?: string
+          document_number?: string | null
+          document_type?: string | null
+          evolution_api_key?: string | null
+          evolution_api_url?: string | null
+          evolution_instance?: string | null
+          id?: string
+          n8n_webhook_url?: string | null
+          notify_due_dates?: boolean | null
+          notify_due_days_before?: number | null
+          notify_email?: boolean | null
+          notify_whatsapp?: boolean | null
+          pix_key?: string | null
+          pix_key_type?: string | null
+          state_registration?: string | null
+          tax_regime?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

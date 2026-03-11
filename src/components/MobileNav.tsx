@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, TrendingUp, TrendingDown, PieChart, Target,
-  CalendarRange, Compass, FileText, Calculator, Upload, MoreHorizontal, X, UserCog,
+  CalendarRange, Compass, FileText, Calculator, Upload, MoreHorizontal, X, UserCog, Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAccount } from "@/contexts/AccountContext";
@@ -23,6 +23,7 @@ const moreItems = [
   { path: "/ebitda", label: "EBITDA", icon: Calculator, account: "business" as const },
   { path: "/importar", label: "Importar", icon: Upload },
   { path: "/perfil", label: "Meu Perfil", icon: UserCog },
+  { path: "/configuracoes", label: "Configurações", icon: Settings },
 ];
 
 export const MobileNav: React.FC = () => {
