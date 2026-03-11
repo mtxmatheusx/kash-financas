@@ -44,58 +44,9 @@ type DisplayMsg = {
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 const PARSE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/parse-transaction`;
 
+// quickSuggestions and consultantConfig are now built inside the component using t()
 type QuickSuggestion = { label: string; icon: any; msg: string; color: string };
-
-const quickSuggestions: Record<ConsultantType, QuickSuggestion[]> = {
-  financial: [
-    { label: "Registrar receita", icon: Plus, msg: "Quero registrar uma receita", color: "text-fin-income border-fin-income/30 bg-fin-income/5 hover:bg-fin-income/10" },
-    { label: "Registrar despesa", icon: Minus, msg: "Quero registrar uma despesa", color: "text-fin-expense border-fin-expense/30 bg-fin-expense/5 hover:bg-fin-expense/10" },
-    { label: "Ver resumo", icon: BarChart3, msg: "Me mostre um resumo financeiro do mês", color: "text-primary border-primary/30 bg-primary/5 hover:bg-primary/10" },
-    { label: "Dica de economia", icon: Lightbulb, msg: "Me dê uma dica prática para economizar dinheiro no dia a dia", color: "text-fin-pending border-fin-pending/30 bg-fin-pending/5 hover:bg-fin-pending/10" },
-    { label: "Simular investimento", icon: LineChart, msg: "Quero simular um investimento. Me ajude a calcular rendimentos", color: "text-fin-investment border-fin-investment/30 bg-fin-investment/5 hover:bg-fin-investment/10" },
-  ],
-  sales: [
-    { label: "Registrar venda", icon: DollarSign, msg: "Quero registrar uma venda", color: "text-fin-income border-fin-income/30 bg-fin-income/5 hover:bg-fin-income/10" },
-    { label: "Custo operacional", icon: Receipt, msg: "Quero registrar um custo operacional", color: "text-fin-expense border-fin-expense/30 bg-fin-expense/5 hover:bg-fin-expense/10" },
-    { label: "Projeção de receita", icon: TrendingUp, msg: "Faça uma projeção de receita para os próximos 3 meses", color: "text-primary border-primary/30 bg-primary/5 hover:bg-primary/10" },
-    { label: "Análise de margem", icon: PieChart, msg: "Analise minha margem de lucro atual e sugira melhorias", color: "text-fin-pending border-fin-pending/30 bg-fin-pending/5 hover:bg-fin-pending/10" },
-    { label: "Estratégia de preço", icon: BadgeDollarSign, msg: "Me ajude a precificar meu produto/serviço com base nos custos", color: "text-fin-investment border-fin-investment/30 bg-fin-investment/5 hover:bg-fin-investment/10" },
-  ],
-  investor: [
-    { label: "Meu perfil", icon: UserCheck, msg: "Quero descobrir meu perfil de investidor. Me faça as perguntas necessárias.", color: "text-primary border-primary/30 bg-primary/5 hover:bg-primary/10" },
-    { label: "Onde investir", icon: CandlestickChart, msg: "Com base no meu perfil, onde posso investir agora? Quero opções com prós e contras.", color: "text-fin-income border-fin-income/30 bg-fin-income/5 hover:bg-fin-income/10" },
-    { label: "Riscos atuais", icon: ShieldAlert, msg: "Quais são os principais riscos do mercado financeiro brasileiro hoje?", color: "text-fin-expense border-fin-expense/30 bg-fin-expense/5 hover:bg-fin-expense/10" },
-    { label: "Renda fixa vs variável", icon: Target, msg: "Compare renda fixa e renda variável para o cenário atual com números reais", color: "text-fin-pending border-fin-pending/30 bg-fin-pending/5 hover:bg-fin-pending/10" },
-    { label: "Carteira ideal", icon: Wallet, msg: "Monte uma sugestão de carteira diversificada para meu perfil", color: "text-fin-investment border-fin-investment/30 bg-fin-investment/5 hover:bg-fin-investment/10" },
-  ],
-};
-
-const consultantConfig: Record<ConsultantType, { label: string; shortLabel: string; icon: any; fallback: string; placeholder: string; greeting: string }> = {
-  financial: {
-    label: "Consultor Financeiro",
-    shortLabel: "Financeiro",
-    icon: Bot,
-    fallback: "CF",
-    placeholder: "Pergunte ou envie uma imagem (fatura, extrato)...",
-    greeting: "Olá! 👋 Sou seu consultor financeiro com IA. Posso analisar seus gastos, simular investimentos e **registrar transações por você**.\n\n📸 Envie uma foto de fatura, extrato ou comprovante e eu analiso!\n🎙️ Ou mande um áudio como \"gastei 50 de gasolina\".",
-  },
-  sales: {
-    label: "Consultor de Vendas",
-    shortLabel: "Vendas",
-    icon: TrendingUp,
-    fallback: "CV",
-    placeholder: "Pergunte ou envie uma imagem (relatório, NF)...",
-    greeting: "Olá! 📊 Sou seu consultor de vendas com IA. Posso **registrar receitas e despesas** e analisar dados.\n\n📸 Envie uma foto de relatório, planilha ou nota fiscal!\n🎙️ Ou diga \"recebi 5000 de freelance\".",
-  },
-  investor: {
-    label: "Consultor de Investimentos",
-    shortLabel: "Investidor",
-    icon: CandlestickChart,
-    fallback: "CI",
-    placeholder: "Pergunte sobre investimentos, perfil ou mercado...",
-    greeting: "Olá! 📈 Sou seu consultor de investimentos com IA. Posso ajudar a **definir seu perfil de investidor**, analisar o mercado e sugerir estratégias.\n\n⚠️ **Aviso importante:** As informações são educacionais. Toda decisão de investimento é de **sua responsabilidade**. Ganhos e perdas dependem exclusivamente das suas escolhas.\n\n💡 Comece descobrindo seu perfil de investidor!",
-  },
-};
+type ConsultantConfig = { label: string; shortLabel: string; icon: any; fallback: string; placeholder: string; greeting: string };
 
 /** Convert a File to a base64 data URL */
 function fileToBase64(file: File): Promise<string> {
