@@ -286,12 +286,12 @@ const DRE: React.FC = () => {
       // ════════════════════════════════════════════════
       let aiText = "";
       if (current.receitaBruta === 0 && current.totalExpenses === 0) {
-        aiText = "Nenhuma movimentação registrada neste período.";
+        aiText = t("dre.pdf.noMovements");
       } else if (current.lucroLiquido >= 0) {
-        aiText = `Resultado positivo no período com lucro líquido de ${formatBRL(current.lucroLiquido)} e margem de ${current.margemLiquida.toFixed(1)}%.`;
-        if (current.margemBruta > 0 && current.margemBruta < 30) aiText += " Atenção: margem bruta abaixo de 30%.";
+        aiText = t("dre.pdf.positiveResult").replace("{amount}", formatBRL(current.lucroLiquido)).replace("{pct}", current.margemLiquida.toFixed(1));
+        if (current.margemBruta > 0 && current.margemBruta < 30) aiText += t("dre.pdf.lowGrossMargin");
       } else {
-        aiText = `Resultado negativo no período com prejuízo de ${formatBRL(Math.abs(current.lucroLiquido))}. Recomenda-se revisão de custos e despesas operacionais.`;
+        aiText = t("dre.pdf.negativeResult").replace("{amount}", formatBRL(Math.abs(current.lucroLiquido)));
       }
       const aiTextLines = pdf.splitTextToSize(aiText, u - 18);
       const aiBoxH = 10 + aiTextLines.length * 4;
