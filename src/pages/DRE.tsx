@@ -637,7 +637,7 @@ const DRE: React.FC = () => {
                   {Object.entries(current.opexGroups).length > 0 && (
                     <p>
                       {t("dre.topExpenseGroup")}{" "}
-                      <strong>{Object.entries(current.opexGroups).sort((a, b) => b[1].total - a[1].total)[0][0]}</strong>{" "}
+                      <strong>{translateCategory(Object.entries(current.opexGroups).sort((a, b) => b[1].total - a[1].total)[0][0], t)}</strong>{" "}
                       ({formatBRL(Object.entries(current.opexGroups).sort((a, b) => b[1].total - a[1].total)[0][1].total)})
                     </p>
                   )}
