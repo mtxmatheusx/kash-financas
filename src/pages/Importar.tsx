@@ -624,7 +624,7 @@ const Importar: React.FC = () => {
               </div>
             )}
 
-            <p className="text-sm text-muted-foreground">Confira e ajuste o mapeamento das colunas:</p>
+            <p className="text-sm text-muted-foreground">{t("import.checkMapping")}</p>
 
             <div className="space-y-3">
               {(["description", "amount", "date", "category", "type"] as const).map(field => {
