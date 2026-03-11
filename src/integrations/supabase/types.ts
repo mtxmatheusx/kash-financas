@@ -81,6 +81,7 @@ export type Database = {
         Row: {
           account_type: Database["public"]["Enums"]["account_type"]
           amount: number
+          country: string | null
           created_at: string
           current_value: number
           date: string
@@ -92,6 +93,7 @@ export type Database = {
         Insert: {
           account_type?: Database["public"]["Enums"]["account_type"]
           amount?: number
+          country?: string | null
           created_at?: string
           current_value?: number
           date?: string
@@ -103,6 +105,7 @@ export type Database = {
         Update: {
           account_type?: Database["public"]["Enums"]["account_type"]
           amount?: number
+          country?: string | null
           created_at?: string
           current_value?: number
           date?: string
