@@ -563,12 +563,12 @@ const Landing: React.FC = () => {
                 <Link to={signupLink}>
                   <motion.div whileTap={{ scale: 0.97 }}>
                     <Button className="w-full h-12 sm:h-14 text-sm sm:text-base bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 font-bold shadow-[0_0_24px_-4px_hsl(348,100%,64%,0.5)] hover:shadow-[0_0_32px_-4px_hsl(348,100%,64%,0.7)] transition-shadow">
-                      <Sparkles className="mr-2 h-4 w-4" /> Liberar Meu Assistente Agora
+                      <Sparkles className="mr-2 h-4 w-4" /> {t("landing.pricing.premiumCta")}
                     </Button>
                   </motion.div>
                 </Link>
                 <p className="text-center text-[11px] text-[hsl(0,0%,40%)] mt-3">
-                  30 dias grátis · Cancele com 1 clique. Sem burocracia.
+                  {t("landing.pricing.premiumNote")}
                 </p>
               </div>
             </motion.div>
