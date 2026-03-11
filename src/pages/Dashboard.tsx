@@ -11,7 +11,14 @@ import {
   Tooltip, ResponsiveContainer, CartesianGrid,
 } from "recharts";
 import { createAnimatedBarShape } from "@/components/AnimatedBar";
-import { DashboardDateFilter, getDateRange, type DateFilter } from "@/components/DashboardDateFilter";
+import { getDateRange, type DateFilter } from "@/components/DashboardDateFilter";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { FinancialInsights } from "@/components/FinancialInsights";
 import { useGoals } from "@/hooks/useGoals";
 
