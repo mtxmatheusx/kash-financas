@@ -44,9 +44,7 @@ const Login: React.FC = () => {
         className="w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center mx-auto mb-4">
-            <span className="text-primary-foreground font-bold text-lg">F</span>
-          </div>
+          <img src={facilitenLogo} alt="Faciliten" className="w-12 h-12 rounded-xl mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-foreground">Faciliten</h1>
           <p className="text-muted-foreground mt-1">Finanças simplificadas</p>
         </div>
