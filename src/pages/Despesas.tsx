@@ -273,7 +273,7 @@ const Despesas: React.FC = () => {
               </div>
               <select value={form.category} onChange={e => { setForm({ ...form, category: e.target.value }); setUserChangedCategory(true); }}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                {categoryKeys.map(c => <option key={c.value} value={c.value}>{t(c.tKey)}</option>)}
               </select>
             </div>
             <div>
