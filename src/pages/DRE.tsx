@@ -380,15 +380,17 @@ const DRE: React.FC = () => {
         const indent = (line.indent || 0) * 6;
 
         // Label
+        const labelColor: C3 = line.bold ? [...black] : [...zinc500];
         pdf.setFontSize(line.bold ? 8 : 7.5);
         pdf.setFont("helvetica", line.bold ? "bold" : "normal");
-        pdf.setTextColor(...(line.bold ? black : zinc500));
+        pdf.setTextColor(...labelColor);
         pdf.text(line.label, m + 4 + indent, y + 4.5);
 
         // Current value
         if (line.value !== 0) {
+          const valColor: C3 = line.value > 0 ? [...green600] : [...red600];
           pdf.setFont("helvetica", line.bold ? "bold" : "normal");
-          pdf.setTextColor(...(line.value > 0 ? green600 : red600));
+          pdf.setTextColor(...valColor);
           pdf.text(formatBRL(Math.abs(line.value)), m + u - 36, y + 4.5, { align: "right" });
         } else {
           pdf.setTextColor(...zinc300);
