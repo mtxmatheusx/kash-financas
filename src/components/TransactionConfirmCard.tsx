@@ -27,6 +27,7 @@ export const TransactionConfirmCard: React.FC<TransactionConfirmCardProps> = ({
   onConfirm,
   onCancel,
 }) => {
+  const { formatMoney: formatBRL } = usePreferences();
   const isIncome = transaction.type === "income";
 
   return (

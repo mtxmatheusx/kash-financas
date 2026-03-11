@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { usePreferences } from "@/contexts/PreferencesContext";
 
 const PlanejamentoFinanceiro: React.FC = () => {
+  const { formatMoney: formatBRL } = usePreferences();
   const { totals, transactions } = useTransactions();
   const { total: investmentTotal } = useInvestments();
   const { goals } = useGoals();

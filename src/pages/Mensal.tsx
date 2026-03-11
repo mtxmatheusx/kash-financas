@@ -19,6 +19,7 @@ import { usePreferences } from "@/contexts/PreferencesContext";
 const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
 const Mensal: React.FC = () => {
+  const { formatMoney: formatBRL } = usePreferences();
   const { transactions } = useTransactions();
   const [year, setYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);

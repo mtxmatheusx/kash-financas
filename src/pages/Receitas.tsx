@@ -29,6 +29,7 @@ const emptyForm = () => ({
 });
 
 const Receitas: React.FC = () => {
+  const { formatMoney: formatBRL } = usePreferences();
   const { transactions, create, update, remove, totals } = useTransactions('income');
   const { account } = useAccount();
   const [search, setSearch] = useState('');
