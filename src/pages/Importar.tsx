@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef } from "react";
 import { PageTransition } from "@/components/PageTransition";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAccount } from "@/contexts/AccountContext";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -193,6 +194,7 @@ function parseCSVLine(line: string, delimiter: string = ","): string[] {
 const Importar: React.FC = () => {
   const { transactions, create } = useTransactions();
   const { account } = useAccount();
+  const { t } = usePreferences();
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [step, setStep] = useState<"upload" | "mapping" | "preview" | "done">("upload");
@@ -444,13 +446,13 @@ const Importar: React.FC = () => {
     <PageTransition>
       <div className="space-y-6 max-w-3xl mx-auto">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Importar Planilha</h1>
-          <p className="text-sm text-muted-foreground">Importe transações de qualquer planilha — a IA identifica as colunas automaticamente</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t("import.title")}</h1>
+          <p className="text-sm text-muted-foreground">{t("import.subtitle")}</p>
         </div>
 
         {/* Step Indicator */}
         <div className="flex items-center gap-2 text-xs font-medium flex-wrap">
-          {["Upload", "Mapeamento", "Pré-visualização", "Concluído"].map((label, i) => {
+          {[t("import.stepUpload"), t("import.stepMapping"), t("import.stepPreview"), t("import.stepDone")].map((label, i) => {
             const stepIndex = ["upload", "mapping", "preview", "done"].indexOf(step);
             return (
               <React.Fragment key={label}>
@@ -483,8 +485,8 @@ const Importar: React.FC = () => {
                 }}
               />
               <Upload className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-              <p className="text-sm font-medium text-foreground">Clique para selecionar ou arraste o arquivo</p>
-              <p className="text-xs text-muted-foreground mt-1">CSV, XLSX, XLS, ODS, TXT, TSV</p>
+              <p className="text-sm font-medium text-foreground">{t("import.clickToSelect")}</p>
+              <p className="text-xs text-muted-foreground mt-1">{t("import.fileTypes")}</p>
             </div>
 
             {/* AI badge */}
@@ -492,11 +494,11 @@ const Importar: React.FC = () => {
               <Brain className="w-5 h-5 text-primary mt-0.5 shrink-0" />
               <div>
                 <p className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                  Mapeamento inteligente com IA
+                  {t("import.aiMapping")}
                   <Sparkles className="w-3.5 h-3.5 text-primary" />
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  A IA analisa os cabeçalhos e dados da sua planilha para identificar automaticamente cada coluna — independente do formato ou idioma.
+                  {t("import.aiMappingDesc")}
                 </p>
               </div>
             </div>
@@ -505,12 +507,12 @@ const Importar: React.FC = () => {
               <div className="flex items-start gap-3">
                 <Download className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-foreground">Modelo de planilha</p>
+                  <p className="text-sm font-medium text-foreground">{t("import.templateTitle")}</p>
                   <p className="text-xs text-muted-foreground mt-0.5 mb-3">
-                    Baixe o modelo, preencha com suas transações e importe de volta.
+                    {t("import.templateDesc")}
                   </p>
                   <Button variant="outline" size="sm" className="gap-2" onClick={downloadTemplate}>
-                    <Download className="w-3.5 h-3.5" /> Baixar modelo (.xlsx)
+                    <Download className="w-3.5 h-3.5" /> {t("import.downloadTemplate")}
                   </Button>
                 </div>
               </div>
@@ -521,25 +523,25 @@ const Importar: React.FC = () => {
               <div className="flex items-start gap-3">
                 <Trash2 className="w-5 h-5 text-destructive mt-0.5 shrink-0" />
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-foreground">Resetar dados importados</p>
+                  <p className="text-sm font-medium text-foreground">{t("import.resetTitle")}</p>
                   <p className="text-xs text-muted-foreground mt-0.5 mb-3">
-                    Remove todas as transações, investimentos e metas da conta atual. Esta ação não pode ser desfeita.
+                    {t("import.resetDesc")}
                   </p>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button variant="destructive" size="sm" className="gap-2">
-                        <Trash2 className="w-3.5 h-3.5" /> Resetar todos os dados
+                        <Trash2 className="w-3.5 h-3.5" /> {t("import.resetAll")}
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
+                        <AlertDialogTitle>{t("import.resetConfirmTitle")}</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Isso removerá permanentemente todas as transações, investimentos e metas da conta <strong>{account.type === "personal" ? "Pessoal" : "Empresarial"}</strong>. Esta ação não pode ser desfeita.
+                          {t("import.resetConfirmDesc").replace("{account}", account.type === "personal" ? t("topbar.personal") : t("topbar.business"))}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
                         <AlertDialogAction
                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           onClick={() => {
@@ -556,7 +558,7 @@ const Importar: React.FC = () => {
                             setTimeout(() => window.location.reload(), 1000);
                           }}
                         >
-                          Sim, resetar tudo
+                          {t("import.resetConfirm")}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -575,13 +577,13 @@ const Importar: React.FC = () => {
                 <FileSpreadsheet className="w-5 h-5 text-primary" />
                 <div>
                   <p className="text-sm font-medium text-foreground">{fileName}</p>
-                  <p className="text-xs text-muted-foreground">{result.rawRows.length} linhas encontradas</p>
+                  <p className="text-xs text-muted-foreground">{t("import.rowsFound").replace("{count}", String(result.rawRows.length))}</p>
                 </div>
               </div>
               {aiMapping && (
                 <div className="flex items-center gap-1.5 text-xs text-primary">
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  IA analisando...
+                  {t("import.aiAnalyzing")}
                 </div>
               )}
             </div>
@@ -589,7 +591,7 @@ const Importar: React.FC = () => {
             {/* Multi-sheet selector */}
             {sheetsAvailable.length > 1 && (
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs text-muted-foreground">Abas:</span>
+                <span className="text-xs text-muted-foreground">{t("import.tabs")}</span>
                 {sheetsAvailable.map(s => (
                   <Button
                     key={s}
@@ -615,23 +617,23 @@ const Importar: React.FC = () => {
                 <Brain className="w-3.5 h-3.5 mt-0.5 shrink-0" />
                 <div>
                   <span className="font-medium">
-                    IA: confiança {aiConfidence === "high" ? "alta" : aiConfidence === "medium" ? "média" : "baixa"}
+                    {t("import.aiConfidence").replace("{level}", aiConfidence === "high" ? t("import.aiConfidenceHigh") : aiConfidence === "medium" ? t("import.aiConfidenceMedium") : t("import.aiConfidenceLow"))}
                   </span>
                   {aiNotes && <p className="text-muted-foreground mt-0.5">{aiNotes}</p>}
                 </div>
               </div>
             )}
 
-            <p className="text-sm text-muted-foreground">Confira e ajuste o mapeamento das colunas:</p>
+            <p className="text-sm text-muted-foreground">{t("import.checkMapping")}</p>
 
             <div className="space-y-3">
               {(["description", "amount", "date", "category", "type"] as const).map(field => {
                 const labels: Record<string, string> = {
-                  description: "Descrição *",
-                  amount: "Valor *",
-                  date: "Data *",
-                  category: "Categoria",
-                  type: "Tipo (Receita/Despesa)",
+                  description: t("import.descriptionCol"),
+                  amount: t("import.amountCol"),
+                  date: t("import.dateCol"),
+                  category: t("import.categoryCol"),
+                  type: t("import.typeCol"),
                 };
                 const required = ["description", "amount", "date"].includes(field);
                 return (
@@ -642,10 +644,10 @@ const Importar: React.FC = () => {
                       onValueChange={v => setMapping(prev => ({ ...prev, [field]: v === "__none__" ? "" : v }))}
                     >
                       <SelectTrigger className="flex-1">
-                        <SelectValue placeholder="Selecione a coluna" />
+                        <SelectValue placeholder={t("import.selectColumn")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="__none__">— Não mapear —</SelectItem>
+                        <SelectItem value="__none__">{t("import.noMap")}</SelectItem>
                         {result.headers.filter(h => h && h.trim() !== "").map(h => (
                           <SelectItem key={h} value={h}>{h}</SelectItem>
                         ))}
@@ -662,7 +664,7 @@ const Importar: React.FC = () => {
             {/* Preview sample */}
             {result.rawRows.length > 0 && (
               <div className="text-xs text-muted-foreground border-t border-border pt-3">
-                <p className="font-medium mb-1">Amostra da primeira linha:</p>
+                <p className="font-medium mb-1">{t("import.sampleRow")}</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                   {result.headers.slice(0, 8).map(h => (
                     <div key={h} className="truncate"><span className="font-mono">{h}:</span> {String(result.rawRows[0][h]).substring(0, 30)}</div>
@@ -672,7 +674,7 @@ const Importar: React.FC = () => {
             )}
 
             <div className="flex gap-2 pt-2 flex-wrap">
-              <Button variant="outline" onClick={reset}>Cancelar</Button>
+              <Button variant="outline" onClick={reset}>{t("common.cancel")}</Button>
               <Button
                 variant="outline"
                 size="sm"
@@ -683,13 +685,13 @@ const Importar: React.FC = () => {
                 })}
               >
                 <RefreshCw className={cn("w-3.5 h-3.5", aiMapping && "animate-spin")} />
-                Remapear com IA
+                {t("import.remapAi")}
               </Button>
               <Button
                 onClick={processMapping}
                 disabled={!mapping.description || !mapping.amount || !mapping.date}
               >
-                Continuar
+                {t("common.continue")}
               </Button>
             </div>
           </div>
@@ -701,15 +703,15 @@ const Importar: React.FC = () => {
             <div className="grid grid-cols-3 gap-3">
               <div className="rounded-xl border border-border bg-card p-3 text-center">
                 <p className="text-2xl font-bold text-fin-income">{result.parsed.length}</p>
-                <p className="text-xs text-muted-foreground">Prontas</p>
+                <p className="text-xs text-muted-foreground">{t("import.ready")}</p>
               </div>
               <div className="rounded-xl border border-border bg-card p-3 text-center">
                 <p className="text-2xl font-bold text-fin-pending">{result.duplicates}</p>
-                <p className="text-xs text-muted-foreground">Duplicadas</p>
+                <p className="text-xs text-muted-foreground">{t("import.duplicated")}</p>
               </div>
               <div className="rounded-xl border border-border bg-card p-3 text-center">
                 <p className="text-2xl font-bold text-fin-expense">{result.errors}</p>
-                <p className="text-xs text-muted-foreground">Erros</p>
+                <p className="text-xs text-muted-foreground">{t("import.errors")}</p>
               </div>
             </div>
 
@@ -718,11 +720,11 @@ const Importar: React.FC = () => {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-border bg-muted/30">
-                      <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Data</th>
-                      <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Descrição</th>
-                      <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Categoria</th>
-                      <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Tipo</th>
-                      <th className="px-3 py-2 text-right text-xs font-semibold text-muted-foreground">Valor</th>
+                      <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">{t("common.date")}</th>
+                      <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">{t("common.description")}</th>
+                      <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">{t("common.category")}</th>
+                      <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">{t("common.type")}</th>
+                      <th className="px-3 py-2 text-right text-xs font-semibold text-muted-foreground">{t("common.amount")}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -740,7 +742,7 @@ const Importar: React.FC = () => {
                               ? "bg-fin-income/10 text-fin-income border-fin-income/20"
                               : "bg-fin-expense/10 text-fin-expense border-fin-expense/20"
                           )}>
-                            {row.type === "income" ? "Receita" : "Despesa"}
+                            {row.type === "income" ? t("kpi.income") : t("kpi.expenses")}
                           </Badge>
                         </td>
                         <td className={cn(
@@ -756,15 +758,15 @@ const Importar: React.FC = () => {
               </div>
               {result.parsed.length > 20 && (
                 <div className="px-3 py-2 text-xs text-muted-foreground border-t border-border">
-                  Mostrando 20 de {result.parsed.length} transações
+                  {t("import.showing").replace("{total}", String(result.parsed.length))}
                 </div>
               )}
             </div>
 
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setStep("mapping")}>Voltar</Button>
+              <Button variant="outline" onClick={() => setStep("mapping")}>{t("common.back")}</Button>
               <Button onClick={doImport} disabled={importing || result.parsed.length === 0}>
-                {importing ? "Importando..." : `Importar ${result.parsed.length} transações`}
+                {importing ? t("import.importing") : t("import.importCount").replace("{count}", String(result.parsed.length))}
               </Button>
             </div>
           </div>
@@ -776,11 +778,11 @@ const Importar: React.FC = () => {
             <div className="w-12 h-12 rounded-full bg-fin-income/10 flex items-center justify-center mx-auto">
               <Check className="w-6 h-6 text-fin-income" />
             </div>
-            <h2 className="text-lg font-bold text-foreground">Importação concluída!</h2>
+            <h2 className="text-lg font-bold text-foreground">{t("import.doneTitle")}</h2>
             <p className="text-sm text-muted-foreground">
-              {importCount} transações foram importadas com sucesso para a conta {account.type === "personal" ? "Pessoal" : "Empresa"}.
+              {t("import.doneDesc").replace("{count}", String(importCount)).replace("{account}", account.type === "personal" ? t("topbar.personal") : t("topbar.business"))}
             </p>
-            <Button onClick={reset}>Importar outro arquivo</Button>
+            <Button onClick={reset}>{t("import.importAnother")}</Button>
           </div>
         )}
       </div>

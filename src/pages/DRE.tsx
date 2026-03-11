@@ -136,35 +136,30 @@ const DRE: React.FC = () => {
     const r: DRELine[] = [];
 
     // ── RECEITA BRUTA ──
-    r.push({ label: "RECEITA BRUTA", value: current.receitaBruta, prevValue: previous.receitaBruta, bold: true, highlight: true, tooltip: "Total de vendas/receitas no período" });
+    r.push({ label: t("dre.line.grossRevenue"), value: current.receitaBruta, prevValue: previous.receitaBruta, bold: true, highlight: true, tooltip: t("dre.line.tooltipGrossRevenue") });
     Object.entries(current.incomeByCategory).forEach(([cat, val]) => {
       const prev = previous.incomeByCategory[cat] || 0;
       r.push({ label: cat, value: val, prevValue: prev, indent: 1 });
     });
     r.push({ label: "", value: 0, separator: true });
 
-    // ── DEDUÇÕES ──
-    r.push({ label: "(-) Deduções sobre receita", value: -current.deducoes, prevValue: -previous.deducoes, indent: 1, tooltip: "Devoluções, descontos e abatimentos" });
+    r.push({ label: t("dre.line.deductions"), value: -current.deducoes, prevValue: -previous.deducoes, indent: 1, tooltip: t("dre.line.tooltipDeductions") });
     r.push({ label: "", value: 0, separator: true });
 
-    // ── RECEITA LÍQUIDA ──
-    r.push({ label: "RECEITA LÍQUIDA", value: current.receitaLiquida, prevValue: previous.receitaLiquida, bold: true, highlight: true, tooltip: "Receita Bruta menos deduções" });
+    r.push({ label: t("dre.line.netRevenue"), value: current.receitaLiquida, prevValue: previous.receitaLiquida, bold: true, highlight: true, tooltip: t("dre.line.tooltipNetRevenue") });
     r.push({ label: "", value: 0, separator: true });
 
-    // ── CPV ──
-    r.push({ label: "(-) Custos dos Produtos/Serviços (CPV)", value: -current.cpv, prevValue: -previous.cpv, bold: true, tooltip: "Custos diretos de produção ou aquisição" });
+    r.push({ label: t("dre.line.cogs"), value: -current.cpv, prevValue: -previous.cpv, bold: true, tooltip: t("dre.line.tooltipCogs") });
     Object.entries(current.cpvByCategory).forEach(([cat, val]) => {
       const prev = previous.cpvByCategory[cat] || 0;
       r.push({ label: cat, value: -val, prevValue: -prev, indent: 2 });
     });
     r.push({ label: "", value: 0, separator: true });
 
-    // ── LUCRO BRUTO ──
-    r.push({ label: "LUCRO BRUTO", value: current.lucroBruto, prevValue: previous.lucroBruto, bold: true, highlight: true, tooltip: "Receita Líquida menos CPV" });
-    r.push({ label: `Margem bruta: ${current.margemBruta.toFixed(1)}%`, value: 0, indent: 1 });
+    r.push({ label: t("dre.line.grossProfitLabel"), value: current.lucroBruto, prevValue: previous.lucroBruto, bold: true, highlight: true, tooltip: t("dre.line.tooltipGrossProfit") });
+    r.push({ label: t("dre.line.grossMarginLabel").replace("{pct}", current.margemBruta.toFixed(1)), value: 0, indent: 1 });
     r.push({ label: "", value: 0, separator: true });
 
-    // ── DESPESAS OPERACIONAIS ──
     Object.entries(current.opexGroups).forEach(([group, data]) => {
       const prevGroup = previous.opexGroups[group];
       r.push({ label: `(-) ${group}`, value: -data.total, prevValue: prevGroup ? -prevGroup.total : 0, bold: true });
@@ -174,25 +169,22 @@ const DRE: React.FC = () => {
       });
     });
     if (current.uncategorized > 0) {
-      r.push({ label: "(-) Despesas não classificadas", value: -current.uncategorized, prevValue: -previous.uncategorized, indent: 1 });
+      r.push({ label: t("dre.line.unclassified"), value: -current.uncategorized, prevValue: -previous.uncategorized, indent: 1 });
     }
     r.push({ label: "", value: 0, separator: true });
-    r.push({ label: "TOTAL DESPESAS OPERACIONAIS", value: -current.totalOpex, prevValue: -previous.totalOpex, bold: true });
+    r.push({ label: t("dre.line.totalOpex"), value: -current.totalOpex, prevValue: -previous.totalOpex, bold: true });
     r.push({ label: "", value: 0, separator: true });
 
-    // ── LUCRO OPERACIONAL ──
-    r.push({ label: "LUCRO OPERACIONAL (EBIT)", value: current.lucroOperacional, prevValue: previous.lucroOperacional, bold: true, highlight: true, tooltip: "Lucro Bruto menos Despesas Operacionais" });
-    r.push({ label: `Margem operacional: ${current.margemOperacional.toFixed(1)}%`, value: 0, indent: 1 });
+    r.push({ label: t("dre.line.ebit"), value: current.lucroOperacional, prevValue: previous.lucroOperacional, bold: true, highlight: true, tooltip: t("dre.line.tooltipEbit") });
+    r.push({ label: t("dre.line.opMarginLabel").replace("{pct}", current.margemOperacional.toFixed(1)), value: 0, indent: 1 });
     r.push({ label: "", value: 0, separator: true });
 
-    // ── OUTRAS RECEITAS/DESPESAS ──
-    r.push({ label: "(+) Outras Receitas", value: current.outrasReceitas, prevValue: previous.outrasReceitas, indent: 1, tooltip: "Receitas não operacionais (juros, etc.)" });
-    r.push({ label: "(-) Outras Despesas", value: -current.outrasDespesas, prevValue: -previous.outrasDespesas, indent: 1, tooltip: "Despesas financeiras, juros, etc." });
+    r.push({ label: t("dre.line.otherRevenue"), value: current.outrasReceitas, prevValue: previous.outrasReceitas, indent: 1, tooltip: t("dre.line.tooltipOtherRevenue") });
+    r.push({ label: t("dre.line.otherExpenses"), value: -current.outrasDespesas, prevValue: -previous.outrasDespesas, indent: 1, tooltip: t("dre.line.tooltipOtherExpenses") });
     r.push({ label: "", value: 0, separator: true });
 
-    // ── LUCRO LÍQUIDO ──
-    r.push({ label: "LUCRO LÍQUIDO DO EXERCÍCIO", value: current.lucroLiquido, prevValue: previous.lucroLiquido, bold: true, highlight: true, tooltip: "Resultado final após todas as deduções" });
-    r.push({ label: `Margem líquida: ${current.margemLiquida.toFixed(1)}%`, value: 0, indent: 1 });
+    r.push({ label: t("dre.line.netProfitLabel"), value: current.lucroLiquido, prevValue: previous.lucroLiquido, bold: true, highlight: true, tooltip: t("dre.line.tooltipNetProfit") });
+    r.push({ label: t("dre.line.netMarginLabel").replace("{pct}", current.margemLiquida.toFixed(1)), value: 0, indent: 1 });
 
     return r;
   }, [current, previous]);
