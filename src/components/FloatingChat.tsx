@@ -223,18 +223,19 @@ export const FloatingChat: React.FC = () => {
       ...(pendingTx.frequency ? { frequency: pendingTx.frequency } : {}),
       ...(pendingTx.installments ? { installments: pendingTx.installments } : {}),
     });
-    setMessages(prev => [...prev, {
-      role: "assistant",
-      content: `✅ **${pendingTx.type === "income" ? "Receita" : "Despesa"} registrada!**\n\n${pendingTx.description} — R$ ${pendingTx.amount.toFixed(2).replace(".", ",")} (${pendingTx.category})`,
-    }]);
+    const confirmContent = `✅ **${pendingTx.type === "income" ? "Receita" : "Despesa"} registrada!**\n\n${pendingTx.description} — R$ ${pendingTx.amount.toFixed(2).replace(".", ",")} (${pendingTx.category})`;
+    setMessages(prev => [...prev, { role: "assistant", content: confirmContent }]);
+    saveMessage("assistant", confirmContent);
     toast.success(`${pendingTx.type === "income" ? "Receita" : "Despesa"} registrada!`);
     setPendingTx(null);
-  }, [pendingTx, create, account.type]);
+  }, [pendingTx, create, account.type, saveMessage]);
 
   const handleCancelTx = useCallback(() => {
-    setMessages(prev => [...prev, { role: "assistant", content: "Ok, registro cancelado. 👍 Como posso ajudar?" }]);
+    const cancelContent = "Ok, registro cancelado. 👍 Como posso ajudar?";
+    setMessages(prev => [...prev, { role: "assistant", content: cancelContent }]);
+    saveMessage("assistant", cancelContent);
     setPendingTx(null);
-  }, []);
+  }, [saveMessage]);
 
   /** Stage a message for preview (don't send yet) */
   const stageMessage = async (userText: string, attachments?: Attachment[]) => {
