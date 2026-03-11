@@ -4,8 +4,10 @@ import {
   LayoutDashboard, TrendingUp, TrendingDown, PieChart,
   MoreHorizontal, X, Target, CalendarRange, Compass,
   FileText, Calculator, Upload, Settings, ChevronRight,
+  Sun, Moon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/contexts/ThemeContext";
 import { useAccount } from "@/contexts/AccountContext";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { AnimatePresence, motion } from "framer-motion";
