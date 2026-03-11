@@ -62,23 +62,24 @@ const Dashboard: React.FC = () => {
   }, [filtered]);
 
   const monthlyData = useMemo(() => {
-    const months: Record<string, { income: number; expense: number }> = {};
+    // Show all 12 months of the current year
+    const year = new Date().getFullYear();
+    const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    const months: { month: string; income: number; expense: number }[] = monthNames.map((name, i) => {
+      const key = `${year}-${String(i + 1).padStart(2, '0')}`;
+      return { month: name, income: 0, expense: 0, _key: key };
+    });
+
     filtered.forEach(t => {
       const m = t.date.slice(0, 7);
-      if (!months[m]) months[m] = { income: 0, expense: 0 };
-      if (t.type === 'income') months[m].income += t.amount;
-      else months[m].expense += t.amount;
+      const idx = months.findIndex((mo: any) => mo._key === m);
+      if (idx >= 0) {
+        if (t.type === 'income') months[idx].income += t.amount;
+        else months[idx].expense += t.amount;
+      }
     });
-    console.log('[Dashboard] monthlyData raw keys:', Object.keys(months).sort());
-    return Object.entries(months)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .slice(-6)
-      .map(([month, data]) => {
-        const [y, m] = month.split('-').map(Number);
-        const label = new Date(y, m - 1, 1).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
-        console.log('[Dashboard] month key:', month, '-> label:', label);
-        return { month: label, ...data };
-      });
+
+    return months.map(({ month, income, expense }) => ({ month, income, expense }));
   }, [filtered]);
 
   const categoryData = useMemo(() => {
