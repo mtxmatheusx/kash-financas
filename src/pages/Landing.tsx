@@ -284,9 +284,8 @@ const Landing: React.FC = () => {
               {...fadeUp(0.2)}
               className="text-sm sm:text-lg text-[hsl(0,0%,50%)] max-w-lg mx-auto lg:mx-0 mb-6 sm:mb-8 leading-relaxed"
             >
-              Chega de planilhas abandonadas. Envie um áudio no WhatsApp.
-              A Faciliten organiza, categoriza e te dá estratégias para{" "}
-              <span className="text-[hsl(160,100%,50%)] font-semibold">lucrar mais</span>.
+              {t("landing.hero.subtitle")}{" "}
+              <span className="text-[hsl(160,100%,50%)] font-semibold">{t("landing.hero.subtitleHighlight")}</span>.
             </motion.p>
 
             <motion.div {...fadeUp(0.3)} className="space-y-3">
