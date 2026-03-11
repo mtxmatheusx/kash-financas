@@ -533,7 +533,7 @@ const DRE: React.FC = () => {
             {/* PDF Header (hidden on screen, visible in export) */}
             <div className="hidden print:block text-center mb-4">
               <h2 className="text-xl font-bold">Demonstração do Resultado do Exercício</h2>
-              <p className="text-sm text-muted-foreground capitalize">{format(refDate, "MMMM yyyy", { locale: ptBR })}</p>
+              <p className="text-sm text-muted-foreground capitalize">{format(refDate, "MMMM yyyy", { locale: dateLocale })}</p>
             </div>
 
           {/* Summary Cards */}
