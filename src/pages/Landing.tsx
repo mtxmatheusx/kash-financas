@@ -473,7 +473,7 @@ const Landing: React.FC = () => {
               <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1">{t("landing.pricing.freeTitle")}</h3>
               <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">{t("landing.pricing.freeDesc")}</p>
               <p className="text-4xl sm:text-5xl font-extrabold text-white mb-5 sm:mb-6 font-mono-fin">
-                R$ 0<span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">{t("landing.pricing.freePerMonth")}</span>
+                {t("pricing.currencySymbol")} 0<span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">{t("landing.pricing.freePerMonth")}</span>
               </p>
               <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
                 {[t("landing.pricing.free1"), t("landing.pricing.free2"), t("landing.pricing.free3")].map(f => (
@@ -498,7 +498,7 @@ const Landing: React.FC = () => {
                 </h3>
                 <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">{t("landing.pricing.premiumDesc")}</p>
                 <p className="text-4xl sm:text-5xl font-extrabold text-white mb-5 sm:mb-6 font-mono-fin">
-                  R$ 29<span className="text-base sm:text-lg">,90</span>
+                  {t("pricing.currencySymbol")} {t("pricing.premiumPrice")}<span className="text-base sm:text-lg">{t("pricing.premiumCents")}</span>
                   <span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">{t("landing.pricing.freePerMonth")}</span>
                 </p>
                 <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">

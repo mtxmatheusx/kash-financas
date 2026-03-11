@@ -288,7 +288,7 @@ const Configuracoes: React.FC = () => {
           {/* ═══════════ Dados da Empresa ═══════════ */}
           <TabsContent value="company">
             <Card>
-              <Field icon={FileText} label="Tipo de Documento">
+              <Field icon={FileText} label={t("settings.docType")}>
                 <Select value={settings.document_type} onValueChange={(v) => update("document_type", v)}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -309,20 +309,20 @@ const Configuracoes: React.FC = () => {
 
               {settings.document_type === "cnpj" && (
                 <>
-                  <Field icon={Building2} label="Razão Social">
-                    <Input value={settings.company_name} onChange={(e) => update("company_name", e.target.value)} placeholder="Razão social" maxLength={200} />
+                  <Field icon={Building2} label={t("settings.companyName")}>
+                    <Input value={settings.company_name} onChange={(e) => update("company_name", e.target.value)} placeholder={t("settings.companyName")} maxLength={200} />
                   </Field>
                   <div className="grid grid-cols-2 gap-3">
-                    <Field icon={FileText} label="Inscrição Estadual">
+                    <Field icon={FileText} label={t("settings.stateReg")}>
                       <Input value={settings.state_registration} onChange={(e) => update("state_registration", e.target.value)} placeholder="IE" maxLength={20} />
                     </Field>
-                    <Field icon={FileText} label="Inscrição Municipal">
+                    <Field icon={FileText} label={t("settings.cityReg")}>
                       <Input value={settings.city_registration} onChange={(e) => update("city_registration", e.target.value)} placeholder="IM" maxLength={20} />
                     </Field>
                   </div>
-                  <Field icon={FileText} label="Regime Tributário">
+                  <Field icon={FileText} label={t("settings.taxRegime")}>
                     <Select value={settings.tax_regime} onValueChange={(v) => update("tax_regime", v)}>
-                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder={t("common.search")} /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="mei">MEI</SelectItem>
                         <SelectItem value="simples">Simples Nacional</SelectItem>
@@ -337,10 +337,10 @@ const Configuracoes: React.FC = () => {
               {/* Endereço */}
               <div className="pt-4 border-t border-border space-y-4">
                 <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4 text-primary" /> Endereço
+                  <MapPin className="w-4 h-4 text-primary" /> {t("settings.address")}
                 </h3>
 
-                <Field icon={MapPin} label="CEP" hint="Digite o CEP para preencher automaticamente">
+                <Field icon={MapPin} label={t("settings.zipCode")} hint={t("settings.zipHint")}>
                   <div className="relative">
                     <Input
                       value={settings.zip_code}
@@ -357,29 +357,29 @@ const Configuracoes: React.FC = () => {
                   </div>
                 </Field>
 
-                <Field label="Logradouro">
-                  <Input value={settings.address} onChange={(e) => update("address", e.target.value)} placeholder="Rua, Avenida..." maxLength={200} />
+                <Field label={t("settings.street")}>
+                  <Input value={settings.address} onChange={(e) => update("address", e.target.value)} placeholder={t("settings.street")} maxLength={200} />
                 </Field>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <Field label="Número">
+                  <Field label={t("settings.number")}>
                     <Input value={settings.address_number} onChange={(e) => update("address_number", e.target.value)} placeholder="Nº" maxLength={10} />
                   </Field>
-                  <Field label="Complemento">
-                    <Input value={settings.address_complement} onChange={(e) => update("address_complement", e.target.value)} placeholder="Sala, Andar..." maxLength={100} />
+                  <Field label={t("settings.complement")}>
+                    <Input value={settings.address_complement} onChange={(e) => update("address_complement", e.target.value)} placeholder={t("settings.complement")} maxLength={100} />
                   </Field>
                 </div>
 
-                <Field label="Bairro">
-                  <Input value={settings.neighborhood} onChange={(e) => update("neighborhood", e.target.value)} placeholder="Bairro" maxLength={100} />
+                <Field label={t("settings.neighborhood")}>
+                  <Input value={settings.neighborhood} onChange={(e) => update("neighborhood", e.target.value)} placeholder={t("settings.neighborhood")} maxLength={100} />
                 </Field>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <Field label="Cidade">
-                    <Input value={settings.city} onChange={(e) => update("city", e.target.value)} placeholder="Cidade" maxLength={100} />
+                  <Field label={t("settings.city")}>
+                    <Input value={settings.city} onChange={(e) => update("city", e.target.value)} placeholder={t("settings.city")} maxLength={100} />
                   </Field>
-                  <Field label="UF">
-                    <Input value={settings.state} onChange={(e) => update("state", e.target.value)} placeholder="SP" maxLength={2} className="uppercase" />
+                  <Field label={t("settings.stateAbbr")}>
+                    <Input value={settings.state} onChange={(e) => update("state", e.target.value)} placeholder={t("settings.stateAbbr")} maxLength={2} className="uppercase" />
                   </Field>
                 </div>
               </div>
@@ -387,33 +387,33 @@ const Configuracoes: React.FC = () => {
               {/* Banking */}
               <div className="pt-4 border-t border-border space-y-4">
                 <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                  <Landmark className="w-4 h-4 text-primary" /> Dados Bancários
+                  <Landmark className="w-4 h-4 text-primary" /> {t("settings.bankData")}
                 </h3>
 
-                <Field icon={Landmark} label="Banco">
-                  <Input value={settings.bank_name} onChange={(e) => update("bank_name", e.target.value)} placeholder="Ex: Nubank, Itaú" maxLength={100} />
+                <Field icon={Landmark} label={t("settings.bank")}>
+                  <Input value={settings.bank_name} onChange={(e) => update("bank_name", e.target.value)} placeholder={t("settings.bank")} maxLength={100} />
                 </Field>
                 <div className="grid grid-cols-2 gap-3">
-                  <Field icon={Landmark} label="Agência">
+                  <Field icon={Landmark} label={t("settings.agency")}>
                     <Input value={settings.bank_agency} onChange={(e) => update("bank_agency", e.target.value)} placeholder="0000" maxLength={10} />
                   </Field>
-                  <Field icon={CreditCard} label="Conta">
+                  <Field icon={CreditCard} label={t("settings.account")}>
                     <Input value={settings.bank_account} onChange={(e) => update("bank_account", e.target.value)} placeholder="00000-0" maxLength={20} />
                   </Field>
                 </div>
-                <Field icon={Smartphone} label="Tipo da Chave PIX">
+                <Field icon={Smartphone} label={t("settings.pixKeyType")}>
                   <Select value={settings.pix_key_type} onValueChange={(v) => update("pix_key_type", v)}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder={t("common.search")} /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="cpf">CPF/CNPJ</SelectItem>
                       <SelectItem value="email">E-mail</SelectItem>
-                      <SelectItem value="phone">Telefone</SelectItem>
-                      <SelectItem value="random">Chave aleatória</SelectItem>
+                      <SelectItem value="phone">{t("settings.phone")}</SelectItem>
+                      <SelectItem value="random">{t("settings.pixKey")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </Field>
-                <Field icon={Smartphone} label="Chave PIX">
-                  <Input value={settings.pix_key} onChange={(e) => update("pix_key", e.target.value)} placeholder="Sua chave PIX" maxLength={100} />
+                <Field icon={Smartphone} label={t("settings.pixKey")}>
+                  <Input value={settings.pix_key} onChange={(e) => update("pix_key", e.target.value)} placeholder={t("settings.pixKey")} maxLength={100} />
                 </Field>
               </div>
             </Card>
@@ -422,41 +422,29 @@ const Configuracoes: React.FC = () => {
           {/* ═══════════ Integrações ═══════════ */}
           <TabsContent value="integrations">
             <div className="space-y-6">
-              {/* Central de Automação */}
               <div className="rounded-xl border border-border bg-card p-6 md:p-8 space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 rounded-xl bg-primary/10">
                     <Webhook className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-foreground font-display-fin">Central de Automação</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Sua conta já está conectada de forma segura aos nossos servidores.
-                    </p>
+                    <h3 className="text-lg font-bold text-foreground font-display-fin">{t("settings.automationCenter")}</h3>
+                    <p className="text-sm text-muted-foreground">{t("settings.automationDesc")}</p>
                   </div>
                 </div>
-                <Button
-                  onClick={handleSyncData}
-                  disabled={saving}
-                  className="w-full gap-2 bg-primary hover:bg-destructive/80 transition-colors"
-                >
+                <Button onClick={handleSyncData} disabled={saving} className="w-full gap-2 bg-primary hover:bg-destructive/80 transition-colors">
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Webhook className="w-4 h-4" />}
-                  Sincronizar Dados
+                  {t("settings.syncData")}
                 </Button>
               </div>
 
-              {/* WhatsApp QR Code Connection */}
               <div className="rounded-xl border border-border bg-card p-6 md:p-8 space-y-6">
                 <div className="text-center space-y-2">
                   <div className="inline-flex p-3 rounded-2xl bg-fin-income/10 mb-2">
                     <MessageCircle className="w-8 h-8 text-fin-income" />
                   </div>
-                  <h3 className="text-lg font-bold text-foreground font-display-fin">
-                    Conecte seu WhatsApp em 1 segundo
-                  </h3>
-                  <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-                    Escaneie o QR Code abaixo com o seu celular para automatizar as cobranças usando o seu próprio número.
-                  </p>
+                  <h3 className="text-lg font-bold text-foreground font-display-fin">{t("settings.connectWhatsApp")}</h3>
+                  <p className="text-sm text-muted-foreground max-w-sm mx-auto">{t("settings.scanQr")}</p>
                 </div>
 
                 <div className="flex justify-center">
@@ -464,34 +452,26 @@ const Configuracoes: React.FC = () => {
                     {qrLoading ? (
                       <div className="flex flex-col items-center gap-3">
                         <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                        <p className="text-xs text-muted-foreground">Gerando QR Code...</p>
+                        <p className="text-xs text-muted-foreground">{t("settings.generatingQr")}</p>
                       </div>
                     ) : qrCodeImage ? (
                       <img src={qrCodeImage} alt="QR Code WhatsApp" className="w-full h-full object-contain rounded-lg" />
                     ) : (
                       <div className="flex flex-col items-center gap-3 text-center px-4">
                         <QrCode className="w-12 h-12 text-muted-foreground/30" />
-                        <p className="text-xs text-muted-foreground">
-                          Clique no botão abaixo para gerar o QR Code
-                        </p>
+                        <p className="text-xs text-muted-foreground">{t("settings.clickToGenerate")}</p>
                       </div>
                     )}
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <Button
-                    className="w-full gap-2 bg-fin-income/90 hover:bg-fin-income text-primary-foreground"
-                    onClick={handleGenerateQr}
-                    disabled={qrLoading}
-                  >
+                  <Button className="w-full gap-2 bg-fin-income/90 hover:bg-fin-income text-primary-foreground" onClick={handleGenerateQr} disabled={qrLoading}>
                     {qrLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <QrCode className="w-4 h-4" />}
-                    {qrCodeImage ? "Atualizar QR Code" : "Gerar QR Code de Conexão"}
+                    {qrCodeImage ? t("settings.updateQr") : t("settings.generateQr")}
                   </Button>
                   {qrCodeImage && (
-                    <p className="text-[10px] text-muted-foreground text-center">
-                      O QR Code expira em alguns minutos. Clique em "Atualizar" se necessário.
-                    </p>
+                    <p className="text-[10px] text-muted-foreground text-center">{t("settings.qrExpires")}</p>
                   )}
                 </div>
               </div>
@@ -503,51 +483,48 @@ const Configuracoes: React.FC = () => {
             <Card>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-foreground">Alertas via WhatsApp</p>
-                  <p className="text-xs text-muted-foreground">Receba notificações no WhatsApp</p>
+                  <p className="text-sm font-medium text-foreground">{t("settings.whatsappAlerts")}</p>
+                  <p className="text-xs text-muted-foreground">{t("settings.whatsappAlertsDesc")}</p>
                 </div>
                 <Switch checked={settings.notify_whatsapp} onCheckedChange={(v) => update("notify_whatsapp", v)} />
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-foreground">Alertas via E-mail</p>
-                  <p className="text-xs text-muted-foreground">Receba notificações por e-mail</p>
+                  <p className="text-sm font-medium text-foreground">{t("settings.emailAlerts")}</p>
+                  <p className="text-xs text-muted-foreground">{t("settings.emailAlertsDesc")}</p>
                 </div>
                 <Switch checked={settings.notify_email} onCheckedChange={(v) => update("notify_email", v)} />
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-foreground">Lembrete de vencimentos</p>
-                  <p className="text-xs text-muted-foreground">Avise antes de contas vencerem</p>
+                  <p className="text-sm font-medium text-foreground">{t("settings.dueReminder")}</p>
+                  <p className="text-xs text-muted-foreground">{t("settings.dueReminderDesc")}</p>
                 </div>
                 <Switch checked={settings.notify_due_dates} onCheckedChange={(v) => update("notify_due_dates", v)} />
               </div>
               {settings.notify_due_dates && (
-                <Field icon={Bell} label="Dias antes do vencimento">
+                <Field icon={Bell} label={t("settings.daysBefore")}>
                   <Select value={String(settings.notify_due_days_before)} onValueChange={(v) => update("notify_due_days_before", Number(v))}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1">1 dia</SelectItem>
-                      <SelectItem value="2">2 dias</SelectItem>
-                      <SelectItem value="3">3 dias</SelectItem>
-                      <SelectItem value="5">5 dias</SelectItem>
-                      <SelectItem value="7">7 dias</SelectItem>
+                      <SelectItem value="1">1 {t("settings.day")}</SelectItem>
+                      <SelectItem value="2">2 {t("settings.days")}</SelectItem>
+                      <SelectItem value="3">3 {t("settings.days")}</SelectItem>
+                      <SelectItem value="5">5 {t("settings.days")}</SelectItem>
+                      <SelectItem value="7">7 {t("settings.days")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </Field>
               )}
 
-              {/* Assistente Financeiro de IA — autosave notification_time */}
               <div className="rounded-xl border border-border bg-card p-5 md:p-6 space-y-4 mt-4">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 rounded-xl bg-primary/10">
                     <Bot className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-foreground font-display-fin">Assistente Financeiro de IA</h3>
-                    <p className="text-xs text-muted-foreground">
-                      A que horas você deseja receber seu resumo de caixa no WhatsApp?
-                    </p>
+                    <h3 className="text-base font-bold text-foreground font-display-fin">{t("settings.aiAssistant")}</h3>
+                    <p className="text-xs text-muted-foreground">{t("settings.aiAssistantDesc")}</p>
                   </div>
                 </div>
                 <Select
@@ -559,14 +536,14 @@ const Configuracoes: React.FC = () => {
                       .from("user_settings")
                       .upsert({ user_id: user.id, notification_time: v } as any, { onConflict: "user_id" });
                     if (error) {
-                      toast.error("Erro ao atualizar horário.");
+                      toast.error("Error");
                     } else {
-                      toast.success("Horário atualizado com sucesso ✨");
+                      toast.success("✨");
                     }
                   }}
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Selecione o horário" />
+                    <SelectValue placeholder={t("settings.selectTime")} />
                   </SelectTrigger>
                   <SelectContent>
                     {Array.from({ length: 14 }, (_, i) => {
@@ -582,7 +559,6 @@ const Configuracoes: React.FC = () => {
           {/* ═══════════ Assinatura ═══════════ */}
           <TabsContent value="subscription">
             <div className="rounded-xl border border-border bg-card overflow-hidden">
-              {/* Status banner */}
               <div
                 className="p-6 md:p-8"
                 style={{
@@ -597,21 +573,21 @@ const Configuracoes: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-foreground font-display-fin">
-                      {isPremium ? "Plano Premium Ativo" : "Plano Gratuito"}
+                      {isPremium ? t("settings.premiumActive") : t("settings.freePlan")}
                     </h3>
                     <p className="text-xs text-muted-foreground">
                       {isTrialing && trialDaysLeft !== null
-                        ? `Período de teste — ${trialDaysLeft} dia${trialDaysLeft !== 1 ? "s" : ""} restante${trialDaysLeft !== 1 ? "s" : ""}`
+                        ? t("settings.trialDays").replace("{count}", String(trialDaysLeft))
                         : isPremium && subscriptionEnd
-                          ? `Renova em ${new Date(subscriptionEnd).toLocaleDateString("pt-BR")}`
-                          : "Recursos básicos disponíveis"}
+                          ? t("settings.renewsAt").replace("{date}", new Date(subscriptionEnd).toLocaleDateString())
+                          : t("settings.basicFeatures")}
                     </p>
                   </div>
                 </div>
 
                 {isPremium && (
                   <div className="grid grid-cols-3 gap-3 mt-5">
-                    {["Relatórios ilimitados", "Agente IA", "Integrações"].map((f) => (
+                    {[t("settings.unlimitedReports"), t("settings.aiAgent"), t("settings.integrationsLabel")].map((f) => (
                       <div key={f} className="text-center py-2 px-1 rounded-lg bg-background/50 border border-border">
                         <p className="text-[11px] font-medium text-foreground">{f}</p>
                       </div>
@@ -620,24 +596,20 @@ const Configuracoes: React.FC = () => {
                 )}
               </div>
 
-              {/* Action */}
               <div className="p-6 border-t border-border">
                 {isPremium ? (
                   <Button
                     variant="outline"
                     className="w-full gap-2 border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                    onClick={() => toast.info("Portal de pagamentos será integrado em breve!")}
+                    onClick={() => toast.info("Portal coming soon")}
                   >
                     <ExternalLink className="w-4 h-4" />
-                    Gerenciar Pagamentos
+                    {t("settings.managePayments")}
                   </Button>
                 ) : (
-                  <Button
-                    className="w-full gap-2"
-                    onClick={() => window.location.href = "/upgrade"}
-                  >
+                  <Button className="w-full gap-2" onClick={() => window.location.href = "/upgrade"}>
                     <Crown className="w-4 h-4" />
-                    Fazer Upgrade para Premium
+                    {t("settings.upgradePremium")}
                   </Button>
                 )}
               </div>
@@ -645,10 +617,9 @@ const Configuracoes: React.FC = () => {
           </TabsContent>
         </Tabs>
 
-        {/* Save button (visible on all tabs except subscription) */}
         <Button onClick={handleSave} disabled={saving} className="gap-2 w-full">
           <Save className="w-4 h-4" />
-          {saving ? "Salvando..." : "Salvar Configurações"}
+          {saving ? t("common.saving") : t("settings.saveSettings")}
         </Button>
       </div>
     </PageTransition>

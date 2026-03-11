@@ -37,7 +37,7 @@ interface DRELine {
 const pct = (part: number, total: number) => (total !== 0 ? (part / total) * 100 : 0);
 
 const DRE: React.FC = () => {
-  const { formatMoney: formatBRL } = usePreferences();
+  const { formatMoney: formatBRL, t } = usePreferences();
   const { allTransactions } = useTransactions();
   const { account } = useAccount();
   const [refDate, setRefDate] = useState(new Date());
@@ -510,19 +510,13 @@ const DRE: React.FC = () => {
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">DRE</h1>
-              <p className="text-sm text-muted-foreground">Demonstração do Resultado do Exercício</p>
+              <h1 className="text-2xl font-bold text-foreground">{t("dre.title")}</h1>
+              <p className="text-sm text-muted-foreground">{t("dre.subtitle")}</p>
             </div>
             <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleExportPDF}
-                disabled={exporting}
-                className="gap-2"
-              >
+              <Button variant="outline" size="sm" onClick={handleExportPDF} disabled={exporting} className="gap-2">
                 {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                Exportar PDF
+                {t("dre.exportPdf")}
               </Button>
               <div className="flex items-center gap-2">
                 <Button variant="ghost" size="icon" onClick={() => setRefDate(d => subMonths(d, 1))}>
@@ -549,17 +543,17 @@ const DRE: React.FC = () => {
           {/* Summary Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
             {[
-              { label: "Receita Bruta", value: current.receitaBruta, color: "text-fin-income" },
-              { label: "Lucro Bruto", value: current.lucroBruto, color: current.lucroBruto >= 0 ? "text-fin-income" : "text-fin-expense" },
-              { label: "Total Despesas", value: current.totalExpenses, color: "text-fin-expense" },
-              { label: "Lucro Líquido", value: current.lucroLiquido, color: current.lucroLiquido >= 0 ? "text-fin-income" : "text-fin-expense" },
+              { label: t("dre.grossRevenue"), value: current.receitaBruta, color: "text-fin-income" },
+              { label: t("dre.grossProfit"), value: current.lucroBruto, color: current.lucroBruto >= 0 ? "text-fin-income" : "text-fin-expense" },
+              { label: t("dre.totalExpenses"), value: current.totalExpenses, color: "text-fin-expense" },
+              { label: t("dre.netProfit"), value: current.lucroLiquido, color: current.lucroLiquido >= 0 ? "text-fin-income" : "text-fin-expense" },
             ].map((card, i) => (
               <div key={i} className="rounded-xl border border-border bg-card p-4">
                 <p className="text-xs text-muted-foreground mb-1">{card.label}</p>
                 <p className={cn("text-lg font-bold", card.color)}>{formatBRL(Math.abs(card.value))}</p>
                 {i === 3 && variation !== 0 && (
                   <p className={cn("text-xs mt-1", variation > 0 ? "text-fin-income" : "text-fin-expense")}>
-                    {variation > 0 ? "+" : ""}{variation.toFixed(1)}% vs mês anterior
+                    {variation > 0 ? "+" : ""}{variation.toFixed(1)}% {t("dre.vsLastMonth")}
                   </p>
                 )}
               </div>
@@ -569,9 +563,9 @@ const DRE: React.FC = () => {
           {/* DRE Table */}
           <div className="rounded-xl border border-border bg-card overflow-hidden">
             <div className="grid grid-cols-[1fr_auto_auto] gap-x-6 px-4 py-3 border-b border-border bg-muted/30">
-              <span className="text-xs font-semibold text-muted-foreground uppercase">Descrição</span>
-              <span className="text-xs font-semibold text-muted-foreground uppercase text-right min-w-[100px]">Mês Atual</span>
-              <span className="text-xs font-semibold text-muted-foreground uppercase text-right min-w-[100px]">Mês Anterior</span>
+              <span className="text-xs font-semibold text-muted-foreground uppercase">{t("dre.description")}</span>
+              <span className="text-xs font-semibold text-muted-foreground uppercase text-right min-w-[100px]">{t("dre.currentMonth")}</span>
+              <span className="text-xs font-semibold text-muted-foreground uppercase text-right min-w-[100px]">{t("dre.previousMonth")}</span>
             </div>
 
             {lines.map((line, i) => {
@@ -623,33 +617,31 @@ const DRE: React.FC = () => {
 
           {/* Health Indicator */}
           <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="text-sm font-semibold text-foreground mb-3">Análise Automática</h3>
+            <h3 className="text-sm font-semibold text-foreground mb-3">{t("dre.autoAnalysis")}</h3>
             <div className="space-y-2 text-sm text-muted-foreground">
               {current.receitaBruta === 0 && current.totalExpenses === 0 ? (
-                <p>Nenhuma movimentação registrada neste mês.</p>
+                <p>{t("dre.noMovements")}</p>
               ) : (
                 <>
                   {current.lucroLiquido > 0 ? (
                     <p className="text-fin-income">
-                      ✓ Resultado positivo — lucro líquido de {formatBRL(current.lucroLiquido)} ({current.margemLiquida.toFixed(1)}% de margem).
+                      {t("dre.positiveResult").replace("{amount}", formatBRL(current.lucroLiquido)).replace("{pct}", current.margemLiquida.toFixed(1))}
                     </p>
                   ) : (
                     <p className="text-fin-expense">
-                      ✗ Resultado negativo — prejuízo de {formatBRL(Math.abs(current.lucroLiquido))}.
+                      {t("dre.negativeResult").replace("{amount}", formatBRL(Math.abs(current.lucroLiquido)))}
                     </p>
                   )}
                   {current.margemBruta > 0 && current.margemBruta < 30 && (
-                    <p className="text-fin-pending">⚠ Margem bruta abaixo de 30% — seus custos diretos estão elevados.</p>
+                    <p className="text-fin-pending">{t("dre.lowGrossMargin")}</p>
                   )}
                   {current.margemOperacional > 0 && current.margemOperacional < 10 && (
-                    <p className="text-fin-pending">⚠ Margem operacional abaixo de 10% — atenção às despesas.</p>
+                    <p className="text-fin-pending">{t("dre.lowOpMargin")}</p>
                   )}
                   {Object.entries(current.opexGroups).length > 0 && (
                     <p>
-                      Maior grupo de despesa:{" "}
-                      <strong>
-                        {Object.entries(current.opexGroups).sort((a, b) => b[1].total - a[1].total)[0][0]}
-                      </strong>{" "}
+                      {t("dre.topExpenseGroup")}{" "}
+                      <strong>{Object.entries(current.opexGroups).sort((a, b) => b[1].total - a[1].total)[0][0]}</strong>{" "}
                       ({formatBRL(Object.entries(current.opexGroups).sort((a, b) => b[1].total - a[1].total)[0][1].total)})
                     </p>
                   )}
@@ -662,20 +654,20 @@ const DRE: React.FC = () => {
           <div className="rounded-xl border border-border bg-card p-5">
             <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
               <Info className="w-4 h-4 text-primary" />
-              Como ler sua DRE
+              {t("dre.howToRead")}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-muted-foreground">
               <div className="space-y-1">
-                <p className="font-medium text-foreground">Receita → Lucro Bruto</p>
-                <p>Receita Bruta menos deduções e custos diretos (CPV). Mostra a eficiência na produção/venda.</p>
+                <p className="font-medium text-foreground">{t("dre.revenueToGross")}</p>
+                <p>{t("dre.revenueToGrossDesc")}</p>
               </div>
               <div className="space-y-1">
-                <p className="font-medium text-foreground">Lucro Bruto → EBIT</p>
-                <p>Lucro Bruto menos despesas operacionais (pessoal, admin, comercial). Mostra o resultado da operação.</p>
+                <p className="font-medium text-foreground">{t("dre.grossToEbit")}</p>
+                <p>{t("dre.grossToEbitDesc")}</p>
               </div>
               <div className="space-y-1">
-                <p className="font-medium text-foreground">EBIT → Lucro Líquido</p>
-                <p>EBIT ajustado por receitas/despesas não operacionais. É o resultado final do exercício.</p>
+                <p className="font-medium text-foreground">{t("dre.ebitToNet")}</p>
+                <p>{t("dre.ebitToNetDesc")}</p>
               </div>
             </div>
           </div>

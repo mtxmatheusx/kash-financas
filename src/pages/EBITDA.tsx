@@ -38,7 +38,7 @@ const fields: FieldDef[] = [
 ];
 
 const EBITDA: React.FC = () => {
-  const { formatMoney: formatBRL } = usePreferences();
+  const { formatMoney: formatBRL, t } = usePreferences();
   const { allTransactions } = useTransactions();
   const { account } = useAccount();
   const [values, setValues] = useState<Record<string, string>>({});
@@ -101,10 +101,8 @@ const EBITDA: React.FC = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Calculadora EBITDA</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Calcule a margem EBITDA da sua empresa de forma simples e rápida
-            </p>
+            <h1 className="text-2xl font-bold text-foreground">{t("ebitda.title")}</h1>
+            <p className="text-sm text-muted-foreground mt-1">{t("ebitda.subtitle")}</p>
           </div>
           {mode === "auto" && (
             <div className="flex items-center gap-2">
