@@ -7,10 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-
-const formatBRL = (v: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 const Metas: React.FC = () => {
+  const { formatMoney: formatBRL } = usePreferences();
   const { goals, create, update, remove } = useGoals();
   const { account } = useAccount();
   const [showForm, setShowForm] = useState(false);

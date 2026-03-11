@@ -8,9 +8,10 @@ import { useGoals } from "@/hooks/useGoals";
 import { Compass, TrendingUp, TrendingDown, PiggyBank, Target } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
-const formatBRL = (v: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 const PlanejamentoFinanceiro: React.FC = () => {
+  const { formatMoney: formatBRL } = usePreferences();
   const { totals, transactions } = useTransactions();
   const { total: investmentTotal } = useInvestments();
   const { goals } = useGoals();

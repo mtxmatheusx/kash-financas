@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AccountProvider } from "@/contexts/AccountContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { PreferencesProvider } from "@/contexts/PreferencesContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AppLayout } from "@/components/AppLayout";
 import Landing from "@/pages/Landing";
@@ -35,6 +36,7 @@ const App = () => (
     <ThemeProvider>
       <AuthProvider>
         <AccountProvider>
+          <PreferencesProvider>
           <TooltipProvider>
             <Toaster />
             <Sonner />
@@ -71,6 +73,7 @@ const App = () => (
               </Routes>
             </BrowserRouter>
           </TooltipProvider>
+          </PreferencesProvider>
         </AccountProvider>
       </AuthProvider>
     </ThemeProvider>

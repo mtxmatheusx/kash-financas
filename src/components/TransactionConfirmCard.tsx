@@ -20,14 +20,14 @@ interface TransactionConfirmCardProps {
   onCancel: () => void;
 }
 
-const formatBRL = (v: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 export const TransactionConfirmCard: React.FC<TransactionConfirmCardProps> = ({
   transaction,
   onConfirm,
   onCancel,
 }) => {
+  const { formatMoney: formatBRL } = usePreferences();
   const isIncome = transaction.type === "income";
 
   return (

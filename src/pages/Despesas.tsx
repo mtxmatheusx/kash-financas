@@ -13,13 +13,13 @@ import { SummaryBar } from "@/components/SummaryBar";
 import { CurrencyInput } from "@/components/CurrencyInput";
 import type { TransactionRow } from "@/lib/types";
 import { useAutoCategory } from "@/hooks/useAutoCategory";
-
-const formatBRL = (v: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 const PERSONAL_CATS = ['Alimentação', 'Transporte', 'Moradia', 'Saúde', 'Lazer', 'Educação', 'Outros'];
 const BUSINESS_CATS = ['Fornecedores', 'Impostos', 'Funcionários', 'Marketing', 'Infraestrutura', 'Outros'];
 
 const Despesas: React.FC = () => {
+  const { formatMoney: formatBRL } = usePreferences();
   const { transactions, create, update, remove, totals, allTransactions } = useTransactions('expense');
   const { account } = useAccount();
   const [search, setSearch] = useState('');

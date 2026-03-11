@@ -6,6 +6,7 @@ import { KPICard } from "@/components/KPICard";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useInvestments } from "@/hooks/useInvestments";
 import { TrendingUp, TrendingDown, Wallet, PiggyBank, Activity } from "lucide-react";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import {
   BarChart, Bar, XAxis, YAxis,
   Tooltip, ResponsiveContainer, CartesianGrid,
@@ -22,32 +23,32 @@ import {
 import { FinancialInsights } from "@/components/FinancialInsights";
 import { useGoals } from "@/hooks/useGoals";
 
-const formatBRL = (value: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
 const formatCompact = (v: number) => {
   if (Math.abs(v) >= 1000) return `${(v / 1000).toFixed(1)}k`;
   return v.toString();
 };
 
-/* Cockpit-style tooltip */
-const CockpitTooltip = ({ active, payload, label }: any) => {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="rounded-lg border border-border bg-card/95 backdrop-blur-md px-3 py-2.5 shadow-xl">
-      <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest mb-2">{label}</p>
-      {payload.map((entry: any, i: number) => (
-        <div key={i} className="flex items-center gap-2.5 py-0.5">
-          <div className="w-1.5 h-1.5 rounded-full" style={{ background: entry.color, boxShadow: `0 0 6px ${entry.color}` }} />
-          <span className="text-xs text-muted-foreground">{entry.name}</span>
-          <span className="font-mono-fin text-xs font-semibold text-foreground ml-auto">{formatBRL(entry.value)}</span>
-        </div>
-      ))}
-    </div>
-  );
-};
-
 const Dashboard: React.FC = () => {
+  const { formatMoney: formatBRL } = usePreferences();
+
+  /* Cockpit-style tooltip */
+  const CockpitTooltip = ({ active, payload, label }: any) => {
+    if (!active || !payload?.length) return null;
+    return (
+      <div className="rounded-lg border border-border bg-card/95 backdrop-blur-md px-3 py-2.5 shadow-xl">
+        <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest mb-2">{label}</p>
+        {payload.map((entry: any, i: number) => (
+          <div key={i} className="flex items-center gap-2.5 py-0.5">
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: entry.color, boxShadow: `0 0 6px ${entry.color}` }} />
+            <span className="text-xs text-muted-foreground">{entry.name}</span>
+            <span className="font-mono-fin text-xs font-semibold text-foreground ml-auto">{formatBRL(entry.value)}</span>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const { transactions, totals } = useTransactions();
   const { total: investmentTotal } = useInvestments();
   const { goals } = useGoals();

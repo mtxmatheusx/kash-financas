@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { maskCPF, maskCNPJ, maskPhone, maskCEP, unmask } from "@/lib/masks";
+import { usePreferences, CURRENCIES, LANGUAGES, type CurrencyCode, type LanguageCode } from "@/contexts/PreferencesContext";
+import { Globe, Coins } from "lucide-react";
 
 interface UserSettings {
   // Profile
@@ -59,6 +61,7 @@ const defaultSettings: UserSettings = {
 
 const Configuracoes: React.FC = () => {
   const { user, profile, isPremium, isTrialing, trialDaysLeft, subscriptionEnd } = useAuth();
+  const { currency, setCurrency, language, setLanguage } = usePreferences();
   const [settings, setSettings] = useState<UserSettings>(defaultSettings);
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -249,6 +252,35 @@ const Configuracoes: React.FC = () => {
               <div className="pt-2 border-t border-border">
                 <p className="text-[11px] text-muted-foreground mb-1">E-mail da conta</p>
                 <p className="text-sm font-medium text-foreground">{profile?.email || "—"}</p>
+              </div>
+
+              {/* Preferences */}
+              <div className="pt-4 border-t border-border space-y-4">
+                <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                  <Globe className="w-4 h-4 text-primary" /> Preferências
+                </h3>
+
+                <Field icon={Coins} label="Moeda" hint="Formato de exibição dos valores monetários">
+                  <Select value={currency} onValueChange={(v) => setCurrency(v as CurrencyCode)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {CURRENCIES.map(c => (
+                        <SelectItem key={c.code} value={c.code}>{c.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
+
+                <Field icon={Globe} label="Idioma" hint="Idioma da interface (em breve)">
+                  <Select value={language} onValueChange={(v) => setLanguage(v as LanguageCode)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {LANGUAGES.map(l => (
+                        <SelectItem key={l.code} value={l.code}>{l.flag} {l.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
               </div>
             </Card>
           </TabsContent>

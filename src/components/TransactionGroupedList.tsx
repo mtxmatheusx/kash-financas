@@ -3,8 +3,7 @@ import { ChevronDown, ChevronRight, Pencil, Trash2, Check, Clock } from "lucide-
 import { cn } from "@/lib/utils";
 import type { TransactionRow } from "@/lib/types";
 
-const formatBRL = (v: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 interface GroupedListProps {
   transactions: TransactionRow[];
@@ -29,6 +28,7 @@ interface Group {
 export const TransactionGroupedList: React.FC<GroupedListProps> = ({
   transactions, type, onEdit, onRemove, onToggleStatus,
 }) => {
+  const { formatMoney: formatBRL } = usePreferences();
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   const { groups, singles } = useMemo(() => {

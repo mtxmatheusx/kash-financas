@@ -3,9 +3,7 @@ import { PageTransition } from "@/components/PageTransition";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Info } from "lucide-react";
-
-const formatBRL = (v: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 const parseNumber = (v: string) => {
   const cleaned = v.replace(/[^\d,.-]/g, "").replace(",", ".");
@@ -31,6 +29,7 @@ const fields: FieldDef[] = [
 ];
 
 const EBITDA: React.FC = () => {
+  const { formatMoney: formatBRL } = usePreferences();
   const [values, setValues] = useState<Record<string, string>>({});
 
   const update = (key: string, val: string) => {
@@ -165,19 +164,22 @@ const EBITDA: React.FC = () => {
 
 const Row: React.FC<{ label: string; value: number; bold?: boolean; highlight?: boolean }> = ({
   label, value, bold, highlight
-}) => (
-  <div className={cn("flex items-center justify-between px-5 py-2.5", highlight && "bg-muted/20")}>
-    <span className={cn("text-sm", bold ? "font-semibold text-foreground" : "text-muted-foreground")}>
-      {label}
-    </span>
-    <span className={cn(
-      "text-sm font-mono",
-      bold ? "font-semibold" : "",
-      value > 0 ? "text-fin-income" : value < 0 ? "text-fin-expense" : "text-muted-foreground"
-    )}>
-      {formatBRL(Math.abs(value))}
-    </span>
-  </div>
-);
+}) => {
+  const { formatMoney: formatBRL } = usePreferences();
+  return (
+    <div className={cn("flex items-center justify-between px-5 py-2.5", highlight && "bg-muted/20")}>
+      <span className={cn("text-sm", bold ? "font-semibold text-foreground" : "text-muted-foreground")}>
+        {label}
+      </span>
+      <span className={cn(
+        "text-sm font-mono",
+        bold ? "font-semibold" : "",
+        value > 0 ? "text-fin-income" : value < 0 ? "text-fin-expense" : "text-muted-foreground"
+      )}>
+        {formatBRL(Math.abs(value))}
+      </span>
+    </div>
+  );
+};
 
 export default EBITDA;
