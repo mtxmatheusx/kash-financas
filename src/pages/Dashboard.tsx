@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { PageTransition, staggerContainer, staggerItem, slideUp, fadeIn } from "@/components/PageTransition";
 import { KPICard } from "@/components/KPICard";
@@ -10,6 +10,7 @@ import {
   Tooltip, ResponsiveContainer,
 } from "recharts";
 import { createAnimatedBarShape } from "@/components/AnimatedBar";
+import { DashboardDateFilter, getDateRange, type DateFilter } from "@/components/DashboardDateFilter";
 
 const formatBRL = (value: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
@@ -40,9 +41,29 @@ const Dashboard: React.FC = () => {
   const { transactions, totals } = useTransactions();
   const { total: investmentTotal } = useInvestments();
 
+  const [dateFilter, setDateFilter] = useState<DateFilter>('all');
+  const [customRange, setCustomRange] = useState<{ from?: Date; to?: Date }>({});
+
+  const filtered = useMemo(() => {
+    const { from, to } = getDateRange(dateFilter, customRange);
+    if (!from) return transactions;
+    return transactions.filter(t => {
+      const d = new Date(t.date + 'T12:00:00');
+      if (from && d < from) return false;
+      if (to && d > to) return false;
+      return true;
+    });
+  }, [transactions, dateFilter, customRange]);
+
+  const filteredTotals = useMemo(() => {
+    const income = filtered.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+    const expense = filtered.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+    return { income, expense, balance: income - expense };
+  }, [filtered]);
+
   const monthlyData = useMemo(() => {
     const months: Record<string, { income: number; expense: number }> = {};
-    transactions.forEach(t => {
+    filtered.forEach(t => {
       const m = t.date.slice(0, 7);
       if (!months[m]) months[m] = { income: 0, expense: 0 };
       if (t.type === 'income') months[m].income += t.amount;
@@ -55,31 +76,39 @@ const Dashboard: React.FC = () => {
         month: new Date(month + '-01').toLocaleDateString('pt-BR', { month: 'short' }).replace('.', ''),
         ...data,
       }));
-  }, [transactions]);
+  }, [filtered]);
 
   const categoryData = useMemo(() => {
     const cats: Record<string, number> = {};
-    transactions.filter(t => t.type === 'expense').forEach(t => {
+    filtered.filter(t => t.type === 'expense').forEach(t => {
       cats[t.category] = (cats[t.category] || 0) + t.amount;
     });
     return Object.entries(cats)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
       .map(([name, value]) => ({ name, value }));
-  }, [transactions]);
+  }, [filtered]);
 
   return (
     <PageTransition>
       <div className="space-y-3 md:space-y-5">
-        {/* Header */}
-        <motion.div {...fadeIn(0)} className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Activity className="w-4 h-4 text-primary" />
+        {/* Header + Filters */}
+        <motion.div {...fadeIn(0)} className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Activity className="w-4 h-4 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-foreground tracking-tight">Dashboard</h1>
+              <p className="text-xs text-muted-foreground">Visão geral das suas finanças</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold text-foreground tracking-tight">Dashboard</h1>
-            <p className="text-xs text-muted-foreground">Visão geral das suas finanças</p>
-          </div>
+          <DashboardDateFilter
+            filter={dateFilter}
+            onFilterChange={setDateFilter}
+            customRange={customRange}
+            onCustomRangeChange={setCustomRange}
+          />
         </motion.div>
 
         {/* KPIs */}
@@ -89,22 +118,19 @@ const Dashboard: React.FC = () => {
           initial="initial"
           animate="animate"
         >
-          <KPICard title="Saldo" value={formatBRL(totals.balance)} icon={Wallet}
+          <KPICard title="Saldo" value={formatBRL(filteredTotals.balance)} icon={Wallet}
             color="bg-primary/10 text-primary" />
-          <KPICard title="Receitas" value={formatBRL(totals.income)} icon={TrendingUp}
+          <KPICard title="Receitas" value={formatBRL(filteredTotals.income)} icon={TrendingUp}
             color="bg-fin-income/10 text-fin-income" />
-          <KPICard title="Despesas" value={formatBRL(totals.expense)} icon={TrendingDown}
+          <KPICard title="Despesas" value={formatBRL(filteredTotals.expense)} icon={TrendingDown}
             color="bg-fin-expense/10 text-fin-expense" />
           <KPICard title="Investimentos" value={formatBRL(investmentTotal)} icon={PiggyBank}
             color="bg-fin-investment/10 text-fin-investment" />
         </motion.div>
 
-        {/* Charts - cockpit style */}
+        {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 md:gap-3">
-          <motion.div
-            {...slideUp(0.15)}
-            className="rounded-xl border border-border bg-card p-4 cockpit-glow"
-          >
+          <motion.div {...slideUp(0.15)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Receitas vs Despesas</h3>
               <div className="flex items-center gap-3">
@@ -131,43 +157,19 @@ const Dashboard: React.FC = () => {
                       <stop offset="100%" stopColor="hsl(var(--fin-expense))" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <XAxis
-                    dataKey="month"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: 'hsl(220, 10%, 48%)', fontSize: 10, fontFamily: 'DM Sans' }}
-                    dy={8}
-                  />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
+                  <XAxis dataKey="month" axisLine={false} tickLine={false}
+                    tick={{ fill: 'hsl(220, 10%, 48%)', fontSize: 10, fontFamily: 'DM Sans' }} dy={8} />
+                  <YAxis axisLine={false} tickLine={false}
                     tick={{ fill: 'hsl(220, 10%, 48%)', fontSize: 10, fontFamily: 'JetBrains Mono' }}
-                    tickFormatter={formatCompact}
-                  />
+                    tickFormatter={formatCompact} />
                   <Tooltip content={<CockpitTooltip />} />
-                  <Area
-                    type="monotone"
-                    dataKey="income"
-                    name="Receitas"
-                    stroke="hsl(var(--fin-income))"
-                    fill="url(#incomeGrad)"
-                    strokeWidth={2}
-                    dot={false}
-                    activeDot={{ r: 4, strokeWidth: 0, fill: 'hsl(var(--fin-income))' }}
-                    animationDuration={1000}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="expense"
-                    name="Despesas"
-                    stroke="hsl(var(--fin-expense))"
-                    fill="url(#expenseGrad)"
-                    strokeWidth={2}
-                    dot={false}
+                  <Area type="monotone" dataKey="income" name="Receitas" stroke="hsl(var(--fin-income))"
+                    fill="url(#incomeGrad)" strokeWidth={2} dot={false}
+                    activeDot={{ r: 4, strokeWidth: 0, fill: 'hsl(var(--fin-income))' }} animationDuration={1000} />
+                  <Area type="monotone" dataKey="expense" name="Despesas" stroke="hsl(var(--fin-expense))"
+                    fill="url(#expenseGrad)" strokeWidth={2} dot={false}
                     activeDot={{ r: 4, strokeWidth: 0, fill: 'hsl(var(--fin-expense))' }}
-                    animationDuration={1000}
-                    animationBegin={200}
-                  />
+                    animationDuration={1000} animationBegin={200} />
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
@@ -177,39 +179,19 @@ const Dashboard: React.FC = () => {
             )}
           </motion.div>
 
-          <motion.div
-            {...slideUp(0.25)}
-            className="rounded-xl border border-border bg-card p-4 cockpit-glow"
-          >
+          <motion.div {...slideUp(0.25)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-4">Top Categorias</h3>
             {categoryData.length > 0 ? (
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={categoryData} layout="vertical" margin={{ top: 0, right: 4, left: 0, bottom: 0 }}>
-                  <XAxis
-                    type="number"
-                    axisLine={false}
-                    tickLine={false}
+                  <XAxis type="number" axisLine={false} tickLine={false}
                     tick={{ fill: 'hsl(220, 10%, 48%)', fontSize: 10, fontFamily: 'JetBrains Mono' }}
-                    tickFormatter={formatCompact}
-                  />
-                  <YAxis
-                    dataKey="name"
-                    type="category"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: 'hsl(220, 10%, 60%)', fontSize: 11, fontFamily: 'DM Sans' }}
-                    width={90}
-                  />
+                    tickFormatter={formatCompact} />
+                  <YAxis dataKey="name" type="category" axisLine={false} tickLine={false}
+                    tick={{ fill: 'hsl(220, 10%, 60%)', fontSize: 11, fontFamily: 'DM Sans' }} width={90} />
                   <Tooltip content={<CockpitTooltip />} />
-                  <Bar
-                    dataKey="value"
-                    name="Total"
-                    fill="hsl(var(--primary))"
-                    radius={[0, 4, 4, 0]}
-                    shape={createAnimatedBarShape("vertical")}
-                    isAnimationActive={false}
-                    opacity={0.85}
-                  />
+                  <Bar dataKey="value" name="Total" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]}
+                    shape={createAnimatedBarShape("vertical")} isAnimationActive={false} opacity={0.85} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -221,30 +203,17 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Recent Transactions */}
-        <motion.div
-          {...slideUp(0.3)}
-          className="rounded-xl border border-border bg-card p-4 cockpit-glow"
-        >
+        <motion.div {...slideUp(0.3)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
           <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-3">Transações Recentes</h3>
-          {transactions.length > 0 ? (
-            <motion.div
-              className="space-y-0.5"
-              variants={staggerContainer}
-              initial="initial"
-              animate="animate"
-            >
-              {transactions.slice(0, 8).map(t => (
-                <motion.div
-                  key={t.id}
-                  variants={staggerItem}
+          {filtered.length > 0 ? (
+            <motion.div className="space-y-0.5" variants={staggerContainer} initial="initial" animate="animate">
+              {filtered.slice(0, 8).map(t => (
+                <motion.div key={t.id} variants={staggerItem}
                   whileHover={{ x: 3, transition: { duration: 0.1 } }}
-                  className="flex items-center justify-between py-2 px-2.5 rounded-lg hover:bg-accent/50 transition-colors cursor-default"
-                >
+                  className="flex items-center justify-between py-2 px-2.5 rounded-lg hover:bg-accent/50 transition-colors cursor-default">
                   <div className="flex items-center gap-2.5">
-                    <div
-                      className={`w-1.5 h-1.5 rounded-full ${t.type === 'income' ? 'bg-fin-income' : 'bg-fin-expense'}`}
-                      style={{ boxShadow: t.type === 'income' ? '0 0 4px hsl(var(--fin-income))' : '0 0 4px hsl(var(--fin-expense))' }}
-                    />
+                    <div className={`w-1.5 h-1.5 rounded-full ${t.type === 'income' ? 'bg-fin-income' : 'bg-fin-expense'}`}
+                      style={{ boxShadow: t.type === 'income' ? '0 0 4px hsl(var(--fin-income))' : '0 0 4px hsl(var(--fin-expense))' }} />
                     <div>
                       <p className="text-sm font-medium text-card-foreground">{t.description}</p>
                       <p className="text-[10px] text-muted-foreground">{t.category} · {new Date(t.date).toLocaleDateString('pt-BR')}</p>
@@ -257,7 +226,7 @@ const Dashboard: React.FC = () => {
               ))}
             </motion.div>
           ) : (
-            <p className="text-xs text-muted-foreground text-center py-6">Nenhuma transação registrada</p>
+            <p className="text-xs text-muted-foreground text-center py-6">Nenhuma transação no período selecionado</p>
           )}
         </motion.div>
       </div>
