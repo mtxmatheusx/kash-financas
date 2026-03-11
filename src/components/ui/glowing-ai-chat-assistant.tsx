@@ -114,7 +114,7 @@ const FloatingAiAssistant = ({
   const hasContent = message.trim() || attachments.length > 0;
 
   return (
-    <div className="fixed bottom-[76px] right-3 sm:bottom-5 sm:right-5 z-30 flex flex-col items-end gap-3">
+    <div className="fixed bottom-[60px] right-3 sm:bottom-5 sm:right-5 z-30 flex flex-col items-end gap-3">
       {/* Floating Button */}
       <button
         className="floating-ai-button relative w-12 h-12 sm:w-14 sm:h-14 rounded-full cursor-pointer transition-all duration-500 flex items-center justify-center group"
