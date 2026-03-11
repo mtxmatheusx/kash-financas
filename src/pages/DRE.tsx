@@ -368,9 +368,9 @@ const DRE: React.FC = () => {
       pdf.setFontSize(7);
       pdf.setFont("helvetica", "bold");
       pdf.setTextColor(...white);
-      pdf.text("DESCRIÇÃO", m + 4, y + 5.5);
-      pdf.text("MÊS ATUAL", m + u - 56, y + 5.5);
-      pdf.text("MÊS ANTERIOR", m + u - 24, y + 5.5);
+      pdf.text(t("dre.pdf.tableDescription"), m + 4, y + 5.5);
+      pdf.text(t("dre.pdf.tableCurrentMonth"), m + u - 56, y + 5.5);
+      pdf.text(t("dre.pdf.tablePreviousMonth"), m + u - 24, y + 5.5);
       y += 8;
 
       let rowIdx = 0;
