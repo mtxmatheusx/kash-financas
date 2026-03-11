@@ -298,7 +298,7 @@ const Landing: React.FC = () => {
                 </motion.div>
               </Link>
               <p className="text-[11px] text-[hsl(0,0%,35%)]">
-                R$ 29,90/mês após o teste. Indique um sócio e ganhe +60 dias.
+                {t("landing.hero.ctaNote")}
               </p>
             </motion.div>
 
