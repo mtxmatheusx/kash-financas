@@ -97,7 +97,7 @@ const Despesas: React.FC = () => {
       is_percentage: form.is_percentage,
       ...(form.is_percentage ? { percentage: parseFloat(form.percentage.replace(',', '.')) } : {}),
       ...(form.entry_type === 'installment' ? { installments: parseInt(form.installments) || 2 } : {}),
-      ...(form.entry_type === 'recurring' ? { frequency: form.frequency } : {}),
+      ...(form.entry_type === 'recurring' ? { frequency: form.frequency, recurring_months: parseInt(form.recurring_months) || 12 } : {}),
     };
 
     if (editingId) {
