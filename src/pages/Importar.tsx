@@ -193,6 +193,7 @@ function parseCSVLine(line: string, delimiter: string = ","): string[] {
 const Importar: React.FC = () => {
   const { transactions, create } = useTransactions();
   const { account } = useAccount();
+  const { t } = usePreferences();
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [step, setStep] = useState<"upload" | "mapping" | "preview" | "done">("upload");
