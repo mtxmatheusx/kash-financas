@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 
 import {
-  ArrowRight, Shield, Zap, Brain, TrendingUp,
+  ArrowRight, Shield, ShieldCheck, Zap, Brain, TrendingUp,
   Crown, Check, ChevronRight, Sparkles, AudioLines, Cpu, Lock, Database,
   X as XIcon,
 } from "lucide-react";
@@ -387,6 +387,41 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
+      {/* ═══ GARANTIA DE ESFORÇO ZERO ═══ */}
+      <section className="py-10 sm:py-16 px-4 sm:px-6 relative bg-[hsl(0,0%,7%)]">
+        <div className="absolute inset-0 bg-gradient-to-b from-[hsl(0,0%,2%)] via-[hsl(0,0%,7%)] to-[hsl(0,0%,2%)] pointer-events-none" />
+        <motion.div
+          {...fadeUp()}
+          className="max-w-3xl mx-auto relative z-10 text-center"
+        >
+          <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[hsl(348,100%,64%)/0.08] border border-[hsl(348,100%,64%)/0.15] mb-5 sm:mb-6">
+            <ShieldCheck className="w-7 h-7 sm:w-8 sm:h-8 text-[hsl(348,100%,64%)]" />
+          </div>
+
+          <h2 className="text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white mb-4 sm:mb-5 leading-[1.15]">
+            A Nossa Garantia de Esforço Zero.
+          </h2>
+
+          <p className="text-sm sm:text-base text-[hsl(0,0%,50%)] leading-relaxed max-w-2xl mx-auto mb-6">
+            Nós odiamos planilhas tanto quanto você. O Faciliten foi construído para que você{" "}
+            <span className="text-white font-semibold">não precise digitar uma única linha financeira nunca mais</span>.
+            Teste a nossa IA por 7 dias. Se ela não economizar pelo menos 5 horas da sua semana,
+            cancele com 1 clique.{" "}
+            <span className="text-[hsl(348,100%,64%)] font-semibold">Sem perguntas.</span>
+          </p>
+
+          <div className="flex items-center justify-center gap-6 sm:gap-8 text-[hsl(0,0%,40%)]">
+            <div className="flex items-center gap-2 text-[11px] sm:text-xs">
+              <Lock className="w-3.5 h-3.5 text-[hsl(348,100%,64%)/0.7]" />
+              <span>Cancelamento instantâneo</span>
+            </div>
+            <div className="flex items-center gap-2 text-[11px] sm:text-xs">
+              <ShieldCheck className="w-3.5 h-3.5 text-[hsl(348,100%,64%)/0.7]" />
+              <span>Sem compromisso</span>
+            </div>
+          </div>
+        </motion.div>
+      </section>
 
       {/* ═══ O JEITO VELHO vs O JEITO FACILITEN ═══ */}
       <section className="py-14 sm:py-28 px-4 sm:px-6 relative">
