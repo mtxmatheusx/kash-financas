@@ -232,7 +232,7 @@ const Dashboard: React.FC = () => {
               ))}
             </motion.div>
           ) : (
-            <p className="text-xs text-muted-foreground text-center py-6">Nenhuma transação no período selecionado</p>
+            <p className="text-xs text-muted-foreground text-center py-6">{t("dashboard.noTransactions")}</p>
           )}
         </motion.div>
       </div>
