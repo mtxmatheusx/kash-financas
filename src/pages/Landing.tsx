@@ -401,7 +401,7 @@ const Landing: React.FC = () => {
               </ul>
             </motion.div>
 
-            {/* Card Direito — O Jeito Kash */}
+            {/* Card Direito — O Jeito Faciliten */}
             <motion.div
               {...fadeUp(0.2)}
               className="relative rounded-xl sm:rounded-2xl overflow-hidden"
