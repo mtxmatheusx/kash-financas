@@ -421,6 +421,7 @@ const DRE: React.FC = () => {
               </div>
             </div>
           </div>
+          </div> {/* end dreRef */}
         </div>
       </TooltipProvider>
     </PageTransition>
