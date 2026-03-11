@@ -1522,6 +1522,8 @@ const en: typeof pt = {
   "dre.line.tooltipOtherExpenses": "Financial expenses, interest, etc.",
   "dre.line.tooltipNetProfit": "Final result after all deductions",
 };
+
+const es: typeof pt = {
   "nav.home": "Inicio",
   "nav.income": "Ingresos",
   "nav.expenses": "Gastos",
