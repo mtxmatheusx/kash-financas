@@ -190,6 +190,8 @@ export const FloatingChat: React.FC = () => {
   const [historyLoaded, setHistoryLoaded] = useState(false);
   const [pendingTx, setPendingTx] = useState<ParsedTransaction | null>(null);
   const [stagedMsg, setStagedMsg] = useState<{ text: string; images: string[] } | null>(null);
+  const [investorDisclaimerAccepted, setInvestorDisclaimerAccepted] = useState<boolean | null>(null);
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
   // Load chat history from database
