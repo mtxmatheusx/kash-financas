@@ -2144,6 +2144,13 @@ const es: typeof pt = {
   "whatsapp.description": "Automatiza tus registros — envía un audio y Faciliten registra ingresos y gastos por ti.",
   "whatsapp.cta": "Activar en WhatsApp",
 
+  "dateFilter.all": "Todos",
+  "dateFilter.today": "Hoy",
+  "dateFilter.yesterday": "Ayer",
+  "dateFilter.week": "Semana",
+  "dateFilter.month": "Mes",
+  "dateFilter.period": "Período",
+
   "insights.title": "Insights con IA",
   "insights.preference": "preferencia",
   "insights.preferences": "preferencias",
