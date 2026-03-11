@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { PageTransition } from "@/components/PageTransition";
 import { WhatsAppAlertBanner } from "@/components/WhatsAppAlertBanner";
 import { useTransactions } from "@/hooks/useTransactions";
@@ -18,7 +18,7 @@ const PERSONAL_CATS = ['Alimentação', 'Transporte', 'Moradia', 'Saúde', 'Laze
 const BUSINESS_CATS = ['Fornecedores', 'Impostos', 'Funcionários', 'Marketing', 'Infraestrutura', 'Outros'];
 
 const Despesas: React.FC = () => {
-  const { transactions, create, update, remove, totals } = useTransactions('expense');
+  const { transactions, create, update, remove, totals, allTransactions } = useTransactions('expense');
   const { account } = useAccount();
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -35,6 +35,7 @@ const Despesas: React.FC = () => {
     is_percentage: false,
     percentage: '',
     recurring_months: '12',
+    percentage_base: 'total' as 'total' | 'monthly',
   });
 
   const [form, setForm] = useState(emptyForm());
@@ -42,6 +43,14 @@ const Despesas: React.FC = () => {
 
   const paidTotal = transactions.filter(t => t.status === 'paid').reduce((s, t) => s + t.amount, 0);
   const pendingTotal = transactions.filter(t => t.status === 'pending').reduce((s, t) => s + t.amount, 0);
+
+  const monthlyIncome = useMemo(() => {
+    const month = form.date?.slice(0, 7);
+    if (!month) return 0;
+    return allTransactions
+      .filter(t => t.type === 'income' && t.date.startsWith(month))
+      .reduce((s, t) => s + t.amount, 0);
+  }, [allTransactions, form.date]);
 
   const filtered = transactions.filter(t =>
     t.description.toLowerCase().includes(search.toLowerCase()) ||
@@ -70,6 +79,7 @@ const Despesas: React.FC = () => {
       is_percentage: t.is_percentage ?? false,
       percentage: t.percentage ? String(t.percentage) : '',
       recurring_months: '12',
+      percentage_base: 'total',
     });
     setAmountCents(Math.round(t.amount * 100));
     setShowForm(true);
@@ -80,7 +90,8 @@ const Despesas: React.FC = () => {
     if (form.is_percentage) {
       const pct = parseFloat(form.percentage.replace(',', '.'));
       if (!form.description || !pct || pct <= 0) return;
-      amount = (totals.income * pct) / 100;
+      const base = form.percentage_base === 'monthly' ? monthlyIncome : totals.income;
+      amount = (base * pct) / 100;
     } else {
       amount = amountCents / 100;
       if (!form.description || !amount) return;
@@ -172,22 +183,36 @@ const Despesas: React.FC = () => {
               <select value={form.is_percentage ? 'percentage' : 'fixed'} onChange={e => setForm({ ...form, is_percentage: e.target.value === 'percentage', amount: '', percentage: '' })}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                 <option value="fixed">Valor Fixo (R$)</option>
-                <option value="percentage">% da Receita Total</option>
+                <option value="percentage">% da Receita</option>
               </select>
             </div>
             {form.is_percentage ? (
-              <div>
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Porcentagem (%)</label>
-                <div className="relative">
-                  <Input value={form.percentage} onChange={e => setForm({ ...form, percentage: e.target.value })} placeholder="Ex: 10" inputMode="decimal" className="pr-10" />
-                  <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Base de cálculo</label>
+                  <select value={form.percentage_base} onChange={e => setForm({ ...form, percentage_base: e.target.value as 'total' | 'monthly' })}
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                    <option value="total">Receita Total ({formatBRL(totals.income)})</option>
+                    <option value="monthly">Receita do Mês ({formatBRL(monthlyIncome)})</option>
+                  </select>
                 </div>
-                {form.percentage && totals.income > 0 && (
-                  <p className="text-xs text-muted-foreground mt-1">
-                    = {formatBRL((totals.income * (parseFloat(form.percentage.replace(',', '.')) || 0)) / 100)} de {formatBRL(totals.income)}
-                  </p>
-                )}
-              </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Porcentagem (%)</label>
+                  <div className="relative">
+                    <Input value={form.percentage} onChange={e => setForm({ ...form, percentage: e.target.value })} placeholder="Ex: 10" inputMode="decimal" className="pr-10" />
+                    <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  </div>
+                  {form.percentage && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {(() => {
+                        const base = form.percentage_base === 'monthly' ? monthlyIncome : totals.income;
+                        const pct = parseFloat(form.percentage.replace(',', '.')) || 0;
+                        return `= ${formatBRL((base * pct) / 100)} de ${formatBRL(base)}`;
+                      })()}
+                    </p>
+                  )}
+                </div>
+              </>
             ) : (
               <div>
                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Valor</label>
