@@ -81,7 +81,7 @@ const Receitas: React.FC = () => {
       entry_type: form.entry_type,
       account_type: account.type,
       ...(form.entry_type === 'installment' ? { installments: parseInt(form.installments) || 2 } : {}),
-      ...(form.entry_type === 'recurring' ? { frequency: form.frequency } : {}),
+      ...(form.entry_type === 'recurring' ? { frequency: form.frequency, recurring_months: parseInt(form.recurring_months) || 12 } : {}),
     };
 
     if (editingId) {
