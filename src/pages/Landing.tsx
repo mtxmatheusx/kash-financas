@@ -274,10 +274,10 @@ const Landing: React.FC = () => {
               {...fadeUp(0.1)}
               className="text-[2rem] leading-[1.1] sm:text-5xl xl:text-6xl font-extrabold tracking-tight sm:leading-[1.05] mb-4 sm:mb-5"
             >
-              <span className="text-white">O Controle Financeiro</span>
+              <span className="text-white">{t("landing.hero.title1")}</span>
               <br />
-              <span className="text-white">Que Vive </span>
-              <span className="neon-glow text-[hsl(160,100%,50%)]">Onde Você Já Está.</span>
+              <span className="text-white">{t("landing.hero.title2")}</span>
+              <span className="neon-glow text-[hsl(160,100%,50%)]">{t("landing.hero.title3")}</span>
             </motion.h1>
 
             <motion.p
