@@ -22,6 +22,7 @@ const emptyForm = () => ({
   entry_type: 'single' as 'single' | 'installment' | 'recurring',
   installments: '2',
   frequency: 'monthly' as 'monthly' | 'yearly',
+  recurring_months: '12',
 });
 
 const Receitas: React.FC = () => {
