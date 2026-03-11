@@ -14,6 +14,7 @@ import { InvestorDisclaimer } from "@/components/InvestorDisclaimer";
 import { GeneralDisclaimer } from "@/components/GeneralDisclaimer";
 import { useAccount } from "@/contexts/AccountContext";
 import { useTransactions } from "@/hooks/useTransactions";
+import { useInvestments } from "@/hooks/useInvestments";
 import { useSpeechToText } from "@/hooks/useSpeechToText";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useAuth } from "@/contexts/AuthContext";
