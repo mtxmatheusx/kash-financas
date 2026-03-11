@@ -11,6 +11,7 @@ import { useAccount } from "@/contexts/AccountContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import facilitenLogo from "@/assets/faciliten-logo.png";
 
 import type { AccountType } from "@/contexts/AccountContext";
 
