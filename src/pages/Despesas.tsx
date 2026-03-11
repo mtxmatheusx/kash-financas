@@ -33,6 +33,7 @@ const Despesas: React.FC = () => {
     frequency: 'monthly' as 'monthly' | 'yearly',
     is_percentage: false,
     percentage: '',
+    recurring_months: '12',
   });
 
   const [form, setForm] = useState(emptyForm());
@@ -67,6 +68,7 @@ const Despesas: React.FC = () => {
       frequency: t.frequency ?? 'monthly',
       is_percentage: t.is_percentage ?? false,
       percentage: t.percentage ? String(t.percentage) : '',
+      recurring_months: '12',
     });
     setAmountCents(Math.round(t.amount * 100));
     setShowForm(true);
@@ -95,7 +97,7 @@ const Despesas: React.FC = () => {
       is_percentage: form.is_percentage,
       ...(form.is_percentage ? { percentage: parseFloat(form.percentage.replace(',', '.')) } : {}),
       ...(form.entry_type === 'installment' ? { installments: parseInt(form.installments) || 2 } : {}),
-      ...(form.entry_type === 'recurring' ? { frequency: form.frequency } : {}),
+      ...(form.entry_type === 'recurring' ? { frequency: form.frequency, recurring_months: parseInt(form.recurring_months) || 12 } : {}),
     };
 
     if (editingId) {
@@ -273,14 +275,30 @@ const Despesas: React.FC = () => {
               </div>
             )}
             {form.entry_type === 'recurring' && (
-              <div>
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Frequência</label>
-                <select value={form.frequency} onChange={e => setForm({ ...form, frequency: e.target.value as 'monthly' | 'yearly' })}
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                  <option value="monthly">Mensal</option>
-                  <option value="yearly">Anual</option>
-                </select>
-              </div>
+              <>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Frequência</label>
+                  <select value={form.frequency} onChange={e => setForm({ ...form, frequency: e.target.value as 'monthly' | 'yearly' })}
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                    <option value="monthly">Mensal</option>
+                    <option value="yearly">Anual</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Duração (meses)</label>
+                  <select value={form.recurring_months} onChange={e => setForm({ ...form, recurring_months: e.target.value })}
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                    <option value="3">3 meses</option>
+                    <option value="6">6 meses</option>
+                    <option value="12">12 meses (1 ano)</option>
+                    <option value="24">24 meses (2 anos)</option>
+                    <option value="36">36 meses (3 anos)</option>
+                  </select>
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    Serão criados {form.recurring_months} lançamentos automáticos a partir da data selecionada
+                  </p>
+                </div>
+              </>
             )}
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Data</label>
