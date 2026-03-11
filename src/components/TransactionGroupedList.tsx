@@ -114,7 +114,7 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
                     ? `${t("txList.recurringMonthly").split(" (")[0]} ${g.frequency === "yearly" ? `(${t("form.yearly")})` : `(${t("form.monthly")})`}`
                     : t("txList.installment")}</span>
                   <span>· {g.items.length} {t("txList.installments")}</span>
-                  <span>· {g.category}</span>
+                  <span>· {translateCategory(g.category, t)}</span>
                   <span className="inline-flex items-center gap-0.5">
                     <span className="text-fin-income">{g.paidCount}✓</span>
                     {g.pendingCount > 0 && <span className="text-fin-pending">{g.pendingCount}⏳</span>}
