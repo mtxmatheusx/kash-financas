@@ -17,7 +17,7 @@ const useReferralCapture = () => {
   const [searchParams] = useSearchParams();
   useEffect(() => {
     const ref = searchParams.get("ref");
-    if (ref) localStorage.setItem("kash_referral_code", ref);
+    if (ref) localStorage.setItem("faciliten_referral_code", ref);
   }, [searchParams]);
 };
 
