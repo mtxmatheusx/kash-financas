@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 
 import {
-  ArrowRight, Shield, Zap, Brain, TrendingUp,
+  ArrowRight, Shield, ShieldCheck, Zap, Brain, TrendingUp,
   Crown, Check, ChevronRight, Sparkles, AudioLines, Cpu, Lock, Database,
   X as XIcon,
 } from "lucide-react";
