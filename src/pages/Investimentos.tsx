@@ -86,21 +86,14 @@ const Investimentos: React.FC = () => {
     setEditValue(`${intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.')},${decPart}`);
   };
 
-  const confirmEdit = async (inv: typeof investments[0]) => {
+  const confirmEdit = (inv: typeof investments[0]) => {
     const newVal = editCents / 100;
     if (newVal > 0) {
-      // Use supabase directly via the hook — we need an update method
-      // For now, we'll remove and re-create with updated value
-      const { supabase } = await import('@/integrations/supabase/client');
-      await supabase.from('investments').update({ current_value: newVal }).eq('id', inv.id);
-      // Refresh by triggering a re-render — update local state
-      inv.current_value = newVal;
+      update(inv.id, { current_value: newVal });
     }
     setEditingId(null);
     setEditValue('');
     setEditCents(0);
-    // Force re-render
-    window.location.reload();
   };
 
   return (
