@@ -52,7 +52,7 @@ export const FinancialInsights: React.FC<FinancialInsightsProps> = ({
   goals,
 }) => {
   const { user } = useAuth();
-  const { t, language } = usePreferences();
+  const { t, language, currency } = usePreferences();
   const [insights, setInsights] = useState<Insight[]>([]);
   const [preferences, setPreferences] = useState<UserPreference[]>([]);
   const [loading, setLoading] = useState(false);
@@ -102,6 +102,7 @@ export const FinancialInsights: React.FC<FinancialInsightsProps> = ({
           goals: goals?.map(g => ({ name: g.name, target_amount: g.target_amount, current_amount: g.current_amount, deadline: g.deadline })) || [],
           preferences: prefs.map(p => p.preference),
           language,
+          currency,
         },
       });
       if (!error && data?.insights?.length > 0) setInsights(data.insights);
@@ -111,7 +112,7 @@ export const FinancialInsights: React.FC<FinancialInsightsProps> = ({
       setLoading(false);
       setHasLoaded(true);
     }
-  }, [transactions, investments, goals, fetchPreferences, language]);
+  }, [transactions, investments, goals, fetchPreferences, language, currency]);
 
   useEffect(() => {
     if (!hasLoaded && transactions.length > 0) fetchInsights();
