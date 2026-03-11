@@ -57,6 +57,7 @@ export const GeneralDisclaimer: React.FC<GeneralDisclaimerProps> = ({ onAccept, 
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       className="absolute inset-0 z-50 flex flex-col bg-background/95 backdrop-blur-sm rounded-2xl"
+      onClick={(e) => e.stopPropagation()}
     >
       {/* Header */}
       <div className="px-4 pt-5 pb-3 text-center space-y-2 shrink-0">
@@ -105,8 +106,8 @@ export const GeneralDisclaimer: React.FC<GeneralDisclaimerProps> = ({ onAccept, 
       </ScrollArea>
 
       {/* Footer */}
-      <div className="px-4 pb-4 pt-2 space-y-3 border-t border-border/50 shrink-0">
-        <label className="flex items-start gap-3 cursor-pointer p-2 rounded-lg hover:bg-accent/30 transition-colors">
+      <div className="px-4 pb-5 pt-2 space-y-3 border-t border-border/50 shrink-0">
+        <label className="flex items-start gap-3 cursor-pointer p-2 rounded-lg hover:bg-accent/30 transition-colors select-none">
           <Checkbox
             checked={accepted}
             onCheckedChange={(v) => setAccepted(v === true)}
@@ -117,10 +118,10 @@ export const GeneralDisclaimer: React.FC<GeneralDisclaimerProps> = ({ onAccept, 
           </span>
         </label>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="flex-1" onClick={onDecline}>
+          <Button variant="outline" size="sm" className="flex-1 h-10" onClick={onDecline}>
             Voltar
           </Button>
-          <Button size="sm" className="flex-1 gap-1.5" disabled={!accepted} onClick={onAccept}>
+          <Button size="sm" className="flex-1 h-10 gap-1.5" disabled={!accepted} onClick={onAccept}>
             <CheckCircle2 className="w-3.5 h-3.5" />
             Aceitar e continuar
           </Button>
