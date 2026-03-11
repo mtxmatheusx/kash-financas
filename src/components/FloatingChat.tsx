@@ -10,6 +10,7 @@ import {
 import { ChatMessageList } from "@/components/ui/chat-message-list";
 import { FloatingAiAssistant, type Attachment } from "@/components/ui/glowing-ai-chat-assistant";
 import { TransactionConfirmCard, type ParsedTransaction } from "@/components/TransactionConfirmCard";
+import { InvestorDisclaimer } from "@/components/InvestorDisclaimer";
 import { useAccount } from "@/contexts/AccountContext";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useSpeechToText } from "@/hooks/useSpeechToText";
