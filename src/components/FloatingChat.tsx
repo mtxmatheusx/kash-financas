@@ -370,15 +370,15 @@ export const FloatingChat: React.FC = () => {
       onSend={stageMessage}
       isLoading={isLoading}
       title={config.label}
-      placeholder={isListening ? "🎙️ Ouvindo..." : config.placeholder}
+      placeholder={isAudioRecording ? `🎙️ Gravando... ${recordingDuration}s` : isAudioSending ? "⏳ Processando áudio..." : isListening ? "🎙️ Ouvindo..." : config.placeholder}
       headerBadges={[
         { label: consultantType === "financial" ? "Financeiro" : "Vendas", variant: "primary" },
         { label: "IA", variant: "accent" },
       ]}
-      micProps={micSupported ? {
-        isListening,
-        onToggle: isListening ? stopListening : startListening,
-      } : undefined}
+      micProps={{
+        isListening: isAudioRecording || isAudioSending,
+        onToggle: isAudioRecording ? stopRecording : startRecording,
+      }}
     >
       {/* Consultant Toggle + Clear */}
       <div className="px-4 pt-3 pb-1 flex items-center gap-2">
