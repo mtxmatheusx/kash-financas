@@ -44,6 +44,7 @@ const Despesas: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const categories = account.type === 'personal' ? PERSONAL_CATS : BUSINESS_CATS;
+  const categoryKeys = account.type === 'personal' ? PERSONAL_CAT_KEYS : BUSINESS_CAT_KEYS;
 
   const emptyForm = () => ({
     description: '', amount: '', category: categories[0],
