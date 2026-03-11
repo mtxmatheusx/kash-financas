@@ -69,12 +69,14 @@ const Dashboard: React.FC = () => {
       if (t.type === 'income') months[m].income += t.amount;
       else months[m].expense += t.amount;
     });
+    console.log('[Dashboard] monthlyData raw keys:', Object.keys(months).sort());
     return Object.entries(months)
       .sort(([a], [b]) => a.localeCompare(b))
       .slice(-6)
       .map(([month, data]) => {
         const [y, m] = month.split('-').map(Number);
         const label = new Date(y, m - 1, 1).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
+        console.log('[Dashboard] month key:', month, '-> label:', label);
         return { month: label, ...data };
       });
   }, [filtered]);
