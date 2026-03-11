@@ -45,7 +45,11 @@ export const TransactionConfirmCard: React.FC<TransactionConfirmCardProps> = ({
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-xs font-semibold text-foreground truncate">{transaction.description}</p>
-          <p className="text-[10px] text-muted-foreground">{transaction.category} · {transaction.status === "paid" ? "Pago" : "Pendente"}</p>
+          <p className="text-[10px] text-muted-foreground">
+            {transaction.category} · {transaction.status === "paid" ? "Pago" : "Pendente"}
+            {transaction.entry_type === "recurring" && ` · Recorrente ${transaction.frequency === "yearly" ? "(Anual)" : "(Mensal)"}`}
+            {transaction.entry_type === "installment" && ` · ${transaction.installments}x parcelas`}
+          </p>
         </div>
         <span className={cn(
           "text-sm font-bold font-mono",
