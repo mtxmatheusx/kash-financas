@@ -245,6 +245,7 @@ const Despesas: React.FC = () => {
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
             )}
             <div>
               <div className="flex items-center gap-1.5">
