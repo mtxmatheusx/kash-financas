@@ -777,11 +777,6 @@ const pt = {
   "dre.line.tooltipOtherRevenue": "Receitas não operacionais (juros, etc.)",
   "dre.line.tooltipOtherExpenses": "Despesas financeiras, juros, etc.",
   "dre.line.tooltipNetProfit": "Resultado final após todas as deduções",
-
-  // Month names
-  "month.jan": "Jan", "month.feb": "Fev", "month.mar": "Mar", "month.apr": "Abr",
-  "month.may": "Mai", "month.jun": "Jun", "month.jul": "Jul", "month.aug": "Ago",
-  "month.sep": "Set", "month.oct": "Out", "month.nov": "Nov", "month.dec": "Dez",
 };
 
 const en: typeof pt = {
