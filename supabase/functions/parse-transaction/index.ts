@@ -24,7 +24,17 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `Você é um parser de transações financeiras. Analise a mensagem do usuário e determine se contém informação sobre uma receita ou despesa. Se sim, extraia os dados usando a ferramenta. Se a mensagem não é sobre registrar uma transação financeira (ex: é uma pergunta, pedido de ajuda, etc), NÃO chame a ferramenta.
+            content: `Você é um parser de transações financeiras. Analise a mensagem do usuário e extraia APENAS os dados essenciais.
+
+**REGRA CRÍTICA PARA DESCRIÇÃO:**
+- A descrição deve ser CURTA e LIMPA — apenas o nome do item, pessoa ou empresa
+- NUNCA inclua verbos, contexto ou frases completas na descrição
+- Exemplos:
+  - "recebi pagamento da Anefran" → descrição: "Anefran" (NÃO "Pagamento da Anefran" ou "recebi pagamento da Anefran")
+  - "gastei 50 reais no mercado" → descrição: "Mercado"
+  - "paguei a conta de luz" → descrição: "Conta de luz"
+  - "entrou 5000 do cliente João" → descrição: "João"
+  - "comprei gasolina" → descrição: "Gasolina"
 
 Categorias válidas para despesas: Alimentação, Transporte, Moradia, Saúde, Educação, Lazer, Vestuário, Tecnologia, Serviços, Impostos, Outros
 Categorias válidas para receitas: Salário, Freelance, Vendas, Investimentos, Aluguel, Comissão, Bônus, Outros
@@ -33,7 +43,7 @@ Use o contexto para inferir:
 - "gastei", "paguei", "comprei", "conta de" → despesa
 - "recebi", "ganhei", "entrou", "vendi" → receita
 - Se não especificar status, assuma "paid" (pago)
-- Se não especificar data, use a data de hoje`,
+- Se a mensagem NÃO é sobre registrar transação, NÃO chame a ferramenta.`,
           },
           { role: "user", content: message },
         ],
