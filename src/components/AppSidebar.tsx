@@ -60,8 +60,8 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
     >
       {/* Logo */}
       <div className="h-16 flex items-center px-4 border-b border-sidebar-border">
-        <div className="w-8 h-8 rounded-lg bg-fin-income flex items-center justify-center shrink-0">
-          <span className="text-sm font-bold text-white">F</span>
+        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
+          <img src="/favicon.png" alt="F" className="w-5 h-5 object-contain" />
         </div>
         {!collapsed && (
           <motion.span
