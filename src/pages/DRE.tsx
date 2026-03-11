@@ -490,10 +490,10 @@ const DRE: React.FC = () => {
       }
 
       pdf.save(`DRE_${format(refDate, "yyyy-MM")}.pdf`);
-      toast.success("PDF exportado com sucesso!");
+      toast.success(t("dre.pdf.exported"));
     } catch (err) {
-      console.error("Erro ao exportar PDF:", err);
-      toast.error("Erro ao exportar PDF");
+      console.error("PDF export error:", err);
+      toast.error(t("dre.pdf.error"));
     } finally {
       setExporting(false);
     }
