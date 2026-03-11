@@ -452,7 +452,7 @@ const Importar: React.FC = () => {
 
         {/* Step Indicator */}
         <div className="flex items-center gap-2 text-xs font-medium flex-wrap">
-          {["Upload", "Mapeamento", "Pré-visualização", "Concluído"].map((label, i) => {
+          {[t("import.stepUpload"), t("import.stepMapping"), t("import.stepPreview"), t("import.stepDone")].map((label, i) => {
             const stepIndex = ["upload", "mapping", "preview", "done"].indexOf(step);
             return (
               <React.Fragment key={label}>
