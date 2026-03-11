@@ -443,7 +443,7 @@ const Landing: React.FC = () => {
               Consultor financeiro + vendas = <span className="line-through text-[hsl(0,0%,30%)]">R$ 5.000/mês</span>
             </p>
             <p className="text-[hsl(160,100%,50%)] font-bold text-base sm:text-lg">
-              Com a Kash, a partir de R$ 0.
+              Com a Faciliten, a partir de R$ 0.
             </p>
           </motion.div>
 
