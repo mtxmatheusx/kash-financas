@@ -43,6 +43,7 @@ export const MobileNav: React.FC = () => {
   const [showMore, setShowMore] = useState(false);
   const { account } = useAccount();
   const { t } = usePreferences();
+  const { theme, toggleTheme } = useTheme();
 
   const filteredMore = moreItems.filter(
     (item) => !item.account || item.account === account.type
