@@ -317,7 +317,7 @@ const Landing: React.FC = () => {
       <section className="py-8 sm:py-12 px-4 sm:px-6 relative">
         <div className="max-w-4xl mx-auto text-center">
           <motion.p {...fadeUp()} className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-[hsl(0,0%,35%)] font-medium mb-5 sm:mb-6">
-            Infraestrutura de nível bancário, movida a inteligência artificial
+            {t("landing.trust.subtitle")}
           </motion.p>
           <div className="flex items-center justify-center gap-6 sm:gap-10 flex-wrap">
             {trustBadges.map((badge, i) => (
