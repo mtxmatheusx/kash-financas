@@ -132,6 +132,7 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
         frequency: d.frequency as TransactionRow['frequency'],
         is_percentage: d.is_percentage ?? undefined,
         percentage: d.percentage ? Number(d.percentage) : undefined,
+        currency: (d as any).currency || 'BRL',
         created_at: d.created_at,
       }));
       setAll(prev => [...mapped, ...prev]);
