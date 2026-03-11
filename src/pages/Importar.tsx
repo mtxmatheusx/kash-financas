@@ -644,7 +644,7 @@ const Importar: React.FC = () => {
                       onValueChange={v => setMapping(prev => ({ ...prev, [field]: v === "__none__" ? "" : v }))}
                     >
                       <SelectTrigger className="flex-1">
-                        <SelectValue placeholder="Selecione a coluna" />
+                        <SelectValue placeholder={t("import.selectColumn")} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="__none__">— Não mapear —</SelectItem>
