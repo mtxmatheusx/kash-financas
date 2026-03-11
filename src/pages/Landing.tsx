@@ -525,42 +525,45 @@ const Landing: React.FC = () => {
       </section>
 
       {/* ═══ FAQ MATA-OBJEÇÕES ═══ */}
-      <section className="py-14 sm:py-24 px-4 sm:px-6 relative">
+      <section className="py-14 sm:py-28 px-4 sm:px-6 relative">
         <div className="max-w-2xl mx-auto relative z-10">
-          <motion.div {...fadeUp()} className="text-center mb-8 sm:mb-12">
+          <motion.div {...fadeUp()} className="text-center mb-10 sm:mb-14">
+            <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-[hsl(0,0%,35%)] font-medium mb-4">
+              Quebra de objeções
+            </p>
             <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
-              Ainda tem dúvidas? Nós respondemos.
+              Ainda tem dúvidas?<br className="hidden sm:block" /> Nós destruímos cada uma.
             </h2>
           </motion.div>
           <motion.div {...fadeUp(0.1)}>
-            <Accordion type="single" collapsible className="space-y-2">
+            <Accordion type="single" collapsible className="space-y-3">
               {[
                 {
-                  q: "Preciso baixar algum aplicativo novo?",
-                  a: "Absolutamente zero. A Faciliten vive dentro do seu WhatsApp. Se você sabe mandar um áudio, você sabe usar a Faciliten.",
+                  q: "Meus dados financeiros estão seguros?",
+                  a: "Absolutamente. Utilizamos a mesma infraestrutura de criptografia de nível bancário que grandes corporações. Seus dados são seus e ninguém mais tem acesso.",
                 },
                 {
-                  q: "Como o Consultor de Vendas funciona?",
-                  a: "Não somos apenas um gestor de despesas. Nossa IA analisa seus custos fixos e variáveis e te entrega metas diárias de vendas e estratégias para manter sua margem de lucro intacta.",
+                  q: "A IA pode errar os meus lançamentos?",
+                  a: "A nossa IA atua como um extrator cirúrgico. Ela lê o seu áudio, categoriza e pede a sua confirmação no WhatsApp se houver alguma dúvida. Você tem sempre o controle final.",
                 },
                 {
-                  q: "É seguro compartilhar meus dados no WhatsApp?",
-                  a: "Utilizamos criptografia de ponta a ponta e a mesma infraestrutura de banco de dados (Cloud) de grandes corporações. A IA não tem acesso à sua conta bancária, ela apenas organiza o que você relata.",
+                  q: "Preciso entender de contabilidade para usar?",
+                  a: "Zero. O Faciliten foi criado justamente para quem odeia planilhas. Você só precisa saber falar ou digitar no WhatsApp.",
                 },
                 {
-                  q: "E se eu quiser cancelar?",
-                  a: "Zero burocracia. O teste de 30 dias não exige cartão de crédito. Se você não economizar tempo e dinheiro, basta parar de mandar mensagens.",
+                  q: "Posso cancelar se não gostar?",
+                  a: "Com um único clique, direto no seu painel. Sem ter que ligar para ninguém ou justificar. Risco zero para você.",
                 },
               ].map((item, i) => (
                 <AccordionItem
                   key={i}
                   value={`faq-${i}`}
-                  className="border border-[hsl(0,0%,10%)] rounded-xl bg-[hsl(0,0%,3%)] px-5 sm:px-6 data-[state=open]:border-[hsl(160,100%,50%)/0.15]"
+                  className="border border-[hsl(0,0%,12%)] rounded-xl bg-[hsl(0,0%,4%,0.5)] px-5 sm:px-6 data-[state=open]:border-[hsl(348,100%,64%,0.2)]"
                 >
-                  <AccordionTrigger className="text-sm sm:text-base font-semibold text-white hover:no-underline py-4 sm:py-5">
+                  <AccordionTrigger className="text-sm sm:text-base font-medium text-white hover:no-underline py-4 sm:py-5 [&[data-state=open]>svg]:text-[hsl(348,100%,64%)]">
                     {item.q}
                   </AccordionTrigger>
-                  <AccordionContent className="text-xs sm:text-sm text-[hsl(0,0%,50%)] leading-relaxed pb-4 sm:pb-5">
+                  <AccordionContent className="text-xs sm:text-sm text-[hsl(0,0%,45%)] leading-relaxed pb-4 sm:pb-5">
                     {item.a}
                   </AccordionContent>
                 </AccordionItem>
