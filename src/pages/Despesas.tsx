@@ -3,7 +3,7 @@ import { PageTransition } from "@/components/PageTransition";
 import { WhatsAppAlertBanner } from "@/components/WhatsAppAlertBanner";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAccount } from "@/contexts/AccountContext";
-import { Plus, Search, ArrowDownRight, Percent } from "lucide-react";
+import { Plus, Search, ArrowDownRight, Percent, Sparkles } from "lucide-react";
 import { TransactionGroupedList } from "@/components/TransactionGroupedList";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { cn } from "@/lib/utils";
 import { CurrencyInput } from "@/components/CurrencyInput";
 import type { TransactionRow } from "@/lib/types";
+import { useAutoCategory } from "@/hooks/useAutoCategory";
 
 const formatBRL = (v: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 
@@ -40,6 +41,18 @@ const Despesas: React.FC = () => {
 
   const [form, setForm] = useState(emptyForm());
   const [amountCents, setAmountCents] = useState(0);
+  const [userChangedCategory, setUserChangedCategory] = useState(false);
+
+  const { suggesting } = useAutoCategory(
+    showForm && !editingId && !userChangedCategory ? form.description : '',
+    'expense',
+    (cat) => {
+      const allCats = [...PERSONAL_CATS, ...BUSINESS_CATS];
+      if (allCats.includes(cat)) {
+        setForm(prev => ({ ...prev, category: cat }));
+      }
+    },
+  );
 
   const paidTotal = transactions.filter(t => t.status === 'paid').reduce((s, t) => s + t.amount, 0);
   const pendingTotal = transactions.filter(t => t.status === 'pending').reduce((s, t) => s + t.amount, 0);
@@ -61,6 +74,7 @@ const Despesas: React.FC = () => {
     setEditingId(null);
     setForm(emptyForm());
     setAmountCents(0);
+    setUserChangedCategory(false);
     setShowForm(true);
   };
 
@@ -228,8 +242,14 @@ const Despesas: React.FC = () => {
               </div>
             )}
             <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Categoria</label>
-              <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}
+              <div className="flex items-center gap-1.5">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Categoria</label>
+                {suggesting && <Sparkles className="w-3 h-3 text-primary animate-pulse" />}
+                {!editingId && !userChangedCategory && form.description.length >= 3 && (
+                  <span className="text-[10px] text-primary/70 italic">IA</span>
+                )}
+              </div>
+              <select value={form.category} onChange={e => { setForm({ ...form, category: e.target.value }); setUserChangedCategory(true); }}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                 {categories.map(c => <option key={c} value={c}>{c}</option>)}
               </select>

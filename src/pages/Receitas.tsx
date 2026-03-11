@@ -11,6 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { cn } from "@/lib/utils";
 import { CurrencyInput } from "@/components/CurrencyInput";
 import type { TransactionRow } from "@/lib/types";
+import { useAutoCategory } from "@/hooks/useAutoCategory";
+import { Sparkles } from "lucide-react";
 
 const formatBRL = (v: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 
@@ -34,6 +36,17 @@ const Receitas: React.FC = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm());
   const [amountCents, setAmountCents] = useState(0);
+  const [userChangedCategory, setUserChangedCategory] = useState(false);
+
+  const { suggesting } = useAutoCategory(
+    showForm && !editingId && !userChangedCategory ? form.description : '',
+    'income',
+    (cat) => {
+      if (CATEGORIES.includes(cat)) {
+        setForm(prev => ({ ...prev, category: cat }));
+      }
+    },
+  );
 
   const paidTotal = transactions.filter(t => t.status === 'paid').reduce((s, t) => s + t.amount, 0);
   const pendingTotal = transactions.filter(t => t.status === 'pending').reduce((s, t) => s + t.amount, 0);
@@ -47,6 +60,7 @@ const Receitas: React.FC = () => {
     setEditingId(null);
     setForm(emptyForm());
     setAmountCents(0);
+    setUserChangedCategory(false);
     setShowForm(true);
   };
 
@@ -156,8 +170,14 @@ const Receitas: React.FC = () => {
               <CurrencyInput value={form.amount} onValueChange={(formatted, cents) => { setForm({ ...form, amount: formatted }); setAmountCents(cents); }} />
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Categoria</label>
-              <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}
+              <div className="flex items-center gap-1.5">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Categoria</label>
+                {suggesting && <Sparkles className="w-3 h-3 text-primary animate-pulse" />}
+                {!editingId && !userChangedCategory && form.description.length >= 3 && (
+                  <span className="text-[10px] text-primary/70 italic">IA</span>
+                )}
+              </div>
+              <select value={form.category} onChange={e => { setForm({ ...form, category: e.target.value }); setUserChangedCategory(true); }}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
