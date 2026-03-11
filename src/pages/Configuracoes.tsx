@@ -179,7 +179,7 @@ const Configuracoes: React.FC = () => {
               <Building2 className="w-3.5 h-3.5 hidden sm:block" /> Empresa
             </TabsTrigger>
             <TabsTrigger value="integrations" className="gap-1.5 text-xs">
-              <Plug className="w-3.5 h-3.5 hidden sm:block" /> Integrações
+              <Webhook className="w-3.5 h-3.5 hidden sm:block" /> Integrações
             </TabsTrigger>
             <TabsTrigger value="notifications" className="gap-1.5 text-xs">
               <Bell className="w-3.5 h-3.5 hidden sm:block" /> Alertas
