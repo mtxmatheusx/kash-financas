@@ -11,6 +11,8 @@ import {
 } from "recharts";
 import { createAnimatedBarShape } from "@/components/AnimatedBar";
 import { DashboardDateFilter, getDateRange, type DateFilter } from "@/components/DashboardDateFilter";
+import { FinancialInsights } from "@/components/FinancialInsights";
+import { useGoals } from "@/hooks/useGoals";
 
 const formatBRL = (value: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
@@ -40,6 +42,7 @@ const CockpitTooltip = ({ active, payload, label }: any) => {
 const Dashboard: React.FC = () => {
   const { transactions, totals } = useTransactions();
   const { total: investmentTotal } = useInvestments();
+  const { goals } = useGoals();
 
   const [dateFilter, setDateFilter] = useState<DateFilter>('all');
   const [customRange, setCustomRange] = useState<{ from?: Date; to?: Date }>({});
@@ -188,8 +191,17 @@ const Dashboard: React.FC = () => {
           </motion.div>
         </div>
 
+        {/* AI Insights */}
+        <motion.div {...slideUp(0.3)}>
+          <FinancialInsights
+            transactions={filtered}
+            investments={{ total: investmentTotal }}
+            goals={goals}
+          />
+        </motion.div>
+
         {/* Recent Transactions */}
-        <motion.div {...slideUp(0.3)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
+        <motion.div {...slideUp(0.35)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
           <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-3">Transações Recentes</h3>
           {filtered.length > 0 ? (
             <motion.div className="space-y-0.5" variants={staggerContainer} initial="initial" animate="animate">
