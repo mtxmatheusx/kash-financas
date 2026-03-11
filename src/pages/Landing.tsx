@@ -168,19 +168,7 @@ const IPhoneMockup: React.FC = () => (
   </motion.div>
 );
 
-/* ── Steps data ── */
-const steps = [
-  { num: "01", icon: WhatsAppIcon, isCustomIcon: true, title: "O Gatilho", desc: "Manda um áudio: \"Gastei 50 reais de gasolina agora\".", accent: "hsl(160 100% 50%)" },
-  { num: "02", icon: Cpu, isCustomIcon: false, title: "A Máquina", desc: "Nossa IA categoriza e atualiza seu dashboard em milissegundos.", accent: "hsl(217 91% 60%)" },
-  { num: "03", icon: TrendingUp, isCustomIcon: false, title: "O Consultor", desc: "A IA cruza seus dados e sugere onde investir para vender mais.", accent: "hsl(348 100% 64%)" },
-];
-
-const trustBadges = [
-  { icon: Lock, label: "Criptografia AES-256" },
-  { icon: Brain, label: "Powered by OpenAI" },
-  { icon: Database, label: "Cloud Database" },
-  { icon: WhatsAppIcon, label: "API Oficial", isCustom: true },
-];
+/* ── Steps and trust badges are now inside the component for i18n ── */
 
 /* ═══════════════════════════════════════════════════════ */
 const Landing: React.FC = () => {
