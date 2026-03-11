@@ -25,7 +25,7 @@ interface MenuItem {
 }
 
 interface MenuSection {
-  title: string;
+  titleKey: TranslationKey;
   items: MenuItem[];
 }
 
