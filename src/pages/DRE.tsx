@@ -485,8 +485,8 @@ const DRE: React.FC = () => {
         pdf.setFontSize(7);
         pdf.setFont("helvetica", "normal");
         pdf.setTextColor(...white);
-        pdf.text("Faciliten · Gestão Financeira Inteligente", m, h - 4.5);
-        pdf.text(`Página ${p} de ${pageCount}`, w - m, h - 4.5, { align: "right" });
+        pdf.text(t("dre.pdf.footer"), m, h - 4.5);
+        pdf.text(t("dre.pdf.page").replace("{current}", String(p)).replace("{total}", String(pageCount)), w - m, h - 4.5, { align: "right" });
       }
 
       pdf.save(`DRE_${format(refDate, "yyyy-MM")}.pdf`);
