@@ -13,10 +13,13 @@ import { TransactionConfirmCard, type ParsedTransaction } from "@/components/Tra
 import { useAccount } from "@/contexts/AccountContext";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useSpeechToText } from "@/hooks/useSpeechToText";
+import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+
+const PROCESS_AUDIO_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/process-audio`;
 
 type ConsultantType = "financial" | "sales";
 
