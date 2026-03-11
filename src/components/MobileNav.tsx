@@ -35,20 +35,20 @@ const mainItems: NavItem[] = [
 
 const moreSections: NavSection[] = [
   {
-    title: "Visão Geral",
+    titleKey: "sidebar.section.overview",
     items: [
       { path: "/planejamento", labelKey: "nav.planning", icon: Compass, descKey: "more.planning" },
       { path: "/mensal", labelKey: "nav.monthly", icon: CalendarRange, descKey: "more.monthly" },
     ],
   },
   {
-    title: "Crescimento",
+    titleKey: "sidebar.section.growth",
     items: [
       { path: "/metas", labelKey: "nav.goals", icon: Target, descKey: "more.goals" },
     ],
   },
   {
-    title: "Relatórios",
+    titleKey: "sidebar.section.reports",
     items: [
       { path: "/dre", labelKey: "nav.dre", icon: FileText, account: "business", descKey: "more.dre" },
       { path: "/ebitda", labelKey: "nav.ebitda", icon: Calculator, account: "business", descKey: "more.ebitda" },
@@ -56,7 +56,7 @@ const moreSections: NavSection[] = [
     ],
   },
   {
-    title: "Configurações",
+    titleKey: "sidebar.section.settings",
     items: [
       { path: "/configuracoes", labelKey: "nav.settings", icon: Settings, descKey: "more.settings" },
     ],
