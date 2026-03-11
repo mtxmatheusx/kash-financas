@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
-import facilitenLogo from "@/assets/faciliten-logo.png";
+
 
 import {
   ArrowRight, Shield, Zap, Brain, TrendingUp,
