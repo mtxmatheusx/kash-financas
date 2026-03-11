@@ -141,7 +141,7 @@ const DRE: React.FC = () => {
     r.push({ label: t("dre.line.grossRevenue"), value: current.receitaBruta, prevValue: previous.receitaBruta, bold: true, highlight: true, tooltip: t("dre.line.tooltipGrossRevenue") });
     Object.entries(current.incomeByCategory).forEach(([cat, val]) => {
       const prev = previous.incomeByCategory[cat] || 0;
-      r.push({ label: cat, value: val, prevValue: prev, indent: 1 });
+      r.push({ label: translateCategory(cat, t), value: val, prevValue: prev, indent: 1 });
     });
     r.push({ label: "", value: 0, separator: true });
 
