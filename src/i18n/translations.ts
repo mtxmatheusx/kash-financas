@@ -1727,6 +1727,11 @@ const es: typeof pt = {
   "cat.invest.crypto": "Cripto",
   "cat.invest.realEstate": "Inmuebles",
   "cat.invest.other": "Otros",
+  "cat.dre.personnel": "Gastos de Personal",
+  "cat.dre.admin": "Gastos Administrativos",
+  "cat.dre.commercial": "Gastos Comerciales",
+  "cat.dre.taxes": "Impuestos y Tasas",
+  "cat.dre.otherExpenses": "Otros Gastos",
 
   "dashboard.title": "Dashboard",
   "dashboard.subtitle": "Resumen de tus finanzas",
