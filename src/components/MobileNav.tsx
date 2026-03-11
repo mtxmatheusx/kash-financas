@@ -117,6 +117,26 @@ export const MobileNav: React.FC = () => {
                       </motion.div>
                     );
                   })}
+                  {/* Theme toggle */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: filteredMore.length * 0.03, duration: 0.2 }}
+                  >
+                    <button
+                      onClick={() => { toggleTheme(); closeMenu(); }}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all active:scale-[0.98] active:bg-accent/60 w-full"
+                    >
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-muted/50 text-muted-foreground">
+                        {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+                      </div>
+                      <div className="flex-1 min-w-0 text-left">
+                        <p className="text-[13px] font-medium leading-tight text-foreground">
+                          {theme === 'light' ? t("sidebar.darkMode") : t("sidebar.lightMode")}
+                        </p>
+                      </div>
+                    </button>
+                  </motion.div>
                 </nav>
               </div>
             </motion.div>
