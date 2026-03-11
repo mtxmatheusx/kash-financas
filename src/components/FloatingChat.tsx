@@ -142,6 +142,38 @@ export const FloatingChat: React.FC = () => {
   const { account } = useAccount();
   const { create } = useTransactions();
   const { user } = useAuth();
+  const { t } = usePreferences();
+
+  const consultantConfig = useMemo<Record<ConsultantType, ConsultantConfig>>(() => ({
+    financial: { label: t("chat.financial.label"), shortLabel: t("chat.financial.short"), icon: Bot, fallback: "CF", placeholder: t("chat.financial.placeholder"), greeting: t("chat.financial.greeting") },
+    sales: { label: t("chat.sales.label"), shortLabel: t("chat.sales.short"), icon: TrendingUp, fallback: "CV", placeholder: t("chat.sales.placeholder"), greeting: t("chat.sales.greeting") },
+    investor: { label: t("chat.investor.label"), shortLabel: t("chat.investor.short"), icon: CandlestickChart, fallback: "CI", placeholder: t("chat.investor.placeholder"), greeting: t("chat.investor.greeting") },
+  }), [t]);
+
+  const quickSuggestions = useMemo<Record<ConsultantType, QuickSuggestion[]>>(() => ({
+    financial: [
+      { label: t("chat.quick.registerIncome"), icon: Plus, msg: t("chat.quick.registerIncomeMsg"), color: "text-fin-income border-fin-income/30 bg-fin-income/5 hover:bg-fin-income/10" },
+      { label: t("chat.quick.registerExpense"), icon: Minus, msg: t("chat.quick.registerExpenseMsg"), color: "text-fin-expense border-fin-expense/30 bg-fin-expense/5 hover:bg-fin-expense/10" },
+      { label: t("chat.quick.viewSummary"), icon: BarChart3, msg: t("chat.quick.viewSummaryMsg"), color: "text-primary border-primary/30 bg-primary/5 hover:bg-primary/10" },
+      { label: t("chat.quick.savingTip"), icon: Lightbulb, msg: t("chat.quick.savingTipMsg"), color: "text-fin-pending border-fin-pending/30 bg-fin-pending/5 hover:bg-fin-pending/10" },
+      { label: t("chat.quick.simulateInvestment"), icon: LineChart, msg: t("chat.quick.simulateInvestmentMsg"), color: "text-fin-investment border-fin-investment/30 bg-fin-investment/5 hover:bg-fin-investment/10" },
+    ],
+    sales: [
+      { label: t("chat.quick.registerSale"), icon: DollarSign, msg: t("chat.quick.registerSaleMsg"), color: "text-fin-income border-fin-income/30 bg-fin-income/5 hover:bg-fin-income/10" },
+      { label: t("chat.quick.operationalCost"), icon: Receipt, msg: t("chat.quick.operationalCostMsg"), color: "text-fin-expense border-fin-expense/30 bg-fin-expense/5 hover:bg-fin-expense/10" },
+      { label: t("chat.quick.revenueProjection"), icon: TrendingUp, msg: t("chat.quick.revenueProjectionMsg"), color: "text-primary border-primary/30 bg-primary/5 hover:bg-primary/10" },
+      { label: t("chat.quick.marginAnalysis"), icon: PieChart, msg: t("chat.quick.marginAnalysisMsg"), color: "text-fin-pending border-fin-pending/30 bg-fin-pending/5 hover:bg-fin-pending/10" },
+      { label: t("chat.quick.pricingStrategy"), icon: BadgeDollarSign, msg: t("chat.quick.pricingStrategyMsg"), color: "text-fin-investment border-fin-investment/30 bg-fin-investment/5 hover:bg-fin-investment/10" },
+    ],
+    investor: [
+      { label: t("chat.quick.myProfile"), icon: UserCheck, msg: t("chat.quick.myProfileMsg"), color: "text-primary border-primary/30 bg-primary/5 hover:bg-primary/10" },
+      { label: t("chat.quick.whereToInvest"), icon: CandlestickChart, msg: t("chat.quick.whereToInvestMsg"), color: "text-fin-income border-fin-income/30 bg-fin-income/5 hover:bg-fin-income/10" },
+      { label: t("chat.quick.currentRisks"), icon: ShieldAlert, msg: t("chat.quick.currentRisksMsg"), color: "text-fin-expense border-fin-expense/30 bg-fin-expense/5 hover:bg-fin-expense/10" },
+      { label: t("chat.quick.fixedVsVariable"), icon: Target, msg: t("chat.quick.fixedVsVariableMsg"), color: "text-fin-pending border-fin-pending/30 bg-fin-pending/5 hover:bg-fin-pending/10" },
+      { label: t("chat.quick.idealPortfolio"), icon: Wallet, msg: t("chat.quick.idealPortfolioMsg"), color: "text-fin-investment border-fin-investment/30 bg-fin-investment/5 hover:bg-fin-investment/10" },
+    ],
+  }), [t]);
+
   const [consultantType, setConsultantType] = useState<ConsultantType>(
     account.type === "business" ? "sales" : "financial"
   );
