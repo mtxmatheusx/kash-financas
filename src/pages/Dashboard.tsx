@@ -7,6 +7,7 @@ import { useTransactions } from "@/hooks/useTransactions";
 import { useInvestments } from "@/hooks/useInvestments";
 import { TrendingUp, TrendingDown, Wallet, PiggyBank, Activity } from "lucide-react";
 import { usePreferences } from "@/contexts/PreferencesContext";
+import { translateCategory } from "@/lib/categoryI18n";
 import {
   BarChart, Bar, XAxis, YAxis,
   Tooltip, ResponsiveContainer, CartesianGrid,
