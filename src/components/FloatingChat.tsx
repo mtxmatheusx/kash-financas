@@ -433,6 +433,7 @@ export const FloatingChat: React.FC = () => {
     const apiMessages = toApiMessages(updatedMessages);
     
     // Run parse-transaction in parallel — with retry
+    // Note: we pass userCountry to the chat edge function for contextualized advice
     const parseWithRetry = async (): Promise<ParsedTransaction | null> => {
       if (!text) return null;
       const result = await parseTransaction(text);
