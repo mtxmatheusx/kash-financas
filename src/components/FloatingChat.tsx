@@ -166,6 +166,7 @@ async function parseTransaction(message: string): Promise<{ transaction: ParsedT
 export const FloatingChat: React.FC = () => {
   const { account } = useAccount();
   const { create } = useTransactions();
+  const { create: createInvestment } = useInvestments();
   const { user } = useAuth();
   const { t } = usePreferences();
 
