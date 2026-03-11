@@ -591,7 +591,7 @@ const Importar: React.FC = () => {
             {/* Multi-sheet selector */}
             {sheetsAvailable.length > 1 && (
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs text-muted-foreground">Abas:</span>
+                <span className="text-xs text-muted-foreground">{t("import.tabs")}</span>
                 {sheetsAvailable.map(s => (
                   <Button
                     key={s}
