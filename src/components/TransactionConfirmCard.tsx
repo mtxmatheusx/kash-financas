@@ -93,7 +93,7 @@ export const TransactionConfirmCard: React.FC<TransactionConfirmCardProps> = ({
           <p className="text-xs font-semibold text-foreground truncate">{transaction.description}</p>
           <p className="text-[10px] text-muted-foreground">
             {transaction.category} · {transaction.status === "paid" ? t("common.paid") : t("common.pending")}
-            {transaction.entry_type === "recurring" && ` · ${t("common.recurring")} ${transaction.frequency === "yearly" ? `(${t("common.yearly")})` : `(${t("common.monthly")})`}`}
+            {transaction.entry_type === "recurring" && ` · Recorrente ${transaction.frequency === "yearly" ? "(Anual)" : "(Mensal)"}`}
             {transaction.entry_type === "installment" && ` · ${transaction.installments}x`}
           </p>
         </div>
