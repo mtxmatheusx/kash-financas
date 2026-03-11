@@ -394,7 +394,7 @@ export const FloatingChat: React.FC = () => {
           </AnimatePresence>
 
           {/* Quick suggestions - show only after greeting (1 message) and when not loading */}
-          {messages.length === 1 && !isLoading && !stagedMsg && !pendingTx && (
+          {messages.length <= 1 && !isLoading && !stagedMsg && !pendingTx && historyLoaded && (
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
