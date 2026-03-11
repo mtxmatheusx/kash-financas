@@ -96,15 +96,16 @@ function toApiMessages(displayMsgs: DisplayMsg[]): ApiMsg[] {
 }
 
 async function streamChat({
-  messages, consultantType, onDelta, onDone, onError, signal,
+  messages, consultantType, onDelta, onDone, onError, signal, country,
 }: {
   messages: ApiMsg[]; consultantType: ConsultantType;
   onDelta: (text: string) => void; onDone: () => void; onError: (err: string) => void; signal?: AbortSignal;
+  country?: { code: string; name: string; currency: string; language: string };
 }) {
   const resp = await fetch(CHAT_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
-    body: JSON.stringify({ messages, consultantType }),
+    body: JSON.stringify({ messages, consultantType, country }),
     signal,
   });
   if (!resp.ok) { const d = await resp.json().catch(() => ({})); onError(d.error || "Erro ao conectar com IA"); return; }
