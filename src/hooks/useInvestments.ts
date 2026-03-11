@@ -24,6 +24,7 @@ export function useInvestments() {
       id: r.id, name: r.name, type: r.type,
       amount: Number(r.amount), current_value: Number(r.current_value),
       date: r.date, account_type: r.account_type as 'personal' | 'business',
+      country: (r as any).country || undefined,
       created_at: r.created_at,
     })));
     setLoading(false);
