@@ -293,7 +293,7 @@ const Landing: React.FC = () => {
                 <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 15 }}>
                   <Button size="lg" className="text-sm sm:text-base px-6 sm:px-8 h-12 sm:h-14 bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 cta-glow font-bold w-full sm:w-auto">
                     <Sparkles className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                    Ativar Meu Copiloto (30 Dias Grátis)
+                    {t("landing.hero.cta")}
                   </Button>
                 </motion.div>
               </Link>
