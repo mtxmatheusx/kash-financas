@@ -720,11 +720,11 @@ const Importar: React.FC = () => {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-border bg-muted/30">
-                      <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Data</th>
-                      <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Descrição</th>
-                      <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Categoria</th>
-                      <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">Tipo</th>
-                      <th className="px-3 py-2 text-right text-xs font-semibold text-muted-foreground">Valor</th>
+                      <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">{t("common.date")}</th>
+                      <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">{t("common.description")}</th>
+                      <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">{t("common.category")}</th>
+                      <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground">{t("common.type")}</th>
+                      <th className="px-3 py-2 text-right text-xs font-semibold text-muted-foreground">{t("common.amount")}</th>
                     </tr>
                   </thead>
                   <tbody>
