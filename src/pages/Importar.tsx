@@ -703,15 +703,15 @@ const Importar: React.FC = () => {
             <div className="grid grid-cols-3 gap-3">
               <div className="rounded-xl border border-border bg-card p-3 text-center">
                 <p className="text-2xl font-bold text-fin-income">{result.parsed.length}</p>
-                <p className="text-xs text-muted-foreground">Prontas</p>
+                <p className="text-xs text-muted-foreground">{t("import.ready")}</p>
               </div>
               <div className="rounded-xl border border-border bg-card p-3 text-center">
                 <p className="text-2xl font-bold text-fin-pending">{result.duplicates}</p>
-                <p className="text-xs text-muted-foreground">Duplicadas</p>
+                <p className="text-xs text-muted-foreground">{t("import.duplicated")}</p>
               </div>
               <div className="rounded-xl border border-border bg-card p-3 text-center">
                 <p className="text-2xl font-bold text-fin-expense">{result.errors}</p>
-                <p className="text-xs text-muted-foreground">Erros</p>
+                <p className="text-xs text-muted-foreground">{t("import.errors")}</p>
               </div>
             </div>
 
