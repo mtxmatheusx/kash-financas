@@ -3,7 +3,7 @@ import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import facilitenLogo from "@/assets/faciliten-logo.png";
-import enterpriseVideo from "@/assets/enterprise-hero.mp4";
+
 import {
   ArrowRight, Shield, Zap, Brain, TrendingUp,
   Crown, Check, ChevronRight, Sparkles, AudioLines, Cpu, Lock, Database,
