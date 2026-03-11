@@ -185,7 +185,7 @@ const trustBadges = [
 /* ═══════════════════════════════════════════════════════ */
 const Landing: React.FC = () => {
   const { user, loading } = useAuth();
-  const { language, setLanguage } = usePreferences();
+  const { language, setLanguage, t } = usePreferences();
   useReferralCapture();
 
   if (loading) {
