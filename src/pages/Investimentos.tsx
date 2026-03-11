@@ -13,7 +13,15 @@ import { usePreferences } from "@/contexts/PreferencesContext";
 import { PieChart as RechartsPie, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { cn } from "@/lib/utils";
 
-const TYPES = ['Renda Fixa', 'Renda Variável', 'Fundos', 'Cripto', 'Imóveis', 'Outros'];
+const INVEST_TYPE_KEYS = [
+  { value: 'Renda Fixa', tKey: 'cat.invest.fixedIncome' as const },
+  { value: 'Renda Variável', tKey: 'cat.invest.variableIncome' as const },
+  { value: 'Fundos', tKey: 'cat.invest.funds' as const },
+  { value: 'Cripto', tKey: 'cat.invest.crypto' as const },
+  { value: 'Imóveis', tKey: 'cat.invest.realEstate' as const },
+  { value: 'Outros', tKey: 'cat.invest.other' as const },
+];
+const TYPES = INVEST_TYPE_KEYS.map(c => c.value);
 const TYPE_COLORS = [
   'hsl(var(--primary))',
   'hsl(var(--fin-income))',
