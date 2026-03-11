@@ -629,11 +629,11 @@ const Importar: React.FC = () => {
             <div className="space-y-3">
               {(["description", "amount", "date", "category", "type"] as const).map(field => {
                 const labels: Record<string, string> = {
-                  description: "Descrição *",
-                  amount: "Valor *",
-                  date: "Data *",
-                  category: "Categoria",
-                  type: "Tipo (Receita/Despesa)",
+                  description: t("import.descriptionCol"),
+                  amount: t("import.amountCol"),
+                  date: t("import.dateCol"),
+                  category: t("import.categoryCol"),
+                  type: t("import.typeCol"),
                 };
                 const required = ["description", "amount", "date"].includes(field);
                 return (
