@@ -26,6 +26,29 @@ const PROCESS_AUDIO_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/pro
 
 type ConsultantType = "financial" | "sales" | "investor";
 
+type UserCountry = {
+  code: string;
+  name: string;
+  flag: string;
+  currency: string;
+  language: string;
+};
+
+const COUNTRY_OPTIONS: UserCountry[] = [
+  { code: "BR", name: "Brasil", flag: "🇧🇷", currency: "BRL (R$)", language: "Português" },
+  { code: "US", name: "United States", flag: "🇺🇸", currency: "USD ($)", language: "English" },
+  { code: "PT", name: "Portugal", flag: "🇵🇹", currency: "EUR (€)", language: "Português" },
+  { code: "ES", name: "España", flag: "🇪🇸", currency: "EUR (€)", language: "Español" },
+  { code: "MX", name: "México", flag: "🇲🇽", currency: "MXN ($)", language: "Español" },
+  { code: "AR", name: "Argentina", flag: "🇦🇷", currency: "ARS ($)", language: "Español" },
+  { code: "CO", name: "Colombia", flag: "🇨🇴", currency: "COP ($)", language: "Español" },
+  { code: "GB", name: "United Kingdom", flag: "🇬🇧", currency: "GBP (£)", language: "English" },
+  { code: "DE", name: "Deutschland", flag: "🇩🇪", currency: "EUR (€)", language: "Deutsch" },
+  { code: "FR", name: "France", flag: "🇫🇷", currency: "EUR (€)", language: "Français" },
+  { code: "JP", name: "日本", flag: "🇯🇵", currency: "JPY (¥)", language: "日本語" },
+  { code: "CL", name: "Chile", flag: "🇨🇱", currency: "CLP ($)", language: "Español" },
+];
+
 // Multimodal content types for the API
 type TextContent = { type: "text"; text: string };
 type ImageContent = { type: "image_url"; image_url: { url: string } };
