@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Settings, User, Building2, CreditCard, Save, Crown, ExternalLink,
-  FileText, Landmark, Bell, Webhook, Smartphone, MapPin, Loader2, MessageCircle, QrCode,
+  FileText, Landmark, Bell, Webhook, Smartphone, MapPin, Loader2, MessageCircle, QrCode, Bot,
 } from "lucide-react";
 import { toast } from "sonner";
 import { maskCPF, maskCNPJ, maskPhone, maskCEP, unmask } from "@/lib/masks";
@@ -40,11 +40,11 @@ interface UserSettings {
   pix_key: string;
   pix_key_type: string;
   // Notifications
-  // Notifications
   notify_whatsapp: boolean;
   notify_email: boolean;
   notify_due_dates: boolean;
   notify_due_days_before: number;
+  notification_time: string;
 }
 
 const defaultSettings: UserSettings = {
@@ -54,7 +54,7 @@ const defaultSettings: UserSettings = {
   zip_code: "", address: "", address_number: "", address_complement: "",
   neighborhood: "", city: "", state: "",
   bank_name: "", bank_agency: "", bank_account: "", pix_key: "", pix_key_type: "",
-  notify_whatsapp: true, notify_email: true, notify_due_dates: true, notify_due_days_before: 3,
+  notify_whatsapp: true, notify_email: true, notify_due_dates: true, notify_due_days_before: 3, notification_time: "08:00",
 };
 
 const Configuracoes: React.FC = () => {
@@ -505,6 +505,46 @@ const Configuracoes: React.FC = () => {
                   </Select>
                 </Field>
               )}
+
+              {/* Assistente Financeiro de IA — autosave notification_time */}
+              <div className="rounded-xl border border-border bg-card p-5 md:p-6 space-y-4 mt-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-primary/10">
+                    <Bot className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-foreground font-display-fin">Assistente Financeiro de IA</h3>
+                    <p className="text-xs text-muted-foreground">
+                      A que horas você deseja receber seu resumo de caixa no WhatsApp?
+                    </p>
+                  </div>
+                </div>
+                <Select
+                  value={settings.notification_time}
+                  onValueChange={async (v) => {
+                    update("notification_time", v);
+                    if (!user) return;
+                    const { error } = await supabase
+                      .from("user_settings")
+                      .upsert({ user_id: user.id, notification_time: v } as any, { onConflict: "user_id" });
+                    if (error) {
+                      toast.error("Erro ao atualizar horário.");
+                    } else {
+                      toast.success("Horário atualizado com sucesso ✨");
+                    }
+                  }}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Selecione o horário" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 14 }, (_, i) => {
+                      const h = String(i + 7).padStart(2, "0");
+                      return <SelectItem key={h} value={`${h}:00`}>{`${h}:00`}</SelectItem>;
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
             </Card>
           </TabsContent>
 
