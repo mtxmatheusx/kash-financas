@@ -310,7 +310,7 @@ const DRE: React.FC = () => {
       pdf.setFontSize(8.5);
       pdf.setFont("helvetica", "bold");
       pdf.setTextColor(...black);
-      pdf.text("✦  Resumo Executivo da IA", m + 6, y + 6);
+      pdf.text(t("dre.pdf.aiSummaryTitle"), m + 6, y + 6);
 
       // Body
       pdf.setFontSize(7.5);
