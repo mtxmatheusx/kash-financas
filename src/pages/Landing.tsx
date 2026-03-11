@@ -448,12 +448,6 @@ const Landing: React.FC = () => {
                   </li>
                 ))}
               </ul>
-                  <li key={item} className="flex items-start gap-3 text-xs sm:text-sm text-[hsl(0,0%,45%)]">
-                    <XIcon className="w-4 h-4 text-[hsl(348,100%,64%)] shrink-0 mt-0.5" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
             </motion.div>
 
             {/* Card Direito — O Jeito Faciliten */}
