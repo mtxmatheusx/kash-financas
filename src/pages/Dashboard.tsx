@@ -11,7 +11,14 @@ import {
   Tooltip, ResponsiveContainer, CartesianGrid,
 } from "recharts";
 import { createAnimatedBarShape } from "@/components/AnimatedBar";
-import { DashboardDateFilter, getDateRange, type DateFilter } from "@/components/DashboardDateFilter";
+import { getDateRange, type DateFilter } from "@/components/DashboardDateFilter";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { FinancialInsights } from "@/components/FinancialInsights";
 import { useGoals } from "@/hooks/useGoals";
 
@@ -111,12 +118,21 @@ const Dashboard: React.FC = () => {
               <p className="text-xs text-muted-foreground">Visão geral das suas finanças</p>
             </div>
           </div>
-          <DashboardDateFilter
-            filter={dateFilter}
-            onFilterChange={setDateFilter}
-            customRange={customRange}
-            onCustomRangeChange={setCustomRange}
-          />
+          <Select
+            value={dateFilter}
+            onValueChange={(v) => setDateFilter(v as DateFilter)}
+          >
+            <SelectTrigger className="w-[180px] h-9 text-xs bg-card border-border">
+              <SelectValue placeholder="Filtrar período..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="today">Hoje</SelectItem>
+              <SelectItem value="yesterday">Ontem</SelectItem>
+              <SelectItem value="week">Semana</SelectItem>
+              <SelectItem value="month">Mês</SelectItem>
+            </SelectContent>
+          </Select>
         </motion.div>
 
         {/* KPIs */}
