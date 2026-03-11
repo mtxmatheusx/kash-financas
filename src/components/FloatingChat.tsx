@@ -311,6 +311,18 @@ export const FloatingChat: React.FC = () => {
 
   const discardStagedMessage = () => setStagedMsg(null);
 
+  const clearHistory = async () => {
+    if (!user) return;
+    await supabase
+      .from('chat_messages')
+      .delete()
+      .eq('user_id', user.id)
+      .eq('consultant_type', consultantType);
+    setMessages([{ role: "assistant", content: config.greeting }]);
+    setPendingTx(null);
+    toast.success("Histórico limpo!");
+  };
+
   return (
     <FloatingAiAssistant
       onSend={stageMessage}
