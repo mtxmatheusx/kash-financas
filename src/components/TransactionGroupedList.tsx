@@ -102,9 +102,9 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
           {/* Group header - clickable */}
           <button
             onClick={() => toggle(g.key)}
-            className="w-full grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center px-4 md:px-6 py-3.5 md:py-4 hover:bg-muted/30 transition-colors text-left"
+            className="w-full grid grid-cols-[1fr_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center px-3 md:px-6 py-3 md:py-4 hover:bg-muted/30 transition-colors text-left"
           >
-            <div className="min-w-0 pr-3 flex items-center gap-2">
+            <div className="min-w-0 pr-2 flex items-center gap-2">
               {expanded[g.key] ? (
                 <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
               ) : (
@@ -112,25 +112,24 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
               )}
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-foreground truncate">{g.description}</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">
-                  {g.entryType === "recurring"
+                <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1 flex-wrap">
+                  <span>{g.entryType === "recurring"
                     ? `Recorrente ${g.frequency === "yearly" ? "(Anual)" : "(Mensal)"}`
-                    : `Parcelado`}
-                  {" · "}{g.items.length} parcelas
-                  <span className="md:hidden"> · {g.category}</span>
+                    : `Parcelado`}</span>
+                  <span>· {g.items.length} parcelas</span>
+                  <span>· {g.category}</span>
+                  <span className="inline-flex items-center gap-0.5">
+                    <span className="text-fin-income">{g.paidCount}✓</span>
+                    {g.pendingCount > 0 && <span className="text-fin-pending">{g.pendingCount}⏳</span>}
+                  </span>
                 </p>
               </div>
             </div>
 
             <span className="text-xs text-muted-foreground hidden md:block">{g.category}</span>
 
-            <div className="flex justify-center px-2 gap-1.5">
-              <span className={cn(
-                "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold",
-                isIncome
-                  ? "bg-fin-income/10 text-fin-income"
-                  : "bg-fin-income/10 text-fin-income"
-              )}>
+            <div className="hidden md:flex justify-center px-2 gap-1.5">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-fin-income/10 text-fin-income">
                 {g.paidCount}✓
               </span>
               {g.pendingCount > 0 && (
@@ -141,13 +140,13 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
             </div>
 
             <span className={cn(
-              "font-mono-fin text-sm font-semibold text-right pl-3 whitespace-nowrap",
+              "font-mono-fin text-sm font-semibold text-right whitespace-nowrap",
               isIncome ? "text-fin-income" : "text-fin-expense"
             )}>
               {isIncome ? "+" : "−"} {formatBRL(g.totalAmount)}
             </span>
 
-            <span className="w-16" />
+            <span className="w-16 hidden md:block" />
           </button>
 
           {/* Expanded items */}
