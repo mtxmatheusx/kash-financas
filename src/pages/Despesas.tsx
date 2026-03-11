@@ -33,6 +33,7 @@ const Despesas: React.FC = () => {
     frequency: 'monthly' as 'monthly' | 'yearly',
     is_percentage: false,
     percentage: '',
+    recurring_months: '12',
   });
 
   const [form, setForm] = useState(emptyForm());
