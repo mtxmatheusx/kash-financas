@@ -249,9 +249,13 @@ export type Database = {
       }
       user_settings: {
         Row: {
+          address: string | null
+          address_complement: string | null
+          address_number: string | null
           bank_account: string | null
           bank_agency: string | null
           bank_name: string | null
+          city: string | null
           city_registration: string | null
           company_name: string | null
           created_at: string
@@ -260,23 +264,32 @@ export type Database = {
           evolution_api_key: string | null
           evolution_api_url: string | null
           evolution_instance: string | null
+          full_name: string | null
           id: string
           n8n_webhook_url: string | null
+          neighborhood: string | null
           notify_due_dates: boolean | null
           notify_due_days_before: number | null
           notify_email: boolean | null
           notify_whatsapp: boolean | null
+          phone: string | null
           pix_key: string | null
           pix_key_type: string | null
+          state: string | null
           state_registration: string | null
           tax_regime: string | null
           updated_at: string
           user_id: string
+          zip_code: string | null
         }
         Insert: {
+          address?: string | null
+          address_complement?: string | null
+          address_number?: string | null
           bank_account?: string | null
           bank_agency?: string | null
           bank_name?: string | null
+          city?: string | null
           city_registration?: string | null
           company_name?: string | null
           created_at?: string
@@ -285,23 +298,32 @@ export type Database = {
           evolution_api_key?: string | null
           evolution_api_url?: string | null
           evolution_instance?: string | null
+          full_name?: string | null
           id?: string
           n8n_webhook_url?: string | null
+          neighborhood?: string | null
           notify_due_dates?: boolean | null
           notify_due_days_before?: number | null
           notify_email?: boolean | null
           notify_whatsapp?: boolean | null
+          phone?: string | null
           pix_key?: string | null
           pix_key_type?: string | null
+          state?: string | null
           state_registration?: string | null
           tax_regime?: string | null
           updated_at?: string
           user_id: string
+          zip_code?: string | null
         }
         Update: {
+          address?: string | null
+          address_complement?: string | null
+          address_number?: string | null
           bank_account?: string | null
           bank_agency?: string | null
           bank_name?: string | null
+          city?: string | null
           city_registration?: string | null
           company_name?: string | null
           created_at?: string
@@ -310,18 +332,23 @@ export type Database = {
           evolution_api_key?: string | null
           evolution_api_url?: string | null
           evolution_instance?: string | null
+          full_name?: string | null
           id?: string
           n8n_webhook_url?: string | null
+          neighborhood?: string | null
           notify_due_dates?: boolean | null
           notify_due_days_before?: number | null
           notify_email?: boolean | null
           notify_whatsapp?: boolean | null
+          phone?: string | null
           pix_key?: string | null
           pix_key_type?: string | null
+          state?: string | null
           state_registration?: string | null
           tax_regime?: string | null
           updated_at?: string
           user_id?: string
+          zip_code?: string | null
         }
         Relationships: []
       }
