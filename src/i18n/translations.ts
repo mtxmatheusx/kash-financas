@@ -77,6 +77,8 @@ const pt = {
   "chat.quick.currentRisksMsg": "Quais são os principais riscos do mercado financeiro brasileiro hoje?",
   "chat.quick.fixedVsVariableMsg": "Compare renda fixa e renda variável para o cenário atual com números reais",
   "chat.quick.idealPortfolioMsg": "Monte uma sugestão de carteira diversificada para meu perfil",
+  "chat.country.title": "De qual país você está investindo/trabalhando?",
+  "chat.country.subtitle": "Isso personaliza moeda, investimentos e consultoria para o seu mercado.",
 
   // Dashboard
   "dashboard.title": "Dashboard",
@@ -852,6 +854,8 @@ const en: typeof pt = {
   "chat.quick.currentRisksMsg": "What are the main risks of the financial market today?",
   "chat.quick.fixedVsVariableMsg": "Compare fixed income and variable income for the current scenario with real numbers",
   "chat.quick.idealPortfolioMsg": "Build a diversified portfolio suggestion for my profile",
+  "chat.country.title": "Which country are you investing/working from?",
+  "chat.country.subtitle": "This personalizes currency, investments and advice for your market.",
 
   "dashboard.title": "Dashboard",
   "dashboard.subtitle": "Overview of your finances",
@@ -1596,6 +1600,8 @@ const es: typeof pt = {
   "chat.quick.currentRisksMsg": "¿Cuáles son los principales riesgos del mercado financiero hoy?",
   "chat.quick.fixedVsVariableMsg": "Compara renta fija y renta variable para el escenario actual con números reales",
   "chat.quick.idealPortfolioMsg": "Arma una sugerencia de cartera diversificada para mi perfil",
+  "chat.country.title": "¿Desde qué país estás invirtiendo/trabajando?",
+  "chat.country.subtitle": "Esto personaliza moneda, inversiones y asesoría para tu mercado.",
 
   "dashboard.title": "Dashboard",
   "dashboard.subtitle": "Resumen de tus finanzas",

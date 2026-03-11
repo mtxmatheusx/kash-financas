@@ -26,6 +26,29 @@ const PROCESS_AUDIO_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/pro
 
 type ConsultantType = "financial" | "sales" | "investor";
 
+type UserCountry = {
+  code: string;
+  name: string;
+  flag: string;
+  currency: string;
+  language: string;
+};
+
+const COUNTRY_OPTIONS: UserCountry[] = [
+  { code: "BR", name: "Brasil", flag: "🇧🇷", currency: "BRL (R$)", language: "Português" },
+  { code: "US", name: "United States", flag: "🇺🇸", currency: "USD ($)", language: "English" },
+  { code: "PT", name: "Portugal", flag: "🇵🇹", currency: "EUR (€)", language: "Português" },
+  { code: "ES", name: "España", flag: "🇪🇸", currency: "EUR (€)", language: "Español" },
+  { code: "MX", name: "México", flag: "🇲🇽", currency: "MXN ($)", language: "Español" },
+  { code: "AR", name: "Argentina", flag: "🇦🇷", currency: "ARS ($)", language: "Español" },
+  { code: "CO", name: "Colombia", flag: "🇨🇴", currency: "COP ($)", language: "Español" },
+  { code: "GB", name: "United Kingdom", flag: "🇬🇧", currency: "GBP (£)", language: "English" },
+  { code: "DE", name: "Deutschland", flag: "🇩🇪", currency: "EUR (€)", language: "Deutsch" },
+  { code: "FR", name: "France", flag: "🇫🇷", currency: "EUR (€)", language: "Français" },
+  { code: "JP", name: "日本", flag: "🇯🇵", currency: "JPY (¥)", language: "日本語" },
+  { code: "CL", name: "Chile", flag: "🇨🇱", currency: "CLP ($)", language: "Español" },
+];
+
 // Multimodal content types for the API
 type TextContent = { type: "text"; text: string };
 type ImageContent = { type: "image_url"; image_url: { url: string } };
@@ -73,15 +96,16 @@ function toApiMessages(displayMsgs: DisplayMsg[]): ApiMsg[] {
 }
 
 async function streamChat({
-  messages, consultantType, onDelta, onDone, onError, signal,
+  messages, consultantType, onDelta, onDone, onError, signal, country,
 }: {
   messages: ApiMsg[]; consultantType: ConsultantType;
   onDelta: (text: string) => void; onDone: () => void; onError: (err: string) => void; signal?: AbortSignal;
+  country?: { code: string; name: string; currency: string; language: string };
 }) {
   const resp = await fetch(CHAT_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
-    body: JSON.stringify({ messages, consultantType }),
+    body: JSON.stringify({ messages, consultantType, country }),
     signal,
   });
   if (!resp.ok) { const d = await resp.json().catch(() => ({})); onError(d.error || "Erro ao conectar com IA"); return; }
@@ -187,17 +211,19 @@ export const FloatingChat: React.FC = () => {
   const [generalDisclaimerAccepted, setGeneralDisclaimerAccepted] = useState<boolean | null>(null);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [showGeneralDisclaimer, setShowGeneralDisclaimer] = useState(false);
+  const [userCountry, setUserCountry] = useState<UserCountry | null>(null);
+  const [countryLoaded, setCountryLoaded] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
-  // Check disclaimers
+  // Check disclaimers + country preference
   useEffect(() => {
     if (!user) return;
-    const checkDisclaimers = async () => {
+    const checkPrefs = async () => {
       const { data } = await supabase
         .from('user_financial_preferences')
         .select('preference')
         .eq('user_id', user.id)
-        .in('preference', ['investor_disclaimer_accepted', 'general_disclaimer_accepted']);
+        .in('category', ['disclaimer', 'country']);
       const prefs = data?.map(d => d.preference) ?? [];
       setInvestorDisclaimerAccepted(prefs.includes('investor_disclaimer_accepted'));
       const generalAccepted = prefs.includes('general_disclaimer_accepted');
@@ -205,8 +231,16 @@ export const FloatingChat: React.FC = () => {
       if (!generalAccepted) {
         setShowGeneralDisclaimer(true);
       }
+      // Load country
+      const countryPref = prefs.find(p => p.startsWith('country:'));
+      if (countryPref) {
+        const code = countryPref.split(':')[1];
+        const found = COUNTRY_OPTIONS.find(c => c.code === code);
+        if (found) setUserCountry(found);
+      }
+      setCountryLoaded(true);
     };
-    checkDisclaimers();
+    checkPrefs();
   }, [user]);
 
   // Load chat history from database
@@ -400,6 +434,7 @@ export const FloatingChat: React.FC = () => {
     const apiMessages = toApiMessages(updatedMessages);
     
     // Run parse-transaction in parallel — with retry
+    // Note: we pass userCountry to the chat edge function for contextualized advice
     const parseWithRetry = async (): Promise<ParsedTransaction | null> => {
       if (!text) return null;
       const result = await parseTransaction(text);
@@ -414,6 +449,7 @@ export const FloatingChat: React.FC = () => {
     try {
       await streamChat({
         messages: apiMessages, consultantType, signal: controller.signal,
+        country: userCountry ? { code: userCountry.code, name: userCountry.name, currency: userCountry.currency, language: userCountry.language } : undefined,
         onDelta: (chunk) => {
           assistantSoFar += chunk;
           const current = assistantSoFar;
@@ -503,6 +539,44 @@ export const FloatingChat: React.FC = () => {
           />
         )}
       </AnimatePresence>
+
+      {/* Country Selection Step */}
+      {countryLoaded && !userCountry && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="px-4 py-3 space-y-3"
+        >
+          <div className="text-center space-y-1">
+            <p className="text-sm font-semibold text-foreground">🌍 {t("chat.country.title")}</p>
+            <p className="text-xs text-muted-foreground">{t("chat.country.subtitle")}</p>
+          </div>
+          <div className="grid grid-cols-2 gap-2 max-h-[280px] overflow-y-auto pr-1">
+            {COUNTRY_OPTIONS.map((c) => (
+              <button
+                key={c.code}
+                onClick={async () => {
+                  setUserCountry(c);
+                  if (user) {
+                    await supabase.from('user_financial_preferences').insert({
+                      user_id: user.id,
+                      preference: `country:${c.code}`,
+                      category: 'country',
+                    });
+                  }
+                }}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border/50 text-left text-xs hover:bg-primary/10 hover:border-primary/30 transition-colors"
+              >
+                <span className="text-lg">{c.flag}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-foreground truncate">{c.name}</p>
+                  <p className="text-muted-foreground text-[10px]">{c.currency}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </motion.div>
+      )}
 
       {/* Consultant Toggle + Clear */}
       <div className="px-4 pt-3 pb-1 flex items-center gap-2">
