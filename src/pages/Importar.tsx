@@ -685,7 +685,7 @@ const Importar: React.FC = () => {
                 })}
               >
                 <RefreshCw className={cn("w-3.5 h-3.5", aiMapping && "animate-spin")} />
-                Remapear com IA
+                {t("import.remapAi")}
               </Button>
               <Button
                 onClick={processMapping}
