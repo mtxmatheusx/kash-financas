@@ -9,6 +9,9 @@ export interface ParsedTransaction {
   description: string;
   category: string;
   status: "paid" | "pending";
+  entry_type?: "single" | "installment" | "recurring";
+  frequency?: "monthly" | "yearly";
+  installments?: number;
 }
 
 interface TransactionConfirmCardProps {
