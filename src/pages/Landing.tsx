@@ -344,10 +344,10 @@ const Landing: React.FC = () => {
         <div className="max-w-5xl mx-auto relative z-10">
           <motion.div {...fadeUp()} className="text-center mb-10 sm:mb-20">
             <span className="inline-block text-[10px] sm:text-xs font-bold uppercase tracking-[0.3em] text-[hsl(160,100%,50%)] mb-3 sm:mb-4">
-              Esforço Zero
+              {t("landing.steps.label")}
             </span>
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
-              Controle em 3 Segundos.
+              {t("landing.steps.title")}
             </h2>
           </motion.div>
 
