@@ -540,6 +540,44 @@ export const FloatingChat: React.FC = () => {
         )}
       </AnimatePresence>
 
+      {/* Country Selection Step */}
+      {countryLoaded && !userCountry && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="px-4 py-3 space-y-3"
+        >
+          <div className="text-center space-y-1">
+            <p className="text-sm font-semibold text-foreground">🌍 {t("chat.country.title")}</p>
+            <p className="text-xs text-muted-foreground">{t("chat.country.subtitle")}</p>
+          </div>
+          <div className="grid grid-cols-2 gap-2 max-h-[280px] overflow-y-auto pr-1">
+            {COUNTRY_OPTIONS.map((c) => (
+              <button
+                key={c.code}
+                onClick={async () => {
+                  setUserCountry(c);
+                  if (user) {
+                    await supabase.from('user_financial_preferences').insert({
+                      user_id: user.id,
+                      preference: `country:${c.code}`,
+                      category: 'country',
+                    });
+                  }
+                }}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border/50 text-left text-xs hover:bg-primary/10 hover:border-primary/30 transition-colors"
+              >
+                <span className="text-lg">{c.flag}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-foreground truncate">{c.name}</p>
+                  <p className="text-muted-foreground text-[10px]">{c.currency}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
       {/* Consultant Toggle + Clear */}
       <div className="px-4 pt-3 pb-1 flex items-center gap-2">
         <div className="flex-1 flex gap-1 bg-muted rounded-lg p-1">
