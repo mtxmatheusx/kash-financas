@@ -597,9 +597,9 @@ const Landing: React.FC = () => {
         <div className="max-w-6xl mx-auto flex flex-col items-center gap-4 sm:flex-row sm:justify-between sm:gap-6">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-[hsl(160,100%,50%)] flex items-center justify-center">
-              <span className="text-[hsl(0,0%,2%)] font-extrabold text-[10px] sm:text-xs">K</span>
+              <span className="text-[hsl(0,0%,2%)] font-extrabold text-[10px] sm:text-xs">F</span>
             </div>
-            <span className="font-bold text-sm text-white">Kash</span>
+            <span className="font-bold text-sm text-white">Faciliten</span>
           </div>
           <div className="flex items-center gap-5 sm:gap-6 text-xs sm:text-sm text-[hsl(0,0%,35%)]">
             <Link to="/login" className="hover:text-white transition-colors">Entrar</Link>
