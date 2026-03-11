@@ -48,13 +48,23 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
     return filtered.sort((a, b) => b.date.localeCompare(a.date));
   }, [all, account.type, typeFilter]);
 
-  const create = useCallback(async (tx: Omit<TransactionRow, 'id' | 'created_at'> & { recurring_months?: number }) => {
+  const create = useCallback(async (tx: Omit<TransactionRow, 'id' | 'created_at'> & { recurring_months?: number; percentage_base?: 'total' | 'monthly' }) => {
     if (!user) return;
 
     const isRecurring = tx.entry_type === 'recurring' && tx.recurring_months && tx.recurring_months > 1;
     const isInstallment = tx.entry_type === 'installment' && tx.installments && tx.installments > 1;
     const count = isRecurring ? tx.recurring_months! : isInstallment ? tx.installments! : 1;
-    const freq = tx.frequency === 'yearly' ? 12 : 1; // months between entries
+    const freq = tx.frequency === 'yearly' ? 12 : 1;
+
+    // Pre-compute monthly income map for percentage-based expenses
+    let monthlyIncomeMap: Record<string, number> = {};
+    if (tx.is_percentage && tx.percentage && tx.percentage_base === 'monthly' && count > 1) {
+      const incomeTransactions = all.filter(t => t.type === 'income' && t.account_type === tx.account_type);
+      incomeTransactions.forEach(t => {
+        const m = t.date.slice(0, 7);
+        monthlyIncomeMap[m] = (monthlyIncomeMap[m] || 0) + t.amount;
+      });
+    }
 
     const rows = [];
     const baseDate = new Date(tx.date + 'T12:00:00');
@@ -63,11 +73,22 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
       const d = new Date(baseDate);
       d.setMonth(d.getMonth() + i * freq);
       const dateStr = d.toISOString().split('T')[0];
+      const monthKey = dateStr.slice(0, 7);
+
+      let amount = tx.amount;
+      if (tx.is_percentage && tx.percentage) {
+        if (tx.percentage_base === 'monthly') {
+          const monthIncome = monthlyIncomeMap[monthKey] || 0;
+          amount = (monthIncome * tx.percentage) / 100;
+        }
+        // 'total' base already calculated in the form's handleSubmit
+      }
+      if (isInstallment) amount = tx.amount / count;
 
       rows.push({
         user_id: user.id,
         type: tx.type,
-        amount: isInstallment ? tx.amount / count : tx.amount,
+        amount,
         description: isInstallment
           ? `${tx.description} (${i + 1}/${count})`
           : tx.description,
