@@ -699,6 +699,19 @@ const pt = {
   "invType.crypto": "Cripto",
   "invType.realEstate": "Imóveis",
   "invType.other": "Outros",
+
+  // Phone mockup
+  "mockup.userMsg1": "\"Gastei 50 de gasolina\"",
+  "mockup.botMsg1": "✅ <b>R$ 50,00</b> → <c>Transporte</c>. 15% acima do mês passado. 📊",
+  "mockup.botMsg1Short": "✅ <b>R$ 50,00</b> → <c>Transporte</c>",
+  "mockup.botMsg1Detail": "Gasto 15% acima do mês passado. 📊",
+  "mockup.userMsg2": "Onde posso cortar?",
+  "mockup.botMsg2": "💡 Delivery: R$ 380 (+40%). Cozinhar 3x/semana economiza ~R$ 250/mês.",
+
+  // Pricing display
+  "pricing.currencySymbol": "R$",
+  "pricing.premiumPrice": "29",
+  "pricing.premiumCents": ",90",
 };
 
 const en: typeof pt = {
@@ -1369,6 +1382,17 @@ const en: typeof pt = {
   "invType.crypto": "Crypto",
   "invType.realEstate": "Real Estate",
   "invType.other": "Other",
+
+  "mockup.userMsg1": "\"I spent 50 on gas\"",
+  "mockup.botMsg1": "✅ <b>$50.00</b> → <c>Transport</c>. 15% above last month. 📊",
+  "mockup.botMsg1Short": "✅ <b>$50.00</b> → <c>Transport</c>",
+  "mockup.botMsg1Detail": "Spending 15% above last month. 📊",
+  "mockup.userMsg2": "Where can I cut?",
+  "mockup.botMsg2": "💡 Delivery: $380 (+40%). Cooking 3x/week saves ~$250/mo.",
+
+  "pricing.currencySymbol": "$",
+  "pricing.premiumPrice": "29",
+  "pricing.premiumCents": ".90",
 };
 
 const es: typeof pt = {
@@ -2039,6 +2063,17 @@ const es: typeof pt = {
   "invType.crypto": "Cripto",
   "invType.realEstate": "Inmuebles",
   "invType.other": "Otros",
+
+  "mockup.userMsg1": "\"Gasté 50 en gasolina\"",
+  "mockup.botMsg1": "✅ <b>$50.00</b> → <c>Transporte</c>. 15% por encima del mes pasado. 📊",
+  "mockup.botMsg1Short": "✅ <b>$50.00</b> → <c>Transporte</c>",
+  "mockup.botMsg1Detail": "Gasto 15% por encima del mes pasado. 📊",
+  "mockup.userMsg2": "¿Dónde puedo recortar?",
+  "mockup.botMsg2": "💡 Delivery: $380 (+40%). Cocinar 3x/semana ahorra ~$250/mes.",
+
+  "pricing.currencySymbol": "$",
+  "pricing.premiumPrice": "29",
+  "pricing.premiumCents": ",90",
 };
 
 export const translations = { "pt-BR": pt, en, es } as const;

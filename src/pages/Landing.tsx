@@ -73,7 +73,7 @@ const WhatsAppIcon: React.FC<{ className?: string; style?: React.CSSProperties }
 );
 
 /* ── Compact WhatsApp Preview (mobile) ── */
-const MobileWhatsAppPreview: React.FC = () => (
+const MobileWhatsAppPreview: React.FC<{ t: (k: any) => string }> = ({ t }) => (
   <motion.div
     {...fadeUp(0.4)}
     className="mt-10 mx-auto max-w-sm rounded-2xl border border-[hsl(0,0%,12%)] bg-[hsl(0,0%,4%)] p-4 lg:hidden"
@@ -92,14 +92,14 @@ const MobileWhatsAppPreview: React.FC = () => (
         <div className="bg-[hsl(142,40%,18%)] rounded-2xl rounded-tr-sm px-3 py-2 max-w-[80%]">
           <div className="flex items-center gap-1.5 text-[11px] text-[hsl(0,0%,85%)]">
             <AudioLines className="w-3 h-3 text-[hsl(160,100%,50%)]" />
-            <span>"Gastei 50 de gasolina"</span>
+            <span>{t("mockup.userMsg1")}</span>
           </div>
         </div>
       </div>
       <div className="flex justify-start">
         <div className="bg-[hsl(0,0%,10%)] rounded-2xl rounded-tl-sm px-3 py-2 max-w-[85%]">
           <p className="text-[11px] text-[hsl(0,0%,85%)] leading-relaxed">
-            ✅ <span className="font-semibold">R$ 50,00</span> → <span className="text-[hsl(160,100%,50%)]">Transporte</span>. 15% acima do mês passado. 📊
+            {t("mockup.botMsg1Short")}. 📊
           </p>
         </div>
       </div>
@@ -108,7 +108,7 @@ const MobileWhatsAppPreview: React.FC = () => (
 );
 
 /* ── iPhone Mockup (desktop) ── */
-const IPhoneMockup: React.FC = () => (
+const IPhoneMockup: React.FC<{ t: (k: any) => string }> = ({ t }) => (
   <motion.div
     initial={{ opacity: 0, x: 40, rotateY: -8 }}
     whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
@@ -134,7 +134,7 @@ const IPhoneMockup: React.FC = () => (
             <div className="bg-[hsl(142,40%,18%)] rounded-2xl rounded-tr-sm px-3 py-2 max-w-[85%]">
               <div className="flex items-center gap-2 text-[11px] text-[hsl(0,0%,85%)]">
                 <AudioLines className="w-3.5 h-3.5 text-[hsl(160,100%,50%)]" />
-                <span>"Gastei 50 de gasolina"</span>
+                <span>{t("mockup.userMsg1")}</span>
               </div>
               <p className="text-[8px] text-[hsl(0,0%,50%)] text-right mt-0.5">10:32</p>
             </div>
@@ -142,22 +142,21 @@ const IPhoneMockup: React.FC = () => (
           <div className="flex justify-start">
             <div className="bg-[hsl(0,0%,12%)] rounded-2xl rounded-tl-sm px-3 py-2 max-w-[90%]">
               <p className="text-[11px] text-[hsl(0,0%,85%)] leading-relaxed">
-                ✅ <span className="font-semibold">R$ 50,00</span> → <span className="text-[hsl(160,100%,50%)]">Transporte</span><br />
-                Gasto 15% acima do mês passado. 📊
+                {t("mockup.botMsg1Detail")}
               </p>
               <p className="text-[8px] text-[hsl(0,0%,50%)] text-right mt-0.5">10:32</p>
             </div>
           </div>
           <div className="flex justify-end">
             <div className="bg-[hsl(142,40%,18%)] rounded-2xl rounded-tr-sm px-3 py-2 max-w-[80%]">
-              <p className="text-[11px] text-[hsl(0,0%,85%)]">Onde posso cortar?</p>
+              <p className="text-[11px] text-[hsl(0,0%,85%)]">{t("mockup.userMsg2")}</p>
               <p className="text-[8px] text-[hsl(0,0%,50%)] text-right mt-0.5">10:33</p>
             </div>
           </div>
           <div className="flex justify-start">
             <div className="bg-[hsl(0,0%,12%)] rounded-2xl rounded-tl-sm px-3 py-2 max-w-[90%]">
               <p className="text-[11px] text-[hsl(0,0%,85%)] leading-relaxed">
-                💡 Delivery: R$ 380 (+40%). Cozinhar 3x/semana economiza ~R$ 250/mês.
+                {t("mockup.botMsg2")}
               </p>
               <p className="text-[8px] text-[hsl(0,0%,50%)] text-right mt-0.5">10:33</p>
             </div>
@@ -167,7 +166,6 @@ const IPhoneMockup: React.FC = () => (
     </div>
   </motion.div>
 );
-
 /* ── Steps and trust badges are now inside the component for i18n ── */
 
 /* ═══════════════════════════════════════════════════════ */

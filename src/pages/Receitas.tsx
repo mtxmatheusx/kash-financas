@@ -122,26 +122,26 @@ const Receitas: React.FC = () => {
         <div className="space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
           <div>
             <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2">
-              <ArrowUpRight className="w-5 h-5 md:w-6 md:h-6 text-fin-income" /> Receitas
+              <ArrowUpRight className="w-5 h-5 md:w-6 md:h-6 text-fin-income" /> {t("income.title")}
             </h1>
-            <p className="text-xs md:text-sm text-muted-foreground">Gestão de entradas</p>
+            <p className="text-xs md:text-sm text-muted-foreground">{t("income.subtitle")}</p>
           </div>
           <Button onClick={openCreate} size="sm" className="gap-2 w-full sm:w-auto">
-            <Plus className="w-4 h-4" /> Nova Receita
+            <Plus className="w-4 h-4" /> {t("income.new")}
           </Button>
         </div>
 
         <WhatsAppAlertBanner />
 
         <SummaryBar items={[
-          { label: "Total", value: formatBRL(totals.income), color: "income", icon: ArrowUpRight },
-          { label: "Recebido", value: formatBRL(paidTotal), color: "income" },
-          { label: "Pendente", value: formatBRL(pendingTotal), color: "pending" },
+          { label: t("income.total"), value: formatBRL(totals.income), color: "income", icon: ArrowUpRight },
+          { label: t("income.received"), value: formatBRL(paidTotal), color: "income" },
+          { label: t("common.pending"), value: formatBRL(pendingTotal), color: "pending" },
         ]} />
 
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Buscar receitas..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10 h-9 md:h-10" />
+          <Input placeholder={t("income.searchPlaceholder")} value={search} onChange={e => setSearch(e.target.value)} className="pl-10 h-9 md:h-10" />
         </div>
 
         <TransactionGroupedList
@@ -155,11 +155,11 @@ const Receitas: React.FC = () => {
 
       <Dialog open={showForm} onOpenChange={v => { if (!v) { setEditingId(null); } setShowForm(v); }}>
         <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg">
-          <DialogHeader><DialogTitle>{editingId ? 'Editar Receita' : 'Nova Receita'}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{editingId ? t("income.editTitle") : t("income.new")}</DialogTitle></DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Descrição</label>
-              <Input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Ex: Salário mensal" />
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("common.description")}</label>
+              <Input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder={t("income.descPlaceholder")} />
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("common.amount")}</label>
@@ -177,7 +177,7 @@ const Receitas: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Categoria</label>
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("common.category")}</label>
                 {suggesting && <Sparkles className="w-3 h-3 text-primary animate-pulse" />}
                 {!editingId && !userChangedCategory && form.description.length >= 3 && (
                   <span className="text-[10px] text-primary/70 italic">IA</span>
@@ -189,55 +189,55 @@ const Receitas: React.FC = () => {
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</label>
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("common.status")}</label>
               <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as 'paid' | 'pending' })}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                <option value="paid">Recebido</option>
-                <option value="pending">Pendente</option>
+                <option value="paid">{t("income.received")}</option>
+                <option value="pending">{t("common.pending")}</option>
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Tipo de Entrada</label>
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("income.entryType")}</label>
               <select value={form.entry_type} onChange={e => setForm({ ...form, entry_type: e.target.value as 'single' | 'installment' | 'recurring' })}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                <option value="single">Entrada Única</option>
-                <option value="installment">Contrato / Prazo Fixo</option>
-                <option value="recurring">Recorrente</option>
+                <option value="single">{t("income.singleEntry")}</option>
+                <option value="installment">{t("income.contractEntry")}</option>
+                <option value="recurring">{t("income.recurringEntry")}</option>
               </select>
             </div>
             {form.entry_type === 'installment' && (
               <div>
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Nº de Entradas (meses)</label>
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("income.numEntries")}</label>
                 <Input type="number" min="1" value={form.installments} onChange={e => setForm({ ...form, installments: e.target.value })} />
               </div>
             )}
             {form.entry_type === 'recurring' && (
               <>
                 <div>
-                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Frequência</label>
+                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("form.frequency")}</label>
                   <select value={form.frequency} onChange={e => setForm({ ...form, frequency: e.target.value as 'monthly' | 'yearly' })}
                     className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                    <option value="monthly">Mensal</option>
-                    <option value="yearly">Anual</option>
+                    <option value="monthly">{t("form.monthly")}</option>
+                    <option value="yearly">{t("form.yearly")}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Duração (meses)</label>
+                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("income.duration")}</label>
                   <Input type="number" min="1" max="120" value={form.recurring_months} onChange={e => setForm({ ...form, recurring_months: e.target.value })} placeholder="Ex: 12" />
                   <p className="text-[10px] text-muted-foreground mt-1">
-                    Serão criados {form.recurring_months || 0} lançamentos automáticos a partir da data selecionada
+                    {t("income.autoLaunchNote").replace("{count}", form.recurring_months || "0")}
                   </p>
                 </div>
               </>
             )}
             <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Data</label>
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("common.date")}</label>
               <Input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
             </div>
           </div>
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button variant="outline" onClick={() => setShowForm(false)} className="w-full sm:w-auto">Cancelar</Button>
-            <Button onClick={handleSubmit} className="w-full sm:w-auto">{editingId ? 'Salvar Alterações' : 'Salvar Receita'}</Button>
+            <Button variant="outline" onClick={() => setShowForm(false)} className="w-full sm:w-auto">{t("common.cancel")}</Button>
+            <Button onClick={handleSubmit} className="w-full sm:w-auto">{editingId ? t("income.saveChanges") : t("income.saveNew")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
