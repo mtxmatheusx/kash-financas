@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Bot, TrendingUp, Mic, MicOff, ImageIcon, Check, X, Send, Plus, Minus, BarChart3, Lightbulb, LineChart } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
@@ -13,6 +13,8 @@ import { TransactionConfirmCard, type ParsedTransaction } from "@/components/Tra
 import { useAccount } from "@/contexts/AccountContext";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useSpeechToText } from "@/hooks/useSpeechToText";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -140,15 +142,57 @@ async function parseTransaction(message: string): Promise<ParsedTransaction | nu
 export const FloatingChat: React.FC = () => {
   const { account } = useAccount();
   const { create } = useTransactions();
+  const { user } = useAuth();
   const [consultantType, setConsultantType] = useState<ConsultantType>(
     account.type === "business" ? "sales" : "financial"
   );
   const config = consultantConfig[consultantType];
   const [messages, setMessages] = useState<DisplayMsg[]>([{ role: "assistant", content: config.greeting }]);
   const [isLoading, setIsLoading] = useState(false);
+  const [historyLoaded, setHistoryLoaded] = useState(false);
   const [pendingTx, setPendingTx] = useState<ParsedTransaction | null>(null);
   const [stagedMsg, setStagedMsg] = useState<{ text: string; images: string[] } | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  // Load chat history from database
+  useEffect(() => {
+    if (!user) return;
+    const loadHistory = async () => {
+      const { data, error } = await supabase
+        .from('chat_messages')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('consultant_type', consultantType)
+        .order('created_at', { ascending: true })
+        .limit(100);
+
+      if (!error && data && data.length > 0) {
+        const loaded: DisplayMsg[] = [
+          { role: "assistant", content: consultantConfig[consultantType].greeting },
+          ...data.map(row => ({
+            role: row.role as "user" | "assistant",
+            content: row.content,
+            images: (row.images as string[] | null)?.length ? (row.images as string[]) : undefined,
+          })),
+        ];
+        setMessages(loaded);
+      }
+      setHistoryLoaded(true);
+    };
+    loadHistory();
+  }, [user, consultantType]);
+
+  // Save message to database
+  const saveMessage = useCallback(async (role: "user" | "assistant", content: string, images?: string[]) => {
+    if (!user || !content.trim()) return;
+    await supabase.from('chat_messages').insert({
+      user_id: user.id,
+      role,
+      content,
+      consultant_type: consultantType,
+      images: images ?? [],
+    } as any);
+  }, [user, consultantType]);
 
   const { isListening, transcript, start: startListening, stop: stopListening, isSupported: micSupported } = useSpeechToText({
     onResult: (text) => stageMessage(text),
@@ -160,6 +204,7 @@ export const FloatingChat: React.FC = () => {
     abortRef.current?.abort();
     setConsultantType(type);
     setMessages([{ role: "assistant", content: consultantConfig[type].greeting }]);
+    setHistoryLoaded(false);
     setPendingTx(null);
     setStagedMsg(null);
   };
@@ -178,18 +223,19 @@ export const FloatingChat: React.FC = () => {
       ...(pendingTx.frequency ? { frequency: pendingTx.frequency } : {}),
       ...(pendingTx.installments ? { installments: pendingTx.installments } : {}),
     });
-    setMessages(prev => [...prev, {
-      role: "assistant",
-      content: `✅ **${pendingTx.type === "income" ? "Receita" : "Despesa"} registrada!**\n\n${pendingTx.description} — R$ ${pendingTx.amount.toFixed(2).replace(".", ",")} (${pendingTx.category})`,
-    }]);
+    const confirmContent = `✅ **${pendingTx.type === "income" ? "Receita" : "Despesa"} registrada!**\n\n${pendingTx.description} — R$ ${pendingTx.amount.toFixed(2).replace(".", ",")} (${pendingTx.category})`;
+    setMessages(prev => [...prev, { role: "assistant", content: confirmContent }]);
+    saveMessage("assistant", confirmContent);
     toast.success(`${pendingTx.type === "income" ? "Receita" : "Despesa"} registrada!`);
     setPendingTx(null);
-  }, [pendingTx, create, account.type]);
+  }, [pendingTx, create, account.type, saveMessage]);
 
   const handleCancelTx = useCallback(() => {
-    setMessages(prev => [...prev, { role: "assistant", content: "Ok, registro cancelado. 👍 Como posso ajudar?" }]);
+    const cancelContent = "Ok, registro cancelado. 👍 Como posso ajudar?";
+    setMessages(prev => [...prev, { role: "assistant", content: cancelContent }]);
+    saveMessage("assistant", cancelContent);
     setPendingTx(null);
-  }, []);
+  }, [saveMessage]);
 
   /** Stage a message for preview (don't send yet) */
   const stageMessage = async (userText: string, attachments?: Attachment[]) => {
@@ -224,6 +270,9 @@ export const FloatingChat: React.FC = () => {
     setMessages(updatedMessages);
     setIsLoading(true);
 
+    // Save user message to DB (don't save base64 images to avoid bloat)
+    saveMessage("user", displayText);
+
     const controller = new AbortController();
     abortRef.current = controller;
     let assistantSoFar = "";
@@ -244,7 +293,11 @@ export const FloatingChat: React.FC = () => {
             return [...prev, { role: "assistant", content: current }];
           });
         },
-        onDone: () => setIsLoading(false),
+        onDone: () => {
+          setIsLoading(false);
+          // Save complete assistant response to DB
+          if (assistantSoFar.trim()) saveMessage("assistant", assistantSoFar);
+        },
         onError: (err) => { toast.error(err); setIsLoading(false); },
       });
     } catch (e: any) {
@@ -341,7 +394,7 @@ export const FloatingChat: React.FC = () => {
           </AnimatePresence>
 
           {/* Quick suggestions - show only after greeting (1 message) and when not loading */}
-          {messages.length === 1 && !isLoading && !stagedMsg && !pendingTx && (
+          {messages.length <= 1 && !isLoading && !stagedMsg && !pendingTx && historyLoaded && (
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
