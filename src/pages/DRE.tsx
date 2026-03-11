@@ -618,33 +618,31 @@ const DRE: React.FC = () => {
 
           {/* Health Indicator */}
           <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="text-sm font-semibold text-foreground mb-3">Análise Automática</h3>
+            <h3 className="text-sm font-semibold text-foreground mb-3">{t("dre.autoAnalysis")}</h3>
             <div className="space-y-2 text-sm text-muted-foreground">
               {current.receitaBruta === 0 && current.totalExpenses === 0 ? (
-                <p>Nenhuma movimentação registrada neste mês.</p>
+                <p>{t("dre.noMovements")}</p>
               ) : (
                 <>
                   {current.lucroLiquido > 0 ? (
                     <p className="text-fin-income">
-                      ✓ Resultado positivo — lucro líquido de {formatBRL(current.lucroLiquido)} ({current.margemLiquida.toFixed(1)}% de margem).
+                      {t("dre.positiveResult").replace("{amount}", formatBRL(current.lucroLiquido)).replace("{pct}", current.margemLiquida.toFixed(1))}
                     </p>
                   ) : (
                     <p className="text-fin-expense">
-                      ✗ Resultado negativo — prejuízo de {formatBRL(Math.abs(current.lucroLiquido))}.
+                      {t("dre.negativeResult").replace("{amount}", formatBRL(Math.abs(current.lucroLiquido)))}
                     </p>
                   )}
                   {current.margemBruta > 0 && current.margemBruta < 30 && (
-                    <p className="text-fin-pending">⚠ Margem bruta abaixo de 30% — seus custos diretos estão elevados.</p>
+                    <p className="text-fin-pending">{t("dre.lowGrossMargin")}</p>
                   )}
                   {current.margemOperacional > 0 && current.margemOperacional < 10 && (
-                    <p className="text-fin-pending">⚠ Margem operacional abaixo de 10% — atenção às despesas.</p>
+                    <p className="text-fin-pending">{t("dre.lowOpMargin")}</p>
                   )}
                   {Object.entries(current.opexGroups).length > 0 && (
                     <p>
-                      Maior grupo de despesa:{" "}
-                      <strong>
-                        {Object.entries(current.opexGroups).sort((a, b) => b[1].total - a[1].total)[0][0]}
-                      </strong>{" "}
+                      {t("dre.topExpenseGroup")}{" "}
+                      <strong>{Object.entries(current.opexGroups).sort((a, b) => b[1].total - a[1].total)[0][0]}</strong>{" "}
                       ({formatBRL(Object.entries(current.opexGroups).sort((a, b) => b[1].total - a[1].total)[0][1].total)})
                     </p>
                   )}
@@ -657,20 +655,20 @@ const DRE: React.FC = () => {
           <div className="rounded-xl border border-border bg-card p-5">
             <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
               <Info className="w-4 h-4 text-primary" />
-              Como ler sua DRE
+              {t("dre.howToRead")}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-muted-foreground">
               <div className="space-y-1">
-                <p className="font-medium text-foreground">Receita → Lucro Bruto</p>
-                <p>Receita Bruta menos deduções e custos diretos (CPV). Mostra a eficiência na produção/venda.</p>
+                <p className="font-medium text-foreground">{t("dre.revenueToGross")}</p>
+                <p>{t("dre.revenueToGrossDesc")}</p>
               </div>
               <div className="space-y-1">
-                <p className="font-medium text-foreground">Lucro Bruto → EBIT</p>
-                <p>Lucro Bruto menos despesas operacionais (pessoal, admin, comercial). Mostra o resultado da operação.</p>
+                <p className="font-medium text-foreground">{t("dre.grossToEbit")}</p>
+                <p>{t("dre.grossToEbitDesc")}</p>
               </div>
               <div className="space-y-1">
-                <p className="font-medium text-foreground">EBIT → Lucro Líquido</p>
-                <p>EBIT ajustado por receitas/despesas não operacionais. É o resultado final do exercício.</p>
+                <p className="font-medium text-foreground">{t("dre.ebitToNet")}</p>
+                <p>{t("dre.ebitToNetDesc")}</p>
               </div>
             </div>
           </div>
