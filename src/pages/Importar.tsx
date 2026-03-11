@@ -485,8 +485,8 @@ const Importar: React.FC = () => {
                 }}
               />
               <Upload className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-              <p className="text-sm font-medium text-foreground">Clique para selecionar ou arraste o arquivo</p>
-              <p className="text-xs text-muted-foreground mt-1">CSV, XLSX, XLS, ODS, TXT, TSV</p>
+              <p className="text-sm font-medium text-foreground">{t("import.clickToSelect")}</p>
+              <p className="text-xs text-muted-foreground mt-1">{t("import.fileTypes")}</p>
             </div>
 
             {/* AI badge */}
