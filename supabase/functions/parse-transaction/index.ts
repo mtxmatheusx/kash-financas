@@ -43,6 +43,13 @@ Use o contexto para inferir:
 - "gastei", "paguei", "comprei", "conta de" → despesa
 - "recebi", "ganhei", "entrou", "vendi" → receita
 - Se não especificar status, assuma "paid" (pago)
+
+**RECORRÊNCIA E PARCELAMENTO:**
+- "mensalmente", "todo mês", "mensal", "por mês", "recorrente" → entry_type: "recurring", frequency: "monthly"
+- "anualmente", "todo ano", "anual", "por ano" → entry_type: "recurring", frequency: "yearly"
+- "em X vezes", "Xx", "parcelado em X" → entry_type: "installment", installments: X
+- Se nenhuma dessas palavras aparecer → entry_type: "single"
+
 - Se a mensagem NÃO é sobre registrar transação, NÃO chame a ferramenta.`,
           },
           { role: "user", content: message },
@@ -58,9 +65,12 @@ Use o contexto para inferir:
                 properties: {
                   type: { type: "string", enum: ["income", "expense"], description: "Tipo: income (receita) ou expense (despesa)" },
                   amount: { type: "number", description: "Valor em reais (positivo)" },
-                  description: { type: "string", description: "Descrição curta da transação" },
+                  description: { type: "string", description: "Descrição curta — apenas nome do item/pessoa/empresa" },
                   category: { type: "string", description: "Categoria da transação" },
                   status: { type: "string", enum: ["paid", "pending"], description: "Status: paid ou pending" },
+                  entry_type: { type: "string", enum: ["single", "installment", "recurring"], description: "Tipo de entrada: single (única), installment (parcelado), recurring (recorrente)" },
+                  frequency: { type: "string", enum: ["monthly", "yearly"], description: "Frequência se recurring" },
+                  installments: { type: "number", description: "Número de parcelas se installment" },
                 },
                 required: ["type", "amount", "description", "category", "status"],
                 additionalProperties: false,

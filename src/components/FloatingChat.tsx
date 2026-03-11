@@ -174,6 +174,9 @@ export const FloatingChat: React.FC = () => {
       date: new Date().toISOString().slice(0, 10),
       status: pendingTx.status,
       account_type: account.type,
+      entry_type: pendingTx.entry_type ?? 'single',
+      ...(pendingTx.frequency ? { frequency: pendingTx.frequency } : {}),
+      ...(pendingTx.installments ? { installments: pendingTx.installments } : {}),
     });
     setMessages(prev => [...prev, {
       role: "assistant",
