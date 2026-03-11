@@ -40,11 +40,11 @@ interface UserSettings {
   pix_key: string;
   pix_key_type: string;
   // Notifications
-  // Notifications
   notify_whatsapp: boolean;
   notify_email: boolean;
   notify_due_dates: boolean;
   notify_due_days_before: number;
+  notification_time: string;
 }
 
 const defaultSettings: UserSettings = {
