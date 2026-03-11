@@ -515,6 +515,7 @@ export const FloatingChat: React.FC = () => {
       .eq('consultant_type', consultantType);
     setMessages([{ role: "assistant", content: config.greeting }]);
     setPendingTx(null);
+    setPendingInv(null);
     toast.success("Histórico limpo!");
   };
 
