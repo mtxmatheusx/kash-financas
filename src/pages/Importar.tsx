@@ -530,7 +530,7 @@ const Importar: React.FC = () => {
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button variant="destructive" size="sm" className="gap-2">
-                        <Trash2 className="w-3.5 h-3.5" /> Resetar todos os dados
+                        <Trash2 className="w-3.5 h-3.5" /> {t("import.resetAll")}
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
