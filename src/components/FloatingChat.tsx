@@ -417,7 +417,7 @@ export const FloatingChat: React.FC = () => {
       {/* Consultant Toggle + Clear */}
       <div className="px-4 pt-3 pb-1 flex items-center gap-2">
         <div className="flex-1 flex gap-1 bg-muted rounded-lg p-1">
-          {(["financial", "sales"] as const).map((type) => {
+          {(["financial", "sales", "investor"] as const).map((type) => {
             const Icon = consultantConfig[type].icon;
             const isActive = consultantType === type;
             return (
