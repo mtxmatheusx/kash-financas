@@ -9,9 +9,11 @@ import { toast } from "sonner";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 import { motion } from "framer-motion";
 import facilitenLogo from "@/assets/faciliten-logo.png";
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = usePreferences();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -25,11 +27,11 @@ const Login: React.FC = () => {
 
     if (error) {
       toast.error(error.message === "Invalid login credentials"
-        ? "E-mail ou senha incorretos"
+        ? t("auth.login.errorInvalid")
         : error.message
       );
     } else {
-      toast.success("Login realizado com sucesso!");
+      toast.success(t("auth.login.success"));
       navigate("/");
     }
     setLoading(false);
@@ -66,7 +68,7 @@ const Login: React.FC = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.3 }}
           >
-            Finanças simplificadas
+            {t("auth.subtitle")}
           </motion.p>
         </div>
 
@@ -77,17 +79,17 @@ const Login: React.FC = () => {
         >
           <Card className="border-border/50">
             <CardHeader>
-              <CardTitle className="text-lg">Entrar</CardTitle>
-              <CardDescription>Acesse sua conta para continuar</CardDescription>
+              <CardTitle className="text-lg">{t("auth.login.title")}</CardTitle>
+              <CardDescription>{t("auth.login.description")}</CardDescription>
             </CardHeader>
             <form onSubmit={handleLogin}>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">E-mail</Label>
+                  <Label htmlFor="email">{t("auth.login.email")}</Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="seu@email.com"
+                    placeholder={t("auth.login.emailPlaceholder")}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -95,9 +97,9 @@ const Login: React.FC = () => {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password">Senha</Label>
+                    <Label htmlFor="password">{t("auth.login.password")}</Label>
                     <Link to="/forgot-password" className="text-xs text-primary hover:underline">
-                      Esqueceu a senha?
+                      {t("auth.login.forgotPassword")}
                     </Link>
                   </div>
                   <div className="relative">
@@ -121,17 +123,17 @@ const Login: React.FC = () => {
               </CardContent>
               <CardFooter className="flex flex-col gap-3">
                 <Button type="submit" className="w-full transition-transform active:scale-[0.98]" disabled={loading}>
-                  {loading ? "Entrando..." : (
+                  {loading ? t("auth.login.loading") : (
                     <>
                       <LogIn className="h-4 w-4 mr-2" />
-                      Entrar
+                      {t("auth.login.submit")}
                     </>
                   )}
                 </Button>
                 <p className="text-sm text-muted-foreground text-center">
-                  Não tem conta?{" "}
+                  {t("auth.login.noAccount")}{" "}
                   <Link to="/signup" className="text-primary hover:underline font-medium">
-                    Criar conta
+                    {t("auth.login.createAccount")}
                   </Link>
                 </p>
               </CardFooter>
