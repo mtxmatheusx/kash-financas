@@ -399,25 +399,24 @@ const Landing: React.FC = () => {
           </div>
 
           <h2 className="text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white mb-4 sm:mb-5 leading-[1.15]">
-            A Nossa Garantia de Esforço Zero.
+            {t("landing.guarantee.title")}
           </h2>
 
           <p className="text-sm sm:text-base text-[hsl(0,0%,50%)] leading-relaxed max-w-2xl mx-auto mb-6">
-            Nós odiamos planilhas tanto quanto você. O Faciliten foi construído para que você{" "}
-            <span className="text-white font-semibold">não precise digitar uma única linha financeira nunca mais</span>.
-            Teste a nossa IA por 7 dias. Se ela não economizar pelo menos 5 horas da sua semana,
-            cancele com 1 clique.{" "}
-            <span className="text-[hsl(348,100%,64%)] font-semibold">Sem perguntas.</span>
+            {t("landing.guarantee.text1")}{" "}
+            <span className="text-white font-semibold">{t("landing.guarantee.highlight")}</span>
+            {t("landing.guarantee.text2")}{" "}
+            <span className="text-[hsl(348,100%,64%)] font-semibold">{t("landing.guarantee.noQuestions")}</span>
           </p>
 
           <div className="flex items-center justify-center gap-6 sm:gap-8 text-[hsl(0,0%,40%)]">
             <div className="flex items-center gap-2 text-[11px] sm:text-xs">
               <Lock className="w-3.5 h-3.5 text-[hsl(348,100%,64%)/0.7]" />
-              <span>Cancelamento instantâneo</span>
+              <span>{t("landing.guarantee.instantCancel")}</span>
             </div>
             <div className="flex items-center gap-2 text-[11px] sm:text-xs">
               <ShieldCheck className="w-3.5 h-3.5 text-[hsl(348,100%,64%)/0.7]" />
-              <span>Sem compromisso</span>
+              <span>{t("landing.guarantee.noCommitment")}</span>
             </div>
           </div>
         </motion.div>
