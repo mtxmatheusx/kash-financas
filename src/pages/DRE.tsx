@@ -228,59 +228,66 @@ const DRE: React.FC = () => {
 
       const addPage = () => { if (y > 265) { pdf.addPage(); y = m; } };
 
-      // ════════════════════════════════════════════════
-      // 1. HEADER EXECUTIVO
-      // ════════════════════════════════════════════════
-      // Top accent line
-      pdf.setFillColor(22, 163, 74);
-      pdf.rect(0, 0, w, 1.2, "F");
+      // ── Load logo ──
+      const logoImg = await new Promise<string>((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext("2d")!;
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL("image/png"));
+        };
+        img.onerror = () => resolve("");
+        img.src = "/favicon.png";
+      });
 
-      // Logo area
+      type C3 = [number, number, number];
+      const zinc950: C3 = [9, 9, 11];
+      const zinc900: C3 = [24, 24, 27];
+      const accentRed: C3 = [244, 63, 94]; // rose-500
+
+      // ════════════════════════════════════════════════
+      // 1. HEADER — MOLDURA DARK
+      // ════════════════════════════════════════════════
+      const headerH = 28;
+      pdf.setFillColor(...zinc950);
+      pdf.rect(0, 0, w, headerH, "F");
+
+      // Logo image
+      if (logoImg) {
+        try {
+          pdf.addImage(logoImg, "PNG", m, 5, 8, 8);
+        } catch { /* fallback below */ }
+      }
+      // Logo text
       pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(20);
-      pdf.setTextColor(...black);
-      pdf.text("Faciliten", m, y + 8);
+      pdf.setFontSize(14);
+      pdf.setTextColor(...white);
+      pdf.text("Faciliten", m + 11, 12);
 
       // Right side: title + date
-      pdf.setFontSize(13);
+      pdf.setFontSize(12);
       pdf.setFont("helvetica", "bold");
-      pdf.setTextColor(...black);
-      pdf.text(`DRE — ${capitalMonth}`, w - m, y + 4, { align: "right" });
+      pdf.setTextColor(...white);
+      pdf.text(`DRE — ${capitalMonth}`, w - m, 10, { align: "right" });
 
-      pdf.setFontSize(8);
+      pdf.setFontSize(7.5);
       pdf.setFont("helvetica", "normal");
-      pdf.setTextColor(...zinc500);
-      pdf.text(`Emitido em ${format(new Date(), "dd/MM/yyyy 'às' HH:mm")}`, w - m, y + 10, { align: "right" });
+      pdf.setTextColor(161, 161, 170); // zinc-400
+      pdf.text(`Emitido em ${format(new Date(), "dd/MM/yyyy 'às' HH:mm")}`, w - m, 16, { align: "right" });
 
-      // Divider
-      y += 16;
-      pdf.setDrawColor(...zinc200);
-      pdf.setLineWidth(0.4);
-      pdf.line(m, y, w - m, y);
-      y += 6;
+      // Accent line below header
+      pdf.setFillColor(...accentRed);
+      pdf.rect(0, headerH, w, 0.8, "F");
+
+      y = headerH + 8;
 
       // ════════════════════════════════════════════════
-      // 2. RESUMO EXECUTIVO DA IA (Aha Moment)
+      // 2. RESUMO EXECUTIVO DA IA — border-l-4 accent
       // ════════════════════════════════════════════════
-      const aiBoxH = 24;
-      pdf.setFillColor(...zinc50);
-      pdf.roundedRect(m, y, u, aiBoxH, 2, 2, "F");
-      pdf.setDrawColor(...zinc200);
-      pdf.roundedRect(m, y, u, aiBoxH, 2, 2, "S");
-
-      // Sparkle icon (simple star)
-      pdf.setFillColor(...green600);
-      pdf.circle(m + 7, y + 7.5, 1.5, "F");
-
-      pdf.setFontSize(9);
-      pdf.setFont("helvetica", "bold");
-      pdf.setTextColor(...black);
-      pdf.text("Resumo Executivo da IA", m + 12, y + 8.5);
-
-      pdf.setFontSize(8);
-      pdf.setFont("helvetica", "normal");
-      pdf.setTextColor(...zinc500);
-
       let aiText = "";
       if (current.receitaBruta === 0 && current.totalExpenses === 0) {
         aiText = "Nenhuma movimentação registrada neste período.";
@@ -290,14 +297,35 @@ const DRE: React.FC = () => {
       } else {
         aiText = `Resultado negativo no período com prejuízo de ${formatBRL(Math.abs(current.lucroLiquido))}. Recomenda-se revisão de custos e despesas operacionais.`;
       }
-      const aiLines = pdf.splitTextToSize(aiText, u - 16);
-      pdf.text(aiLines, m + 6, y + 16);
+      const aiTextLines = pdf.splitTextToSize(aiText, u - 18);
+      const aiBoxH = 10 + aiTextLines.length * 4;
+
+      // Card bg
+      pdf.setFillColor(...zinc50);
+      pdf.roundedRect(m, y, u, aiBoxH, 2, 2, "F");
+      pdf.setDrawColor(...zinc200);
+      pdf.roundedRect(m, y, u, aiBoxH, 2, 2, "S");
+
+      // Left accent border (border-l-4)
+      pdf.setFillColor(...accentRed);
+      pdf.rect(m, y, 1.5, aiBoxH, "F");
+
+      // Title
+      pdf.setFontSize(8.5);
+      pdf.setFont("helvetica", "bold");
+      pdf.setTextColor(...black);
+      pdf.text("✦  Resumo Executivo da IA", m + 6, y + 6);
+
+      // Body
+      pdf.setFontSize(7.5);
+      pdf.setFont("helvetica", "normal");
+      pdf.setTextColor(...zinc500);
+      pdf.text(aiTextLines, m + 6, y + 12);
       y += aiBoxH + 6;
 
       // ════════════════════════════════════════════════
-      // 3. KPIs DE IMPACTO (3 Cards)
+      // 3. KPIs — SaaS Cards with shadow feel
       // ════════════════════════════════════════════════
-      type C3 = [number, number, number];
       const kpis: { label: string; value: number; color: C3 }[] = [
         { label: "Receita Bruta", value: current.receitaBruta, color: [...green600] },
         { label: "Total Despesas", value: current.totalExpenses, color: [...red600] },
@@ -305,47 +333,45 @@ const DRE: React.FC = () => {
       ];
 
       const kpiW = (u - 8) / 3;
-      const kpiH = 26;
+      const kpiH = 28;
       kpis.forEach((kpi, i) => {
         const x = m + i * (kpiW + 4);
-        // Card background
-        pdf.setFillColor(...white);
-        pdf.roundedRect(x, y, kpiW, kpiH, 2, 2, "F");
-        pdf.setDrawColor(...zinc200);
-        pdf.roundedRect(x, y, kpiW, kpiH, 2, 2, "S");
 
-        // Top accent bar
-        pdf.setFillColor(...kpi.color);
-        pdf.rect(x + 0.5, y + 0.5, kpiW - 1, 1.2, "F");
+        // Shadow simulation (slightly offset rect)
+        pdf.setFillColor(240, 240, 240);
+        pdf.roundedRect(x + 0.4, y + 0.4, kpiW, kpiH, 3, 3, "F");
+
+        // Card
+        pdf.setFillColor(...white);
+        pdf.roundedRect(x, y, kpiW, kpiH, 3, 3, "F");
+        pdf.setDrawColor(...zinc200);
+        pdf.roundedRect(x, y, kpiW, kpiH, 3, 3, "S");
 
         // Label
-        pdf.setFontSize(7.5);
+        pdf.setFontSize(7);
         pdf.setFont("helvetica", "normal");
         pdf.setTextColor(...zinc500);
-        pdf.text(kpi.label.toUpperCase(), x + kpiW / 2, y + 9, { align: "center" });
+        pdf.text(kpi.label.toUpperCase(), x + kpiW / 2, y + 8, { align: "center" });
 
-        // Value
-        pdf.setFontSize(14);
+        // Value (giant)
+        pdf.setFontSize(16);
         pdf.setFont("helvetica", "bold");
         pdf.setTextColor(...kpi.color);
-        pdf.text(formatBRL(Math.abs(kpi.value)), x + kpiW / 2, y + 19, { align: "center" });
+        pdf.text(formatBRL(Math.abs(kpi.value)), x + kpiW / 2, y + 20, { align: "center" });
       });
       y += kpiH + 8;
 
       // ════════════════════════════════════════════════
-      // 4. TABELA FINANCEIRA (DRE)
+      // 4. TABELA DRE — Minimalismo, header dark
       // ════════════════════════════════════════════════
-      // Table border
       const tableStartY = y;
-      pdf.setDrawColor(...zinc200);
-      pdf.setLineWidth(0.3);
 
-      // Header row
-      pdf.setFillColor(...zinc100);
+      // Dark header row
+      pdf.setFillColor(...zinc900);
       pdf.rect(m, y, u, 8, "F");
       pdf.setFontSize(7);
       pdf.setFont("helvetica", "bold");
-      pdf.setTextColor(...zinc500);
+      pdf.setTextColor(...white);
       pdf.text("DESCRIÇÃO", m + 4, y + 5.5);
       pdf.text("MÊS ATUAL", m + u - 56, y + 5.5);
       pdf.text("MÊS ANTERIOR", m + u - 24, y + 5.5);
@@ -356,7 +382,8 @@ const DRE: React.FC = () => {
         addPage();
 
         if (line.separator) {
-          pdf.setDrawColor(...zinc200);
+          // Only horizontal line, no vertical
+          pdf.setDrawColor(...zinc100);
           pdf.setLineWidth(0.2);
           pdf.line(m, y, m + u, y);
           y += 1.5;
@@ -365,7 +392,7 @@ const DRE: React.FC = () => {
 
         const rowH = 6.5;
 
-        // Zebra + highlight logic
+        // Zebra + highlight
         if (line.highlight) {
           pdf.setFillColor(...zinc100);
           pdf.rect(m, y, u, rowH, "F");
@@ -386,7 +413,7 @@ const DRE: React.FC = () => {
         pdf.setTextColor(...labelColor);
         pdf.text(line.label, m + 4 + indent, y + 4.5);
 
-        // Current value
+        // Current value (right-aligned)
         if (line.value !== 0) {
           const valColor: C3 = line.value > 0 ? [...green600] : [...red600];
           pdf.setFont("helvetica", line.bold ? "bold" : "normal");
@@ -397,7 +424,7 @@ const DRE: React.FC = () => {
           pdf.text("—", m + u - 46, y + 4.5);
         }
 
-        // Previous value
+        // Previous value (right-aligned)
         const pv = line.prevValue ?? 0;
         pdf.setFont("helvetica", "normal");
         pdf.setTextColor(...zinc300);
@@ -407,19 +434,14 @@ const DRE: React.FC = () => {
           pdf.text("—", m + u - 12, y + 4.5);
         }
 
-        // Row bottom line
-        pdf.setDrawColor(245, 245, 245);
+        // Horizontal bottom border only
+        pdf.setDrawColor(...zinc100);
         pdf.setLineWidth(0.15);
         pdf.line(m, y + rowH, m + u, y + rowH);
 
         y += rowH + 0.5;
         rowIdx++;
       });
-
-      // Table outer border
-      pdf.setDrawColor(...zinc200);
-      pdf.setLineWidth(0.3);
-      pdf.roundedRect(m, tableStartY, u, y - tableStartY, 1.5, 1.5, "S");
 
       // ════════════════════════════════════════════════
       // 5. MARGENS RESUMO
@@ -435,9 +457,9 @@ const DRE: React.FC = () => {
       margins.forEach((mg, i) => {
         const x = m + i * (mCardW + 4);
         pdf.setFillColor(...zinc50);
-        pdf.roundedRect(x, y, mCardW, 14, 1.5, 1.5, "F");
+        pdf.roundedRect(x, y, mCardW, 14, 2, 2, "F");
         pdf.setDrawColor(...zinc200);
-        pdf.roundedRect(x, y, mCardW, 14, 1.5, 1.5, "S");
+        pdf.roundedRect(x, y, mCardW, 14, 2, 2, "S");
         pdf.setFontSize(7);
         pdf.setFont("helvetica", "normal");
         pdf.setTextColor(...zinc500);
@@ -449,25 +471,26 @@ const DRE: React.FC = () => {
       });
 
       // ════════════════════════════════════════════════
-      // FOOTER (all pages)
+      // FOOTER — MOLDURA DARK (all pages)
       // ════════════════════════════════════════════════
       const pageCount = pdf.getNumberOfPages();
       for (let p = 1; p <= pageCount; p++) {
         pdf.setPage(p);
-        // Bottom divider
-        pdf.setDrawColor(...zinc200);
-        pdf.setLineWidth(0.3);
-        pdf.line(m, h - 12, w - m, h - 12);
+
+        // Dark footer bar
+        const footerH = 12;
+        pdf.setFillColor(...zinc950);
+        pdf.rect(0, h - footerH, w, footerH, "F");
+
+        // Top accent line
+        pdf.setFillColor(...accentRed);
+        pdf.rect(0, h - footerH, w, 0.6, "F");
 
         pdf.setFontSize(7);
         pdf.setFont("helvetica", "normal");
-        pdf.setTextColor(...zinc500);
-        pdf.text("Faciliten · Gestão Financeira Inteligente", m, h - 7);
-        pdf.text(`Página ${p} de ${pageCount}`, w - m, h - 7, { align: "right" });
-
-        // Bottom accent
-        pdf.setFillColor(22, 163, 74);
-        pdf.rect(0, h - 1.2, w, 1.2, "F");
+        pdf.setTextColor(...white);
+        pdf.text("Faciliten · Gestão Financeira Inteligente", m, h - 4.5);
+        pdf.text(`Página ${p} de ${pageCount}`, w - m, h - 4.5, { align: "right" });
       }
 
       pdf.save(`DRE_${format(refDate, "yyyy-MM")}.pdf`);
