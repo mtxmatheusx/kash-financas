@@ -369,19 +369,27 @@ const Configuracoes: React.FC = () => {
                 </Field>
               </div>
 
-              <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                  <Smartphone className="w-4 h-4 text-primary" /> Evolution API (WhatsApp)
-                </h3>
-                <Field icon={Plug} label="URL da API">
-                  <Input value={settings.evolution_api_url} onChange={(e) => update("evolution_api_url", e.target.value)} placeholder="https://api.evolution.com" maxLength={500} />
-                </Field>
-                <Field icon={Plug} label="API Key">
-                  <Input type="password" value={settings.evolution_api_key} onChange={(e) => update("evolution_api_key", e.target.value)} placeholder="Chave da Evolution API" maxLength={200} />
-                </Field>
-                <Field icon={Plug} label="Nome da Instância">
-                  <Input value={settings.evolution_instance} onChange={(e) => update("evolution_instance", e.target.value)} placeholder="Nome da instância" maxLength={100} />
-                </Field>
+              {/* WhatsApp Bot Card */}
+              <div className="rounded-xl border border-border bg-accent/30 p-6 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-fin-income/15">
+                    <MessageCircle className="w-6 h-6 text-fin-income" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-foreground font-display-fin">WhatsApp Bot</h3>
+                    <p className="text-xs text-muted-foreground">
+                      Conecte seu número para ativar as notificações automáticas de cobrança.
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-full gap-2 border-fin-income/30 text-fin-income hover:bg-fin-income/10"
+                  onClick={() => toast.info("QR Code será gerado em breve. Configure as credenciais da Evolution API no painel de administração.")}
+                >
+                  <QrCode className="w-4 h-4" />
+                  Gerar QR Code de Conexão
+                </Button>
               </div>
             </Card>
           </TabsContent>
