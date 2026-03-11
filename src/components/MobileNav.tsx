@@ -118,7 +118,7 @@ export const MobileNav: React.FC = () => {
           <button
             onClick={() => setShowMore(!showMore)}
             className={cn(
-              "flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl text-[10px] font-medium transition-all duration-200",
+              "flex flex-col items-center gap-0.5 py-2 px-3 rounded-xl text-[10px] font-medium transition-all duration-200 min-h-[44px] justify-center",
               showMore || isMoreActive
                 ? "text-primary"
                 : "text-muted-foreground active:scale-95"
