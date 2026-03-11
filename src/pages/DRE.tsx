@@ -8,7 +8,6 @@ import { ChevronLeft, ChevronRight, Info, Download, Loader2 } from "lucide-react
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { usePreferences } from "@/contexts/PreferencesContext";
-import { useAccount } from "@/contexts/AccountContext";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 
