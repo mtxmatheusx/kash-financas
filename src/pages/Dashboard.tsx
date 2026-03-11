@@ -115,8 +115,8 @@ const Dashboard: React.FC = () => {
               <Activity className="w-4 h-4 text-primary" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground tracking-tight">Dashboard</h1>
-              <p className="text-xs text-muted-foreground">Visão geral das suas finanças</p>
+              <h1 className="text-xl font-bold text-foreground tracking-tight">{t("dashboard.title")}</h1>
+              <p className="text-xs text-muted-foreground">{t("dashboard.subtitle")}</p>
             </div>
           </div>
           <Select
@@ -124,23 +124,23 @@ const Dashboard: React.FC = () => {
             onValueChange={(v) => setDateFilter(v as DateFilter)}
           >
             <SelectTrigger className="w-[180px] h-9 text-xs bg-card border-border">
-              <SelectValue placeholder="Filtrar período..." />
+              <SelectValue placeholder={t("filter.period")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="today">Hoje</SelectItem>
-              <SelectItem value="yesterday">Ontem</SelectItem>
-              <SelectItem value="week">Semana</SelectItem>
-              <SelectItem value="month">Mês</SelectItem>
+              <SelectItem value="all">{t("filter.all")}</SelectItem>
+              <SelectItem value="today">{t("filter.today")}</SelectItem>
+              <SelectItem value="yesterday">{t("filter.yesterday")}</SelectItem>
+              <SelectItem value="week">{t("filter.week")}</SelectItem>
+              <SelectItem value="month">{t("filter.month")}</SelectItem>
             </SelectContent>
           </Select>
         </motion.div>
 
         {/* KPIs */}
         <SummaryBar items={[
-          { label: "Receitas", value: formatBRL(filteredTotals.income), color: "income", icon: TrendingUp },
-          { label: "Despesas", value: formatBRL(filteredTotals.expense), color: "expense", icon: TrendingDown },
-          { label: "Saldo", value: formatBRL(filteredTotals.balance), color: "primary", icon: Wallet },
+          { label: t("kpi.income"), value: formatBRL(filteredTotals.income), color: "income", icon: TrendingUp },
+          { label: t("kpi.expenses"), value: formatBRL(filteredTotals.expense), color: "expense", icon: TrendingDown },
+          { label: t("kpi.balance"), value: formatBRL(filteredTotals.balance), color: "primary", icon: Wallet },
         ]} />
 
         {/* Charts */}
