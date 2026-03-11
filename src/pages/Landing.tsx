@@ -506,13 +506,13 @@ const Landing: React.FC = () => {
           <div className="grid sm:grid-cols-2 gap-4 sm:gap-5 mt-8 sm:mt-14">
             {/* Free */}
             <motion.div {...fadeUp(0.1)} className="rounded-xl sm:rounded-2xl border border-[hsl(0,0%,10%)] bg-[hsl(0,0%,3%)] p-5 sm:p-8">
-              <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1">Básico</h3>
-              <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">Registro manual, sem IA de vendas</p>
+              <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1">{t("landing.pricing.freeTitle")}</h3>
+              <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">{t("landing.pricing.freeDesc")}</p>
               <p className="text-4xl sm:text-5xl font-extrabold text-white mb-5 sm:mb-6 font-mono-fin">
-                R$ 0<span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">/mês</span>
+                R$ 0<span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">{t("landing.pricing.freePerMonth")}</span>
               </p>
               <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
-                {["Dashboard inteligente", "Receitas e despesas manuais", "Relatórios básicos"].map(f => (
+                {[t("landing.pricing.free1"), t("landing.pricing.free2"), t("landing.pricing.free3")].map(f => (
                   <li key={f} className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
                     <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />
                     {f}
@@ -522,7 +522,7 @@ const Landing: React.FC = () => {
               <Link to={signupLink}>
                 <motion.div whileTap={{ scale: 0.97 }}>
                   <Button variant="outline" className="w-full h-11 sm:h-13 text-sm sm:text-base border-[hsl(0,0%,20%)] bg-transparent hover:bg-[hsl(0,0%,8%)] text-[hsl(0,0%,60%)] font-bold">
-                    Criar Conta Básica
+                    {t("landing.pricing.freeCta")}
                   </Button>
                 </motion.div>
               </Link>
