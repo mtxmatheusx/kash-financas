@@ -123,7 +123,7 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
               </div>
             </div>
 
-            <span className="text-xs text-muted-foreground hidden md:block">{g.category}</span>
+            <span className="text-xs text-muted-foreground hidden md:block">{translateCategory(g.category, t)}</span>
 
             <div className="hidden md:flex justify-center px-2 gap-1.5">
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-fin-income/10 text-fin-income">
