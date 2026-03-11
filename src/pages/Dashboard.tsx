@@ -6,8 +6,8 @@ import { useTransactions } from "@/hooks/useTransactions";
 import { useInvestments } from "@/hooks/useInvestments";
 import { TrendingUp, TrendingDown, Wallet, PiggyBank, Activity } from "lucide-react";
 import {
-  AreaChart, Area, BarChart, Bar, XAxis, YAxis,
-  Tooltip, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis,
+  Tooltip, ResponsiveContainer, CartesianGrid,
 } from "recharts";
 import { createAnimatedBarShape } from "@/components/AnimatedBar";
 import { DashboardDateFilter, getDateRange, type DateFilter } from "@/components/DashboardDateFilter";
