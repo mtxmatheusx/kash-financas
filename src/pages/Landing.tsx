@@ -443,10 +443,10 @@ const Landing: React.FC = () => {
               Quanto custa ter dois consultores?
             </h2>
             <p className="text-[hsl(0,0%,45%)] text-sm sm:text-lg max-w-xl mx-auto mb-1.5">
-              Consultor financeiro + vendas = <span className="line-through text-[hsl(0,0%,30%)]">R$ 5.000/mês</span>
+              Contratar um assistente custa <span className="line-through text-[hsl(0,0%,30%)]">R$ 2.000/mês</span>
             </p>
             <p className="text-[hsl(160,100%,50%)] font-bold text-base sm:text-lg">
-              Com a Faciliten, a partir de R$ 0.
+              O Faciliten custa o valor de um café.
             </p>
           </motion.div>
 
@@ -454,12 +454,12 @@ const Landing: React.FC = () => {
             {/* Free */}
             <motion.div {...fadeUp(0.1)} className="rounded-xl sm:rounded-2xl border border-[hsl(0,0%,10%)] bg-[hsl(0,0%,3%)] p-5 sm:p-8">
               <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1">Básico</h3>
-              <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">Apenas registro manual, sem IA de vendas</p>
+              <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">Registro manual, sem IA de vendas</p>
               <p className="text-4xl sm:text-5xl font-extrabold text-white mb-5 sm:mb-6 font-mono-fin">
                 R$ 0<span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">/mês</span>
               </p>
               <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
-                {["Dashboard inteligente", "Receitas e despesas", "Registro manual"].map(f => (
+                {["Dashboard inteligente", "Receitas e despesas manuais", "Relatórios básicos"].map(f => (
                   <li key={f} className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
                     <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />
                     {f}
@@ -475,9 +475,10 @@ const Landing: React.FC = () => {
               </Link>
             </motion.div>
 
-            {/* Premium */}
+            {/* Premium — glow border + neon CTA */}
             <motion.div {...fadeUp(0.2)} className="relative rounded-xl sm:rounded-2xl overflow-hidden">
-              <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[hsl(160,100%,50%)/0.15] via-[hsl(217,91%,60%)/0.08] to-transparent" />
+              {/* Glow border */}
+              <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[hsl(217,91%,60%)/0.35] via-[hsl(160,100%,50%)/0.15] to-[hsl(217,91%,60%)/0.25] shadow-[0_0_40px_-5px_hsl(217,91%,60%,0.2),0_0_80px_-10px_hsl(160,100%,50%,0.1)]" />
               <div className="absolute inset-px rounded-[11px] sm:rounded-[15px] bg-[hsl(0,0%,3%)]" />
 
               <div className="absolute -top-px right-5 sm:right-6 bg-[hsl(160,100%,50%)] text-[hsl(0,0%,2%)] text-[9px] sm:text-[10px] font-extrabold px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-b-lg shadow-lg shadow-[hsl(160,100%,50%)/0.3] z-10 uppercase tracking-[0.15em]">
@@ -488,13 +489,19 @@ const Landing: React.FC = () => {
                 <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1 flex items-center gap-2">
                   <Crown className="h-4 w-4 sm:h-5 sm:w-5 text-[hsl(45,100%,60%)]" /> Copiloto Premium
                 </h3>
-                <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">Consultor IA ativado, metas diárias, zero limites</p>
+                <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">Zero planilhas. Zero atrito. A IA faz o trabalho pesado.</p>
                 <p className="text-4xl sm:text-5xl font-extrabold text-white mb-5 sm:mb-6 font-mono-fin">
                   R$ 29<span className="text-base sm:text-lg">,90</span>
                   <span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">/mês</span>
                 </p>
                 <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
-                  {["Tudo do básico", "Consultor de Vendas IA", "Estratégias personalizadas", "Investimentos e metas", "Suporte prioritário"].map(f => (
+                  {[
+                    "Lançamentos automáticos via áudio no WhatsApp",
+                    "Dashboard preditivo: saiba o seu lucro em 3 segundos",
+                    "Consultor de Vendas IA com estratégias personalizadas",
+                    "Investimentos, metas e relatórios ilimitados",
+                    "Suporte prioritário",
+                  ].map(f => (
                     <li key={f} className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
                       <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />
                       {f}
@@ -503,11 +510,14 @@ const Landing: React.FC = () => {
                 </ul>
                 <Link to={signupLink}>
                   <motion.div whileTap={{ scale: 0.97 }}>
-                    <Button className="w-full h-11 sm:h-13 text-sm sm:text-base bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 cta-glow font-bold">
-                      <Sparkles className="mr-2 h-4 w-4" /> Começar 30 Dias Grátis
+                    <Button className="w-full h-12 sm:h-14 text-sm sm:text-base bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 font-bold shadow-[0_0_24px_-4px_hsl(348,100%,64%,0.5)] hover:shadow-[0_0_32px_-4px_hsl(348,100%,64%,0.7)] transition-shadow">
+                      <Sparkles className="mr-2 h-4 w-4" /> Liberar Meu Assistente Agora
                     </Button>
                   </motion.div>
                 </Link>
+                <p className="text-center text-[11px] text-[hsl(0,0%,40%)] mt-3">
+                  30 dias grátis · Cancele com 1 clique. Sem burocracia.
+                </p>
               </div>
             </motion.div>
           </div>
