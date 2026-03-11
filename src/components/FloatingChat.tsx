@@ -167,15 +167,23 @@ async function streamChat({
 
 async function parseTransaction(message: string): Promise<ParsedTransaction | null> {
   try {
+    console.log("[parseTransaction] Calling with:", message.slice(0, 80));
     const resp = await fetch(PARSE_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
       body: JSON.stringify({ message }),
     });
-    if (!resp.ok) return null;
+    if (!resp.ok) {
+      console.warn("[parseTransaction] Error response:", resp.status);
+      return null;
+    }
     const data = await resp.json();
+    console.log("[parseTransaction] Result:", data);
     return data.transaction || null;
-  } catch { return null; }
+  } catch (e) {
+    console.error("[parseTransaction] Exception:", e);
+    return null;
+  }
 }
 
 export const FloatingChat: React.FC = () => {
