@@ -195,7 +195,7 @@ const Receitas: React.FC = () => {
               </div>
               <select value={form.category} onChange={e => { setForm({ ...form, category: e.target.value }); setUserChangedCategory(true); }}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                {INCOME_CAT_KEYS.map(c => <option key={c.value} value={c.value}>{t(c.tKey)}</option>)}
               </select>
             </div>
             <div>
