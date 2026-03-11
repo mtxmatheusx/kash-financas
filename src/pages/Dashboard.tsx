@@ -224,7 +224,7 @@ const Dashboard: React.FC = () => {
                       style={{ boxShadow: t.type === 'income' ? '0 0 4px hsl(var(--fin-income))' : '0 0 4px hsl(var(--fin-expense))' }} />
                     <div>
                       <p className="text-sm font-medium text-card-foreground">{t.description}</p>
-                      <p className="text-[10px] text-muted-foreground">{t.category} · {new Date(t.date).toLocaleDateString('pt-BR')}</p>
+                      <p className="text-[10px] text-muted-foreground">{translateCategory(t.category, tFn)} · {new Date(t.date).toLocaleDateString('pt-BR')}</p>
                     </div>
                   </div>
                   <span className={`font-mono-fin text-sm font-semibold ${t.type === 'income' ? 'text-fin-income' : 'text-fin-expense'}`}>
