@@ -3,9 +3,7 @@ import { PageTransition } from "@/components/PageTransition";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Info } from "lucide-react";
-
-const formatBRL = (v: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 const parseNumber = (v: string) => {
   const cleaned = v.replace(/[^\d,.-]/g, "").replace(",", ".");

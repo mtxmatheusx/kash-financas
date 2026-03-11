@@ -23,8 +23,6 @@ import {
 import { FinancialInsights } from "@/components/FinancialInsights";
 import { useGoals } from "@/hooks/useGoals";
 
-const formatBRL = (value: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
 const formatCompact = (v: number) => {
   if (Math.abs(v) >= 1000) return `${(v / 1000).toFixed(1)}k`;
