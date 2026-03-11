@@ -483,51 +483,48 @@ const Configuracoes: React.FC = () => {
             <Card>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-foreground">Alertas via WhatsApp</p>
-                  <p className="text-xs text-muted-foreground">Receba notificações no WhatsApp</p>
+                  <p className="text-sm font-medium text-foreground">{t("settings.whatsappAlerts")}</p>
+                  <p className="text-xs text-muted-foreground">{t("settings.whatsappAlertsDesc")}</p>
                 </div>
                 <Switch checked={settings.notify_whatsapp} onCheckedChange={(v) => update("notify_whatsapp", v)} />
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-foreground">Alertas via E-mail</p>
-                  <p className="text-xs text-muted-foreground">Receba notificações por e-mail</p>
+                  <p className="text-sm font-medium text-foreground">{t("settings.emailAlerts")}</p>
+                  <p className="text-xs text-muted-foreground">{t("settings.emailAlertsDesc")}</p>
                 </div>
                 <Switch checked={settings.notify_email} onCheckedChange={(v) => update("notify_email", v)} />
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-foreground">Lembrete de vencimentos</p>
-                  <p className="text-xs text-muted-foreground">Avise antes de contas vencerem</p>
+                  <p className="text-sm font-medium text-foreground">{t("settings.dueReminder")}</p>
+                  <p className="text-xs text-muted-foreground">{t("settings.dueReminderDesc")}</p>
                 </div>
                 <Switch checked={settings.notify_due_dates} onCheckedChange={(v) => update("notify_due_dates", v)} />
               </div>
               {settings.notify_due_dates && (
-                <Field icon={Bell} label="Dias antes do vencimento">
+                <Field icon={Bell} label={t("settings.daysBefore")}>
                   <Select value={String(settings.notify_due_days_before)} onValueChange={(v) => update("notify_due_days_before", Number(v))}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1">1 dia</SelectItem>
-                      <SelectItem value="2">2 dias</SelectItem>
-                      <SelectItem value="3">3 dias</SelectItem>
-                      <SelectItem value="5">5 dias</SelectItem>
-                      <SelectItem value="7">7 dias</SelectItem>
+                      <SelectItem value="1">1 {t("settings.day")}</SelectItem>
+                      <SelectItem value="2">2 {t("settings.days")}</SelectItem>
+                      <SelectItem value="3">3 {t("settings.days")}</SelectItem>
+                      <SelectItem value="5">5 {t("settings.days")}</SelectItem>
+                      <SelectItem value="7">7 {t("settings.days")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </Field>
               )}
 
-              {/* Assistente Financeiro de IA — autosave notification_time */}
               <div className="rounded-xl border border-border bg-card p-5 md:p-6 space-y-4 mt-4">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 rounded-xl bg-primary/10">
                     <Bot className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-foreground font-display-fin">Assistente Financeiro de IA</h3>
-                    <p className="text-xs text-muted-foreground">
-                      A que horas você deseja receber seu resumo de caixa no WhatsApp?
-                    </p>
+                    <h3 className="text-base font-bold text-foreground font-display-fin">{t("settings.aiAssistant")}</h3>
+                    <p className="text-xs text-muted-foreground">{t("settings.aiAssistantDesc")}</p>
                   </div>
                 </div>
                 <Select
@@ -539,14 +536,14 @@ const Configuracoes: React.FC = () => {
                       .from("user_settings")
                       .upsert({ user_id: user.id, notification_time: v } as any, { onConflict: "user_id" });
                     if (error) {
-                      toast.error("Erro ao atualizar horário.");
+                      toast.error("Error");
                     } else {
-                      toast.success("Horário atualizado com sucesso ✨");
+                      toast.success("✨");
                     }
                   }}
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Selecione o horário" />
+                    <SelectValue placeholder={t("settings.selectTime")} />
                   </SelectTrigger>
                   <SelectContent>
                     {Array.from({ length: 14 }, (_, i) => {
