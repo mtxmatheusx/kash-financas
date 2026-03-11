@@ -192,7 +192,9 @@ export const FloatingChat: React.FC = () => {
   const [pendingTx, setPendingTx] = useState<ParsedTransaction | null>(null);
   const [stagedMsg, setStagedMsg] = useState<{ text: string; images: string[] } | null>(null);
   const [investorDisclaimerAccepted, setInvestorDisclaimerAccepted] = useState<boolean | null>(null);
+  const [generalDisclaimerAccepted, setGeneralDisclaimerAccepted] = useState<boolean | null>(null);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
+  const [showGeneralDisclaimer, setShowGeneralDisclaimer] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
   // Check if investor disclaimer was accepted
