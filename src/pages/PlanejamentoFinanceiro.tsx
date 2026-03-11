@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { PageTransition } from "@/components/PageTransition";
 import { WhatsAppAlertBanner } from "@/components/WhatsAppAlertBanner";
 import { useTransactions } from "@/hooks/useTransactions";
+import { SummaryBar } from "@/components/SummaryBar";
 import { useInvestments } from "@/hooks/useInvestments";
 import { useGoals } from "@/hooks/useGoals";
 import { Compass, TrendingUp, TrendingDown, PiggyBank, Target } from "lucide-react";
@@ -37,26 +38,11 @@ const PlanejamentoFinanceiro: React.FC = () => {
         <WhatsAppAlertBanner />
         <div className="rounded-xl border border-border bg-card p-4 md:p-6 enterprise-shadow">
           <h3 className="text-sm font-semibold text-card-foreground mb-4">Saúde Financeira</h3>
-          <div className="flex gap-3 overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-6">
-            <div className="text-center min-w-[100px] shrink-0 md:shrink md:min-w-0">
-              <div className={`text-xl md:text-4xl font-bold font-mono-fin ${savingsRate >= 20 ? 'text-fin-income' : savingsRate >= 0 ? 'text-fin-pending' : 'text-fin-expense'}`}>
-                {savingsRate.toFixed(0)}%
-              </div>
-              <p className="text-[10px] md:text-xs text-muted-foreground mt-1">Taxa de poupança</p>
-            </div>
-            <div className="text-center min-w-[120px] shrink-0 md:shrink md:min-w-0">
-              <div className="text-xl md:text-4xl font-bold font-mono-fin text-primary">
-                {formatBRL(totals.balance)}
-              </div>
-              <p className="text-[10px] md:text-xs text-muted-foreground mt-1">Saldo</p>
-            </div>
-            <div className="text-center min-w-[120px] shrink-0 md:shrink md:min-w-0">
-              <div className="text-xl md:text-4xl font-bold font-mono-fin text-fin-investment">
-                {formatBRL(investmentTotal)}
-              </div>
-              <p className="text-[10px] md:text-xs text-muted-foreground mt-1">Investido</p>
-            </div>
-          </div>
+          <SummaryBar items={[
+            { label: "Taxa de poupança", value: `${savingsRate.toFixed(0)}%`, color: savingsRate >= 20 ? "income" : savingsRate >= 0 ? "pending" : "expense" },
+            { label: "Saldo", value: formatBRL(totals.balance), color: "primary" },
+            { label: "Investido", value: formatBRL(investmentTotal), color: "investment" },
+          ]} />
         </div>
 
         {/* Recommendations */}

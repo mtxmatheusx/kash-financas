@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { SummaryBar } from "@/components/SummaryBar";
 import { CurrencyInput } from "@/components/CurrencyInput";
 import type { TransactionRow } from "@/lib/types";
 import { useAutoCategory } from "@/hooks/useAutoCategory";
@@ -128,20 +129,11 @@ const Receitas: React.FC = () => {
 
         <WhatsAppAlertBanner />
 
-        <div className="flex gap-2 overflow-x-auto -mx-3 px-3 md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-3">
-          <div className="rounded-xl border-l-4 border-l-fin-income border border-border bg-card p-3 md:p-4 min-w-[120px] shrink-0 md:shrink md:min-w-0">
-            <p className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider">Total</p>
-            <p className="text-sm md:text-xl font-bold text-foreground mt-1 font-mono-fin">{formatBRL(totals.income)}</p>
-          </div>
-          <div className="rounded-xl border-l-4 border-l-fin-income/60 border border-border bg-card p-3 md:p-4 min-w-[120px] shrink-0 md:shrink md:min-w-0">
-            <p className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider">Recebido</p>
-            <p className="text-sm md:text-xl font-bold text-fin-income mt-1 font-mono-fin">{formatBRL(paidTotal)}</p>
-          </div>
-          <div className="rounded-xl border-l-4 border-l-fin-pending border border-border bg-card p-3 md:p-4 min-w-[120px] shrink-0 md:shrink md:min-w-0">
-            <p className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider">Pendente</p>
-            <p className="text-sm md:text-xl font-bold text-fin-pending mt-1 font-mono-fin">{formatBRL(pendingTotal)}</p>
-          </div>
-        </div>
+        <SummaryBar items={[
+          { label: "Total", value: formatBRL(totals.income), color: "income", icon: ArrowUpRight },
+          { label: "Recebido", value: formatBRL(paidTotal), color: "income" },
+          { label: "Pendente", value: formatBRL(pendingTotal), color: "pending" },
+        ]} />
 
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
