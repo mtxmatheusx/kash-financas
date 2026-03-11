@@ -22,6 +22,7 @@ const moreItems = [
   { path: "/dre", label: "DRE", icon: FileText, account: "business" as const },
   { path: "/ebitda", label: "EBITDA", icon: Calculator, account: "business" as const },
   { path: "/importar", label: "Importar", icon: Upload },
+  { path: "/perfil", label: "Meu Perfil", icon: UserCog },
 ];
 
 export const MobileNav: React.FC = () => {
