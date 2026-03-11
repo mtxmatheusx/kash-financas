@@ -109,10 +109,10 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
           if (visibleItems.length === 0) return null;
 
           return (
-            <div key={section.title} className={cn(sIdx > 0 && "mt-4")}>
+            <div key={section.titleKey} className={cn(sIdx > 0 && "mt-4")}>
               {!collapsed && (
                 <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-sidebar-muted/60">
-                  {section.title}
+                  {t(section.titleKey)}
                 </p>
               )}
               {collapsed && sIdx > 0 && (
