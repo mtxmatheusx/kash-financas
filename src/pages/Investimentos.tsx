@@ -4,7 +4,7 @@ import { PageTransition, staggerContainer, staggerItem, slideUp, fadeIn } from "
 import { SummaryBar } from "@/components/SummaryBar";
 import { useInvestments } from "@/hooks/useInvestments";
 import { useAccount } from "@/contexts/AccountContext";
-import { Plus, Trash2, PieChart, Search, TrendingUp, TrendingDown, Pencil, X, Check } from "lucide-react";
+import { Plus, Trash2, PieChart, Search, TrendingUp, TrendingDown, Pencil, X, Check, Globe } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -31,45 +31,90 @@ const TYPE_COLORS = [
   'hsl(var(--muted-foreground))',
 ];
 
+const COUNTRY_OPTIONS = [
+  { code: "BR", name: "Brasil", flag: "🇧🇷", currency: "BRL (R$)" },
+  { code: "US", name: "United States", flag: "🇺🇸", currency: "USD ($)" },
+  { code: "PT", name: "Portugal", flag: "🇵🇹", currency: "EUR (€)" },
+  { code: "ES", name: "España", flag: "🇪🇸", currency: "EUR (€)" },
+  { code: "MX", name: "México", flag: "🇲🇽", currency: "MXN ($)" },
+  { code: "AR", name: "Argentina", flag: "🇦🇷", currency: "ARS ($)" },
+  { code: "CO", name: "Colombia", flag: "🇨🇴", currency: "COP ($)" },
+  { code: "GB", name: "United Kingdom", flag: "🇬🇧", currency: "GBP (£)" },
+  { code: "DE", name: "Deutschland", flag: "🇩🇪", currency: "EUR (€)" },
+  { code: "FR", name: "France", flag: "🇫🇷", currency: "EUR (€)" },
+  { code: "JP", name: "日本", flag: "🇯🇵", currency: "JPY (¥)" },
+  { code: "CL", name: "Chile", flag: "🇨🇱", currency: "CLP ($)" },
+];
+
+const STORAGE_KEY_COUNTRIES = "invest-selected-countries";
+
 const Investimentos: React.FC = () => {
   const { formatMoney: formatBRL, t } = usePreferences();
   const { investments, create, update, remove, total, loading } = useInvestments();
   const { account } = useAccount();
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name: '', type: TYPES[0], amount: '', date: new Date().toISOString().slice(0, 10) });
+  const [form, setForm] = useState({ name: '', type: TYPES[0], amount: '', date: new Date().toISOString().slice(0, 10), country: '' });
   const [amountCents, setAmountCents] = useState(0);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
   const [editCents, setEditCents] = useState(0);
 
-  const filtered = investments.filter(i =>
-    i.name.toLowerCase().includes(search.toLowerCase()) ||
-    i.type.toLowerCase().includes(search.toLowerCase())
-  );
+  // Multi-country filter
+  const [selectedCountries, setSelectedCountries] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY_COUNTRIES);
+      return stored ? JSON.parse(stored) : [];
+    } catch { return []; }
+  });
+  const [showCountryFilter, setShowCountryFilter] = useState(false);
 
-  const totalInvested = useMemo(() => investments.reduce((s, i) => s + i.amount, 0), [investments]);
-  const totalGain = total - totalInvested;
+  const toggleCountry = (code: string) => {
+    setSelectedCountries(prev => {
+      const next = prev.includes(code) ? prev.filter(c => c !== code) : [...prev, code];
+      localStorage.setItem(STORAGE_KEY_COUNTRIES, JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const filtered = useMemo(() => {
+    let list = investments.filter(i =>
+      i.name.toLowerCase().includes(search.toLowerCase()) ||
+      i.type.toLowerCase().includes(search.toLowerCase())
+    );
+    if (selectedCountries.length > 0) {
+      list = list.filter(i => i.country && selectedCountries.includes(i.country));
+    }
+    return list;
+  }, [investments, search, selectedCountries]);
+
+  const totalInvested = useMemo(() => filtered.reduce((s, i) => s + i.amount, 0), [filtered]);
+  const filteredTotal = useMemo(() => filtered.reduce((s, i) => s + i.current_value, 0), [filtered]);
+  const totalGain = filteredTotal - totalInvested;
   const gainPct = totalInvested > 0 ? ((totalGain / totalInvested) * 100) : 0;
 
   const pieData = useMemo(() => {
     const byType: Record<string, number> = {};
-    investments.forEach(i => { byType[i.type] = (byType[i.type] || 0) + i.current_value; });
+    filtered.forEach(i => { byType[i.type] = (byType[i.type] || 0) + i.current_value; });
     return Object.entries(byType).map(([name, value]) => ({ name, value }));
-  }, [investments]);
+  }, [filtered]);
 
   const handleSubmit = () => {
     const amount = amountCents / 100;
     if (!form.name || !amount) return;
-    create({ name: form.name, type: form.type, amount, current_value: amount, date: form.date, account_type: account.type });
-    setForm({ name: '', type: TYPES[0], amount: '', date: new Date().toISOString().slice(0, 10) });
+    create({
+      name: form.name, type: form.type, amount, current_value: amount,
+      date: form.date, account_type: account.type,
+      country: form.country || undefined,
+    });
+    setForm({ name: '', type: TYPES[0], amount: '', date: new Date().toISOString().slice(0, 10), country: '' });
     setAmountCents(0);
     setShowForm(false);
   };
 
   const openCreate = () => {
-    setForm({ name: '', type: TYPES[0], amount: '', date: new Date().toISOString().slice(0, 10) });
+    setForm({ name: '', type: TYPES[0], amount: '', date: new Date().toISOString().slice(0, 10), country: '' });
     setAmountCents(0);
     setShowForm(true);
   };
@@ -92,6 +137,8 @@ const Investimentos: React.FC = () => {
     setEditCents(0);
   };
 
+  const getCountryFlag = (code?: string) => COUNTRY_OPTIONS.find(c => c.code === code)?.flag;
+
   return (
     <PageTransition>
       <div className="space-y-3 md:space-y-5">
@@ -105,14 +152,59 @@ const Investimentos: React.FC = () => {
               <p className="text-xs text-muted-foreground">{t("investment.subtitle")}</p>
             </div>
           </div>
-          <Button onClick={openCreate} size="sm" className="gap-2 w-full sm:w-auto">
-            <Plus className="w-4 h-4" /> {t("investment.new")}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setShowCountryFilter(!showCountryFilter)} className="gap-1.5">
+              <Globe className="w-3.5 h-3.5" />
+              {selectedCountries.length > 0
+                ? `${selectedCountries.map(c => getCountryFlag(c)).join(' ')} (${selectedCountries.length})`
+                : t("investment.allCountries")}
+            </Button>
+            <Button onClick={openCreate} size="sm" className="gap-2">
+              <Plus className="w-4 h-4" /> {t("investment.new")}
+            </Button>
+          </div>
         </motion.div>
+
+        {/* Country filter chips */}
+        {showCountryFilter && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+            className="rounded-xl border border-border bg-card p-4">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-3">{t("investment.filterByCountry")}</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+              {COUNTRY_OPTIONS.map(c => {
+                const isSelected = selectedCountries.includes(c.code);
+                return (
+                  <button key={c.code} onClick={() => toggleCountry(c.code)}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-2 rounded-lg border text-left text-sm transition-all",
+                      isSelected
+                        ? "border-primary bg-primary/5 text-foreground ring-1 ring-primary/30"
+                        : "border-border bg-background text-muted-foreground hover:bg-muted/50"
+                    )}>
+                    <span className="text-lg">{c.flag}</span>
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium truncate">{c.name}</p>
+                      <p className="text-[10px] text-muted-foreground">{c.currency}</p>
+                    </div>
+                    {isSelected && <Check className="w-3.5 h-3.5 text-primary ml-auto shrink-0" />}
+                  </button>
+                );
+              })}
+            </div>
+            {selectedCountries.length > 0 && (
+              <Button variant="ghost" size="sm" className="mt-2 text-xs" onClick={() => {
+                setSelectedCountries([]);
+                localStorage.setItem(STORAGE_KEY_COUNTRIES, '[]');
+              }}>
+                {t("investment.allCountries")}
+              </Button>
+            )}
+          </motion.div>
+        )}
 
         <SummaryBar items={[
           { label: t("investment.totalInvested"), value: formatBRL(totalInvested), color: "investment", icon: PieChart },
-          { label: t("investment.currentValue"), value: formatBRL(total), color: "primary", icon: TrendingUp },
+          { label: t("investment.currentValue"), value: formatBRL(filteredTotal), color: "primary", icon: TrendingUp },
           { label: t("investment.yield"), value: `${gainPct >= 0 ? '+' : ''}${gainPct.toFixed(1)}%`, color: totalGain >= 0 ? "income" : "expense", icon: totalGain >= 0 ? TrendingUp : TrendingDown },
         ]} />
 
@@ -162,6 +254,7 @@ const Investimentos: React.FC = () => {
               const gain = inv.current_value - inv.amount;
               const gPct = inv.amount > 0 ? ((gain / inv.amount) * 100).toFixed(1) : '0.0';
               const isEditing = editingId === inv.id;
+              const countryInfo = COUNTRY_OPTIONS.find(c => c.code === inv.country);
               return (
                 <motion.div key={inv.id} variants={staggerItem}
                   whileHover={{ y: -2, transition: { duration: 0.15 } }}
@@ -171,7 +264,12 @@ const Investimentos: React.FC = () => {
                       <p className="text-sm font-semibold text-card-foreground truncate">{inv.name}</p>
                       <div className="flex items-center gap-1.5 mt-0.5">
                         <div className="w-1.5 h-1.5 rounded-full bg-fin-investment" style={{ boxShadow: '0 0 4px hsl(var(--fin-investment))' }} />
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{INVEST_TYPE_KEYS.find(k => k.value === inv.type) ? t(INVEST_TYPE_KEYS.find(k => k.value === inv.type)!.tKey) : inv.type}</p>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                          {INVEST_TYPE_KEYS.find(k => k.value === inv.type) ? t(INVEST_TYPE_KEYS.find(k => k.value === inv.type)!.tKey) : inv.type}
+                        </p>
+                        {countryInfo && (
+                          <span className="text-[10px] text-muted-foreground ml-1">{countryInfo.flag} {countryInfo.currency}</span>
+                        )}
                       </div>
                     </div>
                     <div className="flex items-center gap-0.5 shrink-0">
@@ -227,6 +325,16 @@ const Investimentos: React.FC = () => {
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("investment.assetName")}</label>
               <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder={t("investment.assetNamePlaceholder")} />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("investment.country")}</label>
+              <select value={form.country} onChange={e => setForm({ ...form, country: e.target.value })}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                <option value="">{t("investment.selectCountries")}</option>
+                {COUNTRY_OPTIONS.map(c => (
+                  <option key={c.code} value={c.code}>{c.flag} {c.name} — {c.currency}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("investment.type")}</label>
