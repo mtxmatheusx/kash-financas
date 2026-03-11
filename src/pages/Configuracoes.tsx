@@ -201,29 +201,29 @@ const Configuracoes: React.FC = () => {
         {/* Header */}
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2 font-display-fin">
-            <Settings className="w-5 h-5 md:w-6 md:h-6 text-primary" /> Configurações
+            <Settings className="w-5 h-5 md:w-6 md:h-6 text-primary" /> {t("settings.title")}
           </h1>
           <p className="text-xs md:text-sm text-muted-foreground">
-            Perfil, dados da empresa, integrações e assinatura
+            {t("settings.subtitle")}
           </p>
         </div>
 
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="w-full grid grid-cols-5 mb-5">
             <TabsTrigger value="profile" className="gap-1.5 text-xs">
-              <User className="w-3.5 h-3.5 hidden sm:block" /> Perfil
+              <User className="w-3.5 h-3.5 hidden sm:block" /> {t("settings.profile")}
             </TabsTrigger>
             <TabsTrigger value="company" className="gap-1.5 text-xs">
-              <Building2 className="w-3.5 h-3.5 hidden sm:block" /> Empresa
+              <Building2 className="w-3.5 h-3.5 hidden sm:block" /> {t("settings.company")}
             </TabsTrigger>
             <TabsTrigger value="integrations" className="gap-1.5 text-xs">
-              <Webhook className="w-3.5 h-3.5 hidden sm:block" /> Integrações
+              <Webhook className="w-3.5 h-3.5 hidden sm:block" /> {t("settings.integrations")}
             </TabsTrigger>
             <TabsTrigger value="notifications" className="gap-1.5 text-xs">
-              <Bell className="w-3.5 h-3.5 hidden sm:block" /> Alertas
+              <Bell className="w-3.5 h-3.5 hidden sm:block" /> {t("settings.alerts")}
             </TabsTrigger>
             <TabsTrigger value="subscription" className="gap-1.5 text-xs">
-              <Crown className="w-3.5 h-3.5 hidden sm:block" /> Plano
+              <Crown className="w-3.5 h-3.5 hidden sm:block" /> {t("settings.plan")}
             </TabsTrigger>
           </TabsList>
 
