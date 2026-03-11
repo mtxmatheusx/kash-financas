@@ -207,141 +207,267 @@ const DRE: React.FC = () => {
       const { jsPDF } = await import("jspdf");
       const pdf = new jsPDF("p", "mm", "a4");
       const w = 210;
-      const margin = 14;
-      const usable = w - margin * 2;
-      let y = margin;
+      const h = 297;
+      const m = 16; // margin
+      const u = w - m * 2; // usable width
+      let y = m;
 
       const monthLabel = format(refDate, "MMMM yyyy", { locale: ptBR });
       const capitalMonth = monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1);
 
-      pdf.setFillColor(15, 23, 42);
-      pdf.rect(0, 0, w, 38, "F");
-      pdf.setFillColor(59, 130, 246);
-      pdf.rect(0, 38, w, 1.5, "F");
+      // ── Palette ──
+      const black = [23, 23, 23] as const;
+      const zinc500 = [113, 113, 122] as const;
+      const zinc300 = [212, 212, 216] as const;
+      const zinc200 = [228, 228, 231] as const;
+      const zinc100 = [244, 244, 245] as const;
+      const zinc50 = [250, 250, 250] as const;
+      const green600 = [22, 163, 74] as const;
+      const red600 = [220, 38, 38] as const;
+      const white = [255, 255, 255] as const;
 
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(18);
+      const addPage = () => { if (y > 265) { pdf.addPage(); y = m; } };
+
+      // ════════════════════════════════════════════════
+      // 1. HEADER EXECUTIVO
+      // ════════════════════════════════════════════════
+      // Top accent line
+      pdf.setFillColor(22, 163, 74);
+      pdf.rect(0, 0, w, 1.2, "F");
+
+      // Logo area
       pdf.setFont("helvetica", "bold");
-      pdf.text("Demonstração do Resultado do Exercício", margin, 18);
-      pdf.setFontSize(11);
-      pdf.setFont("helvetica", "normal");
-      pdf.text(capitalMonth, margin, 27);
+      pdf.setFontSize(20);
+      pdf.setTextColor(...black);
+      pdf.text("Faciliten", m, y + 8);
+
+      // Right side: title + date
+      pdf.setFontSize(13);
+      pdf.setFont("helvetica", "bold");
+      pdf.setTextColor(...black);
+      pdf.text(`DRE — ${capitalMonth}`, w - m, y + 4, { align: "right" });
+
       pdf.setFontSize(8);
-      pdf.setTextColor(148, 163, 184);
-      pdf.text(`Gerado em ${format(new Date(), "dd/MM/yyyy 'às' HH:mm")}`, margin, 34);
+      pdf.setFont("helvetica", "normal");
+      pdf.setTextColor(...zinc500);
+      pdf.text(`Emitido em ${format(new Date(), "dd/MM/yyyy 'às' HH:mm")}`, w - m, y + 10, { align: "right" });
 
-      y = 48;
+      // Divider
+      y += 16;
+      pdf.setDrawColor(...zinc200);
+      pdf.setLineWidth(0.4);
+      pdf.line(m, y, w - m, y);
+      y += 6;
 
-      const summaryCards = [
-        { label: "Receita Bruta", value: current.receitaBruta, color: [34, 197, 94] as [number, number, number] },
-        { label: "Lucro Bruto", value: current.lucroBruto, color: current.lucroBruto >= 0 ? [34, 197, 94] as [number, number, number] : [239, 68, 68] as [number, number, number] },
-        { label: "Total Despesas", value: current.totalExpenses, color: [239, 68, 68] as [number, number, number] },
-        { label: "Lucro Líquido", value: current.lucroLiquido, color: current.lucroLiquido >= 0 ? [34, 197, 94] as [number, number, number] : [239, 68, 68] as [number, number, number] },
-      ];
+      // ════════════════════════════════════════════════
+      // 2. RESUMO EXECUTIVO DA IA (Aha Moment)
+      // ════════════════════════════════════════════════
+      const aiBoxH = 24;
+      pdf.setFillColor(...zinc50);
+      pdf.roundedRect(m, y, u, aiBoxH, 2, 2, "F");
+      pdf.setDrawColor(...zinc200);
+      pdf.roundedRect(m, y, u, aiBoxH, 2, 2, "S");
 
-      const cardW = (usable - 9) / 4;
-      summaryCards.forEach((card, i) => {
-        const x = margin + i * (cardW + 3);
-        pdf.setFillColor(248, 250, 252);
-        pdf.roundedRect(x, y, cardW, 20, 2, 2, "F");
-        pdf.setDrawColor(226, 232, 240);
-        pdf.roundedRect(x, y, cardW, 20, 2, 2, "S");
-        pdf.setFontSize(7);
-        pdf.setTextColor(100, 116, 139);
-        pdf.setFont("helvetica", "normal");
-        pdf.text(card.label.toUpperCase(), x + 4, y + 7);
-        pdf.setFontSize(11);
-        pdf.setTextColor(...card.color);
-        pdf.setFont("helvetica", "bold");
-        pdf.text(formatBRL(Math.abs(card.value)), x + 4, y + 15);
-      });
+      // Sparkle icon (simple star)
+      pdf.setFillColor(...green600);
+      pdf.circle(m + 7, y + 7.5, 1.5, "F");
 
-      y += 28;
-
-      pdf.setFillColor(241, 245, 249);
-      pdf.rect(margin, y, usable, 8, "F");
-      pdf.setFontSize(7);
-      pdf.setTextColor(71, 85, 105);
-      pdf.setFont("helvetica", "bold");
-      pdf.text("DESCRIÇÃO", margin + 4, y + 5.5);
-      pdf.text("MÊS ATUAL", margin + usable - 58, y + 5.5);
-      pdf.text("MÊS ANTERIOR", margin + usable - 28, y + 5.5);
-      y += 10;
-
-      const addNewPageIfNeeded = () => {
-        if (y > 270) { pdf.addPage(); y = margin; }
-      };
-
-      lines.forEach((line) => {
-        addNewPageIfNeeded();
-        if (line.separator) {
-          pdf.setDrawColor(226, 232, 240);
-          pdf.line(margin, y, margin + usable, y);
-          y += 2;
-          return;
-        }
-        const rowH = 7;
-        const indent = (line.indent || 0) * 8;
-        if (line.highlight) {
-          pdf.setFillColor(248, 250, 252);
-          pdf.rect(margin, y - 1, usable, rowH + 1, "F");
-        }
-        pdf.setFontSize(line.bold ? 8.5 : 8);
-        pdf.setFont("helvetica", line.bold ? "bold" : "normal");
-        pdf.setTextColor(line.bold ? 15 : 100, line.bold ? 23 : 116, line.bold ? 42 : 139);
-        pdf.text(line.label, margin + 4 + indent, y + 4.5);
-        if (line.value !== 0) {
-          pdf.setFont("helvetica", line.bold ? "bold" : "normal");
-          if (line.value > 0) pdf.setTextColor(34, 197, 94);
-          else pdf.setTextColor(239, 68, 68);
-          pdf.text(formatBRL(Math.abs(line.value)), margin + usable - 38, y + 4.5, { align: "right" });
-        } else {
-          pdf.setTextColor(148, 163, 184);
-          pdf.text("—", margin + usable - 48, y + 4.5);
-        }
-        const pv = line.prevValue ?? 0;
-        pdf.setFont("helvetica", "normal");
-        pdf.setTextColor(148, 163, 184);
-        if (pv !== 0) {
-          pdf.text(formatBRL(Math.abs(pv)), margin + usable - 4, y + 4.5, { align: "right" });
-        } else {
-          pdf.text("—", margin + usable - 14, y + 4.5);
-        }
-        pdf.setDrawColor(241, 245, 249);
-        pdf.line(margin, y + rowH, margin + usable, y + rowH);
-        y += rowH + 1;
-      });
-
-      addNewPageIfNeeded();
-      y += 4;
-      pdf.setFillColor(248, 250, 252);
-      pdf.roundedRect(margin, y, usable, 22, 2, 2, "F");
-      pdf.setDrawColor(226, 232, 240);
-      pdf.roundedRect(margin, y, usable, 22, 2, 2, "S");
       pdf.setFontSize(9);
       pdf.setFont("helvetica", "bold");
-      pdf.setTextColor(15, 23, 42);
-      pdf.text("Análise Automática", margin + 4, y + 7);
+      pdf.setTextColor(...black);
+      pdf.text("Resumo Executivo da IA", m + 12, y + 8.5);
+
       pdf.setFontSize(8);
       pdf.setFont("helvetica", "normal");
-      if (current.lucroLiquido >= 0) {
-        pdf.setTextColor(34, 197, 94);
-        pdf.text(`✓ Resultado positivo — lucro líquido de ${formatBRL(current.lucroLiquido)} (${current.margemLiquida.toFixed(1)}% de margem).`, margin + 4, y + 15);
-      } else {
-        pdf.setTextColor(239, 68, 68);
-        pdf.text(`✗ Resultado negativo — prejuízo de ${formatBRL(Math.abs(current.lucroLiquido))}.`, margin + 4, y + 15);
-      }
+      pdf.setTextColor(...zinc500);
 
+      let aiText = "";
+      if (current.receitaBruta === 0 && current.totalExpenses === 0) {
+        aiText = "Nenhuma movimentação registrada neste período.";
+      } else if (current.lucroLiquido >= 0) {
+        aiText = `Resultado positivo no período com lucro líquido de ${formatBRL(current.lucroLiquido)} e margem de ${current.margemLiquida.toFixed(1)}%.`;
+        if (current.margemBruta > 0 && current.margemBruta < 30) aiText += " Atenção: margem bruta abaixo de 30%.";
+      } else {
+        aiText = `Resultado negativo no período com prejuízo de ${formatBRL(Math.abs(current.lucroLiquido))}. Recomenda-se revisão de custos e despesas operacionais.`;
+      }
+      const aiLines = pdf.splitTextToSize(aiText, u - 16);
+      pdf.text(aiLines, m + 6, y + 16);
+      y += aiBoxH + 6;
+
+      // ════════════════════════════════════════════════
+      // 3. KPIs DE IMPACTO (3 Cards)
+      // ════════════════════════════════════════════════
+      type C3 = [number, number, number];
+      const kpis: { label: string; value: number; color: C3 }[] = [
+        { label: "Receita Bruta", value: current.receitaBruta, color: [...green600] },
+        { label: "Total Despesas", value: current.totalExpenses, color: [...red600] },
+        { label: "Lucro Líquido", value: current.lucroLiquido, color: current.lucroLiquido >= 0 ? [...green600] : [...red600] },
+      ];
+
+      const kpiW = (u - 8) / 3;
+      const kpiH = 26;
+      kpis.forEach((kpi, i) => {
+        const x = m + i * (kpiW + 4);
+        // Card background
+        pdf.setFillColor(...white);
+        pdf.roundedRect(x, y, kpiW, kpiH, 2, 2, "F");
+        pdf.setDrawColor(...zinc200);
+        pdf.roundedRect(x, y, kpiW, kpiH, 2, 2, "S");
+
+        // Top accent bar
+        pdf.setFillColor(...kpi.color);
+        pdf.rect(x + 0.5, y + 0.5, kpiW - 1, 1.2, "F");
+
+        // Label
+        pdf.setFontSize(7.5);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(...zinc500);
+        pdf.text(kpi.label.toUpperCase(), x + kpiW / 2, y + 9, { align: "center" });
+
+        // Value
+        pdf.setFontSize(14);
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(...kpi.color);
+        pdf.text(formatBRL(Math.abs(kpi.value)), x + kpiW / 2, y + 19, { align: "center" });
+      });
+      y += kpiH + 8;
+
+      // ════════════════════════════════════════════════
+      // 4. TABELA FINANCEIRA (DRE)
+      // ════════════════════════════════════════════════
+      // Table border
+      const tableStartY = y;
+      pdf.setDrawColor(...zinc200);
+      pdf.setLineWidth(0.3);
+
+      // Header row
+      pdf.setFillColor(...zinc100);
+      pdf.rect(m, y, u, 8, "F");
+      pdf.setFontSize(7);
+      pdf.setFont("helvetica", "bold");
+      pdf.setTextColor(...zinc500);
+      pdf.text("DESCRIÇÃO", m + 4, y + 5.5);
+      pdf.text("MÊS ATUAL", m + u - 56, y + 5.5);
+      pdf.text("MÊS ANTERIOR", m + u - 24, y + 5.5);
+      y += 8;
+
+      let rowIdx = 0;
+      lines.forEach((line) => {
+        addPage();
+
+        if (line.separator) {
+          pdf.setDrawColor(...zinc200);
+          pdf.setLineWidth(0.2);
+          pdf.line(m, y, m + u, y);
+          y += 1.5;
+          return;
+        }
+
+        const rowH = 6.5;
+
+        // Zebra + highlight logic
+        if (line.highlight) {
+          pdf.setFillColor(...zinc100);
+          pdf.rect(m, y, u, rowH, "F");
+        } else if (line.bold && !line.indent) {
+          pdf.setFillColor(...zinc50);
+          pdf.rect(m, y, u, rowH, "F");
+        } else if (rowIdx % 2 === 1) {
+          pdf.setFillColor(253, 253, 253);
+          pdf.rect(m, y, u, rowH, "F");
+        }
+
+        const indent = (line.indent || 0) * 6;
+
+        // Label
+        const labelColor: C3 = line.bold ? [...black] : [...zinc500];
+        pdf.setFontSize(line.bold ? 8 : 7.5);
+        pdf.setFont("helvetica", line.bold ? "bold" : "normal");
+        pdf.setTextColor(...labelColor);
+        pdf.text(line.label, m + 4 + indent, y + 4.5);
+
+        // Current value
+        if (line.value !== 0) {
+          const valColor: C3 = line.value > 0 ? [...green600] : [...red600];
+          pdf.setFont("helvetica", line.bold ? "bold" : "normal");
+          pdf.setTextColor(...valColor);
+          pdf.text(formatBRL(Math.abs(line.value)), m + u - 36, y + 4.5, { align: "right" });
+        } else {
+          pdf.setTextColor(...zinc300);
+          pdf.text("—", m + u - 46, y + 4.5);
+        }
+
+        // Previous value
+        const pv = line.prevValue ?? 0;
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(...zinc300);
+        if (pv !== 0) {
+          pdf.text(formatBRL(Math.abs(pv)), m + u - 4, y + 4.5, { align: "right" });
+        } else {
+          pdf.text("—", m + u - 12, y + 4.5);
+        }
+
+        // Row bottom line
+        pdf.setDrawColor(245, 245, 245);
+        pdf.setLineWidth(0.15);
+        pdf.line(m, y + rowH, m + u, y + rowH);
+
+        y += rowH + 0.5;
+        rowIdx++;
+      });
+
+      // Table outer border
+      pdf.setDrawColor(...zinc200);
+      pdf.setLineWidth(0.3);
+      pdf.roundedRect(m, tableStartY, u, y - tableStartY, 1.5, 1.5, "S");
+
+      // ════════════════════════════════════════════════
+      // 5. MARGENS RESUMO
+      // ════════════════════════════════════════════════
+      y += 5;
+      addPage();
+      const margins = [
+        { label: "Margem Bruta", value: `${current.margemBruta.toFixed(1)}%` },
+        { label: "Margem Operacional", value: `${current.margemOperacional.toFixed(1)}%` },
+        { label: "Margem Líquida", value: `${current.margemLiquida.toFixed(1)}%` },
+      ];
+      const mCardW = (u - 8) / 3;
+      margins.forEach((mg, i) => {
+        const x = m + i * (mCardW + 4);
+        pdf.setFillColor(...zinc50);
+        pdf.roundedRect(x, y, mCardW, 14, 1.5, 1.5, "F");
+        pdf.setDrawColor(...zinc200);
+        pdf.roundedRect(x, y, mCardW, 14, 1.5, 1.5, "S");
+        pdf.setFontSize(7);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(...zinc500);
+        pdf.text(mg.label, x + mCardW / 2, y + 5.5, { align: "center" });
+        pdf.setFontSize(11);
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(...black);
+        pdf.text(mg.value, x + mCardW / 2, y + 11.5, { align: "center" });
+      });
+
+      // ════════════════════════════════════════════════
+      // FOOTER (all pages)
+      // ════════════════════════════════════════════════
       const pageCount = pdf.getNumberOfPages();
       for (let p = 1; p <= pageCount; p++) {
         pdf.setPage(p);
+        // Bottom divider
+        pdf.setDrawColor(...zinc200);
+        pdf.setLineWidth(0.3);
+        pdf.line(m, h - 12, w - m, h - 12);
+
         pdf.setFontSize(7);
-        pdf.setTextColor(148, 163, 184);
         pdf.setFont("helvetica", "normal");
-        pdf.text("Faciliten · Gestão Financeira Inteligente", margin, 290);
-        pdf.text(`Página ${p} de ${pageCount}`, w - margin, 290, { align: "right" });
-        pdf.setFillColor(59, 130, 246);
-        pdf.rect(0, 295.5, w, 1.5, "F");
+        pdf.setTextColor(...zinc500);
+        pdf.text("Faciliten · Gestão Financeira Inteligente", m, h - 7);
+        pdf.text(`Página ${p} de ${pageCount}`, w - m, h - 7, { align: "right" });
+
+        // Bottom accent
+        pdf.setFillColor(22, 163, 74);
+        pdf.rect(0, h - 1.2, w, 1.2, "F");
       }
 
       pdf.save(`DRE_${format(refDate, "yyyy-MM")}.pdf`);
