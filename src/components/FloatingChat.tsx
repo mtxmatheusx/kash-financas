@@ -167,15 +167,23 @@ async function streamChat({
 
 async function parseTransaction(message: string): Promise<ParsedTransaction | null> {
   try {
+    console.log("[parseTransaction] Calling with:", message.slice(0, 80));
     const resp = await fetch(PARSE_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
       body: JSON.stringify({ message }),
     });
-    if (!resp.ok) return null;
+    if (!resp.ok) {
+      console.warn("[parseTransaction] Error response:", resp.status);
+      return null;
+    }
     const data = await resp.json();
+    console.log("[parseTransaction] Result:", data);
     return data.transaction || null;
-  } catch { return null; }
+  } catch (e) {
+    console.error("[parseTransaction] Exception:", e);
+    return null;
+  }
 }
 
 export const FloatingChat: React.FC = () => {
@@ -406,7 +414,18 @@ export const FloatingChat: React.FC = () => {
     let assistantSoFar = "";
 
     const apiMessages = toApiMessages(updatedMessages);
-    const parsePromise = text ? parseTransaction(text) : Promise.resolve(null);
+    
+    // Run parse-transaction in parallel — with retry
+    const parseWithRetry = async (): Promise<ParsedTransaction | null> => {
+      if (!text) return null;
+      const result = await parseTransaction(text);
+      if (result && result.amount > 0) return result;
+      // Retry once after a short delay
+      await new Promise(r => setTimeout(r, 800));
+      const retry = await parseTransaction(text);
+      return retry && retry.amount > 0 ? retry : null;
+    };
+    const parsePromise = parseWithRetry();
 
     try {
       await streamChat({
@@ -434,7 +453,13 @@ export const FloatingChat: React.FC = () => {
     }
 
     const parsed = await parsePromise;
-    if (parsed && parsed.amount > 0) setPendingTx(parsed);
+    if (parsed) {
+      setPendingTx(parsed);
+    } else if (text && assistantSoFar.includes("✅")) {
+      // AI said it would register but parse failed — try parsing the AI response
+      const fallback = await parseTransaction(assistantSoFar);
+      if (fallback && fallback.amount > 0) setPendingTx(fallback);
+    }
   };
 
   const discardStagedMessage = () => setStagedMsg(null);
