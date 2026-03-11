@@ -785,6 +785,8 @@ const pt = {
 };
 
 const en: typeof pt = {
+  "seo.landing.title": "Faciliten — AI-Powered Smart Finance",
+  "seo.landing.description": "Intelligent financial control with AI. Record income and expenses by voice, WhatsApp or chat. Free to start.",
   "nav.home": "Home",
   "nav.income": "Income",
   "nav.expenses": "Expenses",
