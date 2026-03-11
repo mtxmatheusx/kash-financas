@@ -82,12 +82,12 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
   return (
     <div className="rounded-xl border border-border bg-card shadow-lg overflow-hidden">
       {/* Header */}
-      <div className="grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center bg-muted/50 px-4 md:px-6 py-3 border-b border-border/50">
+      <div className="grid grid-cols-[1fr_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center bg-muted/50 px-3 md:px-6 py-3 border-b border-border/50">
         <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider">Descrição</span>
         <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:block">Categoria</span>
-        <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider text-center">Status</span>
+        <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:block text-center">Status</span>
         <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider text-right">Valor</span>
-        <span className="w-16" />
+        <span className="w-8 md:w-16 hidden md:block" />
       </div>
 
       {groups.length === 0 && singles.length === 0 && (
@@ -102,9 +102,9 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
           {/* Group header - clickable */}
           <button
             onClick={() => toggle(g.key)}
-            className="w-full grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center px-4 md:px-6 py-3.5 md:py-4 hover:bg-muted/30 transition-colors text-left"
+            className="w-full grid grid-cols-[1fr_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center px-3 md:px-6 py-3 md:py-4 hover:bg-muted/30 transition-colors text-left"
           >
-            <div className="min-w-0 pr-3 flex items-center gap-2">
+            <div className="min-w-0 pr-2 flex items-center gap-2">
               {expanded[g.key] ? (
                 <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
               ) : (
@@ -112,25 +112,24 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
               )}
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-foreground truncate">{g.description}</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">
-                  {g.entryType === "recurring"
+                <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1 flex-wrap">
+                  <span>{g.entryType === "recurring"
                     ? `Recorrente ${g.frequency === "yearly" ? "(Anual)" : "(Mensal)"}`
-                    : `Parcelado`}
-                  {" · "}{g.items.length} parcelas
-                  <span className="md:hidden"> · {g.category}</span>
+                    : `Parcelado`}</span>
+                  <span>· {g.items.length} parcelas</span>
+                  <span>· {g.category}</span>
+                  <span className="inline-flex items-center gap-0.5">
+                    <span className="text-fin-income">{g.paidCount}✓</span>
+                    {g.pendingCount > 0 && <span className="text-fin-pending">{g.pendingCount}⏳</span>}
+                  </span>
                 </p>
               </div>
             </div>
 
             <span className="text-xs text-muted-foreground hidden md:block">{g.category}</span>
 
-            <div className="flex justify-center px-2 gap-1.5">
-              <span className={cn(
-                "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold",
-                isIncome
-                  ? "bg-fin-income/10 text-fin-income"
-                  : "bg-fin-income/10 text-fin-income"
-              )}>
+            <div className="hidden md:flex justify-center px-2 gap-1.5">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-fin-income/10 text-fin-income">
                 {g.paidCount}✓
               </span>
               {g.pendingCount > 0 && (
@@ -141,13 +140,13 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
             </div>
 
             <span className={cn(
-              "font-mono-fin text-sm font-semibold text-right pl-3 whitespace-nowrap",
+              "font-mono-fin text-sm font-semibold text-right whitespace-nowrap",
               isIncome ? "text-fin-income" : "text-fin-expense"
             )}>
               {isIncome ? "+" : "−"} {formatBRL(g.totalAmount)}
             </span>
 
-            <span className="w-16" />
+            <span className="w-16 hidden md:block" />
           </button>
 
           {/* Expanded items */}
@@ -156,22 +155,29 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
               {g.items.map((t, idx) => (
                 <div
                   key={t.id}
-                  className="grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center px-4 md:px-6 pl-10 md:pl-14 py-2.5 border-b border-border/20 last:border-b-0 hover:bg-muted/40 transition-colors group"
+                  className="grid grid-cols-[1fr_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center px-3 md:px-6 pl-9 md:pl-14 py-2.5 border-b border-border/20 last:border-b-0 hover:bg-muted/40 transition-colors group"
                 >
-                  <div className="min-w-0 pr-3">
+                  <div className="min-w-0 pr-2">
                     <p className="text-xs font-medium text-foreground/80">
                       {g.entryType === "installment"
                         ? `Parcela ${idx + 1}/${g.items.length}`
                         : new Date(t.date).toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}
                     </p>
-                    <p className="text-[10px] text-muted-foreground">
-                      {new Date(t.date).toLocaleDateString("pt-BR")}
+                    <p className="text-[10px] text-muted-foreground flex items-center gap-1 flex-wrap">
+                      <span>{new Date(t.date).toLocaleDateString("pt-BR")}</span>
+                      <span className="md:hidden">·
+                        {t.status === "paid" ? (
+                          <span className="text-fin-income"> {statusLabel.paid}</span>
+                        ) : (
+                          <span className="text-fin-pending"> {statusLabel.pending}</span>
+                        )}
+                      </span>
                     </p>
                   </div>
 
                   <span className="text-xs text-muted-foreground hidden md:block" />
 
-                  <div className="flex justify-center px-2">
+                  <div className="hidden md:flex justify-center px-2">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -180,9 +186,7 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
                       className={cn(
                         "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wide cursor-pointer transition-all hover:scale-105",
                         t.status === "paid"
-                          ? isIncome
-                            ? "bg-fin-income/10 text-fin-income border border-fin-income/20 hover:bg-fin-income/20"
-                            : "bg-fin-income/10 text-fin-income border border-fin-income/20 hover:bg-fin-income/20"
+                          ? "bg-fin-income/10 text-fin-income border border-fin-income/20 hover:bg-fin-income/20"
                           : "bg-fin-pending/10 text-fin-pending border border-fin-pending/20 hover:bg-fin-pending/20"
                       )}
                     >
@@ -195,13 +199,13 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
                   </div>
 
                   <span className={cn(
-                    "font-mono-fin text-xs font-semibold text-right pl-3 whitespace-nowrap",
+                    "font-mono-fin text-xs font-semibold text-right whitespace-nowrap",
                     isIncome ? "text-fin-income" : "text-fin-expense"
                   )}>
                     {isIncome ? "+" : "−"} {formatBRL(t.amount)}
                   </span>
 
-                  <div className="flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="hidden md:flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button onClick={() => onEdit(t)} className="p-1 rounded-md text-muted-foreground hover:text-primary hover:bg-muted/50 transition-colors">
                       <Pencil className="w-3 h-3" />
                     </button>
@@ -218,26 +222,31 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
 
       {/* Single transactions */}
       {singles.map(t => (
-        <div key={t.id} className="grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center px-4 md:px-6 py-3.5 md:py-4 border-b border-border/50 last:border-b-0 hover:bg-muted/30 transition-colors duration-150 group">
-          <div className="min-w-0 pr-3">
+        <div key={t.id} className="grid grid-cols-[1fr_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center px-3 md:px-6 py-3 md:py-4 border-b border-border/50 last:border-b-0 hover:bg-muted/30 transition-colors duration-150 group">
+          <div className="min-w-0 pr-2">
             <p className="text-sm font-medium text-foreground truncate">{t.description}</p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
-              {new Date(t.date).toLocaleDateString("pt-BR")}
-              <span className="md:hidden"> · {t.category}</span>
+            <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1 flex-wrap">
+              <span>{new Date(t.date).toLocaleDateString("pt-BR")}</span>
+              <span>· {t.category}</span>
+              <span className="md:hidden">·
+                {t.status === "paid" ? (
+                  <span className="text-fin-income"> {statusLabel.paid}</span>
+                ) : (
+                  <span className="text-fin-pending"> {statusLabel.pending}</span>
+                )}
+              </span>
             </p>
           </div>
 
           <span className="text-xs text-muted-foreground hidden md:block">{t.category}</span>
 
-          <div className="flex justify-center px-2">
+          <div className="hidden md:flex justify-center px-2">
             <button
               onClick={() => onToggleStatus(t.id, t.status === "paid" ? "pending" : "paid")}
               className={cn(
                 "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide cursor-pointer transition-all hover:scale-105",
                 t.status === "paid"
-                  ? isIncome
-                    ? "bg-fin-income/10 text-fin-income border border-fin-income/20"
-                    : "bg-fin-income/10 text-fin-income border border-fin-income/20"
+                  ? "bg-fin-income/10 text-fin-income border border-fin-income/20"
                   : "bg-fin-pending/10 text-fin-pending border border-fin-pending/20"
               )}
             >
@@ -250,13 +259,13 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
           </div>
 
           <span className={cn(
-            "font-mono-fin text-sm font-semibold text-right pl-3 whitespace-nowrap",
+            "font-mono-fin text-sm font-semibold text-right whitespace-nowrap",
             isIncome ? "text-fin-income" : "text-fin-expense"
           )}>
             {isIncome ? "+" : "−"} {formatBRL(t.amount)}
           </span>
 
-          <div className="flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="hidden md:flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <button onClick={() => onEdit(t)} className="p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-muted/50 transition-colors">
               <Pencil className="w-3.5 h-3.5" />
             </button>

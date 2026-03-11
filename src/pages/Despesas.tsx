@@ -163,18 +163,18 @@ const Despesas: React.FC = () => {
 
         <WhatsAppAlertBanner />
 
-        <div className="grid grid-cols-3 gap-3">
-          <div className="rounded-xl border-l-4 border-l-fin-expense border border-border bg-card p-3 md:p-4">
+        <div className="flex gap-2 overflow-x-auto -mx-3 px-3 md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-3">
+          <div className="rounded-xl border-l-4 border-l-fin-expense border border-border bg-card p-3 md:p-4 min-w-[120px] shrink-0 md:shrink md:min-w-0">
             <p className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider">Total</p>
-            <p className="text-base md:text-xl font-bold text-foreground mt-1">{formatBRL(totals.expense)}</p>
+            <p className="text-sm md:text-xl font-bold text-foreground mt-1 font-mono-fin">{formatBRL(totals.expense)}</p>
           </div>
-          <div className="rounded-xl border-l-4 border-l-fin-expense/60 border border-border bg-card p-3 md:p-4">
+          <div className="rounded-xl border-l-4 border-l-fin-expense/60 border border-border bg-card p-3 md:p-4 min-w-[120px] shrink-0 md:shrink md:min-w-0">
             <p className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider">Pago</p>
-            <p className="text-base md:text-xl font-bold text-fin-income mt-1">{formatBRL(paidTotal)}</p>
+            <p className="text-sm md:text-xl font-bold text-fin-income mt-1 font-mono-fin">{formatBRL(paidTotal)}</p>
           </div>
-          <div className="rounded-xl border-l-4 border-l-fin-pending border border-border bg-card p-3 md:p-4">
+          <div className="rounded-xl border-l-4 border-l-fin-pending border border-border bg-card p-3 md:p-4 min-w-[120px] shrink-0 md:shrink md:min-w-0">
             <p className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider">Pendente</p>
-            <p className="text-base md:text-xl font-bold text-fin-pending mt-1">{formatBRL(pendingTotal)}</p>
+            <p className="text-sm md:text-xl font-bold text-fin-pending mt-1 font-mono-fin">{formatBRL(pendingTotal)}</p>
           </div>
         </div>
 
