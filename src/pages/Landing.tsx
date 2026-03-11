@@ -175,6 +175,30 @@ const Landing: React.FC = () => {
   const { language, setLanguage, t } = usePreferences();
   useReferralCapture();
 
+  // Dynamic SEO per language
+  const jsonLd = useMemo(() => ({
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Faciliten",
+    applicationCategory: "FinanceApplication",
+    operatingSystem: "Web",
+    url: "https://kash-financas.lovable.app",
+    description: t("seo.landing.description"),
+    offers: [
+      { "@type": "Offer", price: "0", priceCurrency: "BRL", description: "Free" },
+      { "@type": "Offer", price: "29.90", priceCurrency: "BRL", description: "Premium" },
+    ],
+    aggregateRating: { "@type": "AggregateRating", ratingValue: "4.8", ratingCount: "150" },
+  }), [t]);
+
+  useSEO({
+    title: t("seo.landing.title"),
+    description: t("seo.landing.description"),
+    canonical: "https://kash-financas.lovable.app/",
+    ogImage: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d5283518-bfd0-443c-b909-70781903c305/id-preview-cd6e8791--9ea12495-5229-4c46-84bf-dc9a54baa27d.lovable.app-1773175074000.png",
+    jsonLd,
+  });
+
   const steps = [
     { num: "01", icon: WhatsAppIcon, isCustomIcon: true, title: t("landing.steps.1.title"), desc: t("landing.steps.1.desc"), accent: "hsl(160 100% 50%)" },
     { num: "02", icon: Cpu, isCustomIcon: false, title: t("landing.steps.2.title"), desc: t("landing.steps.2.desc"), accent: "hsl(217 91% 60%)" },
