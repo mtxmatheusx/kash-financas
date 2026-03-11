@@ -232,7 +232,8 @@ const Investimentos: React.FC = () => {
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("investment.type")}</label>
               <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                {INVEST_TYPE_KEYS.map(c => <option key={c.value} value={c.value}>{t(c.tKey)}</option>)}
+              </select>
               </select>
             </div>
             <div>
