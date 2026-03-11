@@ -10,61 +10,59 @@ import { Progress } from "@/components/ui/progress";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { cn } from "@/lib/utils";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import type { TranslationKey } from "@/i18n/translations";
+
+const MONTH_KEYS: TranslationKey[] = [
+  "month.jan","month.feb","month.mar","month.apr","month.may","month.jun",
+  "month.jul","month.aug","month.sep","month.oct","month.nov","month.dec",
+];
 
 const PlanejamentoFinanceiro: React.FC = () => {
-  const { formatMoney: formatBRL } = usePreferences();
+  const { formatMoney: formatBRL, t } = usePreferences();
   const { totals, transactions } = useTransactions();
   const { total: investmentTotal, investments } = useInvestments();
   const { goals } = useGoals();
 
+  const months = MONTH_KEYS.map(k => t(k));
   const savingsRate = totals.income > 0 ? ((totals.income - totals.expense) / totals.income * 100) : 0;
   const completedGoals = goals.filter(g => g.current_amount >= g.target_amount).length;
 
   const topExpenses = useMemo(() => {
     const cats: Record<string, number> = {};
-    transactions.filter(t => t.type === 'expense').forEach(t => {
-      cats[t.category] = (cats[t.category] || 0) + t.amount;
-    });
+    transactions.filter(t => t.type === 'expense').forEach(t => { cats[t.category] = (cats[t.category] || 0) + t.amount; });
     return Object.entries(cats).sort((a, b) => b[1] - a[1]).slice(0, 5);
   }, [transactions]);
 
   const monthlyFlow = useMemo(() => {
-    const months: Record<string, { income: number; expense: number }> = {};
-    const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    const mData: Record<string, { income: number; expense: number }> = {};
     const year = new Date().getFullYear();
-    monthNames.forEach((_, i) => {
-      const key = `${year}-${String(i + 1).padStart(2, '0')}`;
-      months[key] = { income: 0, expense: 0 };
-    });
+    months.forEach((_, i) => { mData[`${year}-${String(i + 1).padStart(2, '0')}`] = { income: 0, expense: 0 }; });
     transactions.forEach(t => {
       const m = t.date.slice(0, 7);
-      if (months[m]) {
-        if (t.type === 'income') months[m].income += t.amount;
-        else months[m].expense += t.amount;
-      }
+      if (mData[m]) { if (t.type === 'income') mData[m].income += t.amount; else mData[m].expense += t.amount; }
     });
-    return Object.entries(months).map(([key, val]) => ({
-      month: monthNames[parseInt(key.split('-')[1]) - 1],
+    return Object.entries(mData).map(([key, val]) => ({
+      month: months[parseInt(key.split('-')[1]) - 1],
       savings: val.income - val.expense,
     }));
-  }, [transactions]);
+  }, [transactions, months]);
 
   const recommendations = useMemo(() => {
     const recs: { icon: React.ElementType; title: string; desc: string; color: string; bgColor: string; borderColor: string }[] = [];
     if (savingsRate < 20) {
-      recs.push({ icon: AlertTriangle, title: 'Aumente sua taxa de poupança', desc: `Recomendamos poupar pelo menos 20% da renda. Atualmente: ${savingsRate.toFixed(0)}%.`, color: 'text-fin-pending', bgColor: 'bg-fin-pending/10', borderColor: 'border-fin-pending/20' });
+      recs.push({ icon: AlertTriangle, title: t("planning.increaseSavings"), desc: t("planning.increaseSavingsDesc").replace("{pct}", savingsRate.toFixed(0)), color: 'text-fin-pending', bgColor: 'bg-fin-pending/10', borderColor: 'border-fin-pending/20' });
     }
     if (investmentTotal === 0) {
-      recs.push({ icon: PiggyBank, title: 'Comece a investir', desc: 'Ainda não há investimentos registrados. Comece com renda fixa para construir sua reserva.', color: 'text-fin-investment', bgColor: 'bg-fin-investment/10', borderColor: 'border-fin-investment/20' });
+      recs.push({ icon: PiggyBank, title: t("planning.startInvesting"), desc: t("planning.startInvestingDesc"), color: 'text-fin-investment', bgColor: 'bg-fin-investment/10', borderColor: 'border-fin-investment/20' });
     }
     if (goals.length === 0) {
-      recs.push({ icon: Target, title: 'Defina metas financeiras', desc: 'Metas ajudam a manter o foco. Crie sua primeira meta na aba Metas.', color: 'text-fin-goals', bgColor: 'bg-fin-goals/10', borderColor: 'border-fin-goals/20' });
+      recs.push({ icon: Target, title: t("planning.setGoals"), desc: t("planning.setGoalsDesc"), color: 'text-fin-goals', bgColor: 'bg-fin-goals/10', borderColor: 'border-fin-goals/20' });
     }
     if (savingsRate >= 20 && investmentTotal > 0 && goals.length > 0) {
-      recs.push({ icon: ShieldCheck, title: 'Parabéns! Finanças saudáveis', desc: 'Continue mantendo uma boa taxa de poupança e diversificando investimentos.', color: 'text-fin-income', bgColor: 'bg-fin-income/10', borderColor: 'border-fin-income/20' });
+      recs.push({ icon: ShieldCheck, title: t("planning.healthyFinances"), desc: t("planning.healthyFinancesDesc"), color: 'text-fin-income', bgColor: 'bg-fin-income/10', borderColor: 'border-fin-income/20' });
     }
     return recs;
-  }, [savingsRate, investmentTotal, goals.length]);
+  }, [savingsRate, investmentTotal, goals.length, t]);
 
   const CockpitTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload?.length) return null;
@@ -84,28 +82,25 @@ const PlanejamentoFinanceiro: React.FC = () => {
   return (
     <PageTransition>
       <div className="space-y-3 md:space-y-5">
-        {/* Header */}
         <motion.div {...fadeIn(0)} className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
             <Compass className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-foreground tracking-tight">Planejamento Financeiro</h1>
-            <p className="text-xs text-muted-foreground">Análise e recomendações para suas finanças</p>
+            <h1 className="text-xl font-bold text-foreground tracking-tight">{t("planning.title")}</h1>
+            <p className="text-xs text-muted-foreground">{t("planning.subtitle")}</p>
           </div>
         </motion.div>
 
-        {/* KPIs */}
         <SummaryBar items={[
-          { label: "Taxa de Poupança", value: `${savingsRate.toFixed(0)}%`, color: savingsRate >= 20 ? "income" : savingsRate >= 0 ? "pending" : "expense", icon: savingsRate >= 20 ? TrendingUp : TrendingDown },
-          { label: "Saldo", value: formatBRL(totals.balance), color: "primary", icon: TrendingUp },
-          { label: "Investido", value: formatBRL(investmentTotal), color: "investment", icon: PiggyBank },
+          { label: t("planning.savingsRate"), value: `${savingsRate.toFixed(0)}%`, color: savingsRate >= 20 ? "income" : savingsRate >= 0 ? "pending" : "expense", icon: savingsRate >= 20 ? TrendingUp : TrendingDown },
+          { label: t("kpi.balance"), value: formatBRL(totals.balance), color: "primary", icon: TrendingUp },
+          { label: t("kpi.invested"), value: formatBRL(investmentTotal), color: "investment", icon: PiggyBank },
         ]} />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          {/* Savings Flow Chart */}
           <motion.div {...slideUp(0.1)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-4">Poupança Mensal</h3>
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-4">{t("planning.monthlySavings")}</h3>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={monthlyFlow} margin={{ top: 8, right: 4, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.4} />
@@ -113,21 +108,18 @@ const PlanejamentoFinanceiro: React.FC = () => {
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: 'hsl(220, 10%, 48%)', fontSize: 10, fontFamily: 'JetBrains Mono' }}
                   tickFormatter={v => Math.abs(v) >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)} />
                 <Tooltip content={<CockpitTooltip />} />
-                <Bar dataKey="savings" name="Poupança" radius={[4, 4, 0, 0]} animationDuration={800}
-                  fill="hsl(var(--fin-income))" opacity={0.85} />
+                <Bar dataKey="savings" name={t("planning.monthlySavings")} radius={[4, 4, 0, 0]} animationDuration={800} fill="hsl(var(--fin-income))" opacity={0.85} />
               </BarChart>
             </ResponsiveContainer>
           </motion.div>
 
-          {/* Recommendations */}
           <motion.div {...slideUp(0.15)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-4">Recomendações</h3>
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-4">{t("planning.recommendations")}</h3>
             <motion.div className="space-y-2.5" variants={staggerContainer} initial="initial" animate="animate">
               {recommendations.map((rec, i) => {
                 const Icon = rec.icon;
                 return (
-                  <motion.div key={i} variants={staggerItem}
-                    className={cn("flex gap-3 p-3 rounded-lg border", rec.bgColor, rec.borderColor)}>
+                  <motion.div key={i} variants={staggerItem} className={cn("flex gap-3 p-3 rounded-lg border", rec.bgColor, rec.borderColor)}>
                     <Icon className={cn("w-5 h-5 shrink-0 mt-0.5", rec.color)} />
                     <div>
                       <p className="text-sm font-medium text-card-foreground">{rec.title}</p>
@@ -141,11 +133,10 @@ const PlanejamentoFinanceiro: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          {/* Top Expenses */}
           <motion.div {...slideUp(0.2)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
             <div className="flex items-center gap-2 mb-4">
               <BarChart3 className="w-3.5 h-3.5 text-muted-foreground" />
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Maiores Categorias de Gasto</h3>
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">{t("planning.topCategories")}</h3>
             </div>
             {topExpenses.length > 0 ? (
               <motion.div className="space-y-3" variants={staggerContainer} initial="initial" animate="animate">
@@ -163,15 +154,14 @@ const PlanejamentoFinanceiro: React.FC = () => {
                 })}
               </motion.div>
             ) : (
-              <p className="text-xs text-muted-foreground text-center py-8">Nenhuma despesa registrada</p>
+              <p className="text-xs text-muted-foreground text-center py-8">{t("planning.noExpenses")}</p>
             )}
           </motion.div>
 
-          {/* Goals Progress */}
           <motion.div {...slideUp(0.25)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
             <div className="flex items-center gap-2 mb-4">
               <Target className="w-3.5 h-3.5 text-muted-foreground" />
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Progresso das Metas</h3>
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">{t("planning.goalsProgress")}</h3>
             </div>
             {goals.length > 0 ? (
               <motion.div className="space-y-3" variants={staggerContainer} initial="initial" animate="animate">
@@ -192,7 +182,7 @@ const PlanejamentoFinanceiro: React.FC = () => {
                 })}
               </motion.div>
             ) : (
-              <p className="text-xs text-muted-foreground text-center py-8">Nenhuma meta registrada</p>
+              <p className="text-xs text-muted-foreground text-center py-8">{t("planning.noGoals")}</p>
             )}
           </motion.div>
         </div>
