@@ -558,7 +558,7 @@ const Importar: React.FC = () => {
                             setTimeout(() => window.location.reload(), 1000);
                           }}
                         >
-                          Sim, resetar tudo
+                          {t("import.resetConfirm")}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
