@@ -193,7 +193,7 @@ const Dashboard: React.FC = () => {
               </ResponsiveContainer>
             ) : (
               <div className="h-[200px] flex items-center justify-center text-muted-foreground text-xs">
-                Adicione despesas para ver o gráfico
+                {t("dashboard.addExpenses")}
               </div>
             )}
           </motion.div>
