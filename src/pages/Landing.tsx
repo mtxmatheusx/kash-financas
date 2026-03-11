@@ -548,13 +548,12 @@ const Landing: React.FC = () => {
                   <span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">/mês</span>
                 </p>
                 <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
-                  {[
-                    "Lançamentos automáticos via áudio no WhatsApp",
-                    "Dashboard preditivo: saiba o seu lucro em 3 segundos",
-                    "Consultor de Vendas IA com estratégias personalizadas",
-                    "Investimentos, metas e relatórios ilimitados",
-                    "Suporte prioritário",
-                  ].map(f => (
+                  {[t("landing.pricing.premium1"), t("landing.pricing.premium2"), t("landing.pricing.premium3"), t("landing.pricing.premium4"), t("landing.pricing.premium5")].map(f => (
+                    <li key={f} className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
+                      <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />
+                      {f}
+                    </li>
+                  ))}
                     <li key={f} className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
                       <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />
                       {f}
