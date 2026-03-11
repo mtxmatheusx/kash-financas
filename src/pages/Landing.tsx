@@ -438,15 +438,16 @@ const Landing: React.FC = () => {
               className="rounded-xl sm:rounded-2xl border border-[hsl(0,0%,12%)] bg-[hsl(0,0%,3%)] p-5 sm:p-8"
             >
               <h3 className="text-base sm:text-lg font-extrabold text-[hsl(0,0%,55%)] mb-5 sm:mb-6">
-                Planilhas & Apps Bancários
+                {t("landing.compare.oldTitle")}
               </h3>
               <ul className="space-y-3.5 sm:space-y-4">
-                {[
-                  "Exigem login e abrir outro app",
-                  "Categorização 100% manual",
-                  "Você esquece de anotar o cafezinho",
-                  "Geram ansiedade ao abrir",
-                ].map(item => (
+                {[t("landing.compare.old1"), t("landing.compare.old2"), t("landing.compare.old3"), t("landing.compare.old4")].map(item => (
+                  <li key={item} className="flex items-start gap-3 text-xs sm:text-sm text-[hsl(0,0%,45%)]">
+                    <XIcon className="w-4 h-4 text-[hsl(348,100%,64%)] shrink-0 mt-0.5" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
                   <li key={item} className="flex items-start gap-3 text-xs sm:text-sm text-[hsl(0,0%,45%)]">
                     <XIcon className="w-4 h-4 text-[hsl(348,100%,64%)] shrink-0 mt-0.5" />
                     {item}
