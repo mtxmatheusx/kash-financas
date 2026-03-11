@@ -234,7 +234,6 @@ const Investimentos: React.FC = () => {
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                 {INVEST_TYPE_KEYS.map(c => <option key={c.value} value={c.value}>{t(c.tKey)}</option>)}
               </select>
-              </select>
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("investment.appliedAmount")}</label>
