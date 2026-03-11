@@ -535,9 +535,9 @@ const Importar: React.FC = () => {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
+                        <AlertDialogTitle>{t("import.resetConfirmTitle")}</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Isso removerá permanentemente todas as transações, investimentos e metas da conta <strong>{account.type === "personal" ? "Pessoal" : "Empresarial"}</strong>. Esta ação não pode ser desfeita.
+                          {t("import.resetConfirmDesc").replace("{account}", account.type === "personal" ? t("topbar.personal") : t("topbar.business"))}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
