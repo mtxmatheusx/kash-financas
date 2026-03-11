@@ -427,7 +427,7 @@ const Landing: React.FC = () => {
         <div className="max-w-5xl mx-auto relative z-10">
           <motion.div {...fadeUp()} className="text-center mb-10 sm:mb-16">
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
-              Por que você abandona planilhas no 2º mês?
+              {t("landing.compare.title")}
             </h2>
           </motion.div>
 
