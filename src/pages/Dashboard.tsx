@@ -6,6 +6,7 @@ import { KPICard } from "@/components/KPICard";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useInvestments } from "@/hooks/useInvestments";
 import { TrendingUp, TrendingDown, Wallet, PiggyBank, Activity } from "lucide-react";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import {
   BarChart, Bar, XAxis, YAxis,
   Tooltip, ResponsiveContainer, CartesianGrid,
