@@ -664,7 +664,7 @@ const Importar: React.FC = () => {
             {/* Preview sample */}
             {result.rawRows.length > 0 && (
               <div className="text-xs text-muted-foreground border-t border-border pt-3">
-                <p className="font-medium mb-1">Amostra da primeira linha:</p>
+                <p className="font-medium mb-1">{t("import.sampleRow")}</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                   {result.headers.slice(0, 8).map(h => (
                     <div key={h} className="truncate"><span className="font-mono">{h}:</span> {String(result.rawRows[0][h]).substring(0, 30)}</div>
