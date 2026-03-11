@@ -52,7 +52,7 @@ export const FinancialInsights: React.FC<FinancialInsightsProps> = ({
   goals,
 }) => {
   const { user } = useAuth();
-  const { t, language } = usePreferences();
+  const { t, language, currency } = usePreferences();
   const [insights, setInsights] = useState<Insight[]>([]);
   const [preferences, setPreferences] = useState<UserPreference[]>([]);
   const [loading, setLoading] = useState(false);
