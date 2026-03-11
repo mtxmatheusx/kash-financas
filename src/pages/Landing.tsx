@@ -225,7 +225,7 @@ const Landing: React.FC = () => {
   const signupLink = "/signup" + (localStorage.getItem("faciliten_referral_code") ? `?ref=${localStorage.getItem("faciliten_referral_code")}` : "");
 
   return (
-    <div className="landing-dark noise-texture min-h-screen overflow-x-hidden font-['DM_Sans']">
+    <main className="landing-dark noise-texture min-h-screen overflow-x-hidden font-['DM_Sans']">
 
       {/* ═══ NAV ═══ */}
       <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-2xl bg-[hsl(0,0%,2%)/0.85] border-b border-[hsl(0,0%,12%)/0.4]">
