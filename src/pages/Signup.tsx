@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner";
 import { Eye, EyeOff, UserPlus, Check, X, Gift } from "lucide-react";
 import { motion } from "framer-motion";
+import facilitenLogo from "@/assets/faciliten-logo.png";
 
 const passwordRules = [
   { test: (p: string) => p.length >= 8, label: "Mínimo 8 caracteres" },

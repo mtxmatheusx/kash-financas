@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 import { motion } from "framer-motion";
+import facilitenLogo from "@/assets/faciliten-logo.png";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
