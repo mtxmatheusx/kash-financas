@@ -35,6 +35,7 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
       frequency: row.frequency as TransactionRow['frequency'],
       is_percentage: row.is_percentage ?? undefined,
       percentage: row.percentage ? Number(row.percentage) : undefined,
+      currency: (row as any).currency || 'BRL',
       created_at: row.created_at,
     })));
     setLoading(false);
