@@ -3,6 +3,7 @@ import { ChevronDown, ChevronRight, Pencil, Trash2, Check, Clock } from "lucide-
 import { cn } from "@/lib/utils";
 import type { TransactionRow } from "@/lib/types";
 import { usePreferences } from "@/contexts/PreferencesContext";
+import { translateCategory } from "@/lib/categoryI18n";
 
 interface GroupedListProps {
   transactions: TransactionRow[];
