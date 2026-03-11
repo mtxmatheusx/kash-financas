@@ -674,7 +674,7 @@ const Importar: React.FC = () => {
             )}
 
             <div className="flex gap-2 pt-2 flex-wrap">
-              <Button variant="outline" onClick={reset}>Cancelar</Button>
+              <Button variant="outline" onClick={reset}>{t("common.cancel")}</Button>
               <Button
                 variant="outline"
                 size="sm"
