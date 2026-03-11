@@ -24,7 +24,7 @@ const Signup: React.FC = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [referralCode, setReferralCode] = useState(searchParams.get("ref") || localStorage.getItem("kash_referral_code") || "");
+  const [referralCode, setReferralCode] = useState(searchParams.get("ref") || localStorage.getItem("faciliten_referral_code") || "");
   const [loading, setLoading] = useState(false);
 
   const allRulesPass = passwordRules.every((r) => r.test(password));
