@@ -31,7 +31,7 @@ interface MenuSection {
 
 const menuSections: MenuSection[] = [
   {
-    title: "Visão Geral",
+    titleKey: "sidebar.section.overview",
     items: [
       { path: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
       { path: "/planejamento", labelKey: "nav.planning", icon: Compass },
@@ -39,21 +39,21 @@ const menuSections: MenuSection[] = [
     ],
   },
   {
-    title: "Movimentações",
+    titleKey: "sidebar.section.transactions",
     items: [
       { path: "/receitas", labelKey: "nav.income", icon: TrendingUp },
       { path: "/despesas", labelKey: "nav.expenses", icon: TrendingDown },
     ],
   },
   {
-    title: "Crescimento",
+    titleKey: "sidebar.section.growth",
     items: [
       { path: "/investimentos", labelKey: "nav.investments", icon: PieChart },
       { path: "/metas", labelKey: "nav.goals", icon: Target },
     ],
   },
   {
-    title: "Relatórios",
+    titleKey: "sidebar.section.reports",
     items: [
       { path: "/dre", labelKey: "nav.dre", icon: FileText, account: "business" },
       { path: "/ebitda", labelKey: "nav.ebitda", icon: Calculator, account: "business" },
