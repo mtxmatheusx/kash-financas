@@ -7,29 +7,40 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAccount } from "@/contexts/AccountContext";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import { AnimatePresence, motion } from "framer-motion";
+import type { TranslationKey } from "@/i18n/translations";
 
-const mainItems = [
-  { path: "/dashboard", label: "Home", icon: LayoutDashboard },
-  { path: "/receitas", label: "Receitas", icon: TrendingUp },
-  { path: "/despesas", label: "Despesas", icon: TrendingDown },
-  { path: "/investimentos", label: "Investir", icon: PieChart },
+interface NavItem {
+  path: string;
+  labelKey: TranslationKey;
+  icon: React.ElementType;
+  descKey?: TranslationKey;
+  account?: "business";
+}
+
+const mainItems: NavItem[] = [
+  { path: "/dashboard", labelKey: "nav.home", icon: LayoutDashboard },
+  { path: "/receitas", labelKey: "nav.income", icon: TrendingUp },
+  { path: "/despesas", labelKey: "nav.expenses", icon: TrendingDown },
+  { path: "/investimentos", labelKey: "nav.investments", icon: PieChart },
 ];
 
-const moreItems = [
-  { path: "/metas", label: "Metas", icon: Target, desc: "Objetivos financeiros" },
-  { path: "/planejamento", label: "Planejamento", icon: Compass, desc: "Análise e recomendações" },
-  { path: "/mensal", label: "Visão Mensal", icon: CalendarRange, desc: "Comparativo mensal" },
-  { path: "/dre", label: "DRE", icon: FileText, account: "business" as const, desc: "Demonstrativo de resultado" },
-  { path: "/ebitda", label: "EBITDA", icon: Calculator, account: "business" as const, desc: "Lucro operacional" },
-  { path: "/importar", label: "Importar", icon: Upload, desc: "Planilhas e extratos" },
-  { path: "/configuracoes", label: "Configurações", icon: Settings, desc: "Conta e preferências" },
+const moreItems: NavItem[] = [
+  { path: "/metas", labelKey: "nav.goals", icon: Target, descKey: "more.goals" },
+  { path: "/planejamento", labelKey: "nav.planning", icon: Compass, descKey: "more.planning" },
+  { path: "/mensal", labelKey: "nav.monthly", icon: CalendarRange, descKey: "more.monthly" },
+  { path: "/dre", labelKey: "nav.dre", icon: FileText, account: "business", descKey: "more.dre" },
+  { path: "/ebitda", labelKey: "nav.ebitda", icon: Calculator, account: "business", descKey: "more.ebitda" },
+  { path: "/importar", labelKey: "nav.import", icon: Upload, descKey: "more.import" },
+  { path: "/configuracoes", labelKey: "nav.settings", icon: Settings, descKey: "more.settings" },
 ];
 
 export const MobileNav: React.FC = () => {
   const location = useLocation();
   const [showMore, setShowMore] = useState(false);
   const { account } = useAccount();
+  const { t } = usePreferences();
 
   const filteredMore = moreItems.filter(
     (item) => !item.account || item.account === account.type
@@ -93,8 +104,10 @@ export const MobileNav: React.FC = () => {
                             <p className={cn(
                               "text-[13px] font-medium leading-tight",
                               isActive ? "text-primary" : "text-foreground"
-                            )}>{item.label}</p>
-                            <p className="text-[10px] text-muted-foreground leading-tight mt-0.5 truncate">{item.desc}</p>
+                            )}>{t(item.labelKey)}</p>
+                            {item.descKey && (
+                              <p className="text-[10px] text-muted-foreground leading-tight mt-0.5 truncate">{t(item.descKey)}</p>
+                            )}
                           </div>
                           <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground/30" />
                         </NavLink>
@@ -140,7 +153,7 @@ export const MobileNav: React.FC = () => {
                   />
                 )}
                 <item.icon className={cn("w-5 h-5", isActive && "stroke-[2.5]")} />
-                <span className={cn(isActive && "font-semibold")}>{item.label}</span>
+                <span className={cn(isActive && "font-semibold")}>{t(item.labelKey)}</span>
               </NavLink>
             );
           })}
@@ -165,7 +178,7 @@ export const MobileNav: React.FC = () => {
             <motion.div animate={{ rotate: showMore ? 90 : 0 }} transition={{ duration: 0.15 }}>
               {showMore ? <X className="w-5 h-5 stroke-[2.5]" /> : <MoreHorizontal className={cn("w-5 h-5", isMoreActive && "stroke-[2.5]")} />}
             </motion.div>
-            <span className={cn((showMore || isMoreActive) && "font-semibold")}>Mais</span>
+            <span className={cn((showMore || isMoreActive) && "font-semibold")}>{t("nav.more")}</span>
           </button>
         </div>
       </nav>

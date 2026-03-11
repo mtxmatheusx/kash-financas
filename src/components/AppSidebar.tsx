@@ -9,9 +9,10 @@ import {
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAccount } from "@/contexts/AccountContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
-
+import type { TranslationKey } from "@/i18n/translations";
 
 import type { AccountType } from "@/contexts/AccountContext";
 
@@ -19,22 +20,22 @@ const FREE_PATHS = ["/dashboard", "/receitas", "/despesas"];
 
 interface MenuItem {
   path: string;
-  label: string;
+  labelKey: TranslationKey;
   icon: React.ElementType;
   account?: AccountType;
 }
 
 const menuItems: MenuItem[] = [
-  { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { path: "/planejamento", label: "Planejamento", icon: Compass },
-  { path: "/receitas", label: "Receitas", icon: TrendingUp },
-  { path: "/despesas", label: "Despesas", icon: TrendingDown },
-  { path: "/investimentos", label: "Investimentos", icon: PieChart },
-  { path: "/metas", label: "Metas", icon: Target },
-  { path: "/mensal", label: "Visão Mensal", icon: CalendarRange },
-  { path: "/dre", label: "DRE", icon: FileText, account: "business" },
-  { path: "/ebitda", label: "EBITDA", icon: Calculator, account: "business" },
-  { path: "/importar", label: "Importar", icon: Upload },
+  { path: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
+  { path: "/planejamento", labelKey: "nav.planning", icon: Compass },
+  { path: "/receitas", labelKey: "nav.income", icon: TrendingUp },
+  { path: "/despesas", labelKey: "nav.expenses", icon: TrendingDown },
+  { path: "/investimentos", labelKey: "nav.investments", icon: PieChart },
+  { path: "/metas", labelKey: "nav.goals", icon: Target },
+  { path: "/mensal", labelKey: "nav.monthly", icon: CalendarRange },
+  { path: "/dre", labelKey: "nav.dre", icon: FileText, account: "business" },
+  { path: "/ebitda", labelKey: "nav.ebitda", icon: Calculator, account: "business" },
+  { path: "/importar", labelKey: "nav.import", icon: Upload },
 ];
 
 interface Props {
@@ -46,6 +47,7 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
   const { theme, toggleTheme } = useTheme();
   const { account, setAccountType } = useAccount();
   const { isPremium, signOut, profile } = useAuth();
+  const { t } = usePreferences();
   const isMobile = useIsMobile();
   const location = useLocation();
 
@@ -87,7 +89,7 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
                   : "text-sidebar-muted hover:text-sidebar-foreground"
               )}
             >
-              Pessoal
+              {t("sidebar.personal")}
             </button>
             <button
               onClick={() => setAccountType('business')}
@@ -98,7 +100,7 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
                   : "text-sidebar-muted hover:text-sidebar-foreground"
               )}
             >
-              Empresa
+              {t("sidebar.business")}
             </button>
           </div>
         </div>
@@ -111,11 +113,12 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
           .map(item => {
           const isActive = location.pathname === item.path;
           const isLocked = !isPremium && !FREE_PATHS.includes(item.path);
+          const label = t(item.labelKey);
           return (
             <NavLink
               key={item.path}
               to={item.path}
-              title={collapsed ? item.label : undefined}
+              title={collapsed ? label : undefined}
               className={cn(
                 "group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all relative",
                 isActive
@@ -132,15 +135,14 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
               )}
               <item.icon className="w-[18px] h-[18px] shrink-0" />
               {!collapsed && (
-                <span className="font-medium flex-1">{item.label}</span>
+                <span className="font-medium flex-1">{label}</span>
               )}
               {!collapsed && isLocked && (
                 <Crown className="w-3.5 h-3.5 text-fin-pending shrink-0" />
               )}
-              {/* Tooltip for collapsed state */}
               {collapsed && (
                 <span className="absolute left-full ml-2 px-2 py-1 rounded-md bg-popover text-popover-foreground text-xs font-medium shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
-                  {item.label}
+                  {label}
                 </span>
               )}
             </NavLink>
@@ -165,28 +167,28 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
           )}
         >
           <Settings className="w-[18px] h-[18px] shrink-0" />
-          {!collapsed && <span>Configurações</span>}
+          {!collapsed && <span>{t("nav.settings")}</span>}
         </NavLink>
         <button
           onClick={toggleTheme}
           className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full"
         >
           {theme === 'light' ? <Moon className="w-[18px] h-[18px]" /> : <Sun className="w-[18px] h-[18px]" />}
-          {!collapsed && <span>{theme === 'light' ? 'Modo escuro' : 'Modo claro'}</span>}
+          {!collapsed && <span>{theme === 'light' ? t("sidebar.darkMode") : t("sidebar.lightMode")}</span>}
         </button>
         <button
           onClick={onToggle}
           className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full"
         >
           {collapsed ? <ChevronRight className="w-[18px] h-[18px]" /> : <ChevronLeft className="w-[18px] h-[18px]" />}
-          {!collapsed && <span>Recolher</span>}
+          {!collapsed && <span>{t("sidebar.collapse")}</span>}
         </button>
         <button
           onClick={signOut}
           className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full"
         >
           <LogOut className="w-[18px] h-[18px]" />
-          {!collapsed && <span>Sair</span>}
+          {!collapsed && <span>{t("sidebar.logout")}</span>}
         </button>
       </div>
     </motion.aside>

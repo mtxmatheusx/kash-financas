@@ -13,13 +13,14 @@ import { SummaryBar } from "@/components/SummaryBar";
 import { CurrencyInput } from "@/components/CurrencyInput";
 import type { TransactionRow } from "@/lib/types";
 import { useAutoCategory } from "@/hooks/useAutoCategory";
-import { usePreferences } from "@/contexts/PreferencesContext";
+import { usePreferences, CURRENCIES, type CurrencyCode } from "@/contexts/PreferencesContext";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const PERSONAL_CATS = ['Alimentação', 'Transporte', 'Moradia', 'Saúde', 'Lazer', 'Educação', 'Outros'];
 const BUSINESS_CATS = ['Fornecedores', 'Impostos', 'Funcionários', 'Marketing', 'Infraestrutura', 'Outros'];
 
 const Despesas: React.FC = () => {
-  const { formatMoney: formatBRL } = usePreferences();
+  const { formatMoney: formatBRL, t, currency: defaultCurrency } = usePreferences();
   const { transactions, create, update, remove, totals, allTransactions } = useTransactions('expense');
   const { account } = useAccount();
   const [search, setSearch] = useState('');
@@ -38,6 +39,7 @@ const Despesas: React.FC = () => {
     percentage: '',
     recurring_months: '12',
     percentage_base: 'total' as 'total' | 'monthly',
+    currency: defaultCurrency,
   });
 
   const [form, setForm] = useState(emptyForm());
@@ -95,6 +97,7 @@ const Despesas: React.FC = () => {
       percentage: t.percentage ? String(t.percentage) : '',
       recurring_months: '12',
       percentage_base: 'total',
+      currency: (t as any).currency || defaultCurrency,
     });
     setAmountCents(Math.round(t.amount * 100));
     setShowForm(true);
@@ -128,6 +131,7 @@ const Despesas: React.FC = () => {
       status: form.status,
       entry_type: form.entry_type,
       account_type: account.type,
+      currency: form.currency,
       is_percentage: form.is_percentage,
       percentage_base: form.percentage_base,
       ...(form.is_percentage ? { percentage: pct } : {}),
@@ -229,8 +233,18 @@ const Despesas: React.FC = () => {
               </>
             ) : (
               <div>
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Valor</label>
-                <CurrencyInput value={form.amount} onValueChange={(formatted, cents) => { setForm({ ...form, amount: formatted }); setAmountCents(cents); }} />
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("common.amount")}</label>
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <CurrencyInput value={form.amount} onValueChange={(formatted, cents) => { setForm({ ...form, amount: formatted }); setAmountCents(cents); }} />
+                  </div>
+                  <Select value={form.currency} onValueChange={(v) => setForm({ ...form, currency: v as CurrencyCode })}>
+                    <SelectTrigger className="w-[100px]"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {CURRENCIES.map(c => <SelectItem key={c.code} value={c.code}>{c.symbol} {c.code}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             )}
             <div>

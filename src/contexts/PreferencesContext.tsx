@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { translations, type TranslationKey } from "@/i18n/translations";
 
 export type CurrencyCode = "BRL" | "USD" | "EUR" | "GBP";
 export type LanguageCode = "pt-BR" | "en" | "es";
@@ -34,7 +35,8 @@ interface PreferencesContextType {
   setCurrency: (c: CurrencyCode) => void;
   language: LanguageCode;
   setLanguage: (l: LanguageCode) => void;
-  formatMoney: (value: number) => string;
+  formatMoney: (value: number, currencyOverride?: CurrencyCode) => string;
+  t: (key: TranslationKey) => string;
 }
 
 const PreferencesContext = createContext<PreferencesContextType | undefined>(undefined);
@@ -65,16 +67,22 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const setCurrency = useCallback((c: CurrencyCode) => setCurrencyState(c), []);
   const setLanguage = useCallback((l: LanguageCode) => setLanguageState(l), []);
 
-  const formatMoney = useCallback((value: number) => {
-    const config = CURRENCIES.find(c => c.code === currency) || CURRENCIES[0];
+  const formatMoney = useCallback((value: number, currencyOverride?: CurrencyCode) => {
+    const code = currencyOverride || currency;
+    const config = CURRENCIES.find(c => c.code === code) || CURRENCIES[0];
     return new Intl.NumberFormat(config.locale, {
       style: "currency",
       currency: config.code,
     }).format(value);
   }, [currency]);
 
+  const t = useCallback((key: TranslationKey): string => {
+    const dict = translations[language];
+    return dict?.[key] || translations["pt-BR"][key] || key;
+  }, [language]);
+
   return (
-    <PreferencesContext.Provider value={{ currency, setCurrency, language, setLanguage, formatMoney }}>
+    <PreferencesContext.Provider value={{ currency, setCurrency, language, setLanguage, formatMoney, t }}>
       {children}
     </PreferencesContext.Provider>
   );

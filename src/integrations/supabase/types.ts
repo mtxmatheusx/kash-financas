@@ -181,6 +181,7 @@ export type Database = {
           amount: number
           category: string
           created_at: string
+          currency: string
           date: string
           description: string
           entry_type: Database["public"]["Enums"]["entry_type"] | null
@@ -198,6 +199,7 @@ export type Database = {
           amount?: number
           category?: string
           created_at?: string
+          currency?: string
           date?: string
           description?: string
           entry_type?: Database["public"]["Enums"]["entry_type"] | null
@@ -215,6 +217,7 @@ export type Database = {
           amount?: number
           category?: string
           created_at?: string
+          currency?: string
           date?: string
           description?: string
           entry_type?: Database["public"]["Enums"]["entry_type"] | null

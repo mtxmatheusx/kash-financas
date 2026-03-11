@@ -30,7 +30,7 @@ const formatCompact = (v: number) => {
 };
 
 const Dashboard: React.FC = () => {
-  const { formatMoney: formatBRL } = usePreferences();
+  const { formatMoney: formatBRL, t } = usePreferences();
 
   /* Cockpit-style tooltip */
   const CockpitTooltip = ({ active, payload, label }: any) => {
@@ -115,8 +115,8 @@ const Dashboard: React.FC = () => {
               <Activity className="w-4 h-4 text-primary" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground tracking-tight">Dashboard</h1>
-              <p className="text-xs text-muted-foreground">Visão geral das suas finanças</p>
+              <h1 className="text-xl font-bold text-foreground tracking-tight">{t("dashboard.title")}</h1>
+              <p className="text-xs text-muted-foreground">{t("dashboard.subtitle")}</p>
             </div>
           </div>
           <Select
@@ -124,38 +124,38 @@ const Dashboard: React.FC = () => {
             onValueChange={(v) => setDateFilter(v as DateFilter)}
           >
             <SelectTrigger className="w-[180px] h-9 text-xs bg-card border-border">
-              <SelectValue placeholder="Filtrar período..." />
+              <SelectValue placeholder={t("filter.period")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="today">Hoje</SelectItem>
-              <SelectItem value="yesterday">Ontem</SelectItem>
-              <SelectItem value="week">Semana</SelectItem>
-              <SelectItem value="month">Mês</SelectItem>
+              <SelectItem value="all">{t("filter.all")}</SelectItem>
+              <SelectItem value="today">{t("filter.today")}</SelectItem>
+              <SelectItem value="yesterday">{t("filter.yesterday")}</SelectItem>
+              <SelectItem value="week">{t("filter.week")}</SelectItem>
+              <SelectItem value="month">{t("filter.month")}</SelectItem>
             </SelectContent>
           </Select>
         </motion.div>
 
         {/* KPIs */}
         <SummaryBar items={[
-          { label: "Receitas", value: formatBRL(filteredTotals.income), color: "income", icon: TrendingUp },
-          { label: "Despesas", value: formatBRL(filteredTotals.expense), color: "expense", icon: TrendingDown },
-          { label: "Saldo", value: formatBRL(filteredTotals.balance), color: "primary", icon: Wallet },
+          { label: t("kpi.income"), value: formatBRL(filteredTotals.income), color: "income", icon: TrendingUp },
+          { label: t("kpi.expenses"), value: formatBRL(filteredTotals.expense), color: "expense", icon: TrendingDown },
+          { label: t("kpi.balance"), value: formatBRL(filteredTotals.balance), color: "primary", icon: Wallet },
         ]} />
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 md:gap-3">
           <motion.div {...slideUp(0.15)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Receitas vs Despesas</h3>
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">{t("dashboard.incomeVsExpense")}</h3>
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-fin-income" style={{ boxShadow: '0 0 6px hsl(var(--fin-income))' }} />
-                  <span className="text-[10px] text-muted-foreground">Receitas</span>
+                  <span className="text-[10px] text-muted-foreground">{t("kpi.income")}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-fin-expense" style={{ boxShadow: '0 0 6px hsl(var(--fin-expense))' }} />
-                  <span className="text-[10px] text-muted-foreground">Despesas</span>
+                  <span className="text-[10px] text-muted-foreground">{t("kpi.expenses")}</span>
                 </div>
               </div>
             </div>
@@ -168,16 +168,16 @@ const Dashboard: React.FC = () => {
                   tick={{ fill: 'hsl(220, 10%, 48%)', fontSize: 10, fontFamily: 'JetBrains Mono' }}
                   tickFormatter={formatCompact} />
                 <Tooltip content={<CockpitTooltip />} cursor={{ fill: 'hsl(var(--muted))', opacity: 0.3 }} />
-                <Bar dataKey="income" name="Receitas" fill="hsl(var(--fin-income))" radius={[4, 4, 0, 0]}
+                <Bar dataKey="income" name={t("kpi.income")} fill="hsl(var(--fin-income))" radius={[4, 4, 0, 0]}
                   opacity={0.85} animationDuration={800} />
-                <Bar dataKey="expense" name="Despesas" fill="hsl(var(--fin-expense))" radius={[4, 4, 0, 0]}
+                <Bar dataKey="expense" name={t("kpi.expenses")} fill="hsl(var(--fin-expense))" radius={[4, 4, 0, 0]}
                   opacity={0.85} animationDuration={800} animationBegin={200} />
               </BarChart>
             </ResponsiveContainer>
           </motion.div>
 
           <motion.div {...slideUp(0.25)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-4">Top Categorias</h3>
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-4">{t("dashboard.topCategories")}</h3>
             {categoryData.length > 0 ? (
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={categoryData} layout="vertical" margin={{ top: 0, right: 4, left: 0, bottom: 0 }}>
@@ -193,7 +193,7 @@ const Dashboard: React.FC = () => {
               </ResponsiveContainer>
             ) : (
               <div className="h-[200px] flex items-center justify-center text-muted-foreground text-xs">
-                Adicione despesas para ver o gráfico
+                {t("dashboard.addExpenses")}
               </div>
             )}
           </motion.div>
@@ -210,7 +210,7 @@ const Dashboard: React.FC = () => {
 
         {/* Recent Transactions */}
         <motion.div {...slideUp(0.35)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
-          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-3">Transações Recentes</h3>
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-3">{t("dashboard.recentTransactions")}</h3>
           {filtered.length > 0 ? (
             <motion.div className="space-y-0.5" variants={staggerContainer} initial="initial" animate="animate">
               {filtered.slice(0, 8).map(t => (
@@ -232,7 +232,7 @@ const Dashboard: React.FC = () => {
               ))}
             </motion.div>
           ) : (
-            <p className="text-xs text-muted-foreground text-center py-6">Nenhuma transação no período selecionado</p>
+            <p className="text-xs text-muted-foreground text-center py-6">{t("dashboard.noTransactions")}</p>
           )}
         </motion.div>
       </div>

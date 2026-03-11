@@ -14,11 +14,12 @@ import { CurrencyInput } from "@/components/CurrencyInput";
 import type { TransactionRow } from "@/lib/types";
 import { useAutoCategory } from "@/hooks/useAutoCategory";
 import { Sparkles } from "lucide-react";
-import { usePreferences } from "@/contexts/PreferencesContext";
+import { usePreferences, CURRENCIES, type CurrencyCode } from "@/contexts/PreferencesContext";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const CATEGORIES = ['Salário', 'Freelance', 'Vendas', 'Serviços', 'Aluguel', 'Dividendos', 'Outros'];
 
-const emptyForm = () => ({
+const emptyForm = (defaultCurrency: CurrencyCode = 'BRL') => ({
   description: '', amount: '', category: CATEGORIES[0],
   date: new Date().toISOString().slice(0, 10),
   status: 'paid' as 'paid' | 'pending',
@@ -26,16 +27,17 @@ const emptyForm = () => ({
   installments: '2',
   frequency: 'monthly' as 'monthly' | 'yearly',
   recurring_months: '12',
+  currency: defaultCurrency,
 });
 
 const Receitas: React.FC = () => {
-  const { formatMoney: formatBRL } = usePreferences();
+  const { formatMoney: formatBRL, t, currency: defaultCurrency } = usePreferences();
   const { transactions, create, update, remove, totals } = useTransactions('income');
   const { account } = useAccount();
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState(emptyForm());
+  const [form, setForm] = useState(emptyForm(defaultCurrency));
   const [amountCents, setAmountCents] = useState(0);
   const [userChangedCategory, setUserChangedCategory] = useState(false);
 
@@ -59,7 +61,7 @@ const Receitas: React.FC = () => {
 
   const openCreate = () => {
     setEditingId(null);
-    setForm(emptyForm());
+    setForm(emptyForm(defaultCurrency));
     setAmountCents(0);
     setUserChangedCategory(false);
     setShowForm(true);
@@ -78,6 +80,7 @@ const Receitas: React.FC = () => {
       installments: String(t.installments ?? 2),
       frequency: t.frequency ?? 'monthly',
       recurring_months: '12',
+      currency: (t as any).currency || defaultCurrency,
     });
     setAmountCents(Math.round(t.amount * 100));
     setShowForm(true);
@@ -96,6 +99,7 @@ const Receitas: React.FC = () => {
       status: form.status,
       entry_type: form.entry_type,
       account_type: account.type,
+      currency: form.currency,
       ...(form.entry_type === 'installment' ? { installments: parseInt(form.installments) || 2 } : {}),
       ...(form.entry_type === 'recurring' ? { frequency: form.frequency, recurring_months: parseInt(form.recurring_months) || 12 } : {}),
     };
@@ -106,7 +110,7 @@ const Receitas: React.FC = () => {
       create(payload);
     }
 
-    setForm(emptyForm());
+    setForm(emptyForm(defaultCurrency));
     setAmountCents(0);
     setEditingId(null);
     setShowForm(false);
@@ -158,8 +162,18 @@ const Receitas: React.FC = () => {
               <Input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Ex: Salário mensal" />
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Valor</label>
-              <CurrencyInput value={form.amount} onValueChange={(formatted, cents) => { setForm({ ...form, amount: formatted }); setAmountCents(cents); }} />
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("common.amount")}</label>
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <CurrencyInput value={form.amount} onValueChange={(formatted, cents) => { setForm({ ...form, amount: formatted }); setAmountCents(cents); }} />
+                </div>
+                <Select value={form.currency} onValueChange={(v) => setForm({ ...form, currency: v as CurrencyCode })}>
+                  <SelectTrigger className="w-[100px]"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {CURRENCIES.map(c => <SelectItem key={c.code} value={c.code}>{c.symbol} {c.code}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <div>
               <div className="flex items-center gap-1.5">

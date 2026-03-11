@@ -61,7 +61,7 @@ const defaultSettings: UserSettings = {
 
 const Configuracoes: React.FC = () => {
   const { user, profile, isPremium, isTrialing, trialDaysLeft, subscriptionEnd } = useAuth();
-  const { currency, setCurrency, language, setLanguage } = usePreferences();
+  const { currency, setCurrency, language, setLanguage, t } = usePreferences();
   const [settings, setSettings] = useState<UserSettings>(defaultSettings);
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -201,45 +201,45 @@ const Configuracoes: React.FC = () => {
         {/* Header */}
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2 font-display-fin">
-            <Settings className="w-5 h-5 md:w-6 md:h-6 text-primary" /> Configurações
+            <Settings className="w-5 h-5 md:w-6 md:h-6 text-primary" /> {t("settings.title")}
           </h1>
           <p className="text-xs md:text-sm text-muted-foreground">
-            Perfil, dados da empresa, integrações e assinatura
+            {t("settings.subtitle")}
           </p>
         </div>
 
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="w-full grid grid-cols-5 mb-5">
             <TabsTrigger value="profile" className="gap-1.5 text-xs">
-              <User className="w-3.5 h-3.5 hidden sm:block" /> Perfil
+              <User className="w-3.5 h-3.5 hidden sm:block" /> {t("settings.profile")}
             </TabsTrigger>
             <TabsTrigger value="company" className="gap-1.5 text-xs">
-              <Building2 className="w-3.5 h-3.5 hidden sm:block" /> Empresa
+              <Building2 className="w-3.5 h-3.5 hidden sm:block" /> {t("settings.company")}
             </TabsTrigger>
             <TabsTrigger value="integrations" className="gap-1.5 text-xs">
-              <Webhook className="w-3.5 h-3.5 hidden sm:block" /> Integrações
+              <Webhook className="w-3.5 h-3.5 hidden sm:block" /> {t("settings.integrations")}
             </TabsTrigger>
             <TabsTrigger value="notifications" className="gap-1.5 text-xs">
-              <Bell className="w-3.5 h-3.5 hidden sm:block" /> Alertas
+              <Bell className="w-3.5 h-3.5 hidden sm:block" /> {t("settings.alerts")}
             </TabsTrigger>
             <TabsTrigger value="subscription" className="gap-1.5 text-xs">
-              <Crown className="w-3.5 h-3.5 hidden sm:block" /> Plano
+              <Crown className="w-3.5 h-3.5 hidden sm:block" /> {t("settings.plan")}
             </TabsTrigger>
           </TabsList>
 
           {/* ═══════════ Meu Perfil ═══════════ */}
           <TabsContent value="profile">
             <Card>
-              <Field icon={User} label="Nome Completo">
+              <Field icon={User} label={t("settings.fullName")}>
                 <Input
                   value={settings.full_name}
                   onChange={(e) => update("full_name", e.target.value)}
-                  placeholder="Seu nome completo"
+                  placeholder={t("settings.fullName")}
                   maxLength={120}
                 />
               </Field>
 
-              <Field icon={Smartphone} label="Telefone / WhatsApp" hint="Usado para notificações e agente IA">
+              <Field icon={Smartphone} label={t("settings.phone")} hint={t("settings.phoneHint")}>
                 <Input
                   value={settings.phone}
                   onChange={(e) => update("phone", maskPhone(e.target.value))}
@@ -250,17 +250,17 @@ const Configuracoes: React.FC = () => {
               </Field>
 
               <div className="pt-2 border-t border-border">
-                <p className="text-[11px] text-muted-foreground mb-1">E-mail da conta</p>
+                <p className="text-[11px] text-muted-foreground mb-1">{t("settings.email")}</p>
                 <p className="text-sm font-medium text-foreground">{profile?.email || "—"}</p>
               </div>
 
               {/* Preferences */}
               <div className="pt-4 border-t border-border space-y-4">
                 <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                  <Globe className="w-4 h-4 text-primary" /> Preferências
+                  <Globe className="w-4 h-4 text-primary" /> {t("settings.preferences")}
                 </h3>
 
-                <Field icon={Coins} label="Moeda" hint="Formato de exibição dos valores monetários">
+                <Field icon={Coins} label={t("settings.currency")} hint={t("settings.currencyHint")}>
                   <Select value={currency} onValueChange={(v) => setCurrency(v as CurrencyCode)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -271,7 +271,7 @@ const Configuracoes: React.FC = () => {
                   </Select>
                 </Field>
 
-                <Field icon={Globe} label="Idioma" hint="Idioma da interface (em breve)">
+                <Field icon={Globe} label={t("settings.language")} hint={t("settings.languageHint")}>
                   <Select value={language} onValueChange={(v) => setLanguage(v as LanguageCode)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
