@@ -329,21 +329,20 @@ const Configuracoes: React.FC = () => {
                   <Input value={settings.address} onChange={(e) => update("address", e.target.value)} placeholder="Rua, Avenida..." maxLength={200} />
                 </Field>
 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   <Field label="Número">
                     <Input value={settings.address_number} onChange={(e) => update("address_number", e.target.value)} placeholder="Nº" maxLength={10} />
                   </Field>
-                  <div className="col-span-2">
-                    <Field label="Complemento">
-                      <Input value={settings.address_complement} onChange={(e) => update("address_complement", e.target.value)} placeholder="Sala, Andar..." maxLength={100} />
-                    </Field>
-                  </div>
+                  <Field label="Complemento">
+                    <Input value={settings.address_complement} onChange={(e) => update("address_complement", e.target.value)} placeholder="Sala, Andar..." maxLength={100} />
+                  </Field>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
-                  <Field label="Bairro">
-                    <Input value={settings.neighborhood} onChange={(e) => update("neighborhood", e.target.value)} placeholder="Bairro" maxLength={100} />
-                  </Field>
+                <Field label="Bairro">
+                  <Input value={settings.neighborhood} onChange={(e) => update("neighborhood", e.target.value)} placeholder="Bairro" maxLength={100} />
+                </Field>
+
+                <div className="grid grid-cols-2 gap-3">
                   <Field label="Cidade">
                     <Input value={settings.city} onChange={(e) => update("city", e.target.value)} placeholder="Cidade" maxLength={100} />
                   </Field>

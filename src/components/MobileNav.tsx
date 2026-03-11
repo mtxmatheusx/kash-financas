@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard, TrendingUp, TrendingDown, PieChart, Target,
-  CalendarRange, Compass, FileText, Calculator, Upload, MoreHorizontal, X, Settings,
-  ChevronRight,
+  LayoutDashboard, TrendingUp, TrendingDown, PieChart,
+  MoreHorizontal, X, Target, CalendarRange, Compass,
+  FileText, Calculator, Upload, Settings, ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAccount } from "@/contexts/AccountContext";
@@ -26,21 +26,6 @@ const moreItems = [
   { path: "/configuracoes", label: "Configurações", icon: Settings, desc: "Conta e preferências" },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.04, delayChildren: 0.05 },
-  },
-  exit: { opacity: 0, transition: { duration: 0.15 } },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, x: -12 },
-  visible: { opacity: 1, x: 0, transition: { type: "spring" as const, stiffness: 400, damping: 28 } },
-  exit: { opacity: 0, x: -8 },
-};
-
 export const MobileNav: React.FC = () => {
   const location = useLocation();
   const [showMore, setShowMore] = useState(false);
@@ -51,116 +36,90 @@ export const MobileNav: React.FC = () => {
   );
 
   const isMoreActive = filteredMore.some((item) => location.pathname === item.path);
-
   const closeMenu = useCallback(() => setShowMore(false), []);
 
   return (
     <>
-      {/* More menu — full-width bottom sheet style */}
+      {/* Bottom sheet overlay */}
       <AnimatePresence>
         {showMore && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-background/70 backdrop-blur-md z-40 md:hidden"
+              transition={{ duration: 0.18 }}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden"
               onClick={closeMenu}
             />
-
-            {/* Sheet */}
             <motion.div
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 30, stiffness: 350 }}
-              className="fixed bottom-[52px] inset-x-0 z-50 md:hidden safe-area-bottom"
+              transition={{ type: "spring", damping: 32, stiffness: 380 }}
+              className="fixed bottom-[56px] inset-x-0 z-50 md:hidden"
             >
-              <div
-                className="mx-2 rounded-2xl border border-border/40 overflow-hidden"
-                style={{
-                  background: 'hsl(var(--card))',
-                  boxShadow: '0 -12px 40px -8px rgba(0,0,0,0.25), 0 0 0 1px hsl(var(--border) / 0.1)',
-                }}
-              >
-                {/* Handle bar */}
-                <div className="flex justify-center pt-2.5 pb-1">
-                  <div className="w-8 h-1 rounded-full bg-muted-foreground/20" />
+              <div className="mx-3 mb-1 rounded-2xl border border-border/50 bg-card overflow-hidden shadow-lg">
+                {/* Handle */}
+                <div className="flex justify-center pt-2 pb-1">
+                  <div className="w-9 h-1 rounded-full bg-muted-foreground/20" />
                 </div>
-
-                {/* Menu items as list */}
-                <motion.nav
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  className="px-2 pb-2"
-                  role="menu"
-                  aria-label="Menu adicional"
-                >
-                  {filteredMore.map((item) => {
+                <nav className="px-1.5 pb-1.5 space-y-0.5" role="menu" aria-label="Menu adicional">
+                  {filteredMore.map((item, i) => {
                     const isActive = location.pathname === item.path;
                     return (
-                      <motion.div key={item.path} variants={itemVariants}>
+                      <motion.div
+                        key={item.path}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.03, duration: 0.2 }}
+                      >
                         <NavLink
                           to={item.path}
                           onClick={closeMenu}
                           role="menuitem"
                           className={cn(
-                            "flex items-center gap-3 px-3 py-3 rounded-xl transition-all active:scale-[0.98]",
-                            isActive
-                              ? "bg-primary/10"
-                              : "hover:bg-accent/40 active:bg-accent/60"
+                            "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all active:scale-[0.98]",
+                            isActive ? "bg-primary/10" : "active:bg-accent/60"
                           )}
                         >
                           <div className={cn(
-                            "w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-colors",
-                            isActive
-                              ? "bg-primary/15 text-primary"
-                              : "bg-muted/60 text-muted-foreground"
+                            "w-8 h-8 rounded-lg flex items-center justify-center shrink-0",
+                            isActive ? "bg-primary/15 text-primary" : "bg-muted/50 text-muted-foreground"
                           )}>
-                            <item.icon className="w-[18px] h-[18px]" />
+                            <item.icon className="w-4 h-4" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className={cn(
-                              "text-sm font-medium leading-tight",
+                              "text-[13px] font-medium leading-tight",
                               isActive ? "text-primary" : "text-foreground"
-                            )}>
-                              {item.label}
-                            </p>
-                            <p className="text-[10px] text-muted-foreground leading-tight mt-0.5 truncate">
-                              {item.desc}
-                            </p>
+                            )}>{item.label}</p>
+                            <p className="text-[10px] text-muted-foreground leading-tight mt-0.5 truncate">{item.desc}</p>
                           </div>
-                          <ChevronRight className={cn(
-                            "w-4 h-4 shrink-0 transition-colors",
-                            isActive ? "text-primary/50" : "text-muted-foreground/30"
-                          )} />
+                          <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground/30" />
                         </NavLink>
                       </motion.div>
                     );
                   })}
-                </motion.nav>
+                </nav>
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
 
-      {/* Bottom navigation bar */}
+      {/* Bottom tab bar */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border/30 safe-area-bottom"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border/40 safe-area-bottom"
         role="navigation"
         aria-label="Menu principal"
         style={{
-          background: 'hsl(var(--card) / 0.95)',
-          backdropFilter: 'blur(20px) saturate(1.2)',
-          WebkitBackdropFilter: 'blur(20px) saturate(1.2)',
+          background: 'hsl(var(--card) / 0.92)',
+          backdropFilter: 'blur(24px) saturate(1.4)',
+          WebkitBackdropFilter: 'blur(24px) saturate(1.4)',
         }}
       >
-        <div className="flex items-center justify-around px-1 h-[52px]">
+        <div className="flex items-stretch h-[56px]">
           {mainItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
@@ -169,58 +128,42 @@ export const MobileNav: React.FC = () => {
                 to={item.path}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-[10px] font-medium transition-colors touch-target",
+                  "relative flex-1 flex flex-col items-center justify-center gap-[3px] text-[10px] font-medium transition-colors",
                   isActive ? "text-primary" : "text-muted-foreground active:text-foreground"
                 )}
               >
                 {isActive && (
-                  <motion.div
-                    layoutId="mobile-nav-pill"
-                    className="absolute top-0 left-1/2 -translate-x-1/2 w-5 h-[2.5px] rounded-b-full bg-primary"
-                    transition={{ type: "spring", bounce: 0.25, duration: 0.35 }}
+                  <motion.span
+                    layoutId="nav-indicator"
+                    className="absolute top-0 inset-x-[25%] h-[2px] rounded-b-full bg-primary"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
                   />
                 )}
-                <motion.div
-                  whileTap={{ scale: 0.85 }}
-                  transition={{ duration: 0.1 }}
-                >
-                  <item.icon className={cn(
-                    "w-[20px] h-[20px] transition-all",
-                    isActive && "stroke-[2.5]"
-                  )} />
-                </motion.div>
+                <item.icon className={cn("w-5 h-5", isActive && "stroke-[2.5]")} />
                 <span className={cn(isActive && "font-semibold")}>{item.label}</span>
               </NavLink>
             );
           })}
 
-          {/* More button */}
+          {/* More */}
           <button
             onClick={() => setShowMore(!showMore)}
             aria-expanded={showMore}
             aria-haspopup="menu"
             className={cn(
-              "relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-[10px] font-medium transition-colors touch-target",
+              "relative flex-1 flex flex-col items-center justify-center gap-[3px] text-[10px] font-medium transition-colors",
               showMore || isMoreActive ? "text-primary" : "text-muted-foreground active:text-foreground"
             )}
           >
             {(showMore || isMoreActive) && (
-              <motion.div
-                layoutId="mobile-nav-pill"
-                className="absolute top-0 left-1/2 -translate-x-1/2 w-5 h-[2.5px] rounded-b-full bg-primary"
-                transition={{ type: "spring", bounce: 0.25, duration: 0.35 }}
+              <motion.span
+                layoutId="nav-indicator"
+                className="absolute top-0 inset-x-[25%] h-[2px] rounded-b-full bg-primary"
+                transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
               />
             )}
-            <motion.div
-              whileTap={{ scale: 0.85 }}
-              animate={{ rotate: showMore ? 90 : 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              {showMore ? (
-                <X className="w-[20px] h-[20px] stroke-[2.5]" />
-              ) : (
-                <MoreHorizontal className={cn("w-[20px] h-[20px]", isMoreActive && "stroke-[2.5]")} />
-              )}
+            <motion.div animate={{ rotate: showMore ? 90 : 0 }} transition={{ duration: 0.15 }}>
+              {showMore ? <X className="w-5 h-5 stroke-[2.5]" /> : <MoreHorizontal className={cn("w-5 h-5", isMoreActive && "stroke-[2.5]")} />}
             </motion.div>
             <span className={cn((showMore || isMoreActive) && "font-semibold")}>Mais</span>
           </button>
