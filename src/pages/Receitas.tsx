@@ -170,8 +170,14 @@ const Receitas: React.FC = () => {
               <CurrencyInput value={form.amount} onValueChange={(formatted, cents) => { setForm({ ...form, amount: formatted }); setAmountCents(cents); }} />
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Categoria</label>
-              <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}
+              <div className="flex items-center gap-1.5">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Categoria</label>
+                {suggesting && <Sparkles className="w-3 h-3 text-primary animate-pulse" />}
+                {!editingId && !userChangedCategory && form.description.length >= 3 && (
+                  <span className="text-[10px] text-primary/70 italic">IA</span>
+                )}
+              </div>
+              <select value={form.category} onChange={e => { setForm({ ...form, category: e.target.value }); setUserChangedCategory(true); }}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
