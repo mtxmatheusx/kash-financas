@@ -533,6 +533,13 @@ const pt = {
   "whatsapp.description": "Automatize seus registros — envie um áudio e a Faciliten lança receitas e despesas por você.",
   "whatsapp.cta": "Ativar no WhatsApp",
 
+  "dateFilter.all": "Todos",
+  "dateFilter.today": "Hoje",
+  "dateFilter.yesterday": "Ontem",
+  "dateFilter.week": "Semana",
+  "dateFilter.month": "Mês",
+  "dateFilter.period": "Período",
+
   // Financial Insights
   "insights.title": "Insights com IA",
   "insights.preference": "preferência",
