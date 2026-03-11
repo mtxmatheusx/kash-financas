@@ -31,7 +31,7 @@ REGRAS:
 - Se houver investimentos, comente o retorno
 - Seja específico e útil, evite generalidades
 - Se não houver dados suficientes, dê dicas gerais de finanças pessoais
-- Todos os valores monetários em formato brasileiro (R$ X.XXX,XX)`;
+- Todos os valores monetários em formato brasileiro (R$ X.XXX,XX)${prefsBlock}`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
