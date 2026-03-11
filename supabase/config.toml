@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.whatsapp-connect]
 verify_jwt = false
+
+[functions.daily-alerts]
+verify_jwt = false
