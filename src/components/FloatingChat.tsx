@@ -406,7 +406,18 @@ export const FloatingChat: React.FC = () => {
     let assistantSoFar = "";
 
     const apiMessages = toApiMessages(updatedMessages);
-    const parsePromise = text ? parseTransaction(text) : Promise.resolve(null);
+    
+    // Run parse-transaction in parallel — with retry
+    const parseWithRetry = async (): Promise<ParsedTransaction | null> => {
+      if (!text) return null;
+      const result = await parseTransaction(text);
+      if (result && result.amount > 0) return result;
+      // Retry once after a short delay
+      await new Promise(r => setTimeout(r, 800));
+      const retry = await parseTransaction(text);
+      return retry && retry.amount > 0 ? retry : null;
+    };
+    const parsePromise = parseWithRetry();
 
     try {
       await streamChat({
@@ -434,7 +445,13 @@ export const FloatingChat: React.FC = () => {
     }
 
     const parsed = await parsePromise;
-    if (parsed && parsed.amount > 0) setPendingTx(parsed);
+    if (parsed) {
+      setPendingTx(parsed);
+    } else if (text && assistantSoFar.includes("✅")) {
+      // AI said it would register but parse failed — try parsing the AI response
+      const fallback = await parseTransaction(assistantSoFar);
+      if (fallback && fallback.amount > 0) setPendingTx(fallback);
+    }
   };
 
   const discardStagedMessage = () => setStagedMsg(null);
