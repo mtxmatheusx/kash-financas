@@ -65,9 +65,12 @@ Use o contexto para inferir:
                 properties: {
                   type: { type: "string", enum: ["income", "expense"], description: "Tipo: income (receita) ou expense (despesa)" },
                   amount: { type: "number", description: "Valor em reais (positivo)" },
-                  description: { type: "string", description: "Descrição curta da transação" },
+                  description: { type: "string", description: "Descrição curta — apenas nome do item/pessoa/empresa" },
                   category: { type: "string", description: "Categoria da transação" },
                   status: { type: "string", enum: ["paid", "pending"], description: "Status: paid ou pending" },
+                  entry_type: { type: "string", enum: ["single", "installment", "recurring"], description: "Tipo de entrada: single (única), installment (parcelado), recurring (recorrente)" },
+                  frequency: { type: "string", enum: ["monthly", "yearly"], description: "Frequência se recurring" },
+                  installments: { type: "number", description: "Número de parcelas se installment" },
                 },
                 required: ["type", "amount", "description", "category", "status"],
                 additionalProperties: false,
