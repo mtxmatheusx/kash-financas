@@ -55,7 +55,7 @@ const defaultSettings: UserSettings = {
   zip_code: "", address: "", address_number: "", address_complement: "",
   neighborhood: "", city: "", state: "",
   bank_name: "", bank_agency: "", bank_account: "", pix_key: "", pix_key_type: "",
-  n8n_webhook_url: "", evolution_api_url: "", evolution_api_key: "", evolution_instance: "",
+  n8n_webhook_url: "",
   notify_whatsapp: true, notify_email: true, notify_due_dates: true, notify_due_days_before: 3,
 };
 
