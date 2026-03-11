@@ -11,6 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { cn } from "@/lib/utils";
 import { CurrencyInput } from "@/components/CurrencyInput";
 import type { TransactionRow } from "@/lib/types";
+import { useAutoCategory } from "@/hooks/useAutoCategory";
+import { Sparkles } from "lucide-react";
 
 const formatBRL = (v: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 
