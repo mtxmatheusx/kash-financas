@@ -234,6 +234,10 @@ const pt = {
   "investment.applicationDate": "Data da aplicação",
   "investment.saveInvestment": "Salvar Investimento",
   "investment.updateValue": "Atualizar valor",
+  "investment.country": "País / Mercado",
+  "investment.selectCountries": "Selecione os países",
+  "investment.allCountries": "Todos os países",
+  "investment.filterByCountry": "Filtrar por país",
 
   // Goals
   "goals.title": "Metas Financeiras",
