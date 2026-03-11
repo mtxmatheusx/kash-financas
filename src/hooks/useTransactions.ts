@@ -77,16 +77,6 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
     const count = isRecurring ? tx.recurring_months! : isInstallment ? tx.installments! : 1;
     const freq = tx.frequency === 'yearly' ? 12 : 1;
 
-    // Pre-compute monthly income map for percentage-based expenses
-    let monthlyIncomeMap: Record<string, number> = {};
-    if (tx.is_percentage && tx.percentage && tx.percentage_base === 'monthly' && count > 1) {
-      const incomeTransactions = all.filter(t => t.type === 'income' && t.account_type === tx.account_type);
-      incomeTransactions.forEach(t => {
-        const m = t.date.slice(0, 7);
-        monthlyIncomeMap[m] = (monthlyIncomeMap[m] || 0) + t.amount;
-      });
-    }
-
     const rows = [];
     const baseDate = new Date(tx.date + 'T12:00:00');
 
@@ -94,17 +84,11 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
       const d = new Date(baseDate);
       d.setMonth(d.getMonth() + i * freq);
       const dateStr = d.toISOString().split('T')[0];
-      const monthKey = dateStr.slice(0, 7);
 
+      // For percentage-based monthly expenses, store 0 as amount — it's recalculated dynamically
       let amount = tx.amount;
-      if (tx.is_percentage && tx.percentage) {
-        if (tx.percentage_base === 'monthly') {
-          const monthIncome = monthlyIncomeMap[monthKey] || 0;
-          amount = (monthIncome * tx.percentage) / 100;
-        }
-        // 'total' base already calculated in the form's handleSubmit
-      }
       if (isInstallment) amount = tx.amount / count;
+      if (tx.is_percentage && tx.percentage_base === 'monthly') amount = 0;
 
       rows.push({
         user_id: user.id,
