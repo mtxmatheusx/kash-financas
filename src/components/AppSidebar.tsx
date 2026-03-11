@@ -36,6 +36,7 @@ const menuItems: MenuItem[] = [
   { path: "/ebitda", label: "EBITDA", icon: Calculator, account: "business" },
   { path: "/importar", label: "Importar", icon: Upload },
   { path: "/perfil", label: "Meu Perfil", icon: UserCog },
+  { path: "/configuracoes", label: "Configurações", icon: Settings },
 ];
 
 interface Props {
