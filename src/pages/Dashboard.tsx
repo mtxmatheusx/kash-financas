@@ -72,10 +72,11 @@ const Dashboard: React.FC = () => {
     return Object.entries(months)
       .sort(([a], [b]) => a.localeCompare(b))
       .slice(-6)
-      .map(([month, data]) => ({
-        month: new Date(month + '-01').toLocaleDateString('pt-BR', { month: 'short' }).replace('.', ''),
-        ...data,
-      }));
+      .map(([month, data]) => {
+        const [y, m] = month.split('-').map(Number);
+        const label = new Date(y, m - 1, 1).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
+        return { month: label, ...data };
+      });
   }, [filtered]);
 
   const categoryData = useMemo(() => {
