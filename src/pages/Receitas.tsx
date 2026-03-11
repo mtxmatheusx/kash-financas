@@ -19,7 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 const CATEGORIES = ['Salário', 'Freelance', 'Vendas', 'Serviços', 'Aluguel', 'Dividendos', 'Outros'];
 
-const emptyForm = () => ({
+const emptyForm = (defaultCurrency: CurrencyCode = 'BRL') => ({
   description: '', amount: '', category: CATEGORIES[0],
   date: new Date().toISOString().slice(0, 10),
   status: 'paid' as 'paid' | 'pending',
@@ -27,6 +27,7 @@ const emptyForm = () => ({
   installments: '2',
   frequency: 'monthly' as 'monthly' | 'yearly',
   recurring_months: '12',
+  currency: defaultCurrency,
 });
 
 const Receitas: React.FC = () => {
