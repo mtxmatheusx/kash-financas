@@ -210,6 +210,8 @@ export const FloatingChat: React.FC = () => {
   const [generalDisclaimerAccepted, setGeneralDisclaimerAccepted] = useState<boolean | null>(null);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [showGeneralDisclaimer, setShowGeneralDisclaimer] = useState(false);
+  const [userCountry, setUserCountry] = useState<UserCountry | null>(null);
+  const [countryLoaded, setCountryLoaded] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
   // Check disclaimers
