@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.parse-transaction]
 verify_jwt = false
+
+[functions.whatsapp-connect]
+verify_jwt = false
