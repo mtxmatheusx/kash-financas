@@ -266,12 +266,14 @@ const DRE: React.FC = () => {
       pdf.setFontSize(12);
       pdf.setFont("helvetica", "bold");
       pdf.setTextColor(...white);
-      pdf.text(`DRE — ${capitalMonth}`, w - m, 10, { align: "right" });
+      const pdfTitle = language === "en" ? "P&L" : language === "es" ? "Estado de Resultados" : "DRE";
+      pdf.text(`${pdfTitle} — ${capitalMonth}`, w - m, 10, { align: "right" });
 
       pdf.setFontSize(7.5);
       pdf.setFont("helvetica", "normal");
       pdf.setTextColor(161, 161, 170); // zinc-400
-      pdf.text(`Emitido em ${format(new Date(), "dd/MM/yyyy 'às' HH:mm")}`, w - m, 16, { align: "right" });
+      const dateFormat = language === "en" ? "MM/dd/yyyy 'at' HH:mm" : "dd/MM/yyyy 'às' HH:mm";
+      pdf.text(t("dre.pdf.issuedAt").replace("{date}", format(new Date(), dateFormat, { locale: dateLocale })), w - m, 16, { align: "right" });
 
       // Accent line below header
       pdf.setFillColor(...accentRed);
