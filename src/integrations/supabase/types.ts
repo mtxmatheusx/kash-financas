@@ -229,6 +229,30 @@ export type Database = {
         }
         Relationships: []
       }
+      user_financial_preferences: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          preference: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          preference: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          preference?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
