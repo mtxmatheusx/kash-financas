@@ -53,6 +53,7 @@ const App = () => (
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/receitas" element={<Receitas />} />
                   <Route path="/despesas" element={<Despesas />} />
+                  <Route path="/perfil" element={<Perfil />} />
 
                   {/* Premium tier */}
                   <Route path="/investimentos" element={<ProtectedRoute requirePremium><Investimentos /></ProtectedRoute>} />
