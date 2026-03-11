@@ -149,7 +149,7 @@ Use markdown (listas, **negrito**, tabelas). Respostas concisas (2-3 parágrafos
 Sempre termine com uma pergunta ou próximo passo.`,
     };
 
-    const systemContent = systemPrompts[consultantType] || systemPrompts.financial;
+    const systemContent = (systemPrompts[consultantType] || systemPrompts.financial) + countryContext;
 
     // Messages already come in the correct format from the frontend
     // They can be either string content or array content (for multimodal)
