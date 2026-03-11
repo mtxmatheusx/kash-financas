@@ -494,11 +494,11 @@ const Importar: React.FC = () => {
               <Brain className="w-5 h-5 text-primary mt-0.5 shrink-0" />
               <div>
                 <p className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                  Mapeamento inteligente com IA
+                  {t("import.aiMapping")}
                   <Sparkles className="w-3.5 h-3.5 text-primary" />
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  A IA analisa os cabeçalhos e dados da sua planilha para identificar automaticamente cada coluna — independente do formato ou idioma.
+                  {t("import.aiMappingDesc")}
                 </p>
               </div>
             </div>
