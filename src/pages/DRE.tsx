@@ -154,7 +154,7 @@ const DRE: React.FC = () => {
     r.push({ label: t("dre.line.cogs"), value: -current.cpv, prevValue: -previous.cpv, bold: true, tooltip: t("dre.line.tooltipCogs") });
     Object.entries(current.cpvByCategory).forEach(([cat, val]) => {
       const prev = previous.cpvByCategory[cat] || 0;
-      r.push({ label: cat, value: -val, prevValue: -prev, indent: 2 });
+      r.push({ label: translateCategory(cat, t), value: -val, prevValue: -prev, indent: 2 });
     });
     r.push({ label: "", value: 0, separator: true });
 
