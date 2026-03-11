@@ -265,7 +265,7 @@ const Landing: React.FC = () => {
               className="text-sm sm:text-lg text-[hsl(0,0%,50%)] max-w-lg mx-auto lg:mx-0 mb-6 sm:mb-8 leading-relaxed"
             >
               Chega de planilhas abandonadas. Envie um áudio no WhatsApp.
-              A Kash organiza, categoriza e te dá estratégias para{" "}
+              A Faciliten organiza, categoriza e te dá estratégias para{" "}
               <span className="text-[hsl(160,100%,50%)] font-semibold">lucrar mais</span>.
             </motion.p>
 
