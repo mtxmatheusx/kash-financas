@@ -14,7 +14,8 @@ import { CurrencyInput } from "@/components/CurrencyInput";
 import type { TransactionRow } from "@/lib/types";
 import { useAutoCategory } from "@/hooks/useAutoCategory";
 import { Sparkles } from "lucide-react";
-import { usePreferences } from "@/contexts/PreferencesContext";
+import { usePreferences, CURRENCIES, type CurrencyCode } from "@/contexts/PreferencesContext";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const CATEGORIES = ['Salário', 'Freelance', 'Vendas', 'Serviços', 'Aluguel', 'Dividendos', 'Outros'];
 
