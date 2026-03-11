@@ -540,9 +540,9 @@ const Landing: React.FC = () => {
 
               <div className="relative p-5 sm:p-8">
                 <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1 flex items-center gap-2">
-                  <Crown className="h-4 w-4 sm:h-5 sm:w-5 text-[hsl(45,100%,60%)]" /> Copiloto Premium
+                  <Crown className="h-4 w-4 sm:h-5 sm:w-5 text-[hsl(45,100%,60%)]" /> {t("landing.pricing.premiumTitle")}
                 </h3>
-                <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">Zero planilhas. Zero atrito. A IA faz o trabalho pesado.</p>
+                <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">{t("landing.pricing.premiumDesc")}</p>
                 <p className="text-4xl sm:text-5xl font-extrabold text-white mb-5 sm:mb-6 font-mono-fin">
                   R$ 29<span className="text-base sm:text-lg">,90</span>
                   <span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">/mês</span>
