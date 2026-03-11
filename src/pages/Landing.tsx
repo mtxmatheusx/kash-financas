@@ -121,7 +121,7 @@ const IPhoneMockup: React.FC = () => (
             <span className="text-[hsl(160,100%,50%)] text-xs font-bold">F</span>
           </div>
           <div>
-            <p className="text-[11px] font-semibold text-white">Kash Copiloto</p>
+            <p className="text-[11px] font-semibold text-white">Faciliten Copiloto</p>
             <p className="text-[9px] text-[hsl(160,100%,50%)]">online</p>
           </div>
         </div>
