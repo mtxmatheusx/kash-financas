@@ -270,6 +270,9 @@ export const FloatingChat: React.FC = () => {
     setMessages(updatedMessages);
     setIsLoading(true);
 
+    // Save user message to DB (don't save base64 images to avoid bloat)
+    saveMessage("user", displayText);
+
     const controller = new AbortController();
     abortRef.current = controller;
     let assistantSoFar = "";
@@ -290,7 +293,11 @@ export const FloatingChat: React.FC = () => {
             return [...prev, { role: "assistant", content: current }];
           });
         },
-        onDone: () => setIsLoading(false),
+        onDone: () => {
+          setIsLoading(false);
+          // Save complete assistant response to DB
+          if (assistantSoFar.trim()) saveMessage("assistant", assistantSoFar);
+        },
         onError: (err) => { toast.error(err); setIsLoading(false); },
       });
     } catch (e: any) {
