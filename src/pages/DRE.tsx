@@ -38,7 +38,7 @@ interface DRELine {
 const pct = (part: number, total: number) => (total !== 0 ? (part / total) * 100 : 0);
 
 const DRE: React.FC = () => {
-  const { formatMoney: formatBRL } = usePreferences();
+  const { formatMoney: formatBRL, t } = usePreferences();
   const { allTransactions } = useTransactions();
   const { account } = useAccount();
   const [refDate, setRefDate] = useState(new Date());
