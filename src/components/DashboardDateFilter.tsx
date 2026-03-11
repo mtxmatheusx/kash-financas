@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { format, startOfDay, subDays, startOfWeek, startOfMonth, endOfMonth } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { ptBR, enUS, es as esLocale } from "date-fns/locale";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
