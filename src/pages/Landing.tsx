@@ -493,13 +493,13 @@ const Landing: React.FC = () => {
         <div className="max-w-3xl mx-auto relative z-10">
           <motion.div {...fadeUp()} className="text-center mb-6">
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1] mb-3 sm:mb-4">
-              Quanto custa ter dois consultores?
+              {t("landing.pricing.title")}
             </h2>
             <p className="text-[hsl(0,0%,45%)] text-sm sm:text-lg max-w-xl mx-auto mb-1.5">
-              Contratar um assistente custa <span className="line-through text-[hsl(0,0%,30%)]">R$ 2.000/mês</span>
+              {t("landing.pricing.subtitle")} <span className="line-through text-[hsl(0,0%,30%)]">{t("landing.pricing.oldPrice")}</span>
             </p>
             <p className="text-[hsl(160,100%,50%)] font-bold text-base sm:text-lg">
-              O Faciliten custa o valor de um café.
+              {t("landing.pricing.punchline")}
             </p>
           </motion.div>
 
