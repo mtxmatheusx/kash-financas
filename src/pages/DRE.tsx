@@ -41,7 +41,53 @@ const DRE: React.FC = () => {
   const { allTransactions } = useTransactions();
   const { account } = useAccount();
   const [refDate, setRefDate] = useState(new Date());
+  const [exporting, setExporting] = useState(false);
+  const dreRef = useRef<HTMLDivElement>(null);
 
+  const handleExportPDF = useCallback(async () => {
+    const element = dreRef.current;
+    if (!element) return;
+    setExporting(true);
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const { jsPDF } = await import("jspdf");
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: "#ffffff",
+      });
+
+      const pdfWidth = 210;
+      const imgWidth = pdfWidth - 20;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const pdf = new jsPDF("p", "mm", "a4");
+      const imgData = canvas.toDataURL("image/png");
+
+      let heightLeft = imgHeight;
+      let position = 10;
+
+      pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
+      heightLeft -= 297 - 20;
+
+      while (heightLeft > 0) {
+        pdf.addPage();
+        position = -(297 - 20 - heightLeft - imgHeight + 10);
+        pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
+        heightLeft -= 297 - 20;
+      }
+
+      const monthLabel = format(refDate, "yyyy-MM", { locale: ptBR });
+      pdf.save(`DRE_${monthLabel}.pdf`);
+      toast.success("PDF exportado com sucesso!");
+    } catch (err) {
+      console.error("Erro ao exportar PDF:", err);
+      toast.error("Erro ao exportar PDF");
+    } finally {
+      setExporting(false);
+    }
+  }, [refDate]);
   const monthStart = startOfMonth(refDate);
   const monthEnd = endOfMonth(refDate);
   const prevMonthStart = startOfMonth(subMonths(refDate, 1));
