@@ -55,8 +55,15 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [language, setLanguageState] = useState<LanguageCode>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) return JSON.parse(stored).language || "pt-BR";
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.language) return parsed.language;
+      }
     } catch {}
+    // Auto-detect from browser on first visit
+    const browserLang = navigator.language?.toLowerCase() || "";
+    if (browserLang.startsWith("es")) return "es";
+    if (browserLang.startsWith("en")) return "en";
     return "pt-BR";
   });
 
