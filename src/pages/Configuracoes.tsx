@@ -65,6 +65,35 @@ const Configuracoes: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [fetchingCep, setFetchingCep] = useState(false);
+  const [qrCodeImage, setQrCodeImage] = useState<string | null>(null);
+  const [qrLoading, setQrLoading] = useState(false);
+
+  const handleGenerateQr = async () => {
+    if (!settings.n8n_webhook_url) {
+      toast.error("Configure a URL do webhook N8N primeiro.");
+      return;
+    }
+    setQrLoading(true);
+    setQrCodeImage(null);
+    try {
+      const res = await fetch(settings.n8n_webhook_url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "generate_qr", user_id: user?.id }),
+      });
+      const data = await res.json();
+      if (data?.qrCode || data?.base64) {
+        const img = data.qrCode || data.base64;
+        setQrCodeImage(img.startsWith("data:") ? img : `data:image/png;base64,${img}`);
+        toast.success("QR Code gerado! Escaneie com seu celular.");
+      } else {
+        toast.error("Não foi possível gerar o QR Code.");
+      }
+    } catch {
+      toast.error("Erro ao conectar com o servidor. Verifique a URL do webhook.");
+    }
+    setQrLoading(false);
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -369,27 +398,56 @@ const Configuracoes: React.FC = () => {
                 </Field>
               </div>
 
-              {/* WhatsApp Bot Card */}
-              <div className="rounded-xl border border-border bg-accent/30 p-6 space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-fin-income/15">
-                    <MessageCircle className="w-6 h-6 text-fin-income" />
+              {/* WhatsApp QR Code Connection */}
+              <div className="rounded-xl border border-border bg-card p-6 md:p-8 space-y-6">
+                <div className="text-center space-y-2">
+                  <div className="inline-flex p-3 rounded-2xl bg-fin-income/10 mb-2">
+                    <MessageCircle className="w-8 h-8 text-fin-income" />
                   </div>
-                  <div>
-                    <h3 className="text-base font-bold text-foreground font-display-fin">WhatsApp Bot</h3>
-                    <p className="text-xs text-muted-foreground">
-                      Conecte seu número para ativar as notificações automáticas de cobrança.
-                    </p>
+                  <h3 className="text-lg font-bold text-foreground font-display-fin">
+                    Conecte seu WhatsApp em 1 segundo
+                  </h3>
+                  <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+                    Escaneie o QR Code abaixo com o seu celular para automatizar as cobranças usando o seu próprio número.
+                  </p>
+                </div>
+
+                {/* QR Code area */}
+                <div className="flex justify-center">
+                  <div className="w-64 h-64 rounded-xl bg-background border border-border flex items-center justify-center overflow-hidden p-2">
+                    {qrLoading ? (
+                      <div className="flex flex-col items-center gap-3">
+                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                        <p className="text-xs text-muted-foreground">Gerando QR Code...</p>
+                      </div>
+                    ) : qrCodeImage ? (
+                      <img src={qrCodeImage} alt="QR Code WhatsApp" className="w-full h-full object-contain rounded-lg" />
+                    ) : (
+                      <div className="flex flex-col items-center gap-3 text-center px-4">
+                        <QrCode className="w-12 h-12 text-muted-foreground/30" />
+                        <p className="text-xs text-muted-foreground">
+                          Clique no botão abaixo para gerar o QR Code
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <Button
-                  variant="outline"
-                  className="w-full gap-2 border-fin-income/30 text-fin-income hover:bg-fin-income/10"
-                  onClick={() => toast.info("QR Code será gerado em breve. Configure as credenciais da Evolution API no painel de administração.")}
-                >
-                  <QrCode className="w-4 h-4" />
-                  Gerar QR Code de Conexão
-                </Button>
+
+                <div className="flex flex-col gap-2">
+                  <Button
+                    className="w-full gap-2 bg-fin-income/90 hover:bg-fin-income text-primary-foreground"
+                    onClick={handleGenerateQr}
+                    disabled={qrLoading}
+                  >
+                    {qrLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <QrCode className="w-4 h-4" />}
+                    {qrCodeImage ? "Atualizar QR Code" : "Gerar QR Code de Conexão"}
+                  </Button>
+                  {qrCodeImage && (
+                    <p className="text-[10px] text-muted-foreground text-center">
+                      O QR Code expira em alguns minutos. Clique em "Atualizar" se necessário.
+                    </p>
+                  )}
+                </div>
               </div>
             </Card>
           </TabsContent>
