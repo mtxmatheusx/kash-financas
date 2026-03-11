@@ -44,50 +44,6 @@ const DRE: React.FC = () => {
   const [exporting, setExporting] = useState(false);
   const dreRef = useRef<HTMLDivElement>(null);
 
-  const handleExportPDF = useCallback(async () => {
-    const element = dreRef.current;
-    if (!element) return;
-    setExporting(true);
-    try {
-      const html2canvas = (await import("html2canvas")).default;
-      const { jsPDF } = await import("jspdf");
-
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: "#ffffff",
-      });
-
-      const pdfWidth = 210;
-      const imgWidth = pdfWidth - 20;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      const pdf = new jsPDF("p", "mm", "a4");
-      const imgData = canvas.toDataURL("image/png");
-
-      let heightLeft = imgHeight;
-      let position = 10;
-
-      pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
-      heightLeft -= 297 - 20;
-
-      while (heightLeft > 0) {
-        pdf.addPage();
-        position = -(297 - 20 - heightLeft - imgHeight + 10);
-        pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
-        heightLeft -= 297 - 20;
-      }
-
-      const monthLabel = format(refDate, "yyyy-MM", { locale: ptBR });
-      pdf.save(`DRE_${monthLabel}.pdf`);
-      toast.success("PDF exportado com sucesso!");
-    } catch (err) {
-      console.error("Erro ao exportar PDF:", err);
-      toast.error("Erro ao exportar PDF");
-    } finally {
-      setExporting(false);
-    }
-  }, [refDate]);
   const monthStart = startOfMonth(refDate);
   const monthEnd = endOfMonth(refDate);
   const prevMonthStart = startOfMonth(subMonths(refDate, 1));
@@ -244,6 +200,159 @@ const DRE: React.FC = () => {
   const variation = previous.lucroLiquido !== 0
     ? ((current.lucroLiquido - previous.lucroLiquido) / Math.abs(previous.lucroLiquido)) * 100
     : 0;
+
+  const handleExportPDF = useCallback(async () => {
+    setExporting(true);
+    try {
+      const { jsPDF } = await import("jspdf");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const w = 210;
+      const margin = 14;
+      const usable = w - margin * 2;
+      let y = margin;
+
+      const monthLabel = format(refDate, "MMMM yyyy", { locale: ptBR });
+      const capitalMonth = monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1);
+
+      pdf.setFillColor(15, 23, 42);
+      pdf.rect(0, 0, w, 38, "F");
+      pdf.setFillColor(59, 130, 246);
+      pdf.rect(0, 38, w, 1.5, "F");
+
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(18);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Demonstração do Resultado do Exercício", margin, 18);
+      pdf.setFontSize(11);
+      pdf.setFont("helvetica", "normal");
+      pdf.text(capitalMonth, margin, 27);
+      pdf.setFontSize(8);
+      pdf.setTextColor(148, 163, 184);
+      pdf.text(`Gerado em ${format(new Date(), "dd/MM/yyyy 'às' HH:mm")}`, margin, 34);
+
+      y = 48;
+
+      const summaryCards = [
+        { label: "Receita Bruta", value: current.receitaBruta, color: [34, 197, 94] as [number, number, number] },
+        { label: "Lucro Bruto", value: current.lucroBruto, color: current.lucroBruto >= 0 ? [34, 197, 94] as [number, number, number] : [239, 68, 68] as [number, number, number] },
+        { label: "Total Despesas", value: current.totalExpenses, color: [239, 68, 68] as [number, number, number] },
+        { label: "Lucro Líquido", value: current.lucroLiquido, color: current.lucroLiquido >= 0 ? [34, 197, 94] as [number, number, number] : [239, 68, 68] as [number, number, number] },
+      ];
+
+      const cardW = (usable - 9) / 4;
+      summaryCards.forEach((card, i) => {
+        const x = margin + i * (cardW + 3);
+        pdf.setFillColor(248, 250, 252);
+        pdf.roundedRect(x, y, cardW, 20, 2, 2, "F");
+        pdf.setDrawColor(226, 232, 240);
+        pdf.roundedRect(x, y, cardW, 20, 2, 2, "S");
+        pdf.setFontSize(7);
+        pdf.setTextColor(100, 116, 139);
+        pdf.setFont("helvetica", "normal");
+        pdf.text(card.label.toUpperCase(), x + 4, y + 7);
+        pdf.setFontSize(11);
+        pdf.setTextColor(...card.color);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(formatBRL(Math.abs(card.value)), x + 4, y + 15);
+      });
+
+      y += 28;
+
+      pdf.setFillColor(241, 245, 249);
+      pdf.rect(margin, y, usable, 8, "F");
+      pdf.setFontSize(7);
+      pdf.setTextColor(71, 85, 105);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("DESCRIÇÃO", margin + 4, y + 5.5);
+      pdf.text("MÊS ATUAL", margin + usable - 58, y + 5.5);
+      pdf.text("MÊS ANTERIOR", margin + usable - 28, y + 5.5);
+      y += 10;
+
+      const addNewPageIfNeeded = () => {
+        if (y > 270) { pdf.addPage(); y = margin; }
+      };
+
+      lines.forEach((line) => {
+        addNewPageIfNeeded();
+        if (line.separator) {
+          pdf.setDrawColor(226, 232, 240);
+          pdf.line(margin, y, margin + usable, y);
+          y += 2;
+          return;
+        }
+        const rowH = 7;
+        const indent = (line.indent || 0) * 8;
+        if (line.highlight) {
+          pdf.setFillColor(248, 250, 252);
+          pdf.rect(margin, y - 1, usable, rowH + 1, "F");
+        }
+        pdf.setFontSize(line.bold ? 8.5 : 8);
+        pdf.setFont("helvetica", line.bold ? "bold" : "normal");
+        pdf.setTextColor(line.bold ? 15 : 100, line.bold ? 23 : 116, line.bold ? 42 : 139);
+        pdf.text(line.label, margin + 4 + indent, y + 4.5);
+        if (line.value !== 0) {
+          pdf.setFont("helvetica", line.bold ? "bold" : "normal");
+          if (line.value > 0) pdf.setTextColor(34, 197, 94);
+          else pdf.setTextColor(239, 68, 68);
+          pdf.text(formatBRL(Math.abs(line.value)), margin + usable - 38, y + 4.5, { align: "right" });
+        } else {
+          pdf.setTextColor(148, 163, 184);
+          pdf.text("—", margin + usable - 48, y + 4.5);
+        }
+        const pv = line.prevValue ?? 0;
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(148, 163, 184);
+        if (pv !== 0) {
+          pdf.text(formatBRL(Math.abs(pv)), margin + usable - 4, y + 4.5, { align: "right" });
+        } else {
+          pdf.text("—", margin + usable - 14, y + 4.5);
+        }
+        pdf.setDrawColor(241, 245, 249);
+        pdf.line(margin, y + rowH, margin + usable, y + rowH);
+        y += rowH + 1;
+      });
+
+      addNewPageIfNeeded();
+      y += 4;
+      pdf.setFillColor(248, 250, 252);
+      pdf.roundedRect(margin, y, usable, 22, 2, 2, "F");
+      pdf.setDrawColor(226, 232, 240);
+      pdf.roundedRect(margin, y, usable, 22, 2, 2, "S");
+      pdf.setFontSize(9);
+      pdf.setFont("helvetica", "bold");
+      pdf.setTextColor(15, 23, 42);
+      pdf.text("Análise Automática", margin + 4, y + 7);
+      pdf.setFontSize(8);
+      pdf.setFont("helvetica", "normal");
+      if (current.lucroLiquido >= 0) {
+        pdf.setTextColor(34, 197, 94);
+        pdf.text(`✓ Resultado positivo — lucro líquido de ${formatBRL(current.lucroLiquido)} (${current.margemLiquida.toFixed(1)}% de margem).`, margin + 4, y + 15);
+      } else {
+        pdf.setTextColor(239, 68, 68);
+        pdf.text(`✗ Resultado negativo — prejuízo de ${formatBRL(Math.abs(current.lucroLiquido))}.`, margin + 4, y + 15);
+      }
+
+      const pageCount = pdf.getNumberOfPages();
+      for (let p = 1; p <= pageCount; p++) {
+        pdf.setPage(p);
+        pdf.setFontSize(7);
+        pdf.setTextColor(148, 163, 184);
+        pdf.setFont("helvetica", "normal");
+        pdf.text("Faciliten · Gestão Financeira Inteligente", margin, 290);
+        pdf.text(`Página ${p} de ${pageCount}`, w - margin, 290, { align: "right" });
+        pdf.setFillColor(59, 130, 246);
+        pdf.rect(0, 295.5, w, 1.5, "F");
+      }
+
+      pdf.save(`DRE_${format(refDate, "yyyy-MM")}.pdf`);
+      toast.success("PDF exportado com sucesso!");
+    } catch (err) {
+      console.error("Erro ao exportar PDF:", err);
+      toast.error("Erro ao exportar PDF");
+    } finally {
+      setExporting(false);
+    }
+  }, [refDate, current, lines, formatBRL]);
 
   return (
     <PageTransition>
