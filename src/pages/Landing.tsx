@@ -230,13 +230,13 @@ const Landing: React.FC = () => {
             </Select>
             <Link to="/login">
               <Button variant="ghost" size="sm" className="text-[hsl(0,0%,60%)] hover:text-white hover:bg-[hsl(0,0%,10%)] text-xs sm:text-sm px-2 sm:px-3">
-                Entrar
+                {t("landing.nav.login")}
               </Button>
             </Link>
             <Link to={signupLink}>
               <Button size="sm" className="bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white cta-glow border-0 font-semibold text-xs sm:text-sm px-3 sm:px-4">
-                <span className="hidden sm:inline">Ativar Copiloto</span>
-                <span className="sm:hidden">Começar</span>
+                <span className="hidden sm:inline">{t("landing.nav.cta")}</span>
+                <span className="sm:hidden">{t("landing.nav.ctaMobile")}</span>
                 <ArrowRight className="ml-1 h-3 w-3 sm:h-3.5 sm:w-3.5" />
               </Button>
             </Link>
