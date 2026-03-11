@@ -110,7 +110,7 @@ const Receitas: React.FC = () => {
       create(payload);
     }
 
-    setForm(emptyForm());
+    setForm(emptyForm(defaultCurrency));
     setAmountCents(0);
     setEditingId(null);
     setShowForm(false);
