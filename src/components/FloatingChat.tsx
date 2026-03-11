@@ -295,12 +295,38 @@ export const FloatingChat: React.FC = () => {
 
   const switchConsultant = (type: ConsultantType) => {
     if (type === consultantType) return;
+    if (type === "investor" && !investorDisclaimerAccepted) {
+      setShowDisclaimer(true);
+      return;
+    }
     abortRef.current?.abort();
     setConsultantType(type);
     setMessages([{ role: "assistant", content: consultantConfig[type].greeting }]);
     setHistoryLoaded(false);
     setPendingTx(null);
     setStagedMsg(null);
+  };
+
+  const handleDisclaimerAccept = async () => {
+    if (!user) return;
+    await supabase.from('user_financial_preferences').insert({
+      user_id: user.id,
+      preference: 'investor_disclaimer_accepted',
+      category: 'disclaimer',
+    });
+    setInvestorDisclaimerAccepted(true);
+    setShowDisclaimer(false);
+    // Now switch to investor
+    abortRef.current?.abort();
+    setConsultantType("investor");
+    setMessages([{ role: "assistant", content: consultantConfig["investor"].greeting }]);
+    setHistoryLoaded(false);
+    setPendingTx(null);
+    setStagedMsg(null);
+  };
+
+  const handleDisclaimerDecline = () => {
+    setShowDisclaimer(false);
   };
 
   const handleConfirmTx = useCallback(() => {
