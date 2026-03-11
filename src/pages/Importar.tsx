@@ -577,7 +577,7 @@ const Importar: React.FC = () => {
                 <FileSpreadsheet className="w-5 h-5 text-primary" />
                 <div>
                   <p className="text-sm font-medium text-foreground">{fileName}</p>
-                  <p className="text-xs text-muted-foreground">{result.rawRows.length} linhas encontradas</p>
+                  <p className="text-xs text-muted-foreground">{t("import.rowsFound").replace("{count}", String(result.rawRows.length))}</p>
                 </div>
               </div>
               {aiMapping && (
