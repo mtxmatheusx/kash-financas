@@ -107,6 +107,7 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
         frequency: tx.frequency ?? null,
         is_percentage: tx.is_percentage ?? false,
         percentage: tx.percentage ?? null,
+        currency: tx.currency || 'BRL',
       });
     }
 
