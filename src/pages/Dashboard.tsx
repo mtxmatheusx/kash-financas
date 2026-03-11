@@ -215,7 +215,7 @@ const Dashboard: React.FC = () => {
           <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-3">{t("dashboard.recentTransactions")}</h3>
           {filtered.length > 0 ? (
             <motion.div className="space-y-0.5" variants={staggerContainer} initial="initial" animate="animate">
-              {filtered.slice(0, 8).map(t => (
+              {filtered.slice(0, 8).map(tx => (
                 <motion.div key={t.id} variants={staggerItem}
                   whileHover={{ x: 3, transition: { duration: 0.1 } }}
                   className="flex items-center justify-between py-2 px-2.5 rounded-lg hover:bg-accent/50 transition-colors cursor-default">
