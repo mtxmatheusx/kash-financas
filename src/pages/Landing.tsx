@@ -17,7 +17,7 @@ const useReferralCapture = () => {
   const [searchParams] = useSearchParams();
   useEffect(() => {
     const ref = searchParams.get("ref");
-    if (ref) localStorage.setItem("kash_referral_code", ref);
+    if (ref) localStorage.setItem("faciliten_referral_code", ref);
   }, [searchParams]);
 };
 
@@ -79,7 +79,7 @@ const MobileWhatsAppPreview: React.FC = () => (
         <WhatsAppIcon className="w-3.5 h-3.5 text-white" />
       </div>
       <div>
-        <p className="text-[11px] font-semibold text-white">Kash Copiloto</p>
+        <p className="text-[11px] font-semibold text-white">Faciliten Copiloto</p>
         <p className="text-[9px] text-[hsl(160,100%,50%)]">online</p>
       </div>
     </div>
@@ -118,10 +118,10 @@ const IPhoneMockup: React.FC = () => (
       <div className="absolute inset-[3px] rounded-[37px] overflow-hidden bg-[hsl(200,5%,8%)]">
         <div className="bg-[hsl(200,8%,12%)] px-4 pt-10 pb-3 flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-[hsl(160,100%,50%)/0.15] flex items-center justify-center">
-            <span className="text-[hsl(160,100%,50%)] text-xs font-bold">K</span>
+            <span className="text-[hsl(160,100%,50%)] text-xs font-bold">F</span>
           </div>
           <div>
-            <p className="text-[11px] font-semibold text-white">Kash Copiloto</p>
+            <p className="text-[11px] font-semibold text-white">Faciliten Copiloto</p>
             <p className="text-[9px] text-[hsl(160,100%,50%)]">online</p>
           </div>
         </div>
@@ -193,7 +193,7 @@ const Landing: React.FC = () => {
 
   if (user) return <Navigate to="/dashboard" replace />;
 
-  const signupLink = "/signup" + (localStorage.getItem("kash_referral_code") ? `?ref=${localStorage.getItem("kash_referral_code")}` : "");
+  const signupLink = "/signup" + (localStorage.getItem("faciliten_referral_code") ? `?ref=${localStorage.getItem("faciliten_referral_code")}` : "");
 
   return (
     <div className="landing-dark noise-texture min-h-screen overflow-x-hidden font-['DM_Sans']">
@@ -203,9 +203,9 @@ const Landing: React.FC = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 relative z-10">
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[hsl(160,100%,50%)] flex items-center justify-center shadow-lg shadow-[hsl(160,100%,50%)/0.3]">
-              <span className="text-[hsl(0,0%,2%)] font-extrabold text-xs sm:text-sm">K</span>
+              <span className="text-[hsl(0,0%,2%)] font-extrabold text-xs sm:text-sm">F</span>
             </div>
-            <span className="font-bold tracking-tight text-white text-base sm:text-lg">Kash</span>
+            <span className="font-bold tracking-tight text-white text-base sm:text-lg">Faciliten</span>
           </Link>
           <div className="flex items-center gap-2 sm:gap-3 relative z-10">
             <Link to="/login">
@@ -265,7 +265,7 @@ const Landing: React.FC = () => {
               className="text-sm sm:text-lg text-[hsl(0,0%,50%)] max-w-lg mx-auto lg:mx-0 mb-6 sm:mb-8 leading-relaxed"
             >
               Chega de planilhas abandonadas. Envie um áudio no WhatsApp.
-              A Kash organiza, categoriza e te dá estratégias para{" "}
+              A Faciliten organiza, categoriza e te dá estratégias para{" "}
               <span className="text-[hsl(160,100%,50%)] font-semibold">lucrar mais</span>.
             </motion.p>
 
@@ -368,7 +368,7 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      {/* ═══ O JEITO VELHO vs O JEITO KASH ═══ */}
+      {/* ═══ O JEITO VELHO vs O JEITO FACILITEN ═══ */}
       <section className="py-14 sm:py-28 px-4 sm:px-6 relative">
         <div className="max-w-5xl mx-auto relative z-10">
           <motion.div {...fadeUp()} className="text-center mb-10 sm:mb-16">
@@ -401,7 +401,7 @@ const Landing: React.FC = () => {
               </ul>
             </motion.div>
 
-            {/* Card Direito — O Jeito Kash */}
+            {/* Card Direito — O Jeito Faciliten */}
             <motion.div
               {...fadeUp(0.2)}
               className="relative rounded-xl sm:rounded-2xl overflow-hidden"
@@ -443,7 +443,7 @@ const Landing: React.FC = () => {
               Consultor financeiro + vendas = <span className="line-through text-[hsl(0,0%,30%)]">R$ 5.000/mês</span>
             </p>
             <p className="text-[hsl(160,100%,50%)] font-bold text-base sm:text-lg">
-              Com a Kash, a partir de R$ 0.
+              Com a Faciliten, a partir de R$ 0.
             </p>
           </motion.div>
 
@@ -524,7 +524,7 @@ const Landing: React.FC = () => {
               {[
                 {
                   q: "Preciso baixar algum aplicativo novo?",
-                  a: "Absolutamente zero. A Kash vive dentro do seu WhatsApp. Se você sabe mandar um áudio, você sabe usar a Kash.",
+                  a: "Absolutamente zero. A Faciliten vive dentro do seu WhatsApp. Se você sabe mandar um áudio, você sabe usar a Faciliten.",
                 },
                 {
                   q: "Como o Consultor de Vendas funciona?",
@@ -597,9 +597,9 @@ const Landing: React.FC = () => {
         <div className="max-w-6xl mx-auto flex flex-col items-center gap-4 sm:flex-row sm:justify-between sm:gap-6">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-[hsl(160,100%,50%)] flex items-center justify-center">
-              <span className="text-[hsl(0,0%,2%)] font-extrabold text-[10px] sm:text-xs">K</span>
+              <span className="text-[hsl(0,0%,2%)] font-extrabold text-[10px] sm:text-xs">F</span>
             </div>
-            <span className="font-bold text-sm text-white">Kash</span>
+            <span className="font-bold text-sm text-white">Faciliten</span>
           </div>
           <div className="flex items-center gap-5 sm:gap-6 text-xs sm:text-sm text-[hsl(0,0%,35%)]">
             <Link to="/login" className="hover:text-white transition-colors">Entrar</Link>
@@ -607,7 +607,7 @@ const Landing: React.FC = () => {
             <Link to="/upgrade" className="hover:text-white transition-colors">Planos</Link>
           </div>
           <p className="text-[10px] text-[hsl(0,0%,25%)]">
-            © {new Date().getFullYear()} Kash
+            © {new Date().getFullYear()} Faciliten
           </p>
         </div>
       </footer>

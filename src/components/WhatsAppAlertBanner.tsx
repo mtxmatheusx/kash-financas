@@ -31,7 +31,7 @@ export const WhatsAppAlertBanner: React.FC = () => {
             Disparo por Voz no WhatsApp
           </h3>
           <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">
-            Automatize seus registros — envie um áudio e a Kash lança receitas e despesas por você.
+            Automatize seus registros — envie um áudio e a Faciliten lança receitas e despesas por você.
           </p>
         </div>
 

@@ -76,7 +76,7 @@ const Upgrade: React.FC = () => {
           <CardContent className="pt-6 space-y-4">
             <Crown className="h-12 w-12 text-yellow-500 mx-auto" />
             <h2 className="text-xl font-bold text-foreground">Você é Premium!</h2>
-            <p className="text-muted-foreground">Aproveite todos os recursos do Kash.</p>
+            <p className="text-muted-foreground">Aproveite todos os recursos do Faciliten.</p>
             {subscriptionEnd && (
               <p className="text-xs text-muted-foreground">
                 Próxima renovação: {new Date(subscriptionEnd).toLocaleDateString("pt-BR")}
@@ -122,7 +122,7 @@ const Upgrade: React.FC = () => {
       >
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground">Escolha seu plano</h1>
-          <p className="text-muted-foreground mt-2">Desbloqueie todo o potencial do Kash</p>
+          <p className="text-muted-foreground mt-2">Desbloqueie todo o potencial do Faciliten</p>
 
           {/* Trial banner */}
           {isTrialing && trialDaysLeft !== null && (
