@@ -1864,6 +1864,10 @@ const es: typeof pt = {
   "investment.applicationDate": "Fecha de aplicación",
   "investment.saveInvestment": "Guardar Inversión",
   "investment.updateValue": "Valor actual",
+  "investment.country": "País / Mercado",
+  "investment.selectCountries": "Seleccione los países",
+  "investment.allCountries": "Todos los países",
+  "investment.filterByCountry": "Filtrar por país",
 
   "goals.title": "Metas Financieras",
   "goals.subtitle": "Sigue tus objetivos financieros",
