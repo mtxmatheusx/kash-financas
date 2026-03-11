@@ -48,46 +48,66 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
     return filtered.sort((a, b) => b.date.localeCompare(a.date));
   }, [all, account.type, typeFilter]);
 
-  const create = useCallback(async (tx: Omit<TransactionRow, 'id' | 'created_at'>) => {
+  const create = useCallback(async (tx: Omit<TransactionRow, 'id' | 'created_at'> & { recurring_months?: number }) => {
     if (!user) return;
-    const { data, error } = await supabase
-      .from('transactions')
-      .insert({
+
+    const isRecurring = tx.entry_type === 'recurring' && tx.recurring_months && tx.recurring_months > 1;
+    const isInstallment = tx.entry_type === 'installment' && tx.installments && tx.installments > 1;
+    const count = isRecurring ? tx.recurring_months! : isInstallment ? tx.installments! : 1;
+    const freq = tx.frequency === 'yearly' ? 12 : 1; // months between entries
+
+    const rows = [];
+    const baseDate = new Date(tx.date + 'T12:00:00');
+
+    for (let i = 0; i < count; i++) {
+      const d = new Date(baseDate);
+      d.setMonth(d.getMonth() + i * freq);
+      const dateStr = d.toISOString().split('T')[0];
+
+      rows.push({
         user_id: user.id,
         type: tx.type,
-        amount: tx.amount,
-        description: tx.description,
+        amount: isInstallment ? tx.amount / count : tx.amount,
+        description: isInstallment
+          ? `${tx.description} (${i + 1}/${count})`
+          : tx.description,
         category: tx.category,
-        date: tx.date,
-        status: tx.status,
+        date: dateStr,
+        status: i === 0 ? tx.status : 'pending' as const,
         account_type: tx.account_type,
         entry_type: tx.entry_type ?? 'single',
         installments: tx.installments ?? null,
         frequency: tx.frequency ?? null,
         is_percentage: tx.is_percentage ?? false,
         percentage: tx.percentage ?? null,
-      })
-      .select()
-      .single();
+      });
+    }
+
+    const { data, error } = await supabase
+      .from('transactions')
+      .insert(rows)
+      .select();
 
     if (error) { toast.error('Erro ao salvar transação'); console.error(error); return; }
     if (data) {
-      setAll(prev => [{
-        id: data.id,
-        type: data.type as 'income' | 'expense',
-        amount: Number(data.amount),
-        description: data.description,
-        category: data.category,
-        date: data.date,
-        status: data.status as 'paid' | 'pending',
-        account_type: data.account_type as 'personal' | 'business',
-        entry_type: data.entry_type as TransactionRow['entry_type'],
-        installments: data.installments ?? undefined,
-        frequency: data.frequency as TransactionRow['frequency'],
-        is_percentage: data.is_percentage ?? undefined,
-        percentage: data.percentage ? Number(data.percentage) : undefined,
-        created_at: data.created_at,
-      }, ...prev]);
+      const mapped = data.map(d => ({
+        id: d.id,
+        type: d.type as 'income' | 'expense',
+        amount: Number(d.amount),
+        description: d.description,
+        category: d.category,
+        date: d.date,
+        status: d.status as 'paid' | 'pending',
+        account_type: d.account_type as 'personal' | 'business',
+        entry_type: d.entry_type as TransactionRow['entry_type'],
+        installments: d.installments ?? undefined,
+        frequency: d.frequency as TransactionRow['frequency'],
+        is_percentage: d.is_percentage ?? undefined,
+        percentage: d.percentage ? Number(d.percentage) : undefined,
+        created_at: d.created_at,
+      }));
+      setAll(prev => [...mapped, ...prev]);
+      if (count > 1) toast.success(`${count} lançamentos criados automaticamente!`);
     }
   }, [user]);
 
