@@ -5,43 +5,41 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, Crown, Loader2, Gift, Copy, Clock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-
-const freeFeatures = [
-  "Dashboard básico",
-  "Controle de Receitas",
-  "Controle de Despesas",
-];
-
-const premiumFeatures = [
-  "Tudo do plano gratuito",
-  "Investimentos",
-  "Metas financeiras",
-  "Visão Mensal completa",
-  "Planejamento Financeiro",
-  "DRE e EBITDA (Empresa)",
-  "Importação de planilhas",
-  "Consultor IA ilimitado",
-  "Suporte prioritário",
-];
 
 const Upgrade: React.FC = () => {
   const navigate = useNavigate();
   const { isPremium, isTrialing, trialDaysLeft, subscriptionEnd, profile } = useAuth();
+  const { t, formatMoney, currency } = usePreferences();
   const [loading, setLoading] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
+
+  const freeFeatures = [t("upgrade.free1"), t("upgrade.free2"), t("upgrade.free3")];
+  const premiumFeatures = [
+    t("upgrade.prem1"), t("upgrade.prem2"), t("upgrade.prem3"), t("upgrade.prem4"),
+    t("upgrade.prem5"), t("upgrade.prem6"), t("upgrade.prem7"), t("upgrade.prem8"), t("upgrade.prem9"),
+  ];
+
+  const PRICE_MAP: Record<string, { amount: number; symbol: string; display: string }> = {
+    BRL: { amount: 29.90, symbol: "R$", display: "R$ 29,90" },
+    USD: { amount: 29.90, symbol: "$", display: "$29.90" },
+    EUR: { amount: 27.90, symbol: "€", display: "€27.90" },
+    GBP: { amount: 23.90, symbol: "£", display: "£23.90" },
+  };
+  const priceInfo = PRICE_MAP[currency] || PRICE_MAP.BRL;
 
   const handleCheckout = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("create-checkout");
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { currency },
+      });
       if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, "_blank");
-      }
+      if (data?.url) window.open(data.url, "_blank");
     } catch (e: any) {
-      toast.error(e.message || "Erro ao iniciar checkout");
+      toast.error(e.message || "Checkout error");
     }
     setLoading(false);
   };
@@ -51,11 +49,9 @@ const Upgrade: React.FC = () => {
     try {
       const { data, error } = await supabase.functions.invoke("customer-portal");
       if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, "_blank");
-      }
+      if (data?.url) window.open(data.url, "_blank");
     } catch (e: any) {
-      toast.error(e.message || "Erro ao abrir portal");
+      toast.error(e.message || "Portal error");
     }
     setPortalLoading(false);
   };
@@ -64,47 +60,39 @@ const Upgrade: React.FC = () => {
     if (profile?.referral_code) {
       const url = `${window.location.origin}/signup?ref=${profile.referral_code}`;
       navigator.clipboard.writeText(url);
-      toast.success("Link de indicação copiado!");
+      toast.success(t("upgrade.linkCopied"));
     }
   };
 
-  // Active paid subscriber
   if (isPremium && !isTrialing) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
         <Card className="w-full max-w-md text-center">
           <CardContent className="pt-6 space-y-4">
             <Crown className="h-12 w-12 text-yellow-500 mx-auto" />
-            <h2 className="text-xl font-bold text-foreground">Você é Premium!</h2>
-            <p className="text-muted-foreground">Aproveite todos os recursos do Faciliten.</p>
+            <h2 className="text-xl font-bold text-foreground">{t("upgrade.youArePremium")}</h2>
+            <p className="text-muted-foreground">{t("upgrade.enjoyAll")}</p>
             {subscriptionEnd && (
               <p className="text-xs text-muted-foreground">
-                Próxima renovação: {new Date(subscriptionEnd).toLocaleDateString("pt-BR")}
+                {t("upgrade.nextRenewal").replace("{date}", new Date(subscriptionEnd).toLocaleDateString())}
               </p>
             )}
-
-            {/* Referral section */}
             {profile?.referral_code && (
               <div className="bg-muted/50 rounded-lg p-4 space-y-2">
                 <p className="text-sm font-medium flex items-center gap-1.5 justify-center">
                   <Gift className="h-4 w-4 text-primary" />
-                  Indique e ganhe +60 dias grátis
+                  {t("upgrade.referralTitle")}
                 </p>
                 <div className="flex items-center gap-2 justify-center">
-                  <code className="bg-background px-3 py-1.5 rounded text-sm font-mono">
-                    {profile.referral_code}
-                  </code>
-                  <Button size="sm" variant="outline" onClick={copyReferralCode}>
-                    <Copy className="h-3.5 w-3.5" />
-                  </Button>
+                  <code className="bg-background px-3 py-1.5 rounded text-sm font-mono">{profile.referral_code}</code>
+                  <Button size="sm" variant="outline" onClick={copyReferralCode}><Copy className="h-3.5 w-3.5" /></Button>
                 </div>
               </div>
             )}
-
             <div className="flex gap-3 justify-center">
-              <Button onClick={() => navigate("/dashboard")}>Ir para o Dashboard</Button>
+              <Button onClick={() => navigate("/dashboard")}>{t("upgrade.goToDashboard")}</Button>
               <Button variant="outline" onClick={handleManage} disabled={portalLoading}>
-                {portalLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Gerenciar assinatura"}
+                {portalLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("upgrade.manageSubscription")}
               </Button>
             </div>
           </CardContent>
@@ -115,90 +103,68 @@ const Upgrade: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-3xl"
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-3xl">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-foreground">Escolha seu plano</h1>
-          <p className="text-muted-foreground mt-2">Desbloqueie todo o potencial do Faciliten</p>
-
-          {/* Trial banner */}
+          <h1 className="text-3xl font-bold text-foreground">{t("upgrade.title")}</h1>
+          <p className="text-muted-foreground mt-2">{t("upgrade.subtitle")}</p>
           {isTrialing && trialDaysLeft !== null && (
             <div className="mt-4 inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
               <Clock className="h-4 w-4" />
               {trialDaysLeft > 0
-                ? `${trialDaysLeft} dia${trialDaysLeft > 1 ? 's' : ''} restante${trialDaysLeft > 1 ? 's' : ''} de trial`
-                : 'Seu trial expirou hoje'}
+                ? t("upgrade.trialBanner").replace("{days}", String(trialDaysLeft)).replace(/{plural}/g, trialDaysLeft > 1 ? "s" : "")
+                : t("upgrade.trialExpiredToday")}
             </div>
           )}
           {!isPremium && !isTrialing && (
             <div className="mt-4 inline-flex items-center gap-2 bg-destructive/10 text-destructive px-4 py-2 rounded-full text-sm font-medium">
               <Clock className="h-4 w-4" />
-              Seu trial expirou — assine para continuar
+              {t("upgrade.trialExpired")}
             </div>
           )}
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Free */}
           <Card className="border-border/50">
             <CardHeader>
-              <CardTitle>Gratuito</CardTitle>
-              <CardDescription>Para começar a organizar suas finanças</CardDescription>
-              <p className="text-3xl font-bold text-foreground mt-2">R$ 0<span className="text-sm text-muted-foreground font-normal">/mês</span></p>
+              <CardTitle>{t("upgrade.freeTitle")}</CardTitle>
+              <CardDescription>{t("upgrade.freeDesc")}</CardDescription>
+              <p className="text-3xl font-bold text-foreground mt-2">{formatMoney(0)}<span className="text-sm text-muted-foreground font-normal">{t("upgrade.perMonth")}</span></p>
             </CardHeader>
             <CardContent>
               <ul className="space-y-3">
-                {freeFeatures.map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-sm">
-                    <Check className="h-4 w-4 text-primary shrink-0" />
-                    <span>{f}</span>
-                  </li>
+                {freeFeatures.map(f => (
+                  <li key={f} className="flex items-center gap-2 text-sm"><Check className="h-4 w-4 text-primary shrink-0" /><span>{f}</span></li>
                 ))}
               </ul>
               <Button variant="outline" className="w-full mt-6" onClick={() => navigate("/dashboard")}>
-                {!isPremium && !isTrialing ? "Plano atual" : "Continuar grátis"}
+                {!isPremium && !isTrialing ? t("upgrade.freePlan") : t("upgrade.freeContinue")}
               </Button>
             </CardContent>
           </Card>
 
-          {/* Premium */}
           <Card className="border-primary/50 relative overflow-hidden">
             <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-bl-lg">
-              Recomendado
+              {t("upgrade.premiumBadge")}
             </div>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Crown className="h-5 w-5 text-yellow-500" />
-                Premium
-              </CardTitle>
-              <CardDescription>Acesso completo a todas as funcionalidades</CardDescription>
-              <p className="text-3xl font-bold text-foreground mt-2">R$ 29,90<span className="text-sm text-muted-foreground font-normal">/mês</span></p>
+              <CardTitle className="flex items-center gap-2"><Crown className="h-5 w-5 text-yellow-500" />{t("upgrade.premiumTitle")}</CardTitle>
+              <CardDescription>{t("upgrade.premiumDesc")}</CardDescription>
+              <p className="text-3xl font-bold text-foreground mt-2">{priceInfo.display}<span className="text-sm text-muted-foreground font-normal">{t("upgrade.perMonth")}</span></p>
             </CardHeader>
             <CardContent>
               <ul className="space-y-3">
-                {premiumFeatures.map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-sm">
-                    <Check className="h-4 w-4 text-primary shrink-0" />
-                    <span>{f}</span>
-                  </li>
+                {premiumFeatures.map(f => (
+                  <li key={f} className="flex items-center gap-2 text-sm"><Check className="h-4 w-4 text-primary shrink-0" /><span>{f}</span></li>
                 ))}
               </ul>
               <Button className="w-full mt-6" onClick={handleCheckout} disabled={loading}>
-                {loading ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                ) : (
-                  <Crown className="h-4 w-4 mr-2" />
-                )}
-                {loading ? "Redirecionando..." : "Assinar Premium"}
+                {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Crown className="h-4 w-4 mr-2" />}
+                {loading ? t("upgrade.redirecting") : t("upgrade.subscribe")}
               </Button>
             </CardContent>
           </Card>
         </div>
 
-        {/* Referral section */}
         {profile?.referral_code && (
           <Card className="mt-6 border-primary/20">
             <CardContent className="pt-6">
@@ -208,17 +174,14 @@ const Upgrade: React.FC = () => {
                     <Gift className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <p className="font-medium text-foreground text-sm">Programa de indicação</p>
-                    <p className="text-xs text-muted-foreground">Indique amigos e ganhe +60 dias de Premium</p>
+                    <p className="font-medium text-foreground text-sm">{t("upgrade.referralProgram")}</p>
+                    <p className="text-xs text-muted-foreground">{t("upgrade.referralDesc")}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 ml-auto">
-                  <code className="bg-muted px-3 py-1.5 rounded text-sm font-mono">
-                    {profile.referral_code}
-                  </code>
+                  <code className="bg-muted px-3 py-1.5 rounded text-sm font-mono">{profile.referral_code}</code>
                   <Button size="sm" variant="outline" onClick={copyReferralCode}>
-                    <Copy className="h-3.5 w-3.5 mr-1" />
-                    Copiar link
+                    <Copy className="h-3.5 w-3.5 mr-1" />{t("upgrade.copyLink")}
                   </Button>
                 </div>
               </div>
@@ -227,9 +190,7 @@ const Upgrade: React.FC = () => {
         )}
 
         <div className="text-center mt-6">
-          <Button variant="ghost" onClick={() => navigate("/dashboard")}>
-            Voltar ao Dashboard
-          </Button>
+          <Button variant="ghost" onClick={() => navigate("/dashboard")}>{t("upgrade.backToDashboard")}</Button>
         </div>
       </motion.div>
     </div>
