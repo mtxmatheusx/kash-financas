@@ -54,7 +54,7 @@ const defaultSettings: UserSettings = {
   zip_code: "", address: "", address_number: "", address_complement: "",
   neighborhood: "", city: "", state: "",
   bank_name: "", bank_agency: "", bank_account: "", pix_key: "", pix_key_type: "",
-  notify_whatsapp: true, notify_email: true, notify_due_dates: true, notify_due_days_before: 3,
+  notify_whatsapp: true, notify_email: true, notify_due_dates: true, notify_due_days_before: 3, notification_time: "08:00",
 };
 
 const Configuracoes: React.FC = () => {
