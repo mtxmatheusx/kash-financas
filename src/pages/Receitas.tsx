@@ -31,7 +31,7 @@ const emptyForm = (defaultCurrency: CurrencyCode = 'BRL') => ({
 });
 
 const Receitas: React.FC = () => {
-  const { formatMoney: formatBRL } = usePreferences();
+  const { formatMoney: formatBRL, t, currency: defaultCurrency } = usePreferences();
   const { transactions, create, update, remove, totals } = useTransactions('income');
   const { account } = useAccount();
   const [search, setSearch] = useState('');
