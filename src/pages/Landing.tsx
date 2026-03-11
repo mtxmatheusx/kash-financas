@@ -430,47 +430,31 @@ const Landing: React.FC = () => {
               {t("landing.compare.title")}
             </h2>
           </motion.div>
-
           <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-            {/* Card Esquerdo — O Jeito Velho */}
-            <motion.div
-              {...fadeUp(0.1)}
-              className="rounded-xl sm:rounded-2xl border border-[hsl(0,0%,12%)] bg-[hsl(0,0%,3%)] p-5 sm:p-8"
-            >
-              <h3 className="text-base sm:text-lg font-extrabold text-[hsl(0,0%,55%)] mb-5 sm:mb-6">
-                {t("landing.compare.oldTitle")}
-              </h3>
+            <motion.div {...fadeUp(0.1)} className="rounded-xl sm:rounded-2xl border border-[hsl(0,0%,12%)] bg-[hsl(0,0%,3%)] p-5 sm:p-8">
+              <h3 className="text-base sm:text-lg font-extrabold text-[hsl(0,0%,55%)] mb-5 sm:mb-6">{t("landing.compare.oldTitle")}</h3>
               <ul className="space-y-3.5 sm:space-y-4">
                 {[t("landing.compare.old1"), t("landing.compare.old2"), t("landing.compare.old3"), t("landing.compare.old4")].map(item => (
                   <li key={item} className="flex items-start gap-3 text-xs sm:text-sm text-[hsl(0,0%,45%)]">
-                    <XIcon className="w-4 h-4 text-[hsl(348,100%,64%)] shrink-0 mt-0.5" />
-                    {item}
+                    <XIcon className="w-4 h-4 text-[hsl(348,100%,64%)] shrink-0 mt-0.5" />{item}
                   </li>
                 ))}
               </ul>
             </motion.div>
-
-            {/* Card Direito — O Jeito Faciliten */}
-            <motion.div
-              {...fadeUp(0.2)}
-              className="relative rounded-xl sm:rounded-2xl overflow-hidden"
-            >
+            <motion.div {...fadeUp(0.2)} className="relative rounded-xl sm:rounded-2xl overflow-hidden">
               <div className="absolute inset-0 rounded-xl sm:rounded-2xl border border-[hsl(160,100%,50%)/0.25] shadow-[0_0_30px_-5px_hsl(160,100%,50%,0.12)]" />
               <div className="absolute inset-px rounded-[11px] sm:rounded-[15px] bg-[hsl(0,0%,3%)]" />
               <div className="relative p-5 sm:p-8">
-                <h3 className="text-base sm:text-lg font-extrabold text-[hsl(160,100%,50%)] mb-5 sm:mb-6">
-                  {t("landing.compare.newTitle")}
-                </h3>
+                <h3 className="text-base sm:text-lg font-extrabold text-[hsl(160,100%,50%)] mb-5 sm:mb-6">{t("landing.compare.newTitle")}</h3>
                 <ul className="space-y-3.5 sm:space-y-4">
                   {[t("landing.compare.new1"), t("landing.compare.new2"), t("landing.compare.new3"), t("landing.compare.new4")].map(item => (
                     <li key={item} className="flex items-start gap-3 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
-                      <Check className="w-4 h-4 text-[hsl(160,100%,50%)] shrink-0 mt-0.5" />
-                      {item}
+                      <Check className="w-4 h-4 text-[hsl(160,100%,50%)] shrink-0 mt-0.5" />{item}
                     </li>
                   ))}
                 </ul>
               </div>
-          </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -480,19 +464,13 @@ const Landing: React.FC = () => {
         <GridOverlay />
         <div className="max-w-3xl mx-auto relative z-10">
           <motion.div {...fadeUp()} className="text-center mb-6">
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1] mb-3 sm:mb-4">
-              {t("landing.pricing.title")}
-            </h2>
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1] mb-3 sm:mb-4">{t("landing.pricing.title")}</h2>
             <p className="text-[hsl(0,0%,45%)] text-sm sm:text-lg max-w-xl mx-auto mb-1.5">
               {t("landing.pricing.subtitle")} <span className="line-through text-[hsl(0,0%,30%)]">{t("landing.pricing.oldPrice")}</span>
             </p>
-            <p className="text-[hsl(160,100%,50%)] font-bold text-base sm:text-lg">
-              {t("landing.pricing.punchline")}
-            </p>
+            <p className="text-[hsl(160,100%,50%)] font-bold text-base sm:text-lg">{t("landing.pricing.punchline")}</p>
           </motion.div>
-
           <div className="grid sm:grid-cols-2 gap-4 sm:gap-5 mt-8 sm:mt-14">
-            {/* Free */}
             <motion.div {...fadeUp(0.1)} className="rounded-xl sm:rounded-2xl border border-[hsl(0,0%,10%)] bg-[hsl(0,0%,3%)] p-5 sm:p-8">
               <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1">{t("landing.pricing.freeTitle")}</h3>
               <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">{t("landing.pricing.freeDesc")}</p>
@@ -502,30 +480,20 @@ const Landing: React.FC = () => {
               <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
                 {[t("landing.pricing.free1"), t("landing.pricing.free2"), t("landing.pricing.free3")].map(f => (
                   <li key={f} className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
-                    <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />
-                    {f}
+                    <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />{f}
                   </li>
                 ))}
               </ul>
               <Link to={signupLink}>
                 <motion.div whileTap={{ scale: 0.97 }}>
-                  <Button variant="outline" className="w-full h-11 sm:h-13 text-sm sm:text-base border-[hsl(0,0%,20%)] bg-transparent hover:bg-[hsl(0,0%,8%)] text-[hsl(0,0%,60%)] font-bold">
-                    {t("landing.pricing.freeCta")}
-                  </Button>
+                  <Button variant="outline" className="w-full h-11 sm:h-13 text-sm sm:text-base border-[hsl(0,0%,20%)] bg-transparent hover:bg-[hsl(0,0%,8%)] text-[hsl(0,0%,60%)] font-bold">{t("landing.pricing.freeCta")}</Button>
                 </motion.div>
               </Link>
             </motion.div>
-
-            {/* Premium — glow border + neon CTA */}
             <motion.div {...fadeUp(0.2)} className="relative rounded-xl sm:rounded-2xl overflow-hidden">
-              {/* Glow border */}
               <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[hsl(217,91%,60%)/0.35] via-[hsl(160,100%,50%)/0.15] to-[hsl(217,91%,60%)/0.25] shadow-[0_0_40px_-5px_hsl(217,91%,60%,0.2),0_0_80px_-10px_hsl(160,100%,50%,0.1)]" />
               <div className="absolute inset-px rounded-[11px] sm:rounded-[15px] bg-[hsl(0,0%,3%)]" />
-
-              <div className="absolute -top-px right-5 sm:right-6 bg-[hsl(160,100%,50%)] text-[hsl(0,0%,2%)] text-[9px] sm:text-[10px] font-extrabold px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-b-lg shadow-lg shadow-[hsl(160,100%,50%)/0.3] z-10 uppercase tracking-[0.15em]">
-                {t("landing.pricing.premiumBadge")}
-              </div>
-
+              <div className="absolute -top-px right-5 sm:right-6 bg-[hsl(160,100%,50%)] text-[hsl(0,0%,2%)] text-[9px] sm:text-[10px] font-extrabold px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-b-lg shadow-lg shadow-[hsl(160,100%,50%)/0.3] z-10 uppercase tracking-[0.15em]">{t("landing.pricing.premiumBadge")}</div>
               <div className="relative p-5 sm:p-8">
                 <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1 flex items-center gap-2">
                   <Crown className="h-4 w-4 sm:h-5 sm:w-5 text-[hsl(45,100%,60%)]" /> {t("landing.pricing.premiumTitle")}
@@ -533,18 +501,12 @@ const Landing: React.FC = () => {
                 <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">{t("landing.pricing.premiumDesc")}</p>
                 <p className="text-4xl sm:text-5xl font-extrabold text-white mb-5 sm:mb-6 font-mono-fin">
                   R$ 29<span className="text-base sm:text-lg">,90</span>
-                  <span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">/mês</span>
+                  <span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">{t("landing.pricing.freePerMonth")}</span>
                 </p>
                 <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
                   {[t("landing.pricing.premium1"), t("landing.pricing.premium2"), t("landing.pricing.premium3"), t("landing.pricing.premium4"), t("landing.pricing.premium5")].map(f => (
                     <li key={f} className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
-                      <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />
-                      {f}
-                    </li>
-                  ))}
-                    <li key={f} className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
-                      <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />
-                      {f}
+                      <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />{f}
                     </li>
                   ))}
                 </ul>
@@ -555,57 +517,33 @@ const Landing: React.FC = () => {
                     </Button>
                   </motion.div>
                 </Link>
-                <p className="text-center text-[11px] text-[hsl(0,0%,40%)] mt-3">
-                  {t("landing.pricing.premiumNote")}
-                </p>
+                <p className="text-center text-[11px] text-[hsl(0,0%,40%)] mt-3">{t("landing.pricing.premiumNote")}</p>
               </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ═══ FAQ MATA-OBJEÇÕES ═══ */}
+      {/* ═══ FAQ ═══ */}
       <section className="py-14 sm:py-28 px-4 sm:px-6 relative">
         <div className="max-w-2xl mx-auto relative z-10">
           <motion.div {...fadeUp()} className="text-center mb-10 sm:mb-14">
-            <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-[hsl(0,0%,35%)] font-medium mb-4">
-              Quebra de objeções
-            </p>
+            <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-[hsl(0,0%,35%)] font-medium mb-4">{t("landing.faq.label")}</p>
             <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
-              Ainda tem dúvidas?<br className="hidden sm:block" /> Nós destruímos cada uma.
+              {t("landing.faq.title")}<br className="hidden sm:block" /> {t("landing.faq.title2")}
             </h2>
           </motion.div>
           <motion.div {...fadeUp(0.1)}>
             <Accordion type="single" collapsible className="space-y-3">
               {[
-                {
-                  q: "Meus dados financeiros estão seguros?",
-                  a: "Absolutamente. Utilizamos a mesma infraestrutura de criptografia de nível bancário que grandes corporações. Seus dados são seus e ninguém mais tem acesso.",
-                },
-                {
-                  q: "A IA pode errar os meus lançamentos?",
-                  a: "A nossa IA atua como um extrator cirúrgico. Ela lê o seu áudio, categoriza e pede a sua confirmação no WhatsApp se houver alguma dúvida. Você tem sempre o controle final.",
-                },
-                {
-                  q: "Preciso entender de contabilidade para usar?",
-                  a: "Zero. O Faciliten foi criado justamente para quem odeia planilhas. Você só precisa saber falar ou digitar no WhatsApp.",
-                },
-                {
-                  q: "Posso cancelar se não gostar?",
-                  a: "Com um único clique, direto no seu painel. Sem ter que ligar para ninguém ou justificar. Risco zero para você.",
-                },
+                { q: t("landing.faq.q1"), a: t("landing.faq.a1") },
+                { q: t("landing.faq.q2"), a: t("landing.faq.a2") },
+                { q: t("landing.faq.q3"), a: t("landing.faq.a3") },
+                { q: t("landing.faq.q4"), a: t("landing.faq.a4") },
               ].map((item, i) => (
-                <AccordionItem
-                  key={i}
-                  value={`faq-${i}`}
-                  className="border border-[hsl(0,0%,12%)] rounded-xl bg-[hsl(0,0%,4%,0.5)] px-5 sm:px-6 data-[state=open]:border-[hsl(348,100%,64%,0.2)]"
-                >
-                  <AccordionTrigger className="text-sm sm:text-base font-medium text-white hover:no-underline py-4 sm:py-5 [&[data-state=open]>svg]:text-[hsl(348,100%,64%)]">
-                    {item.q}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-xs sm:text-sm text-[hsl(0,0%,45%)] leading-relaxed pb-4 sm:pb-5">
-                    {item.a}
-                  </AccordionContent>
+                <AccordionItem key={i} value={`faq-${i}`} className="border border-[hsl(0,0%,12%)] rounded-xl bg-[hsl(0,0%,4%,0.5)] px-5 sm:px-6 data-[state=open]:border-[hsl(348,100%,64%,0.2)]">
+                  <AccordionTrigger className="text-sm sm:text-base font-medium text-white hover:no-underline py-4 sm:py-5 [&[data-state=open]>svg]:text-[hsl(348,100%,64%)]">{item.q}</AccordionTrigger>
+                  <AccordionContent className="text-xs sm:text-sm text-[hsl(0,0%,45%)] leading-relaxed pb-4 sm:pb-5">{item.a}</AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>
@@ -615,32 +553,18 @@ const Landing: React.FC = () => {
 
       {/* ═══ FINAL CTA ═══ */}
       <section className="py-14 sm:py-28 px-4 sm:px-6">
-        <motion.div
-          {...fadeUp()}
-          className="max-w-3xl mx-auto text-center rounded-2xl sm:rounded-3xl p-8 sm:p-16 relative overflow-hidden"
-        >
-          <motion.div
-            className="absolute inset-0"
-            style={{ background: "linear-gradient(135deg, hsl(160 100% 50% / 0.1), hsl(217 91% 60% / 0.06), hsl(160 100% 50% / 0.1))", backgroundSize: "200% 200%" }}
-            animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-          />
+        <motion.div {...fadeUp()} className="max-w-3xl mx-auto text-center rounded-2xl sm:rounded-3xl p-8 sm:p-16 relative overflow-hidden">
+          <motion.div className="absolute inset-0" style={{ background: "linear-gradient(135deg, hsl(160 100% 50% / 0.1), hsl(217 91% 60% / 0.06), hsl(160 100% 50% / 0.1))", backgroundSize: "200% 200%" }} animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }} transition={{ duration: 6, repeat: Infinity, ease: "linear" }} />
           <div className="absolute inset-0 bg-[hsl(0,0%,2%)/0.7] backdrop-blur-xl" />
           <div className="absolute inset-px rounded-[15px] sm:rounded-[23px] border border-[hsl(160,100%,50%)/0.08]" />
-
           <div className="relative z-10">
             <Zap className="h-8 w-8 sm:h-10 sm:w-10 text-[hsl(160,100%,50%)] mx-auto mb-5 sm:mb-6" />
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">
-              Seu Copiloto Está Esperando
-            </h2>
-            <p className="text-[hsl(0,0%,48%)] text-sm sm:text-lg mb-6 sm:mb-8 max-w-lg mx-auto">
-              Ative agora sem cadastrar cartão. Se você não recuperar pelo menos 10x o valor da assinatura já no primeiro mês, o teste sai de graça.
-            </p>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">{t("landing.finalCta.title")}</h2>
+            <p className="text-[hsl(0,0%,48%)] text-sm sm:text-lg mb-6 sm:mb-8 max-w-lg mx-auto">{t("landing.finalCta.subtitle")}</p>
             <Link to={signupLink}>
               <motion.div whileTap={{ scale: 0.97 }} className="inline-block">
                 <Button size="lg" className="text-sm sm:text-base px-6 sm:px-8 h-12 sm:h-14 bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 cta-glow font-bold">
-                  <Sparkles className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  Ativar Meu Copiloto Grátis
+                  <Sparkles className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />{t("landing.finalCta.button")}
                 </Button>
               </motion.div>
             </Link>
@@ -658,13 +582,11 @@ const Landing: React.FC = () => {
             <span className="font-bold text-sm text-white">Faciliten</span>
           </div>
           <div className="flex items-center gap-5 sm:gap-6 text-xs sm:text-sm text-[hsl(0,0%,35%)]">
-            <Link to="/login" className="hover:text-white transition-colors">Entrar</Link>
-            <Link to={signupLink} className="hover:text-white transition-colors">Criar conta</Link>
-            <Link to="/upgrade" className="hover:text-white transition-colors">Planos</Link>
+            <Link to="/login" className="hover:text-white transition-colors">{t("landing.footer.login")}</Link>
+            <Link to={signupLink} className="hover:text-white transition-colors">{t("landing.footer.signup")}</Link>
+            <Link to="/upgrade" className="hover:text-white transition-colors">{t("landing.footer.plans")}</Link>
           </div>
-          <p className="text-[10px] text-[hsl(0,0%,25%)]">
-            © {new Date().getFullYear()} Faciliten
-          </p>
+          <p className="text-[10px] text-[hsl(0,0%,25%)]">© {new Date().getFullYear()} Faciliten</p>
         </div>
       </footer>
     </div>
