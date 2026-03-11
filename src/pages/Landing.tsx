@@ -368,7 +368,7 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      {/* ═══ O JEITO VELHO vs O JEITO KASH ═══ */}
+      {/* ═══ O JEITO VELHO vs O JEITO FACILITEN ═══ */}
       <section className="py-14 sm:py-28 px-4 sm:px-6 relative">
         <div className="max-w-5xl mx-auto relative z-10">
           <motion.div {...fadeUp()} className="text-center mb-10 sm:mb-16">
