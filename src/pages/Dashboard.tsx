@@ -30,7 +30,7 @@ const formatCompact = (v: number) => {
 };
 
 const Dashboard: React.FC = () => {
-  const { formatMoney: formatBRL } = usePreferences();
+  const { formatMoney: formatBRL, t } = usePreferences();
 
   /* Cockpit-style tooltip */
   const CockpitTooltip = ({ active, payload, label }: any) => {
