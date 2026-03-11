@@ -617,7 +617,7 @@ const Importar: React.FC = () => {
                 <Brain className="w-3.5 h-3.5 mt-0.5 shrink-0" />
                 <div>
                   <span className="font-medium">
-                    IA: confiança {aiConfidence === "high" ? "alta" : aiConfidence === "medium" ? "média" : "baixa"}
+                    {t("import.aiConfidence").replace("{level}", aiConfidence === "high" ? t("import.aiConfidenceHigh") : aiConfidence === "medium" ? t("import.aiConfidenceMedium") : t("import.aiConfidenceLow"))}
                   </span>
                   {aiNotes && <p className="text-muted-foreground mt-0.5">{aiNotes}</p>}
                 </div>
