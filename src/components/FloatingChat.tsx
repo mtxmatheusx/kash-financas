@@ -466,6 +466,25 @@ export const FloatingChat: React.FC = () => {
         onToggle: isAudioRecording ? stopRecording : startRecording,
       }}
     >
+      {/* General Disclaimer Overlay */}
+      <AnimatePresence>
+        {showGeneralDisclaimer && (
+          <GeneralDisclaimer
+            onAccept={async () => {
+              if (!user) return;
+              await supabase.from('user_financial_preferences').insert({
+                user_id: user.id,
+                preference: 'general_disclaimer_accepted',
+                category: 'disclaimer',
+              });
+              setGeneralDisclaimerAccepted(true);
+              setShowGeneralDisclaimer(false);
+            }}
+            onDecline={() => setShowGeneralDisclaimer(false)}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Investor Disclaimer Overlay */}
       <AnimatePresence>
         {showDisclaimer && (
