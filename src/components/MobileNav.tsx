@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, TrendingUp, TrendingDown, PieChart, Target,
-  CalendarRange, Compass, FileText, Calculator, Upload, MoreHorizontal, X,
+  CalendarRange, Compass, FileText, Calculator, Upload, MoreHorizontal, X, UserCog,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAccount } from "@/contexts/AccountContext";
