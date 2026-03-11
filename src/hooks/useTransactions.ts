@@ -42,11 +42,32 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
+  // Build monthly income map for dynamic percentage recalculation
+  const monthlyIncomeMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    all.filter(t => t.account_type === account.type && t.type === 'income')
+      .forEach(t => {
+        const m = t.date.slice(0, 7);
+        map[m] = (map[m] || 0) + t.amount;
+      });
+    return map;
+  }, [all, account.type]);
+
   const transactions = useMemo(() => {
     let filtered = all.filter(t => t.account_type === account.type);
     if (typeFilter) filtered = filtered.filter(t => t.type === typeFilter);
+
+    // Dynamically recalculate percentage-based expenses
+    filtered = filtered.map(t => {
+      if (t.is_percentage && t.percentage && t.type === 'expense') {
+        const monthIncome = monthlyIncomeMap[t.date.slice(0, 7)] || 0;
+        return { ...t, amount: (monthIncome * t.percentage) / 100 };
+      }
+      return t;
+    });
+
     return filtered.sort((a, b) => b.date.localeCompare(a.date));
-  }, [all, account.type, typeFilter]);
+  }, [all, account.type, typeFilter, monthlyIncomeMap]);
 
   const create = useCallback(async (tx: Omit<TransactionRow, 'id' | 'created_at'> & { recurring_months?: number; percentage_base?: 'total' | 'monthly' }) => {
     if (!user) return;
