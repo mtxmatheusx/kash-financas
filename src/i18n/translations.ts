@@ -2063,6 +2063,17 @@ const es: typeof pt = {
   "invType.crypto": "Cripto",
   "invType.realEstate": "Inmuebles",
   "invType.other": "Otros",
+
+  "mockup.userMsg1": "\"Gasté 50 en gasolina\"",
+  "mockup.botMsg1": "✅ <b>$50.00</b> → <c>Transporte</c>. 15% por encima del mes pasado. 📊",
+  "mockup.botMsg1Short": "✅ <b>$50.00</b> → <c>Transporte</c>",
+  "mockup.botMsg1Detail": "Gasto 15% por encima del mes pasado. 📊",
+  "mockup.userMsg2": "¿Dónde puedo recortar?",
+  "mockup.botMsg2": "💡 Delivery: $380 (+40%). Cocinar 3x/semana ahorra ~$250/mes.",
+
+  "pricing.currencySymbol": "$",
+  "pricing.premiumPrice": "29",
+  "pricing.premiumCents": ",90",
 };
 
 export const translations = { "pt-BR": pt, en, es } as const;
