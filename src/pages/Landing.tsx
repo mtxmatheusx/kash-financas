@@ -607,7 +607,7 @@ const Landing: React.FC = () => {
             <Link to="/upgrade" className="hover:text-white transition-colors">Planos</Link>
           </div>
           <p className="text-[10px] text-[hsl(0,0%,25%)]">
-            © {new Date().getFullYear()} Kash
+            © {new Date().getFullYear()} Faciliten
           </p>
         </div>
       </footer>

@@ -436,7 +436,7 @@ const Importar: React.FC = () => {
     ws["!cols"] = [{ wch: 14 }, { wch: 30 }, { wch: 14 }, { wch: 18 }, { wch: 12 }];
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Transações");
-    XLSX.writeFile(wb, "modelo-importacao-kash.xlsx");
+    XLSX.writeFile(wb, "modelo-importacao-faciliten.xlsx");
     toast.success("Modelo baixado com sucesso!");
   };
 
