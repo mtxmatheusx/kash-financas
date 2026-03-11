@@ -9,8 +9,10 @@ import { toast } from "sonner";
 import { Mail } from "lucide-react";
 import { motion } from "framer-motion";
 import facilitenLogo from "@/assets/faciliten-logo.png";
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 const ForgotPassword: React.FC = () => {
+  const { t } = usePreferences();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -27,7 +29,7 @@ const ForgotPassword: React.FC = () => {
       toast.error(error.message);
     } else {
       setSent(true);
-      toast.success("E-mail de recuperação enviado!");
+      toast.success(t("auth.forgot.success"));
     }
     setLoading(false);
   };
@@ -45,30 +47,27 @@ const ForgotPassword: React.FC = () => {
         </div>
         <Card className="border-border/50">
           <CardHeader>
-            <CardTitle className="text-lg">Recuperar senha</CardTitle>
+            <CardTitle className="text-lg">{t("auth.forgot.title")}</CardTitle>
             <CardDescription>
-              {sent
-                ? "Verifique sua caixa de entrada"
-                : "Informe seu e-mail para receber o link de recuperação"
-              }
+              {sent ? t("auth.forgot.sent") : t("auth.forgot.description")}
             </CardDescription>
           </CardHeader>
           {sent ? (
             <CardContent className="text-center py-6">
               <Mail className="h-12 w-12 text-primary mx-auto mb-4" />
               <p className="text-sm text-muted-foreground">
-                Enviamos um link de recuperação para <strong>{email}</strong>. Verifique também a pasta de spam.
+                {t("auth.forgot.sentDetail")} <strong>{email}</strong>. {t("auth.forgot.sentSpam")}
               </p>
             </CardContent>
           ) : (
             <form onSubmit={handleReset}>
               <CardContent>
                 <div className="space-y-2">
-                  <Label htmlFor="email">E-mail</Label>
+                  <Label htmlFor="email">{t("auth.forgot.email")}</Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="seu@email.com"
+                    placeholder={t("auth.forgot.emailPlaceholder")}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -77,14 +76,14 @@ const ForgotPassword: React.FC = () => {
               </CardContent>
               <CardFooter>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Enviando..." : "Enviar link de recuperação"}
+                  {loading ? t("auth.forgot.loading") : t("auth.forgot.submit")}
                 </Button>
               </CardFooter>
             </form>
           )}
           <div className="px-6 pb-6 text-center">
             <Link to="/login" className="text-sm text-primary hover:underline">
-              Voltar ao login
+              {t("auth.forgot.backToLogin")}
             </Link>
           </div>
         </Card>
