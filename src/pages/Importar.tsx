@@ -764,9 +764,9 @@ const Importar: React.FC = () => {
             </div>
 
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setStep("mapping")}>Voltar</Button>
+              <Button variant="outline" onClick={() => setStep("mapping")}>{t("common.back")}</Button>
               <Button onClick={doImport} disabled={importing || result.parsed.length === 0}>
-                {importing ? "Importando..." : `Importar ${result.parsed.length} transações`}
+                {importing ? t("import.importing") : t("import.importCount").replace("{count}", String(result.parsed.length))}
               </Button>
             </div>
           </div>
