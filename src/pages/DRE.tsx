@@ -519,7 +519,7 @@ const DRE: React.FC = () => {
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
                 <span className="text-sm font-medium text-foreground min-w-[120px] text-center capitalize">
-                  {format(refDate, "MMMM yyyy", { locale: ptBR })}
+                  {format(refDate, "MMMM yyyy", { locale: dateLocale })}
                 </span>
                 <Button variant="ghost" size="icon" onClick={() => setRefDate(d => subMonths(d, -1))}>
                   <ChevronRight className="w-4 h-4" />
