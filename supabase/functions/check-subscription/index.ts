@@ -11,15 +11,6 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CHECK-SUBSCRIPTION] ${step}${details ? ` - ${JSON.stringify(details)}` : ''}`);
 };
 
-function decodeJwtPayload(token: string): Record<string, unknown> {
-  const parts = token.split(".");
-  if (parts.length !== 3) throw new Error("Invalid JWT");
-  const payload = parts[1];
-  const padded = payload + "=".repeat((4 - (payload.length % 4)) % 4);
-  const decoded = atob(padded.replace(/-/g, "+").replace(/_/g, "/"));
-  return JSON.parse(decoded);
-}
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -37,20 +28,26 @@ serve(async (req) => {
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const claims = decodeJwtPayload(token);
-    const userId = claims.sub as string;
-    const email = claims.email as string;
 
-    if (!userId || !email) {
+    // Use a Supabase client to validate the token via getClaims
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
       return new Response(JSON.stringify({ error: "Invalid token" }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Check expiration
-    const exp = claims.exp as number;
-    if (exp && exp * 1000 < Date.now()) {
-      return new Response(JSON.stringify({ error: "Token expired" }), {
+    const userId = claimsData.claims.sub as string;
+    const email = claimsData.claims.email as string;
+
+    if (!userId || !email) {
+      return new Response(JSON.stringify({ error: "Invalid token" }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
