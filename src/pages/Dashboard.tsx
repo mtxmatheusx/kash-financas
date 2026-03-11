@@ -118,12 +118,21 @@ const Dashboard: React.FC = () => {
               <p className="text-xs text-muted-foreground">Visão geral das suas finanças</p>
             </div>
           </div>
-          <DashboardDateFilter
-            filter={dateFilter}
-            onFilterChange={setDateFilter}
-            customRange={customRange}
-            onCustomRangeChange={setCustomRange}
-          />
+          <Select
+            value={dateFilter}
+            onValueChange={(v) => setDateFilter(v as DateFilter)}
+          >
+            <SelectTrigger className="w-[180px] h-9 text-xs bg-card border-border">
+              <SelectValue placeholder="Filtrar período..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="today">Hoje</SelectItem>
+              <SelectItem value="yesterday">Ontem</SelectItem>
+              <SelectItem value="week">Semana</SelectItem>
+              <SelectItem value="month">Mês</SelectItem>
+            </SelectContent>
+          </Select>
         </motion.div>
 
         {/* KPIs */}
