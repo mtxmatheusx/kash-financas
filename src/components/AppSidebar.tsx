@@ -35,8 +35,6 @@ const menuItems: MenuItem[] = [
   { path: "/dre", label: "DRE", icon: FileText, account: "business" },
   { path: "/ebitda", label: "EBITDA", icon: Calculator, account: "business" },
   { path: "/importar", label: "Importar", icon: Upload },
-  { path: "/perfil", label: "Meu Perfil", icon: UserCog },
-  { path: "/configuracoes", label: "Configurações", icon: Settings },
 ];
 
 interface Props {
@@ -148,6 +146,18 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
             {profile.display_name || profile.email}
           </div>
         )}
+        <NavLink
+          to="/configuracoes"
+          className={cn(
+            "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all w-full",
+            location.pathname === "/configuracoes"
+              ? "bg-sidebar-accent text-sidebar-accent-foreground"
+              : "text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+          )}
+        >
+          <Settings className="w-[18px] h-[18px] shrink-0" />
+          {!collapsed && <span>Configurações</span>}
+        </NavLink>
         <button
           onClick={toggleTheme}
           className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full"
