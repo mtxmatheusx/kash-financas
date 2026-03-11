@@ -297,10 +297,11 @@ const DRE: React.FC = () => {
       // ════════════════════════════════════════════════
       // 3. KPIs DE IMPACTO (3 Cards)
       // ════════════════════════════════════════════════
-      const kpis = [
-        { label: "Receita Bruta", value: current.receitaBruta, color: green600 },
-        { label: "Total Despesas", value: current.totalExpenses, color: red600 },
-        { label: "Lucro Líquido", value: current.lucroLiquido, color: current.lucroLiquido >= 0 ? green600 : red600 },
+      type C3 = [number, number, number];
+      const kpis: { label: string; value: number; color: C3 }[] = [
+        { label: "Receita Bruta", value: current.receitaBruta, color: [...green600] },
+        { label: "Total Despesas", value: current.totalExpenses, color: [...red600] },
+        { label: "Lucro Líquido", value: current.lucroLiquido, color: current.lucroLiquido >= 0 ? [...green600] : [...red600] },
       ];
 
       const kpiW = (u - 8) / 3;
