@@ -3,7 +3,7 @@ import { PageTransition } from "@/components/PageTransition";
 import { WhatsAppAlertBanner } from "@/components/WhatsAppAlertBanner";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAccount } from "@/contexts/AccountContext";
-import { Plus, Search, ArrowDownRight, Percent } from "lucide-react";
+import { Plus, Search, ArrowDownRight, Percent, Sparkles } from "lucide-react";
 import { TransactionGroupedList } from "@/components/TransactionGroupedList";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
