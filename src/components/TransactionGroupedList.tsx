@@ -82,12 +82,12 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
   return (
     <div className="rounded-xl border border-border bg-card shadow-lg overflow-hidden">
       {/* Header */}
-      <div className="grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center bg-muted/50 px-4 md:px-6 py-3 border-b border-border/50">
+      <div className="grid grid-cols-[1fr_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center bg-muted/50 px-3 md:px-6 py-3 border-b border-border/50">
         <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider">Descrição</span>
         <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:block">Categoria</span>
-        <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider text-center">Status</span>
+        <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:block text-center">Status</span>
         <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider text-right">Valor</span>
-        <span className="w-16" />
+        <span className="w-8 md:w-16 hidden md:block" />
       </div>
 
       {groups.length === 0 && singles.length === 0 && (
