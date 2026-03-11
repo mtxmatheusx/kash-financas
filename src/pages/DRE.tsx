@@ -544,17 +544,17 @@ const DRE: React.FC = () => {
           {/* Summary Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
             {[
-              { label: "Receita Bruta", value: current.receitaBruta, color: "text-fin-income" },
-              { label: "Lucro Bruto", value: current.lucroBruto, color: current.lucroBruto >= 0 ? "text-fin-income" : "text-fin-expense" },
-              { label: "Total Despesas", value: current.totalExpenses, color: "text-fin-expense" },
-              { label: "Lucro Líquido", value: current.lucroLiquido, color: current.lucroLiquido >= 0 ? "text-fin-income" : "text-fin-expense" },
+              { label: t("dre.grossRevenue"), value: current.receitaBruta, color: "text-fin-income" },
+              { label: t("dre.grossProfit"), value: current.lucroBruto, color: current.lucroBruto >= 0 ? "text-fin-income" : "text-fin-expense" },
+              { label: t("dre.totalExpenses"), value: current.totalExpenses, color: "text-fin-expense" },
+              { label: t("dre.netProfit"), value: current.lucroLiquido, color: current.lucroLiquido >= 0 ? "text-fin-income" : "text-fin-expense" },
             ].map((card, i) => (
               <div key={i} className="rounded-xl border border-border bg-card p-4">
                 <p className="text-xs text-muted-foreground mb-1">{card.label}</p>
                 <p className={cn("text-lg font-bold", card.color)}>{formatBRL(Math.abs(card.value))}</p>
                 {i === 3 && variation !== 0 && (
                   <p className={cn("text-xs mt-1", variation > 0 ? "text-fin-income" : "text-fin-expense")}>
-                    {variation > 0 ? "+" : ""}{variation.toFixed(1)}% vs mês anterior
+                    {variation > 0 ? "+" : ""}{variation.toFixed(1)}% {t("dre.vsLastMonth")}
                   </p>
                 )}
               </div>
@@ -564,9 +564,9 @@ const DRE: React.FC = () => {
           {/* DRE Table */}
           <div className="rounded-xl border border-border bg-card overflow-hidden">
             <div className="grid grid-cols-[1fr_auto_auto] gap-x-6 px-4 py-3 border-b border-border bg-muted/30">
-              <span className="text-xs font-semibold text-muted-foreground uppercase">Descrição</span>
-              <span className="text-xs font-semibold text-muted-foreground uppercase text-right min-w-[100px]">Mês Atual</span>
-              <span className="text-xs font-semibold text-muted-foreground uppercase text-right min-w-[100px]">Mês Anterior</span>
+              <span className="text-xs font-semibold text-muted-foreground uppercase">{t("dre.description")}</span>
+              <span className="text-xs font-semibold text-muted-foreground uppercase text-right min-w-[100px]">{t("dre.currentMonth")}</span>
+              <span className="text-xs font-semibold text-muted-foreground uppercase text-right min-w-[100px]">{t("dre.previousMonth")}</span>
             </div>
 
             {lines.map((line, i) => {
