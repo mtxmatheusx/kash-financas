@@ -854,6 +854,8 @@ const en: typeof pt = {
   "chat.quick.currentRisksMsg": "What are the main risks of the financial market today?",
   "chat.quick.fixedVsVariableMsg": "Compare fixed income and variable income for the current scenario with real numbers",
   "chat.quick.idealPortfolioMsg": "Build a diversified portfolio suggestion for my profile",
+  "chat.country.title": "Which country are you investing/working from?",
+  "chat.country.subtitle": "This personalizes currency, investments and advice for your market.",
 
   "dashboard.title": "Dashboard",
   "dashboard.subtitle": "Overview of your finances",
