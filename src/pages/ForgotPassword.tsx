@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner";
 import { Mail } from "lucide-react";
 import { motion } from "framer-motion";
+import facilitenLogo from "@/assets/faciliten-logo.png";
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState("");
