@@ -139,7 +139,7 @@ const FloatingAiAssistant = ({
       {/* Chat Interface */}
       {isChatOpen && (
         <div
-          className="fixed inset-0 sm:absolute sm:inset-auto sm:bottom-20 sm:right-0 z-50 sm:z-auto"
+          className="fixed inset-0 bottom-[60px] sm:absolute sm:inset-auto sm:bottom-20 sm:right-0 z-50 sm:z-auto"
           ref={chatRef}
         >
           <div

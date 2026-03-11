@@ -132,7 +132,7 @@ export const GeneralDisclaimer: React.FC<GeneralDisclaimerProps> = ({ onAccept, 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="px-4 pb-5 pt-3 space-y-3 border-t border-border/40 shrink-0 bg-background"
+        className="px-4 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] pt-3 space-y-3 border-t border-border/40 shrink-0 bg-background"
       >
         <label
           className={`flex items-start gap-3 cursor-pointer p-3 rounded-xl border transition-all select-none active:scale-[0.99] ${
