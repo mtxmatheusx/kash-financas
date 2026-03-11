@@ -31,7 +31,9 @@ REGRAS:
 - Se houver investimentos, comente o retorno
 - Seja específico e útil, evite generalidades
 - Se não houver dados suficientes, dê dicas gerais de finanças pessoais
-- Todos os valores monetários em formato brasileiro (R$ X.XXX,XX)${prefsBlock}`;
+- Todos os valores monetários em formato brasileiro (R$ X.XXX,XX)
+- CRÍTICO: NÃO gere insights que se contradizem. Antes de retornar, revise TODOS os insights juntos e garanta que a narrativa é coerente. Por exemplo, não diga que a renda "aumentou significativamente" em um insight e que é "estável" em outro. Escolha a interpretação mais precisa e use-a de forma consistente.
+- Cada insight deve abordar um ASPECTO DIFERENTE das finanças (ex: receita, despesa, categoria específica, meta, investimento). Não repita o mesmo tema com ângulos diferentes.${prefsBlock}`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
