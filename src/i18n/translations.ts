@@ -1533,6 +1533,8 @@ const en: typeof pt = {
 };
 
 const es: typeof pt = {
+  "seo.landing.title": "Faciliten — Finanzas inteligentes con IA",
+  "seo.landing.description": "Control financiero inteligente con IA. Registra ingresos y gastos por voz, WhatsApp o chat. Gratis para empezar.",
   "nav.home": "Inicio",
   "nav.income": "Ingresos",
   "nav.expenses": "Gastos",
