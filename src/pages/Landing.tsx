@@ -535,7 +535,7 @@ const Landing: React.FC = () => {
               <div className="absolute inset-px rounded-[11px] sm:rounded-[15px] bg-[hsl(0,0%,3%)]" />
 
               <div className="absolute -top-px right-5 sm:right-6 bg-[hsl(160,100%,50%)] text-[hsl(0,0%,2%)] text-[9px] sm:text-[10px] font-extrabold px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-b-lg shadow-lg shadow-[hsl(160,100%,50%)/0.3] z-10 uppercase tracking-[0.15em]">
-                Recomendado
+                {t("landing.pricing.premiumBadge")}
               </div>
 
               <div className="relative p-5 sm:p-8">
