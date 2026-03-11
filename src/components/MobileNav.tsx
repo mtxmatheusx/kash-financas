@@ -22,7 +22,7 @@ interface NavItem {
 }
 
 interface NavSection {
-  title: string;
+  titleKey: TranslationKey;
   items: NavItem[];
 }
 
