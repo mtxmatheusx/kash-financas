@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { Bot, TrendingUp, Mic, MicOff, ImageIcon, Check, X, Send, Plus, Minus, BarChart3, Lightbulb, LineChart } from "lucide-react";
+import { Bot, TrendingUp, Mic, MicOff, ImageIcon, Check, X, Send, Plus, Minus, BarChart3, Lightbulb, LineChart, Trash2 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import {
