@@ -168,25 +168,26 @@ const IPhoneMockup: React.FC = () => (
   </motion.div>
 );
 
-/* ── Steps data ── */
-const steps = [
-  { num: "01", icon: WhatsAppIcon, isCustomIcon: true, title: "O Gatilho", desc: "Manda um áudio: \"Gastei 50 reais de gasolina agora\".", accent: "hsl(160 100% 50%)" },
-  { num: "02", icon: Cpu, isCustomIcon: false, title: "A Máquina", desc: "Nossa IA categoriza e atualiza seu dashboard em milissegundos.", accent: "hsl(217 91% 60%)" },
-  { num: "03", icon: TrendingUp, isCustomIcon: false, title: "O Consultor", desc: "A IA cruza seus dados e sugere onde investir para vender mais.", accent: "hsl(348 100% 64%)" },
-];
-
-const trustBadges = [
-  { icon: Lock, label: "Criptografia AES-256" },
-  { icon: Brain, label: "Powered by OpenAI" },
-  { icon: Database, label: "Cloud Database" },
-  { icon: WhatsAppIcon, label: "API Oficial", isCustom: true },
-];
+/* ── Steps and trust badges are now inside the component for i18n ── */
 
 /* ═══════════════════════════════════════════════════════ */
 const Landing: React.FC = () => {
   const { user, loading } = useAuth();
-  const { language, setLanguage } = usePreferences();
+  const { language, setLanguage, t } = usePreferences();
   useReferralCapture();
+
+  const steps = [
+    { num: "01", icon: WhatsAppIcon, isCustomIcon: true, title: t("landing.steps.1.title"), desc: t("landing.steps.1.desc"), accent: "hsl(160 100% 50%)" },
+    { num: "02", icon: Cpu, isCustomIcon: false, title: t("landing.steps.2.title"), desc: t("landing.steps.2.desc"), accent: "hsl(217 91% 60%)" },
+    { num: "03", icon: TrendingUp, isCustomIcon: false, title: t("landing.steps.3.title"), desc: t("landing.steps.3.desc"), accent: "hsl(348 100% 64%)" },
+  ];
+
+  const trustBadges = [
+    { icon: Lock, label: t("landing.trust.encryption") },
+    { icon: Brain, label: t("landing.trust.ai") },
+    { icon: Database, label: t("landing.trust.cloud") },
+    { icon: WhatsAppIcon, label: t("landing.trust.api"), isCustom: true },
+  ];
 
   if (loading) {
     return (
@@ -229,13 +230,13 @@ const Landing: React.FC = () => {
             </Select>
             <Link to="/login">
               <Button variant="ghost" size="sm" className="text-[hsl(0,0%,60%)] hover:text-white hover:bg-[hsl(0,0%,10%)] text-xs sm:text-sm px-2 sm:px-3">
-                Entrar
+                {t("landing.nav.login")}
               </Button>
             </Link>
             <Link to={signupLink}>
               <Button size="sm" className="bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white cta-glow border-0 font-semibold text-xs sm:text-sm px-3 sm:px-4">
-                <span className="hidden sm:inline">Ativar Copiloto</span>
-                <span className="sm:hidden">Começar</span>
+                <span className="hidden sm:inline">{t("landing.nav.cta")}</span>
+                <span className="sm:hidden">{t("landing.nav.ctaMobile")}</span>
                 <ArrowRight className="ml-1 h-3 w-3 sm:h-3.5 sm:w-3.5" />
               </Button>
             </Link>
@@ -264,7 +265,7 @@ const Landing: React.FC = () => {
             <motion.div {...fadeUp(0)}>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[hsl(160,100%,50%)/0.2] bg-[hsl(160,100%,50%)/0.05] backdrop-blur-sm text-[11px] font-semibold text-[hsl(160,100%,50%)] mb-5 sm:mb-6 neon-box-glow">
                 <WhatsAppIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                Copiloto por WhatsApp
+                {t("landing.hero.badge")}
                 <ChevronRight className="h-3 w-3" />
               </div>
             </motion.div>
@@ -273,19 +274,18 @@ const Landing: React.FC = () => {
               {...fadeUp(0.1)}
               className="text-[2rem] leading-[1.1] sm:text-5xl xl:text-6xl font-extrabold tracking-tight sm:leading-[1.05] mb-4 sm:mb-5"
             >
-              <span className="text-white">O Controle Financeiro</span>
+              <span className="text-white">{t("landing.hero.title1")}</span>
               <br />
-              <span className="text-white">Que Vive </span>
-              <span className="neon-glow text-[hsl(160,100%,50%)]">Onde Você Já Está.</span>
+              <span className="text-white">{t("landing.hero.title2")}</span>
+              <span className="neon-glow text-[hsl(160,100%,50%)]">{t("landing.hero.title3")}</span>
             </motion.h1>
 
             <motion.p
               {...fadeUp(0.2)}
               className="text-sm sm:text-lg text-[hsl(0,0%,50%)] max-w-lg mx-auto lg:mx-0 mb-6 sm:mb-8 leading-relaxed"
             >
-              Chega de planilhas abandonadas. Envie um áudio no WhatsApp.
-              A Faciliten organiza, categoriza e te dá estratégias para{" "}
-              <span className="text-[hsl(160,100%,50%)] font-semibold">lucrar mais</span>.
+              {t("landing.hero.subtitle")}{" "}
+              <span className="text-[hsl(160,100%,50%)] font-semibold">{t("landing.hero.subtitleHighlight")}</span>.
             </motion.p>
 
             <motion.div {...fadeUp(0.3)} className="space-y-3">
@@ -293,12 +293,12 @@ const Landing: React.FC = () => {
                 <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 15 }}>
                   <Button size="lg" className="text-sm sm:text-base px-6 sm:px-8 h-12 sm:h-14 bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 cta-glow font-bold w-full sm:w-auto">
                     <Sparkles className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                    Ativar Meu Copiloto (30 Dias Grátis)
+                    {t("landing.hero.cta")}
                   </Button>
                 </motion.div>
               </Link>
               <p className="text-[11px] text-[hsl(0,0%,35%)]">
-                R$ 29,90/mês após o teste. Indique um sócio e ganhe +60 dias.
+                {t("landing.hero.ctaNote")}
               </p>
             </motion.div>
 
@@ -317,7 +317,7 @@ const Landing: React.FC = () => {
       <section className="py-8 sm:py-12 px-4 sm:px-6 relative">
         <div className="max-w-4xl mx-auto text-center">
           <motion.p {...fadeUp()} className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-[hsl(0,0%,35%)] font-medium mb-5 sm:mb-6">
-            Infraestrutura de nível bancário, movida a inteligência artificial
+            {t("landing.trust.subtitle")}
           </motion.p>
           <div className="flex items-center justify-center gap-6 sm:gap-10 flex-wrap">
             {trustBadges.map((badge, i) => (
@@ -344,10 +344,10 @@ const Landing: React.FC = () => {
         <div className="max-w-5xl mx-auto relative z-10">
           <motion.div {...fadeUp()} className="text-center mb-10 sm:mb-20">
             <span className="inline-block text-[10px] sm:text-xs font-bold uppercase tracking-[0.3em] text-[hsl(160,100%,50%)] mb-3 sm:mb-4">
-              Esforço Zero
+              {t("landing.steps.label")}
             </span>
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
-              Controle em 3 Segundos.
+              {t("landing.steps.title")}
             </h2>
           </motion.div>
 
@@ -399,25 +399,24 @@ const Landing: React.FC = () => {
           </div>
 
           <h2 className="text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white mb-4 sm:mb-5 leading-[1.15]">
-            A Nossa Garantia de Esforço Zero.
+            {t("landing.guarantee.title")}
           </h2>
 
           <p className="text-sm sm:text-base text-[hsl(0,0%,50%)] leading-relaxed max-w-2xl mx-auto mb-6">
-            Nós odiamos planilhas tanto quanto você. O Faciliten foi construído para que você{" "}
-            <span className="text-white font-semibold">não precise digitar uma única linha financeira nunca mais</span>.
-            Teste a nossa IA por 7 dias. Se ela não economizar pelo menos 5 horas da sua semana,
-            cancele com 1 clique.{" "}
-            <span className="text-[hsl(348,100%,64%)] font-semibold">Sem perguntas.</span>
+            {t("landing.guarantee.text1")}{" "}
+            <span className="text-white font-semibold">{t("landing.guarantee.highlight")}</span>
+            {t("landing.guarantee.text2")}{" "}
+            <span className="text-[hsl(348,100%,64%)] font-semibold">{t("landing.guarantee.noQuestions")}</span>
           </p>
 
           <div className="flex items-center justify-center gap-6 sm:gap-8 text-[hsl(0,0%,40%)]">
             <div className="flex items-center gap-2 text-[11px] sm:text-xs">
               <Lock className="w-3.5 h-3.5 text-[hsl(348,100%,64%)/0.7]" />
-              <span>Cancelamento instantâneo</span>
+              <span>{t("landing.guarantee.instantCancel")}</span>
             </div>
             <div className="flex items-center gap-2 text-[11px] sm:text-xs">
               <ShieldCheck className="w-3.5 h-3.5 text-[hsl(348,100%,64%)/0.7]" />
-              <span>Sem compromisso</span>
+              <span>{t("landing.guarantee.noCommitment")}</span>
             </div>
           </div>
         </motion.div>
@@ -428,55 +427,29 @@ const Landing: React.FC = () => {
         <div className="max-w-5xl mx-auto relative z-10">
           <motion.div {...fadeUp()} className="text-center mb-10 sm:mb-16">
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
-              Por que você abandona planilhas no 2º mês?
+              {t("landing.compare.title")}
             </h2>
           </motion.div>
-
           <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-            {/* Card Esquerdo — O Jeito Velho */}
-            <motion.div
-              {...fadeUp(0.1)}
-              className="rounded-xl sm:rounded-2xl border border-[hsl(0,0%,12%)] bg-[hsl(0,0%,3%)] p-5 sm:p-8"
-            >
-              <h3 className="text-base sm:text-lg font-extrabold text-[hsl(0,0%,55%)] mb-5 sm:mb-6">
-                Planilhas & Apps Bancários
-              </h3>
+            <motion.div {...fadeUp(0.1)} className="rounded-xl sm:rounded-2xl border border-[hsl(0,0%,12%)] bg-[hsl(0,0%,3%)] p-5 sm:p-8">
+              <h3 className="text-base sm:text-lg font-extrabold text-[hsl(0,0%,55%)] mb-5 sm:mb-6">{t("landing.compare.oldTitle")}</h3>
               <ul className="space-y-3.5 sm:space-y-4">
-                {[
-                  "Exigem login e abrir outro app",
-                  "Categorização 100% manual",
-                  "Você esquece de anotar o cafezinho",
-                  "Geram ansiedade ao abrir",
-                ].map(item => (
+                {[t("landing.compare.old1"), t("landing.compare.old2"), t("landing.compare.old3"), t("landing.compare.old4")].map(item => (
                   <li key={item} className="flex items-start gap-3 text-xs sm:text-sm text-[hsl(0,0%,45%)]">
-                    <XIcon className="w-4 h-4 text-[hsl(348,100%,64%)] shrink-0 mt-0.5" />
-                    {item}
+                    <XIcon className="w-4 h-4 text-[hsl(348,100%,64%)] shrink-0 mt-0.5" />{item}
                   </li>
                 ))}
               </ul>
             </motion.div>
-
-            {/* Card Direito — O Jeito Faciliten */}
-            <motion.div
-              {...fadeUp(0.2)}
-              className="relative rounded-xl sm:rounded-2xl overflow-hidden"
-            >
+            <motion.div {...fadeUp(0.2)} className="relative rounded-xl sm:rounded-2xl overflow-hidden">
               <div className="absolute inset-0 rounded-xl sm:rounded-2xl border border-[hsl(160,100%,50%)/0.25] shadow-[0_0_30px_-5px_hsl(160,100%,50%,0.12)]" />
               <div className="absolute inset-px rounded-[11px] sm:rounded-[15px] bg-[hsl(0,0%,3%)]" />
               <div className="relative p-5 sm:p-8">
-                <h3 className="text-base sm:text-lg font-extrabold text-[hsl(160,100%,50%)] mb-5 sm:mb-6">
-                  O Seu Novo Copiloto
-                </h3>
+                <h3 className="text-base sm:text-lg font-extrabold text-[hsl(160,100%,50%)] mb-5 sm:mb-6">{t("landing.compare.newTitle")}</h3>
                 <ul className="space-y-3.5 sm:space-y-4">
-                  {[
-                    "Zero downloads — vive no seu WhatsApp",
-                    "Mande um áudio no trânsito",
-                    "Categorização via IA em 3 segundos",
-                    "Te diz como vender mais hoje",
-                  ].map(item => (
+                  {[t("landing.compare.new1"), t("landing.compare.new2"), t("landing.compare.new3"), t("landing.compare.new4")].map(item => (
                     <li key={item} className="flex items-start gap-3 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
-                      <Check className="w-4 h-4 text-[hsl(160,100%,50%)] shrink-0 mt-0.5" />
-                      {item}
+                      <Check className="w-4 h-4 text-[hsl(160,100%,50%)] shrink-0 mt-0.5" />{item}
                     </li>
                   ))}
                 </ul>
@@ -491,133 +464,86 @@ const Landing: React.FC = () => {
         <GridOverlay />
         <div className="max-w-3xl mx-auto relative z-10">
           <motion.div {...fadeUp()} className="text-center mb-6">
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1] mb-3 sm:mb-4">
-              Quanto custa ter dois consultores?
-            </h2>
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1] mb-3 sm:mb-4">{t("landing.pricing.title")}</h2>
             <p className="text-[hsl(0,0%,45%)] text-sm sm:text-lg max-w-xl mx-auto mb-1.5">
-              Contratar um assistente custa <span className="line-through text-[hsl(0,0%,30%)]">R$ 2.000/mês</span>
+              {t("landing.pricing.subtitle")} <span className="line-through text-[hsl(0,0%,30%)]">{t("landing.pricing.oldPrice")}</span>
             </p>
-            <p className="text-[hsl(160,100%,50%)] font-bold text-base sm:text-lg">
-              O Faciliten custa o valor de um café.
-            </p>
+            <p className="text-[hsl(160,100%,50%)] font-bold text-base sm:text-lg">{t("landing.pricing.punchline")}</p>
           </motion.div>
-
           <div className="grid sm:grid-cols-2 gap-4 sm:gap-5 mt-8 sm:mt-14">
-            {/* Free */}
             <motion.div {...fadeUp(0.1)} className="rounded-xl sm:rounded-2xl border border-[hsl(0,0%,10%)] bg-[hsl(0,0%,3%)] p-5 sm:p-8">
-              <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1">Básico</h3>
-              <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">Registro manual, sem IA de vendas</p>
+              <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1">{t("landing.pricing.freeTitle")}</h3>
+              <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">{t("landing.pricing.freeDesc")}</p>
               <p className="text-4xl sm:text-5xl font-extrabold text-white mb-5 sm:mb-6 font-mono-fin">
-                R$ 0<span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">/mês</span>
+                R$ 0<span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">{t("landing.pricing.freePerMonth")}</span>
               </p>
               <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
-                {["Dashboard inteligente", "Receitas e despesas manuais", "Relatórios básicos"].map(f => (
+                {[t("landing.pricing.free1"), t("landing.pricing.free2"), t("landing.pricing.free3")].map(f => (
                   <li key={f} className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
-                    <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />
-                    {f}
+                    <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />{f}
                   </li>
                 ))}
               </ul>
               <Link to={signupLink}>
                 <motion.div whileTap={{ scale: 0.97 }}>
-                  <Button variant="outline" className="w-full h-11 sm:h-13 text-sm sm:text-base border-[hsl(0,0%,20%)] bg-transparent hover:bg-[hsl(0,0%,8%)] text-[hsl(0,0%,60%)] font-bold">
-                    Criar Conta Básica
-                  </Button>
+                  <Button variant="outline" className="w-full h-11 sm:h-13 text-sm sm:text-base border-[hsl(0,0%,20%)] bg-transparent hover:bg-[hsl(0,0%,8%)] text-[hsl(0,0%,60%)] font-bold">{t("landing.pricing.freeCta")}</Button>
                 </motion.div>
               </Link>
             </motion.div>
-
-            {/* Premium — glow border + neon CTA */}
             <motion.div {...fadeUp(0.2)} className="relative rounded-xl sm:rounded-2xl overflow-hidden">
-              {/* Glow border */}
               <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[hsl(217,91%,60%)/0.35] via-[hsl(160,100%,50%)/0.15] to-[hsl(217,91%,60%)/0.25] shadow-[0_0_40px_-5px_hsl(217,91%,60%,0.2),0_0_80px_-10px_hsl(160,100%,50%,0.1)]" />
               <div className="absolute inset-px rounded-[11px] sm:rounded-[15px] bg-[hsl(0,0%,3%)]" />
-
-              <div className="absolute -top-px right-5 sm:right-6 bg-[hsl(160,100%,50%)] text-[hsl(0,0%,2%)] text-[9px] sm:text-[10px] font-extrabold px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-b-lg shadow-lg shadow-[hsl(160,100%,50%)/0.3] z-10 uppercase tracking-[0.15em]">
-                Recomendado
-              </div>
-
+              <div className="absolute -top-px right-5 sm:right-6 bg-[hsl(160,100%,50%)] text-[hsl(0,0%,2%)] text-[9px] sm:text-[10px] font-extrabold px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-b-lg shadow-lg shadow-[hsl(160,100%,50%)/0.3] z-10 uppercase tracking-[0.15em]">{t("landing.pricing.premiumBadge")}</div>
               <div className="relative p-5 sm:p-8">
                 <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1 flex items-center gap-2">
-                  <Crown className="h-4 w-4 sm:h-5 sm:w-5 text-[hsl(45,100%,60%)]" /> Copiloto Premium
+                  <Crown className="h-4 w-4 sm:h-5 sm:w-5 text-[hsl(45,100%,60%)]" /> {t("landing.pricing.premiumTitle")}
                 </h3>
-                <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">Zero planilhas. Zero atrito. A IA faz o trabalho pesado.</p>
+                <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">{t("landing.pricing.premiumDesc")}</p>
                 <p className="text-4xl sm:text-5xl font-extrabold text-white mb-5 sm:mb-6 font-mono-fin">
                   R$ 29<span className="text-base sm:text-lg">,90</span>
-                  <span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">/mês</span>
+                  <span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">{t("landing.pricing.freePerMonth")}</span>
                 </p>
                 <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
-                  {[
-                    "Lançamentos automáticos via áudio no WhatsApp",
-                    "Dashboard preditivo: saiba o seu lucro em 3 segundos",
-                    "Consultor de Vendas IA com estratégias personalizadas",
-                    "Investimentos, metas e relatórios ilimitados",
-                    "Suporte prioritário",
-                  ].map(f => (
+                  {[t("landing.pricing.premium1"), t("landing.pricing.premium2"), t("landing.pricing.premium3"), t("landing.pricing.premium4"), t("landing.pricing.premium5")].map(f => (
                     <li key={f} className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
-                      <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />
-                      {f}
+                      <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />{f}
                     </li>
                   ))}
                 </ul>
                 <Link to={signupLink}>
                   <motion.div whileTap={{ scale: 0.97 }}>
                     <Button className="w-full h-12 sm:h-14 text-sm sm:text-base bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 font-bold shadow-[0_0_24px_-4px_hsl(348,100%,64%,0.5)] hover:shadow-[0_0_32px_-4px_hsl(348,100%,64%,0.7)] transition-shadow">
-                      <Sparkles className="mr-2 h-4 w-4" /> Liberar Meu Assistente Agora
+                      <Sparkles className="mr-2 h-4 w-4" /> {t("landing.pricing.premiumCta")}
                     </Button>
                   </motion.div>
                 </Link>
-                <p className="text-center text-[11px] text-[hsl(0,0%,40%)] mt-3">
-                  30 dias grátis · Cancele com 1 clique. Sem burocracia.
-                </p>
+                <p className="text-center text-[11px] text-[hsl(0,0%,40%)] mt-3">{t("landing.pricing.premiumNote")}</p>
               </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ═══ FAQ MATA-OBJEÇÕES ═══ */}
+      {/* ═══ FAQ ═══ */}
       <section className="py-14 sm:py-28 px-4 sm:px-6 relative">
         <div className="max-w-2xl mx-auto relative z-10">
           <motion.div {...fadeUp()} className="text-center mb-10 sm:mb-14">
-            <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-[hsl(0,0%,35%)] font-medium mb-4">
-              Quebra de objeções
-            </p>
+            <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-[hsl(0,0%,35%)] font-medium mb-4">{t("landing.faq.label")}</p>
             <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
-              Ainda tem dúvidas?<br className="hidden sm:block" /> Nós destruímos cada uma.
+              {t("landing.faq.title")}<br className="hidden sm:block" /> {t("landing.faq.title2")}
             </h2>
           </motion.div>
           <motion.div {...fadeUp(0.1)}>
             <Accordion type="single" collapsible className="space-y-3">
               {[
-                {
-                  q: "Meus dados financeiros estão seguros?",
-                  a: "Absolutamente. Utilizamos a mesma infraestrutura de criptografia de nível bancário que grandes corporações. Seus dados são seus e ninguém mais tem acesso.",
-                },
-                {
-                  q: "A IA pode errar os meus lançamentos?",
-                  a: "A nossa IA atua como um extrator cirúrgico. Ela lê o seu áudio, categoriza e pede a sua confirmação no WhatsApp se houver alguma dúvida. Você tem sempre o controle final.",
-                },
-                {
-                  q: "Preciso entender de contabilidade para usar?",
-                  a: "Zero. O Faciliten foi criado justamente para quem odeia planilhas. Você só precisa saber falar ou digitar no WhatsApp.",
-                },
-                {
-                  q: "Posso cancelar se não gostar?",
-                  a: "Com um único clique, direto no seu painel. Sem ter que ligar para ninguém ou justificar. Risco zero para você.",
-                },
+                { q: t("landing.faq.q1"), a: t("landing.faq.a1") },
+                { q: t("landing.faq.q2"), a: t("landing.faq.a2") },
+                { q: t("landing.faq.q3"), a: t("landing.faq.a3") },
+                { q: t("landing.faq.q4"), a: t("landing.faq.a4") },
               ].map((item, i) => (
-                <AccordionItem
-                  key={i}
-                  value={`faq-${i}`}
-                  className="border border-[hsl(0,0%,12%)] rounded-xl bg-[hsl(0,0%,4%,0.5)] px-5 sm:px-6 data-[state=open]:border-[hsl(348,100%,64%,0.2)]"
-                >
-                  <AccordionTrigger className="text-sm sm:text-base font-medium text-white hover:no-underline py-4 sm:py-5 [&[data-state=open]>svg]:text-[hsl(348,100%,64%)]">
-                    {item.q}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-xs sm:text-sm text-[hsl(0,0%,45%)] leading-relaxed pb-4 sm:pb-5">
-                    {item.a}
-                  </AccordionContent>
+                <AccordionItem key={i} value={`faq-${i}`} className="border border-[hsl(0,0%,12%)] rounded-xl bg-[hsl(0,0%,4%,0.5)] px-5 sm:px-6 data-[state=open]:border-[hsl(348,100%,64%,0.2)]">
+                  <AccordionTrigger className="text-sm sm:text-base font-medium text-white hover:no-underline py-4 sm:py-5 [&[data-state=open]>svg]:text-[hsl(348,100%,64%)]">{item.q}</AccordionTrigger>
+                  <AccordionContent className="text-xs sm:text-sm text-[hsl(0,0%,45%)] leading-relaxed pb-4 sm:pb-5">{item.a}</AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>
@@ -627,32 +553,18 @@ const Landing: React.FC = () => {
 
       {/* ═══ FINAL CTA ═══ */}
       <section className="py-14 sm:py-28 px-4 sm:px-6">
-        <motion.div
-          {...fadeUp()}
-          className="max-w-3xl mx-auto text-center rounded-2xl sm:rounded-3xl p-8 sm:p-16 relative overflow-hidden"
-        >
-          <motion.div
-            className="absolute inset-0"
-            style={{ background: "linear-gradient(135deg, hsl(160 100% 50% / 0.1), hsl(217 91% 60% / 0.06), hsl(160 100% 50% / 0.1))", backgroundSize: "200% 200%" }}
-            animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-          />
+        <motion.div {...fadeUp()} className="max-w-3xl mx-auto text-center rounded-2xl sm:rounded-3xl p-8 sm:p-16 relative overflow-hidden">
+          <motion.div className="absolute inset-0" style={{ background: "linear-gradient(135deg, hsl(160 100% 50% / 0.1), hsl(217 91% 60% / 0.06), hsl(160 100% 50% / 0.1))", backgroundSize: "200% 200%" }} animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }} transition={{ duration: 6, repeat: Infinity, ease: "linear" }} />
           <div className="absolute inset-0 bg-[hsl(0,0%,2%)/0.7] backdrop-blur-xl" />
           <div className="absolute inset-px rounded-[15px] sm:rounded-[23px] border border-[hsl(160,100%,50%)/0.08]" />
-
           <div className="relative z-10">
             <Zap className="h-8 w-8 sm:h-10 sm:w-10 text-[hsl(160,100%,50%)] mx-auto mb-5 sm:mb-6" />
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">
-              Seu Copiloto Está Esperando
-            </h2>
-            <p className="text-[hsl(0,0%,48%)] text-sm sm:text-lg mb-6 sm:mb-8 max-w-lg mx-auto">
-              Ative agora sem cadastrar cartão. Se você não recuperar pelo menos 10x o valor da assinatura já no primeiro mês, o teste sai de graça.
-            </p>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">{t("landing.finalCta.title")}</h2>
+            <p className="text-[hsl(0,0%,48%)] text-sm sm:text-lg mb-6 sm:mb-8 max-w-lg mx-auto">{t("landing.finalCta.subtitle")}</p>
             <Link to={signupLink}>
               <motion.div whileTap={{ scale: 0.97 }} className="inline-block">
                 <Button size="lg" className="text-sm sm:text-base px-6 sm:px-8 h-12 sm:h-14 bg-[hsl(348,100%,64%)] hover:bg-[hsl(348,100%,58%)] text-white border-0 cta-glow font-bold">
-                  <Sparkles className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  Ativar Meu Copiloto Grátis
+                  <Sparkles className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />{t("landing.finalCta.button")}
                 </Button>
               </motion.div>
             </Link>
@@ -670,13 +582,11 @@ const Landing: React.FC = () => {
             <span className="font-bold text-sm text-white">Faciliten</span>
           </div>
           <div className="flex items-center gap-5 sm:gap-6 text-xs sm:text-sm text-[hsl(0,0%,35%)]">
-            <Link to="/login" className="hover:text-white transition-colors">Entrar</Link>
-            <Link to={signupLink} className="hover:text-white transition-colors">Criar conta</Link>
-            <Link to="/upgrade" className="hover:text-white transition-colors">Planos</Link>
+            <Link to="/login" className="hover:text-white transition-colors">{t("landing.footer.login")}</Link>
+            <Link to={signupLink} className="hover:text-white transition-colors">{t("landing.footer.signup")}</Link>
+            <Link to="/upgrade" className="hover:text-white transition-colors">{t("landing.footer.plans")}</Link>
           </div>
-          <p className="text-[10px] text-[hsl(0,0%,25%)]">
-            © {new Date().getFullYear()} Faciliten
-          </p>
+          <p className="text-[10px] text-[hsl(0,0%,25%)]">© {new Date().getFullYear()} Faciliten</p>
         </div>
       </footer>
     </div>
