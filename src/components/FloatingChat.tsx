@@ -448,6 +448,7 @@ export const FloatingChat: React.FC = () => {
     try {
       await streamChat({
         messages: apiMessages, consultantType, signal: controller.signal,
+        country: userCountry ? { code: userCountry.code, name: userCountry.name, currency: userCountry.currency, language: userCountry.language } : undefined,
         onDelta: (chunk) => {
           assistantSoFar += chunk;
           const current = assistantSoFar;
