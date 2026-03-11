@@ -164,10 +164,10 @@ const DRE: React.FC = () => {
 
     Object.entries(current.opexGroups).forEach(([group, data]) => {
       const prevGroup = previous.opexGroups[group];
-      r.push({ label: `(-) ${group}`, value: -data.total, prevValue: prevGroup ? -prevGroup.total : 0, bold: true });
+      r.push({ label: `(-) ${translateCategory(group, t)}`, value: -data.total, prevValue: prevGroup ? -prevGroup.total : 0, bold: true });
       Object.entries(data.categories).forEach(([cat, val]) => {
         const prev = prevGroup?.categories[cat] || 0;
-        r.push({ label: cat, value: -val, prevValue: -prev, indent: 2 });
+        r.push({ label: translateCategory(cat, t), value: -val, prevValue: -prev, indent: 2 });
       });
     });
     if (current.uncategorized > 0) {
