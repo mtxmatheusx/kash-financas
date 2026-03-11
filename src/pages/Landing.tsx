@@ -203,9 +203,9 @@ const Landing: React.FC = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 relative z-10">
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[hsl(160,100%,50%)] flex items-center justify-center shadow-lg shadow-[hsl(160,100%,50%)/0.3]">
-              <span className="text-[hsl(0,0%,2%)] font-extrabold text-xs sm:text-sm">K</span>
+              <span className="text-[hsl(0,0%,2%)] font-extrabold text-xs sm:text-sm">F</span>
             </div>
-            <span className="font-bold tracking-tight text-white text-base sm:text-lg">Kash</span>
+            <span className="font-bold tracking-tight text-white text-base sm:text-lg">Faciliten</span>
           </Link>
           <div className="flex items-center gap-2 sm:gap-3 relative z-10">
             <Link to="/login">
