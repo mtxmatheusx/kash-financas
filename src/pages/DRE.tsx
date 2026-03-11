@@ -497,7 +497,7 @@ const DRE: React.FC = () => {
     } finally {
       setExporting(false);
     }
-  }, [refDate, current, lines, formatBRL]);
+  }, [refDate, current, lines, formatBRL, t, language, dateLocale]);
 
   return (
     <PageTransition>
