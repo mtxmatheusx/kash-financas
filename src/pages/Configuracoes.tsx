@@ -39,8 +39,7 @@ interface UserSettings {
   bank_account: string;
   pix_key: string;
   pix_key_type: string;
-  // Integrations
-  n8n_webhook_url: string;
+  // Notifications
   // Notifications
   notify_whatsapp: boolean;
   notify_email: boolean;
@@ -55,7 +54,6 @@ const defaultSettings: UserSettings = {
   zip_code: "", address: "", address_number: "", address_complement: "",
   neighborhood: "", city: "", state: "",
   bank_name: "", bank_agency: "", bank_account: "", pix_key: "", pix_key_type: "",
-  n8n_webhook_url: "",
   notify_whatsapp: true, notify_email: true, notify_due_dates: true, notify_due_days_before: 3,
 };
 
@@ -69,19 +67,13 @@ const Configuracoes: React.FC = () => {
   const [qrLoading, setQrLoading] = useState(false);
 
   const handleGenerateQr = async () => {
-    if (!settings.n8n_webhook_url) {
-      toast.error("Configure a URL do webhook N8N primeiro.");
-      return;
-    }
     setQrLoading(true);
     setQrCodeImage(null);
     try {
-      const res = await fetch(settings.n8n_webhook_url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "generate_qr", user_id: user?.id }),
+      const { data, error } = await supabase.functions.invoke("whatsapp-connect", {
+        body: { action: "generate_qr" },
       });
-      const data = await res.json();
+      if (error) throw error;
       if (data?.qrCode || data?.base64) {
         const img = data.qrCode || data.base64;
         setQrCodeImage(img.startsWith("data:") ? img : `data:image/png;base64,${img}`);
@@ -90,9 +82,23 @@ const Configuracoes: React.FC = () => {
         toast.error("Não foi possível gerar o QR Code.");
       }
     } catch {
-      toast.error("Erro ao conectar com o servidor. Verifique a URL do webhook.");
+      toast.error("Erro ao gerar QR Code. Tente novamente.");
     }
     setQrLoading(false);
+  };
+
+  const handleSyncData = async () => {
+    setSaving(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("whatsapp-connect", {
+        body: { action: "sync" },
+      });
+      if (error) throw error;
+      toast.success(data?.message || "Dados sincronizados com sucesso!");
+    } catch {
+      toast.error("Erro ao sincronizar. Tente novamente.");
+    }
+    setSaving(false);
   };
 
   useEffect(() => {
@@ -384,18 +390,28 @@ const Configuracoes: React.FC = () => {
 
           {/* ═══════════ Integrações ═══════════ */}
           <TabsContent value="integrations">
-            <Card>
-              <p className="text-xs text-muted-foreground">
-                Configure suas integrações externas. Os dados são salvos de forma segura.
-              </p>
-
-              <div className="border-b border-border pb-5 space-y-3">
-                <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                  <Webhook className="w-4 h-4 text-primary" /> N8N
-                </h3>
-                <Field icon={Webhook} label="Webhook URL" hint="URL do webhook N8N para automações">
-                  <Input value={settings.n8n_webhook_url} onChange={(e) => update("n8n_webhook_url", e.target.value)} placeholder="https://seu-n8n.com/webhook/..." maxLength={500} />
-                </Field>
+            <div className="space-y-6">
+              {/* Central de Automação */}
+              <div className="rounded-xl border border-border bg-card p-6 md:p-8 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-primary/10">
+                    <Webhook className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-foreground font-display-fin">Central de Automação</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Sua conta já está conectada de forma segura aos nossos servidores.
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={handleSyncData}
+                  disabled={saving}
+                  className="w-full gap-2 bg-primary hover:bg-destructive/80 transition-colors"
+                >
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Webhook className="w-4 h-4" />}
+                  Sincronizar Dados
+                </Button>
               </div>
 
               {/* WhatsApp QR Code Connection */}
@@ -412,7 +428,6 @@ const Configuracoes: React.FC = () => {
                   </p>
                 </div>
 
-                {/* QR Code area */}
                 <div className="flex justify-center">
                   <div className="w-64 h-64 rounded-xl bg-background border border-border flex items-center justify-center overflow-hidden p-2">
                     {qrLoading ? (
@@ -449,7 +464,7 @@ const Configuracoes: React.FC = () => {
                   )}
                 </div>
               </div>
-            </Card>
+            </div>
           </TabsContent>
 
           {/* ═══════════ Notificações ═══════════ */}
