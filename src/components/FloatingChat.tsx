@@ -208,6 +208,7 @@ export const FloatingChat: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [historyLoaded, setHistoryLoaded] = useState(false);
   const [pendingTx, setPendingTx] = useState<ParsedTransaction | null>(null);
+  const [pendingInv, setPendingInv] = useState<ParsedInvestment | null>(null);
   const [stagedMsg, setStagedMsg] = useState<{ text: string; images: string[] } | null>(null);
   const [investorDisclaimerAccepted, setInvestorDisclaimerAccepted] = useState<boolean | null>(null);
   const [generalDisclaimerAccepted, setGeneralDisclaimerAccepted] = useState<boolean | null>(null);
