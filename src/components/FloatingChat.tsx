@@ -142,15 +142,57 @@ async function parseTransaction(message: string): Promise<ParsedTransaction | nu
 export const FloatingChat: React.FC = () => {
   const { account } = useAccount();
   const { create } = useTransactions();
+  const { user } = useAuth();
   const [consultantType, setConsultantType] = useState<ConsultantType>(
     account.type === "business" ? "sales" : "financial"
   );
   const config = consultantConfig[consultantType];
   const [messages, setMessages] = useState<DisplayMsg[]>([{ role: "assistant", content: config.greeting }]);
   const [isLoading, setIsLoading] = useState(false);
+  const [historyLoaded, setHistoryLoaded] = useState(false);
   const [pendingTx, setPendingTx] = useState<ParsedTransaction | null>(null);
   const [stagedMsg, setStagedMsg] = useState<{ text: string; images: string[] } | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  // Load chat history from database
+  useEffect(() => {
+    if (!user) return;
+    const loadHistory = async () => {
+      const { data, error } = await supabase
+        .from('chat_messages')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('consultant_type', consultantType)
+        .order('created_at', { ascending: true })
+        .limit(100);
+
+      if (!error && data && data.length > 0) {
+        const loaded: DisplayMsg[] = [
+          { role: "assistant", content: consultantConfig[consultantType].greeting },
+          ...data.map(row => ({
+            role: row.role as "user" | "assistant",
+            content: row.content,
+            images: (row.images as string[] | null)?.length ? (row.images as string[]) : undefined,
+          })),
+        ];
+        setMessages(loaded);
+      }
+      setHistoryLoaded(true);
+    };
+    loadHistory();
+  }, [user, consultantType]);
+
+  // Save message to database
+  const saveMessage = useCallback(async (role: "user" | "assistant", content: string, images?: string[]) => {
+    if (!user || !content.trim()) return;
+    await supabase.from('chat_messages').insert({
+      user_id: user.id,
+      role,
+      content,
+      consultant_type: consultantType,
+      images: images ?? [],
+    } as any);
+  }, [user, consultantType]);
 
   const { isListening, transcript, start: startListening, stop: stopListening, isSupported: micSupported } = useSpeechToText({
     onResult: (text) => stageMessage(text),
@@ -162,6 +204,7 @@ export const FloatingChat: React.FC = () => {
     abortRef.current?.abort();
     setConsultantType(type);
     setMessages([{ role: "assistant", content: consultantConfig[type].greeting }]);
+    setHistoryLoaded(false);
     setPendingTx(null);
     setStagedMsg(null);
   };
