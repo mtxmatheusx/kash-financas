@@ -456,14 +456,14 @@ export const FloatingChat: React.FC = () => {
     
     // Run parse-transaction in parallel — with retry
     // Note: we pass userCountry to the chat edge function for contextualized advice
-    const parseWithRetry = async (): Promise<ParsedTransaction | null> => {
-      if (!text) return null;
+    const parseWithRetry = async (): Promise<{ transaction: ParsedTransaction | null; investment: ParsedInvestment | null }> => {
+      if (!text) return { transaction: null, investment: null };
       const result = await parseTransaction(text);
-      if (result && result.amount > 0) return result;
+      if ((result.transaction && result.transaction.amount > 0) || (result.investment && result.investment.amount > 0)) return result;
       // Retry once after a short delay
       await new Promise(r => setTimeout(r, 800));
       const retry = await parseTransaction(text);
-      return retry && retry.amount > 0 ? retry : null;
+      return ((retry.transaction && retry.transaction.amount > 0) || (retry.investment && retry.investment.amount > 0)) ? retry : { transaction: null, investment: null };
     };
     const parsePromise = parseWithRetry();
 
@@ -483,7 +483,6 @@ export const FloatingChat: React.FC = () => {
         },
         onDone: () => {
           setIsLoading(false);
-          // Save complete assistant response to DB
           if (assistantSoFar.trim()) saveMessage("assistant", assistantSoFar);
         },
         onError: (err) => { toast.error(err); setIsLoading(false); },
@@ -494,12 +493,14 @@ export const FloatingChat: React.FC = () => {
     }
 
     const parsed = await parsePromise;
-    if (parsed) {
-      setPendingTx(parsed);
+    if (parsed.investment) {
+      setPendingInv(parsed.investment);
+    } else if (parsed.transaction) {
+      setPendingTx(parsed.transaction);
     } else if (text && assistantSoFar.includes("✅")) {
-      // AI said it would register but parse failed — try parsing the AI response
       const fallback = await parseTransaction(assistantSoFar);
-      if (fallback && fallback.amount > 0) setPendingTx(fallback);
+      if (fallback.investment) setPendingInv(fallback.investment);
+      else if (fallback.transaction && fallback.transaction.amount > 0) setPendingTx(fallback.transaction);
     }
   };
 
