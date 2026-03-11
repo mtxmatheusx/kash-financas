@@ -38,7 +38,8 @@ interface DRELine {
 const pct = (part: number, total: number) => (total !== 0 ? (part / total) * 100 : 0);
 
 const DRE: React.FC = () => {
-  const { formatMoney: formatBRL, t } = usePreferences();
+  const { formatMoney: formatBRL, t, language } = usePreferences();
+  const dateLocale = language === "en" ? enUS : language === "es" ? esLocale : ptBR;
   const { allTransactions } = useTransactions();
   const { account } = useAccount();
   const [refDate, setRefDate] = useState(new Date());
