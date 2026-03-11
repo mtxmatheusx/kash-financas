@@ -422,41 +422,29 @@ const Configuracoes: React.FC = () => {
           {/* ═══════════ Integrações ═══════════ */}
           <TabsContent value="integrations">
             <div className="space-y-6">
-              {/* Central de Automação */}
               <div className="rounded-xl border border-border bg-card p-6 md:p-8 space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 rounded-xl bg-primary/10">
                     <Webhook className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-foreground font-display-fin">Central de Automação</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Sua conta já está conectada de forma segura aos nossos servidores.
-                    </p>
+                    <h3 className="text-lg font-bold text-foreground font-display-fin">{t("settings.automationCenter")}</h3>
+                    <p className="text-sm text-muted-foreground">{t("settings.automationDesc")}</p>
                   </div>
                 </div>
-                <Button
-                  onClick={handleSyncData}
-                  disabled={saving}
-                  className="w-full gap-2 bg-primary hover:bg-destructive/80 transition-colors"
-                >
+                <Button onClick={handleSyncData} disabled={saving} className="w-full gap-2 bg-primary hover:bg-destructive/80 transition-colors">
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Webhook className="w-4 h-4" />}
-                  Sincronizar Dados
+                  {t("settings.syncData")}
                 </Button>
               </div>
 
-              {/* WhatsApp QR Code Connection */}
               <div className="rounded-xl border border-border bg-card p-6 md:p-8 space-y-6">
                 <div className="text-center space-y-2">
                   <div className="inline-flex p-3 rounded-2xl bg-fin-income/10 mb-2">
                     <MessageCircle className="w-8 h-8 text-fin-income" />
                   </div>
-                  <h3 className="text-lg font-bold text-foreground font-display-fin">
-                    Conecte seu WhatsApp em 1 segundo
-                  </h3>
-                  <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-                    Escaneie o QR Code abaixo com o seu celular para automatizar as cobranças usando o seu próprio número.
-                  </p>
+                  <h3 className="text-lg font-bold text-foreground font-display-fin">{t("settings.connectWhatsApp")}</h3>
+                  <p className="text-sm text-muted-foreground max-w-sm mx-auto">{t("settings.scanQr")}</p>
                 </div>
 
                 <div className="flex justify-center">
@@ -464,34 +452,26 @@ const Configuracoes: React.FC = () => {
                     {qrLoading ? (
                       <div className="flex flex-col items-center gap-3">
                         <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                        <p className="text-xs text-muted-foreground">Gerando QR Code...</p>
+                        <p className="text-xs text-muted-foreground">{t("settings.generatingQr")}</p>
                       </div>
                     ) : qrCodeImage ? (
                       <img src={qrCodeImage} alt="QR Code WhatsApp" className="w-full h-full object-contain rounded-lg" />
                     ) : (
                       <div className="flex flex-col items-center gap-3 text-center px-4">
                         <QrCode className="w-12 h-12 text-muted-foreground/30" />
-                        <p className="text-xs text-muted-foreground">
-                          Clique no botão abaixo para gerar o QR Code
-                        </p>
+                        <p className="text-xs text-muted-foreground">{t("settings.clickToGenerate")}</p>
                       </div>
                     )}
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <Button
-                    className="w-full gap-2 bg-fin-income/90 hover:bg-fin-income text-primary-foreground"
-                    onClick={handleGenerateQr}
-                    disabled={qrLoading}
-                  >
+                  <Button className="w-full gap-2 bg-fin-income/90 hover:bg-fin-income text-primary-foreground" onClick={handleGenerateQr} disabled={qrLoading}>
                     {qrLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <QrCode className="w-4 h-4" />}
-                    {qrCodeImage ? "Atualizar QR Code" : "Gerar QR Code de Conexão"}
+                    {qrCodeImage ? t("settings.updateQr") : t("settings.generateQr")}
                   </Button>
                   {qrCodeImage && (
-                    <p className="text-[10px] text-muted-foreground text-center">
-                      O QR Code expira em alguns minutos. Clique em "Atualizar" se necessário.
-                    </p>
+                    <p className="text-[10px] text-muted-foreground text-center">{t("settings.qrExpires")}</p>
                   )}
                 </div>
               </div>
