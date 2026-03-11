@@ -42,6 +42,7 @@ const CockpitTooltip = ({ active, payload, label }: any) => {
 const Dashboard: React.FC = () => {
   const { transactions, totals } = useTransactions();
   const { total: investmentTotal } = useInvestments();
+  const { goals } = useGoals();
 
   const [dateFilter, setDateFilter] = useState<DateFilter>('all');
   const [customRange, setCustomRange] = useState<{ from?: Date; to?: Date }>({});
