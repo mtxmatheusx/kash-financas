@@ -367,6 +367,22 @@ export const FloatingChat: React.FC = () => {
   };
 
   const handleConfirmTx = useCallback(() => {
+    if (pendingInv) {
+      createInvestment({
+        name: pendingInv.name,
+        type: pendingInv.investment_type,
+        amount: pendingInv.amount,
+        current_value: pendingInv.amount,
+        date: new Date().toISOString().slice(0, 10),
+        account_type: account.type,
+      });
+      const confirmContent = `✅ **${t("investment.title")} registrado!**\n\n${pendingInv.name} — ${formatMoney(pendingInv.amount)} (${pendingInv.investment_type})`;
+      setMessages(prev => [...prev, { role: "assistant", content: confirmContent }]);
+      saveMessage("assistant", confirmContent);
+      toast.success(`${t("investment.title")} registrado!`);
+      setPendingInv(null);
+      return;
+    }
     if (!pendingTx) return;
     create({
       type: pendingTx.type,
@@ -380,19 +396,21 @@ export const FloatingChat: React.FC = () => {
       ...(pendingTx.frequency ? { frequency: pendingTx.frequency } : {}),
       ...(pendingTx.installments ? { installments: pendingTx.installments } : {}),
     });
-    const confirmContent = `✅ **${pendingTx.type === "income" ? "Receita" : "Despesa"} registrada!**\n\n${pendingTx.description} — R$ ${pendingTx.amount.toFixed(2).replace(".", ",")} (${pendingTx.category})`;
+    const typeLabel = pendingTx.type === "income" ? t("income.title") : t("expense.title");
+    const confirmContent = `✅ **${typeLabel} registrada!**\n\n${pendingTx.description} — ${formatMoney(pendingTx.amount)} (${pendingTx.category})`;
     setMessages(prev => [...prev, { role: "assistant", content: confirmContent }]);
     saveMessage("assistant", confirmContent);
-    toast.success(`${pendingTx.type === "income" ? "Receita" : "Despesa"} registrada!`);
+    toast.success(`${typeLabel} registrada!`);
     setPendingTx(null);
-  }, [pendingTx, create, account.type, saveMessage]);
+  }, [pendingTx, pendingInv, create, createInvestment, account.type, saveMessage, t]);
 
   const handleCancelTx = useCallback(() => {
-    const cancelContent = "Ok, registro cancelado. 👍 Como posso ajudar?";
+    const cancelContent = t("chat.financial.greeting").includes("Hello") ? "Ok, registration cancelled. 👍 How can I help?" : "Ok, registro cancelado. 👍 Como posso ajudar?";
     setMessages(prev => [...prev, { role: "assistant", content: cancelContent }]);
     saveMessage("assistant", cancelContent);
     setPendingTx(null);
-  }, [saveMessage]);
+    setPendingInv(null);
+  }, [saveMessage, t]);
 
   /** Stage a message for preview (don't send yet) */
   const stageMessage = async (userText: string, attachments?: Attachment[]) => {
