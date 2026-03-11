@@ -142,7 +142,7 @@ async function streamChat({
   onDone();
 }
 
-async function parseTransaction(message: string): Promise<ParsedTransaction | null> {
+async function parseTransaction(message: string): Promise<{ transaction: ParsedTransaction | null; investment: ParsedInvestment | null }> {
   try {
     console.log("[parseTransaction] Calling with:", message.slice(0, 80));
     const resp = await fetch(PARSE_URL, {
@@ -152,14 +152,14 @@ async function parseTransaction(message: string): Promise<ParsedTransaction | nu
     });
     if (!resp.ok) {
       console.warn("[parseTransaction] Error response:", resp.status);
-      return null;
+      return { transaction: null, investment: null };
     }
     const data = await resp.json();
     console.log("[parseTransaction] Result:", data);
-    return data.transaction || null;
+    return { transaction: data.transaction || null, investment: data.investment || null };
   } catch (e) {
     console.error("[parseTransaction] Exception:", e);
-    return null;
+    return { transaction: null, investment: null };
   }
 }
 
