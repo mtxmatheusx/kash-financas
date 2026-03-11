@@ -197,19 +197,24 @@ export const FloatingChat: React.FC = () => {
   const [showGeneralDisclaimer, setShowGeneralDisclaimer] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
-  // Check if investor disclaimer was accepted
+  // Check disclaimers
   useEffect(() => {
     if (!user) return;
-    const checkDisclaimer = async () => {
+    const checkDisclaimers = async () => {
       const { data } = await supabase
         .from('user_financial_preferences')
-        .select('id')
+        .select('preference')
         .eq('user_id', user.id)
-        .eq('preference', 'investor_disclaimer_accepted')
-        .limit(1);
-      setInvestorDisclaimerAccepted(!!(data && data.length > 0));
+        .in('preference', ['investor_disclaimer_accepted', 'general_disclaimer_accepted']);
+      const prefs = data?.map(d => d.preference) ?? [];
+      setInvestorDisclaimerAccepted(prefs.includes('investor_disclaimer_accepted'));
+      const generalAccepted = prefs.includes('general_disclaimer_accepted');
+      setGeneralDisclaimerAccepted(generalAccepted);
+      if (!generalAccepted) {
+        setShowGeneralDisclaimer(true);
+      }
     };
-    checkDisclaimer();
+    checkDisclaimers();
   }, [user]);
 
   // Load chat history from database
