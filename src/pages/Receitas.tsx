@@ -197,16 +197,9 @@ const Receitas: React.FC = () => {
                 </div>
                 <div>
                   <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Duração (meses)</label>
-                  <select value={form.recurring_months} onChange={e => setForm({ ...form, recurring_months: e.target.value })}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                    <option value="3">3 meses</option>
-                    <option value="6">6 meses</option>
-                    <option value="12">12 meses (1 ano)</option>
-                    <option value="24">24 meses (2 anos)</option>
-                    <option value="36">36 meses (3 anos)</option>
-                  </select>
+                  <Input type="number" min="1" max="120" value={form.recurring_months} onChange={e => setForm({ ...form, recurring_months: e.target.value })} placeholder="Ex: 12" />
                   <p className="text-[10px] text-muted-foreground mt-1">
-                    Serão criados {form.recurring_months} lançamentos automáticos a partir da data selecionada
+                    Serão criados {form.recurring_months || 0} lançamentos automáticos a partir da data selecionada
                   </p>
                 </div>
               </>
