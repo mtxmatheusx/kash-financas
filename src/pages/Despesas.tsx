@@ -20,7 +20,7 @@ const PERSONAL_CATS = ['Alimentação', 'Transporte', 'Moradia', 'Saúde', 'Laze
 const BUSINESS_CATS = ['Fornecedores', 'Impostos', 'Funcionários', 'Marketing', 'Infraestrutura', 'Outros'];
 
 const Despesas: React.FC = () => {
-  const { formatMoney: formatBRL } = usePreferences();
+  const { formatMoney: formatBRL, t, currency: defaultCurrency } = usePreferences();
   const { transactions, create, update, remove, totals, allTransactions } = useTransactions('expense');
   const { account } = useAccount();
   const [search, setSearch] = useState('');
