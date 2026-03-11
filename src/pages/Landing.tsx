@@ -176,6 +176,19 @@ const Landing: React.FC = () => {
   const { language, setLanguage, t } = usePreferences();
   useReferralCapture();
 
+  const steps = [
+    { num: "01", icon: WhatsAppIcon, isCustomIcon: true, title: t("landing.steps.1.title"), desc: t("landing.steps.1.desc"), accent: "hsl(160 100% 50%)" },
+    { num: "02", icon: Cpu, isCustomIcon: false, title: t("landing.steps.2.title"), desc: t("landing.steps.2.desc"), accent: "hsl(217 91% 60%)" },
+    { num: "03", icon: TrendingUp, isCustomIcon: false, title: t("landing.steps.3.title"), desc: t("landing.steps.3.desc"), accent: "hsl(348 100% 64%)" },
+  ];
+
+  const trustBadges = [
+    { icon: Lock, label: t("landing.trust.encryption") },
+    { icon: Brain, label: t("landing.trust.ai") },
+    { icon: Database, label: t("landing.trust.cloud") },
+    { icon: WhatsAppIcon, label: t("landing.trust.api"), isCustom: true },
+  ];
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[hsl(0,0%,2%)]">
