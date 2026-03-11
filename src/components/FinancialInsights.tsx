@@ -111,7 +111,7 @@ export const FinancialInsights: React.FC<FinancialInsightsProps> = ({
       setLoading(false);
       setHasLoaded(true);
     }
-  }, [transactions, investments, goals, fetchPreferences]);
+  }, [transactions, investments, goals, fetchPreferences, language]);
 
   useEffect(() => {
     if (!hasLoaded && transactions.length > 0) fetchInsights();
