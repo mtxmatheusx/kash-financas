@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { PageTransition } from "@/components/PageTransition";
 import { WhatsAppAlertBanner } from "@/components/WhatsAppAlertBanner";
 import { useTransactions } from "@/hooks/useTransactions";
+import { SummaryBar } from "@/components/SummaryBar";
 import { useInvestments } from "@/hooks/useInvestments";
 import { useGoals } from "@/hooks/useGoals";
 import { Compass, TrendingUp, TrendingDown, PiggyBank, Target } from "lucide-react";
