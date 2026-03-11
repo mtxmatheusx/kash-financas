@@ -10,6 +10,7 @@ import {
 import { ChatMessageList } from "@/components/ui/chat-message-list";
 import { FloatingAiAssistant, type Attachment } from "@/components/ui/glowing-ai-chat-assistant";
 import { TransactionConfirmCard, type ParsedTransaction } from "@/components/TransactionConfirmCard";
+import { InvestorDisclaimer } from "@/components/InvestorDisclaimer";
 import { useAccount } from "@/contexts/AccountContext";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useSpeechToText } from "@/hooks/useSpeechToText";
@@ -189,7 +190,24 @@ export const FloatingChat: React.FC = () => {
   const [historyLoaded, setHistoryLoaded] = useState(false);
   const [pendingTx, setPendingTx] = useState<ParsedTransaction | null>(null);
   const [stagedMsg, setStagedMsg] = useState<{ text: string; images: string[] } | null>(null);
+  const [investorDisclaimerAccepted, setInvestorDisclaimerAccepted] = useState<boolean | null>(null);
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
+
+  // Check if investor disclaimer was accepted
+  useEffect(() => {
+    if (!user) return;
+    const checkDisclaimer = async () => {
+      const { data } = await supabase
+        .from('user_financial_preferences')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('preference', 'investor_disclaimer_accepted')
+        .limit(1);
+      setInvestorDisclaimerAccepted(!!(data && data.length > 0));
+    };
+    checkDisclaimer();
+  }, [user]);
 
   // Load chat history from database
   useEffect(() => {
@@ -277,12 +295,38 @@ export const FloatingChat: React.FC = () => {
 
   const switchConsultant = (type: ConsultantType) => {
     if (type === consultantType) return;
+    if (type === "investor" && !investorDisclaimerAccepted) {
+      setShowDisclaimer(true);
+      return;
+    }
     abortRef.current?.abort();
     setConsultantType(type);
     setMessages([{ role: "assistant", content: consultantConfig[type].greeting }]);
     setHistoryLoaded(false);
     setPendingTx(null);
     setStagedMsg(null);
+  };
+
+  const handleDisclaimerAccept = async () => {
+    if (!user) return;
+    await supabase.from('user_financial_preferences').insert({
+      user_id: user.id,
+      preference: 'investor_disclaimer_accepted',
+      category: 'disclaimer',
+    });
+    setInvestorDisclaimerAccepted(true);
+    setShowDisclaimer(false);
+    // Now switch to investor
+    abortRef.current?.abort();
+    setConsultantType("investor");
+    setMessages([{ role: "assistant", content: consultantConfig["investor"].greeting }]);
+    setHistoryLoaded(false);
+    setPendingTx(null);
+    setStagedMsg(null);
+  };
+
+  const handleDisclaimerDecline = () => {
+    setShowDisclaimer(false);
   };
 
   const handleConfirmTx = useCallback(() => {
@@ -414,6 +458,16 @@ export const FloatingChat: React.FC = () => {
         onToggle: isAudioRecording ? stopRecording : startRecording,
       }}
     >
+      {/* Investor Disclaimer Overlay */}
+      <AnimatePresence>
+        {showDisclaimer && (
+          <InvestorDisclaimer
+            onAccept={handleDisclaimerAccept}
+            onDecline={handleDisclaimerDecline}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Consultant Toggle + Clear */}
       <div className="px-4 pt-3 pb-1 flex items-center gap-2">
         <div className="flex-1 flex gap-1 bg-muted rounded-lg p-1">
