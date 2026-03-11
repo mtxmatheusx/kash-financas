@@ -1,14 +1,15 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState, useCallback } from "react";
 import { PageTransition } from "@/components/PageTransition";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAccount } from "@/contexts/AccountContext";
 import { format, startOfMonth, endOfMonth, subMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { ChevronLeft, ChevronRight, Info } from "lucide-react";
+import { ChevronLeft, ChevronRight, Info, Download, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { toast } from "sonner";
 
 /* ── Category → DRE group mapping ── */
 const COST_CATEGORIES = ["Fornecedores", "Infraestrutura"]; // CPV / Custos diretos
@@ -40,7 +41,53 @@ const DRE: React.FC = () => {
   const { allTransactions } = useTransactions();
   const { account } = useAccount();
   const [refDate, setRefDate] = useState(new Date());
+  const [exporting, setExporting] = useState(false);
+  const dreRef = useRef<HTMLDivElement>(null);
 
+  const handleExportPDF = useCallback(async () => {
+    const element = dreRef.current;
+    if (!element) return;
+    setExporting(true);
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const { jsPDF } = await import("jspdf");
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: "#ffffff",
+      });
+
+      const pdfWidth = 210;
+      const imgWidth = pdfWidth - 20;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const pdf = new jsPDF("p", "mm", "a4");
+      const imgData = canvas.toDataURL("image/png");
+
+      let heightLeft = imgHeight;
+      let position = 10;
+
+      pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
+      heightLeft -= 297 - 20;
+
+      while (heightLeft > 0) {
+        pdf.addPage();
+        position = -(297 - 20 - heightLeft - imgHeight + 10);
+        pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
+        heightLeft -= 297 - 20;
+      }
+
+      const monthLabel = format(refDate, "yyyy-MM", { locale: ptBR });
+      pdf.save(`DRE_${monthLabel}.pdf`);
+      toast.success("PDF exportado com sucesso!");
+    } catch (err) {
+      console.error("Erro ao exportar PDF:", err);
+      toast.error("Erro ao exportar PDF");
+    } finally {
+      setExporting(false);
+    }
+  }, [refDate]);
   const monthStart = startOfMonth(refDate);
   const monthEnd = endOfMonth(refDate);
   const prevMonthStart = startOfMonth(subMonths(refDate, 1));
@@ -208,18 +255,38 @@ const DRE: React.FC = () => {
               <h1 className="text-2xl font-bold text-foreground">DRE</h1>
               <p className="text-sm text-muted-foreground">Demonstração do Resultado do Exercício</p>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" onClick={() => setRefDate(d => subMonths(d, 1))}>
-                <ChevronLeft className="w-4 h-4" />
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleExportPDF}
+                disabled={exporting}
+                className="gap-2"
+              >
+                {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                Exportar PDF
               </Button>
-              <span className="text-sm font-medium text-foreground min-w-[120px] text-center capitalize">
-                {format(refDate, "MMMM yyyy", { locale: ptBR })}
-              </span>
-              <Button variant="ghost" size="icon" onClick={() => setRefDate(d => subMonths(d, -1))}>
-                <ChevronRight className="w-4 h-4" />
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="icon" onClick={() => setRefDate(d => subMonths(d, 1))}>
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                <span className="text-sm font-medium text-foreground min-w-[120px] text-center capitalize">
+                  {format(refDate, "MMMM yyyy", { locale: ptBR })}
+                </span>
+                <Button variant="ghost" size="icon" onClick={() => setRefDate(d => subMonths(d, -1))}>
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </div>
+
+          {/* PDF-exportable content */}
+          <div ref={dreRef} className="space-y-6 bg-background">
+            {/* PDF Header (hidden on screen, visible in export) */}
+            <div className="hidden print:block text-center mb-4">
+              <h2 className="text-xl font-bold">Demonstração do Resultado do Exercício</h2>
+              <p className="text-sm text-muted-foreground capitalize">{format(refDate, "MMMM yyyy", { locale: ptBR })}</p>
+            </div>
 
           {/* Summary Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
@@ -354,6 +421,7 @@ const DRE: React.FC = () => {
               </div>
             </div>
           </div>
+          </div> {/* end dreRef */}
         </div>
       </TooltipProvider>
     </PageTransition>
