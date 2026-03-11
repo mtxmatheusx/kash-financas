@@ -112,6 +112,11 @@ const pt = {
   "cat.invest.crypto": "Cripto",
   "cat.invest.realEstate": "Imóveis",
   "cat.invest.other": "Outros",
+  "cat.dre.personnel": "Despesas com Pessoal",
+  "cat.dre.admin": "Despesas Administrativas",
+  "cat.dre.commercial": "Despesas Comerciais",
+  "cat.dre.taxes": "Impostos e Taxas",
+  "cat.dre.otherExpenses": "Outras Despesas",
 
   // Dashboard
   "dashboard.title": "Dashboard",
