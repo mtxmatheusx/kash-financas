@@ -60,12 +60,14 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
     >
       {/* Logo */}
       <div className="h-16 flex items-center px-4 border-b border-sidebar-border">
-        <img src={facilitenLogo} alt="Faciliten" className="w-8 h-8 rounded-lg" />
+        <div className="w-8 h-8 rounded-lg bg-fin-income flex items-center justify-center shrink-0">
+          <span className="text-sm font-bold text-white">F</span>
+        </div>
         {!collapsed && (
           <motion.span
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="ml-3 font-semibold text-sidebar-foreground text-sm"
+            className="ml-3 font-semibold text-sidebar-foreground text-sm tracking-wide"
           >
             Faciliten
           </motion.span>
