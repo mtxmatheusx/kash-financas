@@ -177,7 +177,7 @@ const Dashboard: React.FC = () => {
           </motion.div>
 
           <motion.div {...slideUp(0.25)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-4">Top Categorias</h3>
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-4">{t("dashboard.topCategories")}</h3>
             {categoryData.length > 0 ? (
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={categoryData} layout="vertical" margin={{ top: 0, right: 4, left: 0, bottom: 0 }}>
