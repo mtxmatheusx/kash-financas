@@ -445,9 +445,9 @@ const DRE: React.FC = () => {
       y += 5;
       addPage();
       const margins = [
-        { label: "Margem Bruta", value: `${current.margemBruta.toFixed(1)}%` },
-        { label: "Margem Operacional", value: `${current.margemOperacional.toFixed(1)}%` },
-        { label: "Margem Líquida", value: `${current.margemLiquida.toFixed(1)}%` },
+        { label: t("dre.grossMargin"), value: `${current.margemBruta.toFixed(1)}%` },
+        { label: t("dre.opMargin"), value: `${current.margemOperacional.toFixed(1)}%` },
+        { label: t("dre.netMargin"), value: `${current.margemLiquida.toFixed(1)}%` },
       ];
       const mCardW = (u - 8) / 3;
       margins.forEach((mg, i) => {
