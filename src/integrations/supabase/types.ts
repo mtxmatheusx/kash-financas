@@ -268,6 +268,7 @@ export type Database = {
           id: string
           n8n_webhook_url: string | null
           neighborhood: string | null
+          notification_time: string | null
           notify_due_dates: boolean | null
           notify_due_days_before: number | null
           notify_email: boolean | null
@@ -302,6 +303,7 @@ export type Database = {
           id?: string
           n8n_webhook_url?: string | null
           neighborhood?: string | null
+          notification_time?: string | null
           notify_due_dates?: boolean | null
           notify_due_days_before?: number | null
           notify_email?: boolean | null
@@ -336,6 +338,7 @@ export type Database = {
           id?: string
           n8n_webhook_url?: string | null
           neighborhood?: string | null
+          notification_time?: string | null
           notify_due_dates?: boolean | null
           notify_due_days_before?: number | null
           notify_email?: boolean | null
