@@ -83,6 +83,36 @@ const pt = {
   "chat.country.title": "De qual país você está investindo/trabalhando?",
   "chat.country.subtitle": "Isso personaliza moeda, investimentos e consultoria para o seu mercado.",
 
+  // Categories - Income
+  "cat.income.salary": "Salário",
+  "cat.income.freelance": "Freelance",
+  "cat.income.sales": "Vendas",
+  "cat.income.services": "Serviços",
+  "cat.income.rent": "Aluguel",
+  "cat.income.dividends": "Dividendos",
+  "cat.income.other": "Outros",
+  // Categories - Expense (Personal)
+  "cat.expense.food": "Alimentação",
+  "cat.expense.transport": "Transporte",
+  "cat.expense.housing": "Moradia",
+  "cat.expense.health": "Saúde",
+  "cat.expense.leisure": "Lazer",
+  "cat.expense.education": "Educação",
+  "cat.expense.other": "Outros",
+  // Categories - Expense (Business)
+  "cat.expense.suppliers": "Fornecedores",
+  "cat.expense.taxes": "Impostos",
+  "cat.expense.employees": "Funcionários",
+  "cat.expense.marketing": "Marketing",
+  "cat.expense.infrastructure": "Infraestrutura",
+  // Categories - Investment Types
+  "cat.invest.fixedIncome": "Renda Fixa",
+  "cat.invest.variableIncome": "Renda Variável",
+  "cat.invest.funds": "Fundos",
+  "cat.invest.crypto": "Cripto",
+  "cat.invest.realEstate": "Imóveis",
+  "cat.invest.other": "Outros",
+
   // Dashboard
   "dashboard.title": "Dashboard",
   "dashboard.subtitle": "Visão geral das suas finanças",
