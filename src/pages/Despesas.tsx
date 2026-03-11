@@ -41,6 +41,18 @@ const Despesas: React.FC = () => {
 
   const [form, setForm] = useState(emptyForm());
   const [amountCents, setAmountCents] = useState(0);
+  const [userChangedCategory, setUserChangedCategory] = useState(false);
+
+  const { suggesting } = useAutoCategory(
+    showForm && !editingId && !userChangedCategory ? form.description : '',
+    'expense',
+    (cat) => {
+      const allCats = [...PERSONAL_CATS, ...BUSINESS_CATS];
+      if (allCats.includes(cat)) {
+        setForm(prev => ({ ...prev, category: cat }));
+      }
+    },
+  );
 
   const paidTotal = transactions.filter(t => t.status === 'paid').reduce((s, t) => s + t.amount, 0);
   const pendingTotal = transactions.filter(t => t.status === 'pending').reduce((s, t) => s + t.amount, 0);
