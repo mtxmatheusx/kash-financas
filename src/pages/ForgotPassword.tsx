@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner";
 import { Mail } from "lucide-react";
 import { motion } from "framer-motion";
+import facilitenLogo from "@/assets/faciliten-logo.png";
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -38,6 +39,10 @@ const ForgotPassword: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
+        <div className="text-center mb-6">
+          <img src={facilitenLogo} alt="Faciliten" className="w-12 h-12 rounded-xl mx-auto mb-3" />
+          <h1 className="text-xl font-bold text-foreground">Faciliten</h1>
+        </div>
         <Card className="border-border/50">
           <CardHeader>
             <CardTitle className="text-lg">Recuperar senha</CardTitle>

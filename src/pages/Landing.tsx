@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
+import facilitenLogo from "@/assets/faciliten-logo.png";
 import {
   ArrowRight, Shield, Zap, Brain, TrendingUp,
   Crown, Check, ChevronRight, Sparkles, AudioLines, Cpu, Lock, Database,
@@ -202,9 +203,7 @@ const Landing: React.FC = () => {
       <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-2xl bg-[hsl(0,0%,2%)/0.85] border-b border-[hsl(0,0%,12%)/0.4]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 relative z-10">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[hsl(160,100%,50%)] flex items-center justify-center shadow-lg shadow-[hsl(160,100%,50%)/0.3]">
-              <span className="text-[hsl(0,0%,2%)] font-extrabold text-xs sm:text-sm">F</span>
-            </div>
+            <img src={facilitenLogo} alt="Faciliten" className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg shadow-lg shadow-[hsl(160,100%,50%)/0.3]" />
             <span className="font-bold tracking-tight text-white text-base sm:text-lg">Faciliten</span>
           </Link>
           <div className="flex items-center gap-2 sm:gap-3 relative z-10">

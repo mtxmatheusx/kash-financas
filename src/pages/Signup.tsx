@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner";
 import { Eye, EyeOff, UserPlus, Check, X, Gift } from "lucide-react";
 import { motion } from "framer-motion";
+import facilitenLogo from "@/assets/faciliten-logo.png";
 
 const passwordRules = [
   { test: (p: string) => p.length >= 8, label: "Mínimo 8 caracteres" },
@@ -80,9 +81,7 @@ const Signup: React.FC = () => {
         className="w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center mx-auto mb-4">
-            <span className="text-primary-foreground font-bold text-lg">F</span>
-          </div>
+          <img src={facilitenLogo} alt="Faciliten" className="w-12 h-12 rounded-xl mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-foreground">Faciliten</h1>
           <p className="text-muted-foreground mt-1">30 dias de Premium grátis</p>
         </div>
