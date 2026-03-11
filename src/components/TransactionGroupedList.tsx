@@ -222,7 +222,7 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
             <p className="text-sm font-medium text-foreground truncate">{tx.description}</p>
             <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1 flex-wrap">
               <span>{new Date(tx.date).toLocaleDateString("pt-BR")}</span>
-              <span>· {tx.category}</span>
+              <span>· {translateCategory(tx.category, t)}</span>
               <span className="md:hidden">·
                 {tx.status === "paid" ? (
                   <span className="text-fin-income"> {statusLabel.paid}</span>
