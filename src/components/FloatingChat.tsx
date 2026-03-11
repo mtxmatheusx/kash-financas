@@ -168,7 +168,7 @@ export const FloatingChat: React.FC = () => {
   const { create } = useTransactions();
   const { create: createInvestment } = useInvestments();
   const { user } = useAuth();
-  const { t } = usePreferences();
+  const { t, formatMoney } = usePreferences();
 
   const consultantConfig = useMemo<Record<ConsultantType, ConsultantConfig>>(() => ({
     financial: { label: t("chat.financial.label"), shortLabel: t("chat.financial.short"), icon: Bot, fallback: "CF", placeholder: t("chat.financial.placeholder"), greeting: t("chat.financial.greeting") },
