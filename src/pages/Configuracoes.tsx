@@ -230,16 +230,16 @@ const Configuracoes: React.FC = () => {
           {/* ═══════════ Meu Perfil ═══════════ */}
           <TabsContent value="profile">
             <Card>
-              <Field icon={User} label="Nome Completo">
+              <Field icon={User} label={t("settings.fullName")}>
                 <Input
                   value={settings.full_name}
                   onChange={(e) => update("full_name", e.target.value)}
-                  placeholder="Seu nome completo"
+                  placeholder={t("settings.fullName")}
                   maxLength={120}
                 />
               </Field>
 
-              <Field icon={Smartphone} label="Telefone / WhatsApp" hint="Usado para notificações e agente IA">
+              <Field icon={Smartphone} label={t("settings.phone")} hint={t("settings.phoneHint")}>
                 <Input
                   value={settings.phone}
                   onChange={(e) => update("phone", maskPhone(e.target.value))}
@@ -250,17 +250,17 @@ const Configuracoes: React.FC = () => {
               </Field>
 
               <div className="pt-2 border-t border-border">
-                <p className="text-[11px] text-muted-foreground mb-1">E-mail da conta</p>
+                <p className="text-[11px] text-muted-foreground mb-1">{t("settings.email")}</p>
                 <p className="text-sm font-medium text-foreground">{profile?.email || "—"}</p>
               </div>
 
               {/* Preferences */}
               <div className="pt-4 border-t border-border space-y-4">
                 <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                  <Globe className="w-4 h-4 text-primary" /> Preferências
+                  <Globe className="w-4 h-4 text-primary" /> {t("settings.preferences")}
                 </h3>
 
-                <Field icon={Coins} label="Moeda" hint="Formato de exibição dos valores monetários">
+                <Field icon={Coins} label={t("settings.currency")} hint={t("settings.currencyHint")}>
                   <Select value={currency} onValueChange={(v) => setCurrency(v as CurrencyCode)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -271,7 +271,7 @@ const Configuracoes: React.FC = () => {
                   </Select>
                 </Field>
 
-                <Field icon={Globe} label="Idioma" hint="Idioma da interface (em breve)">
+                <Field icon={Globe} label={t("settings.language")} hint={t("settings.languageHint")}>
                   <Select value={language} onValueChange={(v) => setLanguage(v as LanguageCode)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
