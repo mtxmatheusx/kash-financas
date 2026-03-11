@@ -511,19 +511,13 @@ const DRE: React.FC = () => {
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">DRE</h1>
-              <p className="text-sm text-muted-foreground">Demonstração do Resultado do Exercício</p>
+              <h1 className="text-2xl font-bold text-foreground">{t("dre.title")}</h1>
+              <p className="text-sm text-muted-foreground">{t("dre.subtitle")}</p>
             </div>
             <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleExportPDF}
-                disabled={exporting}
-                className="gap-2"
-              >
+              <Button variant="outline" size="sm" onClick={handleExportPDF} disabled={exporting} className="gap-2">
                 {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                Exportar PDF
+                {t("dre.exportPdf")}
               </Button>
               <div className="flex items-center gap-2">
                 <Button variant="ghost" size="icon" onClick={() => setRefDate(d => subMonths(d, 1))}>
