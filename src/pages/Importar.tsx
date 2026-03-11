@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef } from "react";
 import { PageTransition } from "@/components/PageTransition";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAccount } from "@/contexts/AccountContext";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
