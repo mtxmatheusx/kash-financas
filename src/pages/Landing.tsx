@@ -306,7 +306,7 @@ const Landing: React.FC = () => {
 
           {/* Right — Desktop iPhone Mockup */}
           <div className="hidden lg:flex justify-center">
-            <IPhoneMockup />
+            <IPhoneMockup t={t} />
           </div>
         </div>
       </section>
