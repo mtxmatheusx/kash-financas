@@ -12,6 +12,7 @@ export interface TransactionRow {
   frequency?: 'monthly' | 'yearly';
   is_percentage?: boolean;
   percentage?: number;
+  currency?: string;
   created_at: string;
 }
 
