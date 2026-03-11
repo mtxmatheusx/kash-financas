@@ -171,12 +171,20 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
   }, []);
 
   const totals = useMemo(() => {
-    const income = all.filter(t => t.account_type === account.type && t.type === 'income')
+    const acctTx = all.filter(t => t.account_type === account.type);
+    const income = acctTx.filter(t => t.type === 'income')
       .reduce((s, t) => s + t.amount, 0);
-    const expense = all.filter(t => t.account_type === account.type && t.type === 'expense')
-      .reduce((s, t) => s + t.amount, 0);
+    const expense = acctTx.filter(t => t.type === 'expense')
+      .map(t => {
+        if (t.is_percentage && t.percentage) {
+          const monthIncome = monthlyIncomeMap[t.date.slice(0, 7)] || 0;
+          return (monthIncome * t.percentage) / 100;
+        }
+        return t.amount;
+      })
+      .reduce((s, a) => s + a, 0);
     return { income, expense, balance: income - expense };
-  }, [all, account.type]);
+  }, [all, account.type, monthlyIncomeMap]);
 
   return { transactions, create, update, remove, totals, allTransactions: all, loading };
 }
