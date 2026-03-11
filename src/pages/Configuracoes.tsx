@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Settings, User, Building2, CreditCard, Save, Crown, ExternalLink,
-  FileText, Landmark, Plug, Bell, Webhook, Smartphone, MapPin, Loader2,
+  FileText, Landmark, Bell, Webhook, Smartphone, MapPin, Loader2, MessageCircle, QrCode,
 } from "lucide-react";
 import { toast } from "sonner";
 import { maskCPF, maskCNPJ, maskPhone, maskCEP, unmask } from "@/lib/masks";
@@ -41,9 +41,6 @@ interface UserSettings {
   pix_key_type: string;
   // Integrations
   n8n_webhook_url: string;
-  evolution_api_url: string;
-  evolution_api_key: string;
-  evolution_instance: string;
   // Notifications
   notify_whatsapp: boolean;
   notify_email: boolean;
@@ -58,7 +55,7 @@ const defaultSettings: UserSettings = {
   zip_code: "", address: "", address_number: "", address_complement: "",
   neighborhood: "", city: "", state: "",
   bank_name: "", bank_agency: "", bank_account: "", pix_key: "", pix_key_type: "",
-  n8n_webhook_url: "", evolution_api_url: "", evolution_api_key: "", evolution_instance: "",
+  n8n_webhook_url: "",
   notify_whatsapp: true, notify_email: true, notify_due_dates: true, notify_due_days_before: 3,
 };
 
@@ -182,7 +179,7 @@ const Configuracoes: React.FC = () => {
               <Building2 className="w-3.5 h-3.5 hidden sm:block" /> Empresa
             </TabsTrigger>
             <TabsTrigger value="integrations" className="gap-1.5 text-xs">
-              <Plug className="w-3.5 h-3.5 hidden sm:block" /> Integrações
+              <Webhook className="w-3.5 h-3.5 hidden sm:block" /> Integrações
             </TabsTrigger>
             <TabsTrigger value="notifications" className="gap-1.5 text-xs">
               <Bell className="w-3.5 h-3.5 hidden sm:block" /> Alertas
@@ -372,19 +369,27 @@ const Configuracoes: React.FC = () => {
                 </Field>
               </div>
 
-              <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                  <Smartphone className="w-4 h-4 text-primary" /> Evolution API (WhatsApp)
-                </h3>
-                <Field icon={Plug} label="URL da API">
-                  <Input value={settings.evolution_api_url} onChange={(e) => update("evolution_api_url", e.target.value)} placeholder="https://api.evolution.com" maxLength={500} />
-                </Field>
-                <Field icon={Plug} label="API Key">
-                  <Input type="password" value={settings.evolution_api_key} onChange={(e) => update("evolution_api_key", e.target.value)} placeholder="Chave da Evolution API" maxLength={200} />
-                </Field>
-                <Field icon={Plug} label="Nome da Instância">
-                  <Input value={settings.evolution_instance} onChange={(e) => update("evolution_instance", e.target.value)} placeholder="Nome da instância" maxLength={100} />
-                </Field>
+              {/* WhatsApp Bot Card */}
+              <div className="rounded-xl border border-border bg-accent/30 p-6 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-fin-income/15">
+                    <MessageCircle className="w-6 h-6 text-fin-income" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-foreground font-display-fin">WhatsApp Bot</h3>
+                    <p className="text-xs text-muted-foreground">
+                      Conecte seu número para ativar as notificações automáticas de cobrança.
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-full gap-2 border-fin-income/30 text-fin-income hover:bg-fin-income/10"
+                  onClick={() => toast.info("QR Code será gerado em breve. Configure as credenciais da Evolution API no painel de administração.")}
+                >
+                  <QrCode className="w-4 h-4" />
+                  Gerar QR Code de Conexão
+                </Button>
               </div>
             </Card>
           </TabsContent>
