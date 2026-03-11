@@ -109,10 +109,10 @@ export const MobileNav: React.FC = () => {
                 </div>
                 <nav className="px-1.5 pb-1.5" role="menu" aria-label="Menu adicional">
                   {filteredSections.map((section, sIdx) => (
-                    <div key={section.title}>
+                    <div key={section.titleKey}>
                       {/* Section title */}
                       <p className="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/50">
-                        {section.title}
+                        {t(section.titleKey)}
                       </p>
                       <div className="space-y-0.5">
                         {section.items.map((item) => {
