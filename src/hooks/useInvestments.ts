@@ -24,6 +24,7 @@ export function useInvestments() {
       id: r.id, name: r.name, type: r.type,
       amount: Number(r.amount), current_value: Number(r.current_value),
       date: r.date, account_type: r.account_type as 'personal' | 'business',
+      country: (r as any).country || undefined,
       created_at: r.created_at,
     })));
     setLoading(false);
@@ -47,6 +48,7 @@ export function useInvestments() {
       id: data.id, name: data.name, type: data.type,
       amount: Number(data.amount), current_value: Number(data.current_value),
       date: data.date, account_type: data.account_type as 'personal' | 'business',
+      country: (data as any).country || undefined,
       created_at: data.created_at,
     }, ...prev]);
   }, [user]);

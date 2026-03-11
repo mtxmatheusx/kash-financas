@@ -234,6 +234,10 @@ const pt = {
   "investment.applicationDate": "Data da aplicação",
   "investment.saveInvestment": "Salvar Investimento",
   "investment.updateValue": "Atualizar valor",
+  "investment.country": "País / Mercado",
+  "investment.selectCountries": "Selecione os países",
+  "investment.allCountries": "Todos os países",
+  "investment.filterByCountry": "Filtrar por país",
 
   // Goals
   "goals.title": "Metas Financeiras",
@@ -1057,6 +1061,10 @@ const en: typeof pt = {
   "investment.applicationDate": "Application date",
   "investment.saveInvestment": "Save Investment",
   "investment.updateValue": "Current value",
+  "investment.country": "Country / Market",
+  "investment.selectCountries": "Select countries",
+  "investment.allCountries": "All countries",
+  "investment.filterByCountry": "Filter by country",
 
   "goals.title": "Financial Goals",
   "goals.subtitle": "Track your financial objectives",
@@ -1856,6 +1864,10 @@ const es: typeof pt = {
   "investment.applicationDate": "Fecha de aplicación",
   "investment.saveInvestment": "Guardar Inversión",
   "investment.updateValue": "Valor actual",
+  "investment.country": "País / Mercado",
+  "investment.selectCountries": "Seleccione los países",
+  "investment.allCountries": "Todos los países",
+  "investment.filterByCountry": "Filtrar por país",
 
   "goals.title": "Metas Financieras",
   "goals.subtitle": "Sigue tus objetivos financieros",

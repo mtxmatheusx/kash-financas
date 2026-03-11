@@ -24,6 +24,7 @@ export interface InvestmentRow {
   current_value: number;
   date: string;
   account_type: 'personal' | 'business';
+  country?: string;
   created_at: string;
 }
 
