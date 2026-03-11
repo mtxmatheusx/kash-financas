@@ -11,6 +11,7 @@ import { ChatMessageList } from "@/components/ui/chat-message-list";
 import { FloatingAiAssistant, type Attachment } from "@/components/ui/glowing-ai-chat-assistant";
 import { TransactionConfirmCard, type ParsedTransaction } from "@/components/TransactionConfirmCard";
 import { InvestorDisclaimer } from "@/components/InvestorDisclaimer";
+import { GeneralDisclaimer } from "@/components/GeneralDisclaimer";
 import { useAccount } from "@/contexts/AccountContext";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useSpeechToText } from "@/hooks/useSpeechToText";
@@ -191,22 +192,29 @@ export const FloatingChat: React.FC = () => {
   const [pendingTx, setPendingTx] = useState<ParsedTransaction | null>(null);
   const [stagedMsg, setStagedMsg] = useState<{ text: string; images: string[] } | null>(null);
   const [investorDisclaimerAccepted, setInvestorDisclaimerAccepted] = useState<boolean | null>(null);
+  const [generalDisclaimerAccepted, setGeneralDisclaimerAccepted] = useState<boolean | null>(null);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
+  const [showGeneralDisclaimer, setShowGeneralDisclaimer] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
-  // Check if investor disclaimer was accepted
+  // Check disclaimers
   useEffect(() => {
     if (!user) return;
-    const checkDisclaimer = async () => {
+    const checkDisclaimers = async () => {
       const { data } = await supabase
         .from('user_financial_preferences')
-        .select('id')
+        .select('preference')
         .eq('user_id', user.id)
-        .eq('preference', 'investor_disclaimer_accepted')
-        .limit(1);
-      setInvestorDisclaimerAccepted(!!(data && data.length > 0));
+        .in('preference', ['investor_disclaimer_accepted', 'general_disclaimer_accepted']);
+      const prefs = data?.map(d => d.preference) ?? [];
+      setInvestorDisclaimerAccepted(prefs.includes('investor_disclaimer_accepted'));
+      const generalAccepted = prefs.includes('general_disclaimer_accepted');
+      setGeneralDisclaimerAccepted(generalAccepted);
+      if (!generalAccepted) {
+        setShowGeneralDisclaimer(true);
+      }
     };
-    checkDisclaimer();
+    checkDisclaimers();
   }, [user]);
 
   // Load chat history from database
@@ -458,6 +466,25 @@ export const FloatingChat: React.FC = () => {
         onToggle: isAudioRecording ? stopRecording : startRecording,
       }}
     >
+      {/* General Disclaimer Overlay */}
+      <AnimatePresence>
+        {showGeneralDisclaimer && (
+          <GeneralDisclaimer
+            onAccept={async () => {
+              if (!user) return;
+              await supabase.from('user_financial_preferences').insert({
+                user_id: user.id,
+                preference: 'general_disclaimer_accepted',
+                category: 'disclaimer',
+              });
+              setGeneralDisclaimerAccepted(true);
+              setShowGeneralDisclaimer(false);
+            }}
+            onDecline={() => setShowGeneralDisclaimer(false)}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Investor Disclaimer Overlay */}
       <AnimatePresence>
         {showDisclaimer && (
