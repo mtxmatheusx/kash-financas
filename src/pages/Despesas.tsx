@@ -44,6 +44,14 @@ const Despesas: React.FC = () => {
   const paidTotal = transactions.filter(t => t.status === 'paid').reduce((s, t) => s + t.amount, 0);
   const pendingTotal = transactions.filter(t => t.status === 'pending').reduce((s, t) => s + t.amount, 0);
 
+  const monthlyIncome = useMemo(() => {
+    const month = form.date?.slice(0, 7);
+    if (!month) return 0;
+    return allTransactions
+      .filter(t => t.type === 'income' && t.date.startsWith(month))
+      .reduce((s, t) => s + t.amount, 0);
+  }, [allTransactions, form.date]);
+
   const filtered = transactions.filter(t =>
     t.description.toLowerCase().includes(search.toLowerCase()) ||
     t.category.toLowerCase().includes(search.toLowerCase())
