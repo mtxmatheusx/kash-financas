@@ -27,6 +27,7 @@ interface DRELine {
 }
 
 const DRE: React.FC = () => {
+  const { formatMoney: formatBRL } = usePreferences();
   const { allTransactions } = useTransactions();
   const { account } = useAccount();
   const [refDate, setRefDate] = useState(new Date());
