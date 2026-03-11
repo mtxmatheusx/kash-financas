@@ -206,7 +206,7 @@ const DRE: React.FC = () => {
       const u = w - m * 2; // usable width
       let y = m;
 
-      const monthLabel = format(refDate, "MMMM yyyy", { locale: ptBR });
+      const monthLabel = format(refDate, "MMMM yyyy", { locale: dateLocale });
       const capitalMonth = monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1);
 
       // ── Palette ──
