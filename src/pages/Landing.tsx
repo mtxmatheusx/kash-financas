@@ -213,6 +213,20 @@ const Landing: React.FC = () => {
             <span className="font-bold tracking-tight text-white text-base sm:text-lg">Faciliten</span>
           </Link>
           <div className="flex items-center gap-2 sm:gap-3 relative z-10">
+            <Select value={language} onValueChange={(v) => setLanguage(v as LanguageCode)}>
+              <SelectTrigger className="h-8 w-auto min-w-0 gap-1 border-[hsl(0,0%,15%)] bg-transparent text-[hsl(0,0%,60%)] hover:text-white text-xs px-2 [&>svg]:w-3 [&>svg]:h-3">
+                <SelectValue>
+                  {LANGUAGES.find(l => l.code === language)?.flag}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent className="bg-[hsl(0,0%,8%)] border-[hsl(0,0%,15%)] text-white min-w-[140px]">
+                {LANGUAGES.map(l => (
+                  <SelectItem key={l.code} value={l.code} className="text-xs hover:bg-[hsl(0,0%,12%)] focus:bg-[hsl(0,0%,12%)] focus:text-white">
+                    {l.flag} {l.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Link to="/login">
               <Button variant="ghost" size="sm" className="text-[hsl(0,0%,60%)] hover:text-white hover:bg-[hsl(0,0%,10%)] text-xs sm:text-sm px-2 sm:px-3">
                 Entrar
