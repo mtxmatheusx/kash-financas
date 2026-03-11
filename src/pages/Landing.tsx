@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePreferences, LANGUAGES, type LanguageCode } from "@/contexts/PreferencesContext";
+import { useSEO } from "@/hooks/useSEO";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 
@@ -174,6 +175,30 @@ const Landing: React.FC = () => {
   const { language, setLanguage, t } = usePreferences();
   useReferralCapture();
 
+  // Dynamic SEO per language
+  const jsonLd = useMemo(() => ({
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Faciliten",
+    applicationCategory: "FinanceApplication",
+    operatingSystem: "Web",
+    url: "https://kash-financas.lovable.app",
+    description: t("seo.landing.description"),
+    offers: [
+      { "@type": "Offer", price: "0", priceCurrency: "BRL", description: "Free" },
+      { "@type": "Offer", price: "29.90", priceCurrency: "BRL", description: "Premium" },
+    ],
+    aggregateRating: { "@type": "AggregateRating", ratingValue: "4.8", ratingCount: "150" },
+  }), [t]);
+
+  useSEO({
+    title: t("seo.landing.title"),
+    description: t("seo.landing.description"),
+    canonical: "https://kash-financas.lovable.app/",
+    ogImage: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d5283518-bfd0-443c-b909-70781903c305/id-preview-cd6e8791--9ea12495-5229-4c46-84bf-dc9a54baa27d.lovable.app-1773175074000.png",
+    jsonLd,
+  });
+
   const steps = [
     { num: "01", icon: WhatsAppIcon, isCustomIcon: true, title: t("landing.steps.1.title"), desc: t("landing.steps.1.desc"), accent: "hsl(160 100% 50%)" },
     { num: "02", icon: Cpu, isCustomIcon: false, title: t("landing.steps.2.title"), desc: t("landing.steps.2.desc"), accent: "hsl(217 91% 60%)" },
@@ -200,7 +225,7 @@ const Landing: React.FC = () => {
   const signupLink = "/signup" + (localStorage.getItem("faciliten_referral_code") ? `?ref=${localStorage.getItem("faciliten_referral_code")}` : "");
 
   return (
-    <div className="landing-dark noise-texture min-h-screen overflow-x-hidden font-['DM_Sans']">
+    <main className="landing-dark noise-texture min-h-screen overflow-x-hidden font-['DM_Sans']">
 
       {/* ═══ NAV ═══ */}
       <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-2xl bg-[hsl(0,0%,2%)/0.85] border-b border-[hsl(0,0%,12%)/0.4]">
@@ -587,7 +612,7 @@ const Landing: React.FC = () => {
           <p className="text-[10px] text-[hsl(0,0%,25%)]">© {new Date().getFullYear()} Faciliten</p>
         </div>
       </footer>
-    </div>
+    </main>
   );
 };
 

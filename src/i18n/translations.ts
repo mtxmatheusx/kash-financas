@@ -1,6 +1,9 @@
 export type TranslationKey = keyof typeof pt;
 
 const pt = {
+  // SEO
+  "seo.landing.title": "Faciliten — Finanças simplificadas com IA",
+  "seo.landing.description": "Controle financeiro inteligente com IA. Registre receitas e despesas por voz, WhatsApp ou chat. Gratuito para começar.",
   // Navigation
   "nav.home": "Home",
   "nav.income": "Receitas",
@@ -782,6 +785,8 @@ const pt = {
 };
 
 const en: typeof pt = {
+  "seo.landing.title": "Faciliten — AI-Powered Smart Finance",
+  "seo.landing.description": "Intelligent financial control with AI. Record income and expenses by voice, WhatsApp or chat. Free to start.",
   "nav.home": "Home",
   "nav.income": "Income",
   "nav.expenses": "Expenses",
@@ -1528,6 +1533,8 @@ const en: typeof pt = {
 };
 
 const es: typeof pt = {
+  "seo.landing.title": "Faciliten — Finanzas inteligentes con IA",
+  "seo.landing.description": "Control financiero inteligente con IA. Registra ingresos y gastos por voz, WhatsApp o chat. Gratis para empezar.",
   "nav.home": "Inicio",
   "nav.income": "Ingresos",
   "nav.expenses": "Gastos",
