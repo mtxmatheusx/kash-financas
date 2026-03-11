@@ -13,6 +13,8 @@ import { TransactionConfirmCard, type ParsedTransaction } from "@/components/Tra
 import { useAccount } from "@/contexts/AccountContext";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useSpeechToText } from "@/hooks/useSpeechToText";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
