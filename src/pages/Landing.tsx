@@ -465,15 +465,16 @@ const Landing: React.FC = () => {
               <div className="absolute inset-px rounded-[11px] sm:rounded-[15px] bg-[hsl(0,0%,3%)]" />
               <div className="relative p-5 sm:p-8">
                 <h3 className="text-base sm:text-lg font-extrabold text-[hsl(160,100%,50%)] mb-5 sm:mb-6">
-                  O Seu Novo Copiloto
+                  {t("landing.compare.newTitle")}
                 </h3>
                 <ul className="space-y-3.5 sm:space-y-4">
-                  {[
-                    "Zero downloads — vive no seu WhatsApp",
-                    "Mande um áudio no trânsito",
-                    "Categorização via IA em 3 segundos",
-                    "Te diz como vender mais hoje",
-                  ].map(item => (
+                  {[t("landing.compare.new1"), t("landing.compare.new2"), t("landing.compare.new3"), t("landing.compare.new4")].map(item => (
+                    <li key={item} className="flex items-start gap-3 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
+                      <Check className="w-4 h-4 text-[hsl(160,100%,50%)] shrink-0 mt-0.5" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
                     <li key={item} className="flex items-start gap-3 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
                       <Check className="w-4 h-4 text-[hsl(160,100%,50%)] shrink-0 mt-0.5" />
                       {item}
