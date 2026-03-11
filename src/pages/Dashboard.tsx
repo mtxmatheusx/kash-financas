@@ -76,7 +76,8 @@ const Dashboard: React.FC = () => {
   const monthlyData = useMemo(() => {
     // Show all 12 months of the current year
     const year = new Date().getFullYear();
-    const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    const monthKeys = ['month.jan','month.feb','month.mar','month.apr','month.may','month.jun','month.jul','month.aug','month.sep','month.oct','month.nov','month.dec'] as const;
+    const monthNames = monthKeys.map(k => t(k));
     const months: { month: string; income: number; expense: number }[] = monthNames.map((name, i) => {
       const key = `${year}-${String(i + 1).padStart(2, '0')}`;
       return { month: name, income: 0, expense: 0, _key: key };
