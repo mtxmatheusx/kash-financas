@@ -77,6 +77,8 @@ const pt = {
   "chat.quick.currentRisksMsg": "Quais são os principais riscos do mercado financeiro brasileiro hoje?",
   "chat.quick.fixedVsVariableMsg": "Compare renda fixa e renda variável para o cenário atual com números reais",
   "chat.quick.idealPortfolioMsg": "Monte uma sugestão de carteira diversificada para meu perfil",
+  "chat.country.title": "De qual país você está investindo/trabalhando?",
+  "chat.country.subtitle": "Isso personaliza moeda, investimentos e consultoria para o seu mercado.",
 
   // Dashboard
   "dashboard.title": "Dashboard",
