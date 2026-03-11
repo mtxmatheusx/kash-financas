@@ -24,6 +24,14 @@ const CATEGORY_MAP: Record<string, TranslationKey> = {
   "Infraestrutura": "cat.expense.infrastructure",
   // Shared
   "Outros": "cat.expense.other",
+  // DRE Expense Groups
+  "Despesas com Pessoal": "cat.dre.personnel",
+  "Despesas Administrativas": "cat.dre.admin",
+  "Despesas Comerciais": "cat.dre.commercial",
+  "Impostos e Taxas": "cat.dre.taxes",
+  "Outras Despesas": "cat.dre.otherExpenses",
+  // Extra categories
+  "Casa": "cat.expense.housing",
   // Investment Types
   "Renda Fixa": "cat.invest.fixedIncome",
   "Renda Variável": "cat.invest.variableIncome",
