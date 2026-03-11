@@ -612,7 +612,7 @@ const Landing: React.FC = () => {
           <p className="text-[10px] text-[hsl(0,0%,25%)]">© {new Date().getFullYear()} Faciliten</p>
         </div>
       </footer>
-    </div>
+    </main>
   );
 };
 
