@@ -111,13 +111,15 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
     }
   }, [user]);
 
-  const update = useCallback(async (id: string, updates: Partial<TransactionRow>) => {
+  const update = useCallback(async (id: string, updates: Partial<TransactionRow> & { recurring_months?: number }) => {
+    // Strip non-db fields before sending to Supabase
+    const { recurring_months, ...dbUpdates } = updates as any;
     const { error } = await supabase
       .from('transactions')
-      .update(updates as any)
+      .update(dbUpdates)
       .eq('id', id);
     if (error) { toast.error('Erro ao atualizar'); console.error(error); return; }
-    setAll(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
+    setAll(prev => prev.map(t => t.id === id ? { ...t, ...dbUpdates } : t));
   }, []);
 
   const remove = useCallback(async (id: string) => {
