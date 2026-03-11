@@ -11,6 +11,8 @@ import {
 } from "recharts";
 import { createAnimatedBarShape } from "@/components/AnimatedBar";
 import { DashboardDateFilter, getDateRange, type DateFilter } from "@/components/DashboardDateFilter";
+import { FinancialInsights } from "@/components/FinancialInsights";
+import { useGoals } from "@/hooks/useGoals";
 
 const formatBRL = (value: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
