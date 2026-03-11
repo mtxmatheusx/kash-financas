@@ -147,15 +147,15 @@ const Dashboard: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 md:gap-3">
           <motion.div {...slideUp(0.15)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Receitas vs Despesas</h3>
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">{t("dashboard.incomeVsExpense")}</h3>
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-fin-income" style={{ boxShadow: '0 0 6px hsl(var(--fin-income))' }} />
-                  <span className="text-[10px] text-muted-foreground">Receitas</span>
+                  <span className="text-[10px] text-muted-foreground">{t("kpi.income")}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-fin-expense" style={{ boxShadow: '0 0 6px hsl(var(--fin-expense))' }} />
-                  <span className="text-[10px] text-muted-foreground">Despesas</span>
+                  <span className="text-[10px] text-muted-foreground">{t("kpi.expenses")}</span>
                 </div>
               </div>
             </div>
