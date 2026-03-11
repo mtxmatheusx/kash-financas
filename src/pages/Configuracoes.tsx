@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Settings, User, Building2, CreditCard, Save, Crown, ExternalLink,
-  FileText, Landmark, Bell, Webhook, Smartphone, MapPin, Loader2, MessageCircle, QrCode,
+  FileText, Landmark, Bell, Webhook, Smartphone, MapPin, Loader2, MessageCircle, QrCode, Bot,
 } from "lucide-react";
 import { toast } from "sonner";
 import { maskCPF, maskCNPJ, maskPhone, maskCEP, unmask } from "@/lib/masks";
