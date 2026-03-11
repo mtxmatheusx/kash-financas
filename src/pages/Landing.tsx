@@ -524,7 +524,7 @@ const Landing: React.FC = () => {
               {[
                 {
                   q: "Preciso baixar algum aplicativo novo?",
-                  a: "Absolutamente zero. A Kash vive dentro do seu WhatsApp. Se você sabe mandar um áudio, você sabe usar a Kash.",
+                  a: "Absolutamente zero. A Faciliten vive dentro do seu WhatsApp. Se você sabe mandar um áudio, você sabe usar a Faciliten.",
                 },
                 {
                   q: "Como o Consultor de Vendas funciona?",
