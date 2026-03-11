@@ -319,16 +319,10 @@ export const FloatingChat: React.FC = () => {
                 <ChatBubble variant={message.role === "user" ? "sent" : "received"} layout="ai">
                   {message.role === "assistant" && <ChatBubbleAvatar fallback={config.fallback} />}
                   <ChatBubbleMessage variant={message.role === "user" ? "sent" : "received"}>
-                    {/* Show image thumbnails for user messages */}
                     {message.role === "user" && message.images && message.images.length > 0 && (
                       <div className="flex gap-1.5 flex-wrap mb-2">
                         {message.images.map((img, i) => (
-                          <img
-                            key={i}
-                            src={img}
-                            alt={`Anexo ${i + 1}`}
-                            className="w-20 h-20 rounded-lg object-cover border border-primary-foreground/20"
-                          />
+                          <img key={i} src={img} alt={`Anexo ${i + 1}`} className="w-20 h-20 rounded-lg object-cover border border-primary-foreground/20" />
                         ))}
                       </div>
                     )}
@@ -342,6 +336,34 @@ export const FloatingChat: React.FC = () => {
               </motion.div>
             ))}
           </AnimatePresence>
+
+          {/* Quick suggestions - show only after greeting (1 message) and when not loading */}
+          {messages.length === 1 && !isLoading && !stagedMsg && !pendingTx && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="flex flex-wrap gap-2 px-4 py-2"
+            >
+              {[
+                { label: "Registrar receita", icon: Plus, msg: "Quero registrar uma receita", color: "text-fin-income border-fin-income/30 bg-fin-income/5 hover:bg-fin-income/10" },
+                { label: "Registrar despesa", icon: Minus, msg: "Quero registrar uma despesa", color: "text-fin-expense border-fin-expense/30 bg-fin-expense/5 hover:bg-fin-expense/10" },
+                { label: "Ver resumo", icon: BarChart3, msg: "Me mostre um resumo financeiro do mês", color: "text-primary border-primary/30 bg-primary/5 hover:bg-primary/10" },
+              ].map((s) => (
+                <button
+                  key={s.label}
+                  onClick={() => stageMessage(s.msg)}
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-colors",
+                    s.color
+                  )}
+                >
+                  <s.icon className="w-3 h-3" />
+                  {s.label}
+                </button>
+              ))}
+            </motion.div>
+          )}
 
           {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
