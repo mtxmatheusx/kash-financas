@@ -1382,6 +1382,17 @@ const en: typeof pt = {
   "invType.crypto": "Crypto",
   "invType.realEstate": "Real Estate",
   "invType.other": "Other",
+
+  "mockup.userMsg1": "\"I spent 50 on gas\"",
+  "mockup.botMsg1": "✅ <b>$50.00</b> → <c>Transport</c>. 15% above last month. 📊",
+  "mockup.botMsg1Short": "✅ <b>$50.00</b> → <c>Transport</c>",
+  "mockup.botMsg1Detail": "Spending 15% above last month. 📊",
+  "mockup.userMsg2": "Where can I cut?",
+  "mockup.botMsg2": "💡 Delivery: $380 (+40%). Cooking 3x/week saves ~$250/mo.",
+
+  "pricing.currencySymbol": "$",
+  "pricing.premiumPrice": "29",
+  "pricing.premiumCents": ".90",
 };
 
 const es: typeof pt = {
