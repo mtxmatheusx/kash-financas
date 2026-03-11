@@ -148,39 +148,21 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
             </div>
-            {monthlyData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={200}>
-                <AreaChart data={monthlyData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="incomeGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="hsl(var(--fin-income))" stopOpacity={0.25} />
-                      <stop offset="100%" stopColor="hsl(var(--fin-income))" stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient id="expenseGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="hsl(var(--fin-expense))" stopOpacity={0.2} />
-                      <stop offset="100%" stopColor="hsl(var(--fin-expense))" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <XAxis dataKey="month" axisLine={false} tickLine={false}
-                    tick={{ fill: 'hsl(220, 10%, 48%)', fontSize: 10, fontFamily: 'DM Sans' }} dy={8} />
-                  <YAxis axisLine={false} tickLine={false}
-                    tick={{ fill: 'hsl(220, 10%, 48%)', fontSize: 10, fontFamily: 'JetBrains Mono' }}
-                    tickFormatter={formatCompact} />
-                  <Tooltip content={<CockpitTooltip />} />
-                  <Area type="monotone" dataKey="income" name="Receitas" stroke="hsl(var(--fin-income))"
-                    fill="url(#incomeGrad)" strokeWidth={2} dot={false}
-                    activeDot={{ r: 4, strokeWidth: 0, fill: 'hsl(var(--fin-income))' }} animationDuration={1000} />
-                  <Area type="monotone" dataKey="expense" name="Despesas" stroke="hsl(var(--fin-expense))"
-                    fill="url(#expenseGrad)" strokeWidth={2} dot={false}
-                    activeDot={{ r: 4, strokeWidth: 0, fill: 'hsl(var(--fin-expense))' }}
-                    animationDuration={1000} animationBegin={200} />
-                </AreaChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="h-[200px] flex items-center justify-center text-muted-foreground text-xs">
-                Adicione transações para ver o gráfico
-              </div>
-            )}
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={monthlyData} margin={{ top: 8, right: 4, left: -20, bottom: 0 }} barGap={2} barCategoryGap="20%">
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.4} />
+                <XAxis dataKey="month" axisLine={false} tickLine={false}
+                  tick={{ fill: 'hsl(220, 10%, 48%)', fontSize: 10, fontFamily: 'DM Sans' }} dy={8} />
+                <YAxis axisLine={false} tickLine={false}
+                  tick={{ fill: 'hsl(220, 10%, 48%)', fontSize: 10, fontFamily: 'JetBrains Mono' }}
+                  tickFormatter={formatCompact} />
+                <Tooltip content={<CockpitTooltip />} cursor={{ fill: 'hsl(var(--muted))', opacity: 0.3 }} />
+                <Bar dataKey="income" name="Receitas" fill="hsl(var(--fin-income))" radius={[4, 4, 0, 0]}
+                  opacity={0.85} animationDuration={800} />
+                <Bar dataKey="expense" name="Despesas" fill="hsl(var(--fin-expense))" radius={[4, 4, 0, 0]}
+                  opacity={0.85} animationDuration={800} animationBegin={200} />
+              </BarChart>
+            </ResponsiveContainer>
           </motion.div>
 
           <motion.div {...slideUp(0.25)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
