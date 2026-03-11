@@ -51,6 +51,12 @@ export function useInvestments() {
     }, ...prev]);
   }, [user]);
 
+  const update = useCallback(async (id: string, updates: Partial<InvestmentRow>) => {
+    const { error } = await supabase.from('investments').update(updates as any).eq('id', id);
+    if (error) { toast.error('Erro ao atualizar'); console.error(error); return; }
+    setAll(prev => prev.map(i => i.id === id ? { ...i, ...updates } : i));
+  }, []);
+
   const remove = useCallback(async (id: string) => {
     const { error } = await supabase.from('investments').delete().eq('id', id);
     if (error) { toast.error('Erro ao excluir'); console.error(error); return; }
@@ -59,5 +65,5 @@ export function useInvestments() {
 
   const total = useMemo(() => investments.reduce((s, i) => s + i.current_value, 0), [investments]);
 
-  return { investments, create, remove, total, loading };
+  return { investments, create, update, remove, total, loading };
 }

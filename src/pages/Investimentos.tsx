@@ -4,13 +4,14 @@ import { PageTransition, staggerContainer, staggerItem, slideUp, fadeIn } from "
 import { SummaryBar } from "@/components/SummaryBar";
 import { useInvestments } from "@/hooks/useInvestments";
 import { useAccount } from "@/contexts/AccountContext";
-import { Plus, Trash2, PieChart, Search, TrendingUp, TrendingDown, Pencil } from "lucide-react";
+import { Plus, Trash2, PieChart, Search, TrendingUp, TrendingDown, Pencil, X, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { CurrencyInput } from "@/components/CurrencyInput";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { PieChart as RechartsPie, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { cn } from "@/lib/utils";
 
 const TYPES = ['Renda Fixa', 'Renda Variável', 'Fundos', 'Cripto', 'Imóveis', 'Outros'];
 const TYPE_COLORS = [
@@ -24,13 +25,17 @@ const TYPE_COLORS = [
 
 const Investimentos: React.FC = () => {
   const { formatMoney: formatBRL } = usePreferences();
-  const { investments, create, remove, total, loading } = useInvestments();
+  const { investments, create, update, remove, total, loading } = useInvestments();
   const { account } = useAccount();
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name: '', type: TYPES[0], amount: '', current_value: '', date: new Date().toISOString().slice(0, 10) });
+  const [form, setForm] = useState({ name: '', type: TYPES[0], amount: '', date: new Date().toISOString().slice(0, 10) });
   const [amountCents, setAmountCents] = useState(0);
-  const [currentCents, setCurrentCents] = useState(0);
+
+  // Edit mode for updating current value inline
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState('');
+  const [editCents, setEditCents] = useState(0);
 
   const filtered = investments.filter(i =>
     i.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -47,22 +52,48 @@ const Investimentos: React.FC = () => {
     return Object.entries(byType).map(([name, value]) => ({ name, value }));
   }, [investments]);
 
+  // Simplified form: current_value = amount on creation (just invested, no gains yet)
   const handleSubmit = () => {
     const amount = amountCents / 100;
-    const current = currentCents / 100 || amount;
     if (!form.name || !amount) return;
-    create({ name: form.name, type: form.type, amount, current_value: current, date: form.date, account_type: account.type });
-    setForm({ name: '', type: TYPES[0], amount: '', current_value: '', date: new Date().toISOString().slice(0, 10) });
+    create({
+      name: form.name,
+      type: form.type,
+      amount,
+      current_value: amount, // Always starts equal — user updates later as it grows
+      date: form.date,
+      account_type: account.type,
+    });
+    setForm({ name: '', type: TYPES[0], amount: '', date: new Date().toISOString().slice(0, 10) });
     setAmountCents(0);
-    setCurrentCents(0);
     setShowForm(false);
   };
 
   const openCreate = () => {
-    setForm({ name: '', type: TYPES[0], amount: '', current_value: '', date: new Date().toISOString().slice(0, 10) });
+    setForm({ name: '', type: TYPES[0], amount: '', date: new Date().toISOString().slice(0, 10) });
     setAmountCents(0);
-    setCurrentCents(0);
     setShowForm(true);
+  };
+
+  const startEdit = (inv: typeof investments[0]) => {
+    setEditingId(inv.id);
+    const cents = Math.round(inv.current_value * 100);
+    setEditCents(cents);
+    // Format for display
+    const digits = String(cents).padStart(3, '0');
+    const intPart = digits.slice(0, -2).replace(/^0+(?=\d)/, '') || '0';
+    const decPart = digits.slice(-2);
+    setEditValue(`${intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.')},${decPart}`);
+  };
+
+  const confirmEdit = (inv: typeof investments[0]) => {
+    const newVal = editCents / 100;
+    if (newVal > 0) {
+      update(inv.id, { current_value: newVal });
+    }
+    setEditingId(null);
+    setEditValue('');
+    setEditCents(0);
   };
 
   return (
@@ -123,7 +154,7 @@ const Investimentos: React.FC = () => {
                 </RechartsPie>
               </ResponsiveContainer>
               <div className="flex flex-wrap gap-2 mt-2 justify-center">
-                {pieData.map((d, i) => (
+                {pieData.map((d) => (
                   <div key={d.name} className="flex items-center gap-1.5">
                     <div className="w-2 h-2 rounded-full" style={{ background: TYPE_COLORS[TYPES.indexOf(d.name) % TYPE_COLORS.length] }} />
                     <span className="text-[10px] text-muted-foreground">{d.name}</span>
@@ -142,7 +173,8 @@ const Investimentos: React.FC = () => {
           >
             {filtered.map(inv => {
               const gain = inv.current_value - inv.amount;
-              const gPct = inv.amount > 0 ? ((gain / inv.amount) * 100).toFixed(1) : '0';
+              const gPct = inv.amount > 0 ? ((gain / inv.amount) * 100).toFixed(1) : '0.0';
+              const isEditing = editingId === inv.id;
               return (
                 <motion.div key={inv.id} variants={staggerItem}
                   whileHover={{ y: -2, transition: { duration: 0.15 } }}
@@ -155,17 +187,46 @@ const Investimentos: React.FC = () => {
                         <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{inv.type}</p>
                       </div>
                     </div>
-                    <button onClick={() => remove(inv.id)} className="text-muted-foreground hover:text-fin-expense p-1 shrink-0 transition-colors">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex items-center gap-0.5 shrink-0">
+                      {!isEditing && (
+                        <button onClick={() => startEdit(inv)} className="text-muted-foreground hover:text-primary p-1 transition-colors" title="Atualizar valor">
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      <button onClick={() => remove(inv.id)} className="text-muted-foreground hover:text-fin-expense p-1 transition-colors" title="Excluir">
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
-                  <p className="text-lg font-bold font-mono-fin text-card-foreground tracking-tight">{formatBRL(inv.current_value)}</p>
-                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
-                    <span className="text-[10px] text-muted-foreground">Investido: {formatBRL(inv.amount)}</span>
-                    <span className={`text-xs font-bold font-mono-fin ${gain >= 0 ? 'text-fin-income' : 'text-fin-expense'}`}>
-                      {gain >= 0 ? '+' : ''}{gPct}%
-                    </span>
-                  </div>
+
+                  {isEditing ? (
+                    <div className="space-y-2">
+                      <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Valor atual</label>
+                      <div className="flex gap-1.5">
+                        <CurrencyInput
+                          value={editValue}
+                          onValueChange={(formatted, cents) => { setEditValue(formatted); setEditCents(cents); }}
+                          className="text-sm h-8 flex-1"
+                        />
+                        <Button size="sm" className="h-8 w-8 p-0" onClick={() => confirmEdit(inv)}>
+                          <Check className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => setEditingId(null)}>
+                          <X className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-lg font-bold font-mono-fin text-card-foreground tracking-tight">{formatBRL(inv.current_value)}</p>
+                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
+                        <span className="text-[10px] text-muted-foreground">Investido: {formatBRL(inv.amount)}</span>
+                        <span className={cn("text-xs font-bold font-mono-fin", gain >= 0 ? 'text-fin-income' : 'text-fin-expense')}>
+                          {gain >= 0 ? '+' : ''}{gPct}%
+                        </span>
+                      </div>
+                    </>
+                  )}
                 </motion.div>
               );
             })}
@@ -180,12 +241,15 @@ const Investimentos: React.FC = () => {
         </div>
       </div>
 
+      {/* Simplified form — no "Valor Atual" field, starts equal to invested */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
         <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg">
-          <DialogHeader><DialogTitle>Novo Investimento</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Novo Investimento</DialogTitle>
+          </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Nome</label>
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Nome do ativo</label>
               <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Ex: Tesouro Selic 2029" />
             </div>
             <div>
@@ -196,15 +260,12 @@ const Investimentos: React.FC = () => {
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Valor investido</label>
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Valor aplicado</label>
               <CurrencyInput value={form.amount} onValueChange={(formatted, cents) => { setForm({ ...form, amount: formatted }); setAmountCents(cents); }} />
+              <p className="text-[10px] text-muted-foreground mt-1">O valor atual começa igual ao aplicado. Atualize depois pelo ícone ✏️ no card.</p>
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Valor atual</label>
-              <CurrencyInput value={form.current_value} onValueChange={(formatted, cents) => { setForm({ ...form, current_value: formatted }); setCurrentCents(cents); }} />
-            </div>
-            <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Data</label>
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Data da aplicação</label>
               <Input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
             </div>
           </div>
