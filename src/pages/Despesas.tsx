@@ -183,22 +183,36 @@ const Despesas: React.FC = () => {
               <select value={form.is_percentage ? 'percentage' : 'fixed'} onChange={e => setForm({ ...form, is_percentage: e.target.value === 'percentage', amount: '', percentage: '' })}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                 <option value="fixed">Valor Fixo (R$)</option>
-                <option value="percentage">% da Receita Total</option>
+                <option value="percentage">% da Receita</option>
               </select>
             </div>
             {form.is_percentage ? (
-              <div>
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Porcentagem (%)</label>
-                <div className="relative">
-                  <Input value={form.percentage} onChange={e => setForm({ ...form, percentage: e.target.value })} placeholder="Ex: 10" inputMode="decimal" className="pr-10" />
-                  <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Base de cálculo</label>
+                  <select value={form.percentage_base} onChange={e => setForm({ ...form, percentage_base: e.target.value as 'total' | 'monthly' })}
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                    <option value="total">Receita Total ({formatBRL(totals.income)})</option>
+                    <option value="monthly">Receita do Mês ({formatBRL(monthlyIncome)})</option>
+                  </select>
                 </div>
-                {form.percentage && totals.income > 0 && (
-                  <p className="text-xs text-muted-foreground mt-1">
-                    = {formatBRL((totals.income * (parseFloat(form.percentage.replace(',', '.')) || 0)) / 100)} de {formatBRL(totals.income)}
-                  </p>
-                )}
-              </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Porcentagem (%)</label>
+                  <div className="relative">
+                    <Input value={form.percentage} onChange={e => setForm({ ...form, percentage: e.target.value })} placeholder="Ex: 10" inputMode="decimal" className="pr-10" />
+                    <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  </div>
+                  {form.percentage && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {(() => {
+                        const base = form.percentage_base === 'monthly' ? monthlyIncome : totals.income;
+                        const pct = parseFloat(form.percentage.replace(',', '.')) || 0;
+                        return `= ${formatBRL((base * pct) / 100)} de ${formatBRL(base)}`;
+                      })()}
+                    </p>
+                  )}
+                </div>
+              </>
             ) : (
               <div>
                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Valor</label>
