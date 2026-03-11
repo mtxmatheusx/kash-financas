@@ -458,6 +458,16 @@ export const FloatingChat: React.FC = () => {
         onToggle: isAudioRecording ? stopRecording : startRecording,
       }}
     >
+      {/* Investor Disclaimer Overlay */}
+      <AnimatePresence>
+        {showDisclaimer && (
+          <InvestorDisclaimer
+            onAccept={handleDisclaimerAccept}
+            onDecline={handleDisclaimerDecline}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Consultant Toggle + Clear */}
       <div className="px-4 pt-3 pb-1 flex items-center gap-2">
         <div className="flex-1 flex gap-1 bg-muted rounded-lg p-1">
