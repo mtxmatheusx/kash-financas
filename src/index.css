@@ -6,6 +6,7 @@
 
 @layer base {
   :root {
+    /* ═══ Core palette ═══ */
     --background: 220 20% 97%;
     --foreground: 220 25% 10%;
 
@@ -36,6 +37,7 @@
 
     --radius: 0.625rem;
 
+    /* ═══ Finance semantic tokens ═══ */
     --fin-income: 152 82% 54%;
     --fin-expense: 0 76% 58%;
     --fin-pending: 38 92% 50%;
@@ -43,9 +45,17 @@
     --fin-goals: 217 91% 60%;
     --fin-emergency: 25 95% 53%;
 
+    /* ═══ Glass morphism ═══ */
     --glass-bg: 0 0% 100% / 0.8;
     --glass-border: 220 13% 91% / 0.6;
 
+    /* ═══ Chart tokens ═══ */
+    --chart-grid: 220 13% 91%;
+    --chart-axis: 220 10% 48%;
+    --chart-tooltip-bg: 0 0% 100%;
+    --chart-cursor: 220 14% 96%;
+
+    /* ═══ Sidebar ═══ */
     --sidebar-background: 225 30% 6%;
     --sidebar-foreground: 220 15% 75%;
     --sidebar-primary: 217 91% 60%;
@@ -55,6 +65,20 @@
     --sidebar-border: 220 20% 14%;
     --sidebar-ring: 217 91% 60%;
     --sidebar-muted: 220 12% 50%;
+
+    /* ═══ Status / Feedback ═══ */
+    --success: 152 82% 54%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --info: 217 91% 60%;
+    --info-foreground: 0 0% 100%;
+
+    /* ═══ Elevation shadows ═══ */
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.03);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
   }
 
   .dark {
@@ -89,8 +113,14 @@
     --glass-bg: 225 28% 6% / 0.7;
     --glass-border: 225 20% 16% / 0.4;
 
+    --chart-grid: 225 20% 12%;
+    --chart-axis: 220 10% 48%;
+    --chart-tooltip-bg: 225 28% 7%;
+    --chart-cursor: 225 25% 10%;
+
     --fin-income: 145 90% 48%;
     --fin-expense: 0 80% 58%;
+    /* fin-pending, fin-investment, fin-goals, fin-emergency stay the same */
 
     --sidebar-background: 225 35% 3%;
     --sidebar-foreground: 220 12% 70%;
@@ -101,6 +131,16 @@
     --sidebar-border: 225 22% 10%;
     --sidebar-ring: 217 91% 60%;
     --sidebar-muted: 220 10% 42%;
+
+    --success: 145 90% 48%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 10%;
+
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.2);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.35), 0 2px 4px -2px rgb(0 0 0 / 0.25);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
   }
 }
 
@@ -114,19 +154,74 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  ::-webkit-scrollbar { width: 4px; }
+
+  /* ═══ Focus-visible — accessibility baseline ═══ */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring rounded-sm;
+  }
+
+  /* ═══ Motion reduction ═══ */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* ═══ Custom scrollbar ═══ */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { @apply bg-muted-foreground/10 rounded-full; }
   ::-webkit-scrollbar-thumb:hover { @apply bg-muted-foreground/25; }
+
+  /* ═══ Selection ═══ */
+  ::selection {
+    background: hsl(var(--primary) / 0.2);
+    color: hsl(var(--foreground));
+  }
+}
+
+@layer components {
+  /* ═══ Skeleton loading ═══ */
+  .skeleton {
+    @apply bg-muted animate-pulse rounded-md;
+  }
+  .skeleton-text {
+    @apply skeleton h-4 w-3/4;
+  }
+  .skeleton-circle {
+    @apply skeleton rounded-full;
+  }
+
+  /* ═══ Card hover states ═══ */
+  .card-interactive {
+    @apply rounded-xl border border-border bg-card transition-all duration-200;
+    box-shadow: var(--shadow-xs);
+  }
+  .card-interactive:hover {
+    @apply border-primary/20;
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  /* ═══ Touch targets — minimum 44px ═══ */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
+  }
 }
 
 @layer utilities {
+  /* ═══ Glass morphism ═══ */
   .glass {
     background: hsl(var(--glass-bg));
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     border: 1px solid hsl(var(--glass-border));
   }
+
+  /* ═══ Typography utilities ═══ */
   .font-mono-fin {
     font-family: 'JetBrains Mono', monospace;
     font-feature-settings: 'tnum';
@@ -136,20 +231,49 @@
     font-weight: 700;
     letter-spacing: -0.02em;
   }
+
+  /* ═══ Responsive typography scale ═══ */
+  .text-display {
+    @apply text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight;
+  }
+  .text-title {
+    @apply text-lg sm:text-xl font-bold tracking-tight;
+  }
+  .text-label {
+    @apply text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-muted-foreground;
+  }
+  .text-value {
+    @apply text-base sm:text-lg font-bold font-display tracking-tight;
+  }
+
+  /* ═══ Elevation ═══ */
   .enterprise-shadow {
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+    box-shadow: var(--shadow-xs);
   }
   .enterprise-shadow-md {
-    box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.08);
+    box-shadow: var(--shadow-md);
+  }
+  .enterprise-shadow-lg {
+    box-shadow: var(--shadow-lg);
   }
   .cockpit-glow {
     box-shadow: inset 0 1px 0 0 hsl(var(--primary) / 0.06), 0 0 0 1px hsl(var(--border));
   }
+
+  /* ═══ Safe areas ═══ */
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
 
-  /* Landing page dark cockpit utilities */
+  /* ═══ Spacing tokens for consistent rhythm ═══ */
+  .gap-section { @apply gap-4 md:gap-6 lg:gap-8; }
+  .p-section { @apply p-3 md:p-6 lg:p-8; }
+  .space-y-section { @apply space-y-3 md:space-y-5 lg:space-y-6; }
+
+  /* ═══ Landing page dark cockpit utilities ═══ */
   .landing-dark {
     --landing-bg: 0 0% 2%;
     --landing-card: 0 0% 3%;
@@ -182,4 +306,8 @@
   .cta-glow {
     box-shadow: 0 0 30px hsl(348 100% 64% / 0.4), 0 4px 20px hsl(348 100% 64% / 0.3);
   }
+
+  /* ═══ Truncation ═══ */
+  .line-clamp-1 { @apply overflow-hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+  .line-clamp-2 { @apply overflow-hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 }

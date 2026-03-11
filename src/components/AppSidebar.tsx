@@ -115,8 +115,9 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
             <NavLink
               key={item.path}
               to={item.path}
+              title={collapsed ? item.label : undefined}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all relative",
+                "group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all relative",
                 isActive
                   ? "bg-sidebar-accent text-sidebar-accent-foreground"
                   : "text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50",
@@ -134,7 +135,13 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
                 <span className="font-medium flex-1">{item.label}</span>
               )}
               {!collapsed && isLocked && (
-                <Crown className="w-3.5 h-3.5 text-yellow-500 shrink-0" />
+                <Crown className="w-3.5 h-3.5 text-fin-pending shrink-0" />
+              )}
+              {/* Tooltip for collapsed state */}
+              {collapsed && (
+                <span className="absolute left-full ml-2 px-2 py-1 rounded-md bg-popover text-popover-foreground text-xs font-medium shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
+                  {item.label}
+                </span>
               )}
             </NavLink>
           );

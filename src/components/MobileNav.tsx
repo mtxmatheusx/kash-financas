@@ -86,7 +86,7 @@ export const MobileNav: React.FC = () => {
       </AnimatePresence>
 
       {/* Bottom navigation bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-xl border-t border-border safe-area-bottom">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-xl border-t border-border safe-area-bottom" role="navigation" aria-label="Menu principal">
         <div className="flex items-center justify-around px-2 pt-1.5 pb-1">
           {mainItems.map((item) => {
             const isActive = location.pathname === item.path;
@@ -95,7 +95,7 @@ export const MobileNav: React.FC = () => {
                 key={item.path}
                 to={item.path}
                 className={cn(
-                  "flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl text-[10px] font-medium transition-all duration-200",
+                  "flex flex-col items-center gap-0.5 py-2 px-3 rounded-xl text-[10px] font-medium transition-all duration-200 min-h-[44px] justify-center",
                   isActive
                     ? "text-primary"
                     : "text-muted-foreground active:scale-95"
@@ -118,7 +118,7 @@ export const MobileNav: React.FC = () => {
           <button
             onClick={() => setShowMore(!showMore)}
             className={cn(
-              "flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl text-[10px] font-medium transition-all duration-200",
+              "flex flex-col items-center gap-0.5 py-2 px-3 rounded-xl text-[10px] font-medium transition-all duration-200 min-h-[44px] justify-center",
               showMore || isMoreActive
                 ? "text-primary"
                 : "text-muted-foreground active:scale-95"
