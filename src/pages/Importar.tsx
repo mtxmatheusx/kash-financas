@@ -758,7 +758,7 @@ const Importar: React.FC = () => {
               </div>
               {result.parsed.length > 20 && (
                 <div className="px-3 py-2 text-xs text-muted-foreground border-t border-border">
-                  Mostrando 20 de {result.parsed.length} transações
+                  {t("import.showing").replace("{total}", String(result.parsed.length))}
                 </div>
               )}
             </div>
