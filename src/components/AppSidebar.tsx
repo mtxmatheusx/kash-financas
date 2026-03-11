@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import {
   LayoutDashboard, TrendingUp, TrendingDown, PieChart, Target, CalendarRange,
   Sun, Moon, ChevronLeft, ChevronRight, Compass, FileText, Calculator, Upload,
-  Crown, LogOut, UserCog,
+  Crown, LogOut, UserCog, Settings,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAccount } from "@/contexts/AccountContext";
