@@ -37,22 +37,21 @@ const PlanejamentoFinanceiro: React.FC = () => {
         <WhatsAppAlertBanner />
         <div className="rounded-xl border border-border bg-card p-4 md:p-6 enterprise-shadow">
           <h3 className="text-sm font-semibold text-card-foreground mb-4">Saúde Financeira</h3>
-          <div className="grid grid-cols-3 gap-3 md:gap-6">
-            <div className="text-center">
-              <div className={`text-2xl md:text-4xl font-bold font-mono-fin ${savingsRate >= 20 ? 'text-fin-income' : savingsRate >= 0 ? 'text-fin-pending' : 'text-fin-expense'}`}>
+          <div className="flex gap-3 overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-6">
+            <div className="text-center min-w-[100px] shrink-0 md:shrink md:min-w-0">
+              <div className={`text-xl md:text-4xl font-bold font-mono-fin ${savingsRate >= 20 ? 'text-fin-income' : savingsRate >= 0 ? 'text-fin-pending' : 'text-fin-expense'}`}>
                 {savingsRate.toFixed(0)}%
               </div>
               <p className="text-[10px] md:text-xs text-muted-foreground mt-1">Taxa de poupança</p>
-              <p className="text-[10px] text-muted-foreground hidden md:block">Meta: ≥ 20%</p>
             </div>
-            <div className="text-center">
-              <div className="text-2xl md:text-4xl font-bold font-mono-fin text-primary">
+            <div className="text-center min-w-[120px] shrink-0 md:shrink md:min-w-0">
+              <div className="text-xl md:text-4xl font-bold font-mono-fin text-primary">
                 {formatBRL(totals.balance)}
               </div>
               <p className="text-[10px] md:text-xs text-muted-foreground mt-1">Saldo</p>
             </div>
-            <div className="text-center">
-              <div className="text-2xl md:text-4xl font-bold font-mono-fin text-fin-investment">
+            <div className="text-center min-w-[120px] shrink-0 md:shrink md:min-w-0">
+              <div className="text-xl md:text-4xl font-bold font-mono-fin text-fin-investment">
                 {formatBRL(investmentTotal)}
               </div>
               <p className="text-[10px] md:text-xs text-muted-foreground mt-1">Investido</p>

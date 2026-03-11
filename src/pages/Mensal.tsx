@@ -99,16 +99,16 @@ const Mensal: React.FC = () => {
         </div>
 
         {/* Summary */}
-        <div className="grid grid-cols-3 gap-2 md:gap-4">
-          <div className="rounded-xl border border-border bg-card p-3 md:p-5 enterprise-shadow">
+        <div className="flex gap-2 overflow-x-auto -mx-3 px-3 md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-4">
+          <div className="rounded-xl border border-border bg-card p-3 md:p-5 enterprise-shadow min-w-[120px] shrink-0 md:shrink md:min-w-0">
             <p className="text-[9px] md:text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">Receitas</p>
             <p className="text-sm md:text-xl font-bold font-mono-fin text-fin-income">{formatBRL(summaryData.income)}</p>
           </div>
-          <div className="rounded-xl border border-border bg-card p-3 md:p-5 enterprise-shadow">
+          <div className="rounded-xl border border-border bg-card p-3 md:p-5 enterprise-shadow min-w-[120px] shrink-0 md:shrink md:min-w-0">
             <p className="text-[9px] md:text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">Despesas</p>
             <p className="text-sm md:text-xl font-bold font-mono-fin text-fin-expense">{formatBRL(summaryData.expense)}</p>
           </div>
-          <div className="rounded-xl border border-border bg-card p-3 md:p-5 enterprise-shadow">
+          <div className="rounded-xl border border-border bg-card p-3 md:p-5 enterprise-shadow min-w-[120px] shrink-0 md:shrink md:min-w-0">
             <p className="text-[9px] md:text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">Saldo</p>
             <p className={`text-sm md:text-xl font-bold font-mono-fin ${summaryData.income - summaryData.expense >= 0 ? 'text-fin-income' : 'text-fin-expense'}`}>
               {formatBRL(summaryData.income - summaryData.expense)}

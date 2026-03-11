@@ -222,26 +222,31 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
 
       {/* Single transactions */}
       {singles.map(t => (
-        <div key={t.id} className="grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center px-4 md:px-6 py-3.5 md:py-4 border-b border-border/50 last:border-b-0 hover:bg-muted/30 transition-colors duration-150 group">
-          <div className="min-w-0 pr-3">
+        <div key={t.id} className="grid grid-cols-[1fr_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center px-3 md:px-6 py-3 md:py-4 border-b border-border/50 last:border-b-0 hover:bg-muted/30 transition-colors duration-150 group">
+          <div className="min-w-0 pr-2">
             <p className="text-sm font-medium text-foreground truncate">{t.description}</p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
-              {new Date(t.date).toLocaleDateString("pt-BR")}
-              <span className="md:hidden"> · {t.category}</span>
+            <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1 flex-wrap">
+              <span>{new Date(t.date).toLocaleDateString("pt-BR")}</span>
+              <span>· {t.category}</span>
+              <span className="md:hidden">·
+                {t.status === "paid" ? (
+                  <span className="text-fin-income"> {statusLabel.paid}</span>
+                ) : (
+                  <span className="text-fin-pending"> {statusLabel.pending}</span>
+                )}
+              </span>
             </p>
           </div>
 
           <span className="text-xs text-muted-foreground hidden md:block">{t.category}</span>
 
-          <div className="flex justify-center px-2">
+          <div className="hidden md:flex justify-center px-2">
             <button
               onClick={() => onToggleStatus(t.id, t.status === "paid" ? "pending" : "paid")}
               className={cn(
                 "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide cursor-pointer transition-all hover:scale-105",
                 t.status === "paid"
-                  ? isIncome
-                    ? "bg-fin-income/10 text-fin-income border border-fin-income/20"
-                    : "bg-fin-income/10 text-fin-income border border-fin-income/20"
+                  ? "bg-fin-income/10 text-fin-income border border-fin-income/20"
                   : "bg-fin-pending/10 text-fin-pending border border-fin-pending/20"
               )}
             >
@@ -254,13 +259,13 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
           </div>
 
           <span className={cn(
-            "font-mono-fin text-sm font-semibold text-right pl-3 whitespace-nowrap",
+            "font-mono-fin text-sm font-semibold text-right whitespace-nowrap",
             isIncome ? "text-fin-income" : "text-fin-expense"
           )}>
             {isIncome ? "+" : "−"} {formatBRL(t.amount)}
           </span>
 
-          <div className="flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="hidden md:flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <button onClick={() => onEdit(t)} className="p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-muted/50 transition-colors">
               <Pencil className="w-3.5 h-3.5" />
             </button>
