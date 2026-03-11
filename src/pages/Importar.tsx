@@ -691,7 +691,7 @@ const Importar: React.FC = () => {
                 onClick={processMapping}
                 disabled={!mapping.description || !mapping.amount || !mapping.date}
               >
-                Continuar
+                {t("common.continue")}
               </Button>
             </div>
           </div>
