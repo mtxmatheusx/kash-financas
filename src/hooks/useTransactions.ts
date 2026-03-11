@@ -83,7 +83,7 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
     for (let i = 0; i < count; i++) {
       const d = new Date(baseDate);
       d.setMonth(d.getMonth() + i * freq);
-      const dateStr = d.toISOString().split('T')[0];
+      const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
       // For percentage-based monthly expenses, store 0 as amount — it's recalculated dynamically
       let amount = tx.amount;
