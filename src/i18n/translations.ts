@@ -1600,6 +1600,8 @@ const es: typeof pt = {
   "chat.quick.currentRisksMsg": "¿Cuáles son los principales riesgos del mercado financiero hoy?",
   "chat.quick.fixedVsVariableMsg": "Compara renta fija y renta variable para el escenario actual con números reales",
   "chat.quick.idealPortfolioMsg": "Arma una sugerencia de cartera diversificada para mi perfil",
+  "chat.country.title": "¿Desde qué país estás invirtiendo/trabajando?",
+  "chat.country.subtitle": "Esto personaliza moneda, inversiones y asesoría para tu mercado.",
 
   "dashboard.title": "Dashboard",
   "dashboard.subtitle": "Resumen de tus finanzas",
