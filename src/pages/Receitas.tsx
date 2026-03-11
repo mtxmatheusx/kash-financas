@@ -3,31 +3,34 @@ import { PageTransition } from "@/components/PageTransition";
 import { WhatsAppAlertBanner } from "@/components/WhatsAppAlertBanner";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAccount } from "@/contexts/AccountContext";
-import { Plus, Search, Trash2, ArrowUpRight } from "lucide-react";
+import { Plus, Search, Trash2, ArrowUpRight, Pencil } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { CurrencyInput } from "@/components/CurrencyInput";
+import type { TransactionRow } from "@/lib/types";
 
 const formatBRL = (v: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 
 const CATEGORIES = ['Salário', 'Freelance', 'Vendas', 'Serviços', 'Aluguel', 'Dividendos', 'Outros'];
 
+const emptyForm = () => ({
+  description: '', amount: '', category: CATEGORIES[0],
+  date: new Date().toISOString().slice(0, 10),
+  status: 'paid' as 'paid' | 'pending',
+  entry_type: 'single' as 'single' | 'installment' | 'recurring',
+  installments: '2',
+  frequency: 'monthly' as 'monthly' | 'yearly',
+});
+
 const Receitas: React.FC = () => {
-  const { transactions, create, remove, totals } = useTransactions('income');
+  const { transactions, create, update, remove, totals } = useTransactions('income');
   const { account } = useAccount();
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({
-    description: '', amount: '', category: CATEGORIES[0],
-    date: new Date().toISOString().slice(0, 10),
-    status: 'paid' as 'paid' | 'pending',
-    entry_type: 'single' as 'single' | 'installment' | 'recurring',
-    installments: '2',
-    frequency: 'monthly' as 'monthly' | 'yearly',
-  });
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [form, setForm] = useState(emptyForm());
   const [amountCents, setAmountCents] = useState(0);
 
   const paidTotal = transactions.filter(t => t.status === 'paid').reduce((s, t) => s + t.amount, 0);
@@ -38,18 +41,56 @@ const Receitas: React.FC = () => {
     t.category.toLowerCase().includes(search.toLowerCase())
   );
 
+  const openCreate = () => {
+    setEditingId(null);
+    setForm(emptyForm());
+    setAmountCents(0);
+    setShowForm(true);
+  };
+
+  const openEdit = (t: TransactionRow) => {
+    setEditingId(t.id);
+    const formatted = formatBRL(t.amount).replace('R$\u00a0', 'R$ ');
+    setForm({
+      description: t.description,
+      amount: formatted,
+      category: t.category,
+      date: t.date,
+      status: t.status,
+      entry_type: t.entry_type ?? 'single',
+      installments: String(t.installments ?? 2),
+      frequency: t.frequency ?? 'monthly',
+    });
+    setAmountCents(Math.round(t.amount * 100));
+    setShowForm(true);
+  };
+
   const handleSubmit = () => {
     const amount = amountCents / 100;
     if (!form.description || !amount) return;
-    create({
-      type: 'income', amount, description: form.description,
-      category: form.category, date: form.date, status: form.status,
-      entry_type: form.entry_type, account_type: account.type,
+
+    const payload = {
+      type: 'income' as const,
+      amount,
+      description: form.description,
+      category: form.category,
+      date: form.date,
+      status: form.status,
+      entry_type: form.entry_type,
+      account_type: account.type,
       ...(form.entry_type === 'installment' ? { installments: parseInt(form.installments) || 2 } : {}),
       ...(form.entry_type === 'recurring' ? { frequency: form.frequency } : {}),
-    });
-    setForm({ description: '', amount: '', category: CATEGORIES[0], date: new Date().toISOString().slice(0, 10), status: 'paid', entry_type: 'single', installments: '2', frequency: 'monthly' });
+    };
+
+    if (editingId) {
+      update(editingId, payload);
+    } else {
+      create(payload);
+    }
+
+    setForm(emptyForm());
     setAmountCents(0);
+    setEditingId(null);
     setShowForm(false);
   };
 
@@ -63,7 +104,7 @@ const Receitas: React.FC = () => {
             </h1>
             <p className="text-xs md:text-sm text-muted-foreground">Gestão de entradas</p>
           </div>
-          <Button onClick={() => setShowForm(true)} size="sm" className="gap-2 w-full sm:w-auto">
+          <Button onClick={openCreate} size="sm" className="gap-2 w-full sm:w-auto">
             <Plus className="w-4 h-4" /> Nova Receita
           </Button>
         </div>
@@ -91,13 +132,12 @@ const Receitas: React.FC = () => {
         </div>
 
         <div className="rounded-xl border border-border bg-card shadow-lg overflow-hidden">
-          {/* Table Header */}
           <div className="grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center bg-muted/50 px-4 md:px-6 py-3 border-b border-border/50">
             <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider">Descrição</span>
             <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:block">Categoria</span>
             <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider text-center">Status</span>
             <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider text-right">Valor</span>
-            <span className="w-8" />
+            <span className="w-16" />
           </div>
 
           {filtered.length > 0 ? (
@@ -131,9 +171,14 @@ const Receitas: React.FC = () => {
                     + {formatBRL(t.amount)}
                   </span>
 
-                  <button onClick={() => remove(t.id)} className="ml-2 p-1.5 rounded-md text-muted-foreground hover:text-fin-expense hover:bg-muted/50 transition-colors opacity-0 group-hover:opacity-100">
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={() => openEdit(t)} className="p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-muted/50 transition-colors">
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                    <button onClick={() => remove(t.id)} className="p-1.5 rounded-md text-muted-foreground hover:text-fin-expense hover:bg-muted/50 transition-colors">
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -145,9 +190,9 @@ const Receitas: React.FC = () => {
         </div>
       </div>
 
-      <Dialog open={showForm} onOpenChange={setShowForm}>
+      <Dialog open={showForm} onOpenChange={v => { if (!v) { setEditingId(null); } setShowForm(v); }}>
         <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg">
-          <DialogHeader><DialogTitle>Nova Receita</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{editingId ? 'Editar Receita' : 'Nova Receita'}</DialogTitle></DialogHeader>
           <div className="space-y-4 py-4">
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Descrição</label>
@@ -204,7 +249,7 @@ const Receitas: React.FC = () => {
           </div>
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button variant="outline" onClick={() => setShowForm(false)} className="w-full sm:w-auto">Cancelar</Button>
-            <Button onClick={handleSubmit} className="w-full sm:w-auto">Salvar Receita</Button>
+            <Button onClick={handleSubmit} className="w-full sm:w-auto">{editingId ? 'Salvar Alterações' : 'Salvar Receita'}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
