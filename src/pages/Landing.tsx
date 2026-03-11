@@ -368,6 +368,35 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
+      {/* ═══ VIDEO SHOWCASE ═══ */}
+      <section className="py-14 sm:py-28 px-4 sm:px-6 relative">
+        <div className="max-w-5xl mx-auto relative z-10">
+          <motion.div {...fadeUp()} className="text-center mb-8 sm:mb-14">
+            <span className="inline-block text-[10px] sm:text-xs font-bold uppercase tracking-[0.3em] text-[hsl(160,100%,50%)] mb-3 sm:mb-4">
+              Visão Enterprise
+            </span>
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
+              Tecnologia de Ponta ao Seu Alcance.
+            </h2>
+          </motion.div>
+
+          <motion.div
+            {...fadeUp(0.15)}
+            className="relative rounded-xl sm:rounded-2xl overflow-hidden border border-[hsl(0,0%,12%)] neon-box-glow"
+          >
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-auto aspect-video object-cover"
+              src={enterpriseVideo}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[hsl(0,0%,2%)/0.6] via-transparent to-transparent pointer-events-none" />
+          </motion.div>
+        </div>
+      </section>
+
       {/* ═══ O JEITO VELHO vs O JEITO FACILITEN ═══ */}
       <section className="py-14 sm:py-28 px-4 sm:px-6 relative">
         <div className="max-w-5xl mx-auto relative z-10">
