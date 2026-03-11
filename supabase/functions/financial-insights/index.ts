@@ -9,9 +9,18 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { transactions, investments, goals, preferences, language } = await req.json();
+    const { transactions, investments, goals, preferences, language, currency } = await req.json();
     const langMap: Record<string, string> = { "pt-BR": "português brasileiro", en: "English", es: "español" };
     const responseLang = langMap[language] || "português brasileiro";
+    const currencySymbol: Record<string, string> = { BRL: "R$", USD: "$", EUR: "€", GBP: "£" };
+    const currencyFormat: Record<string, string> = {
+      BRL: "formato brasileiro (R$ X.XXX,XX)",
+      USD: "US dollar format ($X,XXX.XX)",
+      EUR: "Euro format (€X.XXX,XX)",
+      GBP: "British pound format (£X,XXX.XX)",
+    };
+    const symbol = currencySymbol[currency] || "R$";
+    const moneyFormat = currencyFormat[currency] || currencyFormat.BRL;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -25,7 +34,7 @@ DADOS DO USUÁRIO:
 ${JSON.stringify({ transactions, investments, goals }, null, 2)}
 
 REGRAS:
-- Cada insight deve ter: type (spending_trend | expense_highlight | savings_opportunity | income_insight | goal_progress), title (curto, max 8 palavras), description (1-2 frases com valores reais em R$), icon (emoji), severity (info | warning | success | alert)
+- Cada insight deve ter: type (spending_trend | expense_highlight | savings_opportunity | income_insight | goal_progress), title (curto, max 8 palavras), description (1-2 frases com valores reais usando o símbolo ${symbol}), icon (emoji), severity (info | warning | success | alert)
 - Use valores REAIS dos dados fornecidos, nunca invente números
 - Compare mês atual vs anterior quando possível
 - Identifique a maior categoria de gasto
@@ -33,8 +42,8 @@ REGRAS:
 - Se houver investimentos, comente o retorno
 - Seja específico e útil, evite generalidades
 - Se não houver dados suficientes, dê dicas gerais de finanças pessoais
-- Todos os valores monetários em formato brasileiro (R$ X.XXX,XX)
-- CRÍTICO: NÃO gere insights que se contradizem. Antes de retornar, revise TODOS os insights juntos e garanta que a narrativa é coerente. Por exemplo, não diga que a renda "aumentou significativamente" em um insight e que é "estável" em outro. Escolha a interpretação mais precisa e use-a de forma consistente.
+- IMPORTANTE: Todos os valores monetários devem usar ${moneyFormat}. Use APENAS o símbolo ${symbol}, NUNCA use R$ ou outro símbolo que não seja ${symbol}.
+- CRÍTICO: NÃO gere insights que se contradizem. Antes de retornar, revise TODOS os insights juntos e garanta que a narrativa é coerente.
 - Cada insight deve abordar um ASPECTO DIFERENTE das finanças (ex: receita, despesa, categoria específica, meta, investimento). Não repita o mesmo tema com ângulos diferentes.${prefsBlock}`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
