@@ -49,6 +49,7 @@ const Receitas: React.FC = () => {
     setEditingId(null);
     setForm(emptyForm());
     setAmountCents(0);
+    setUserChangedCategory(false);
     setShowForm(true);
   };
 
