@@ -147,7 +147,7 @@ const Investimentos: React.FC = () => {
                 {pieData.map((d) => (
                   <div key={d.name} className="flex items-center gap-1.5">
                     <div className="w-2 h-2 rounded-full" style={{ background: TYPE_COLORS[TYPES.indexOf(d.name) % TYPE_COLORS.length] }} />
-                    <span className="text-[10px] text-muted-foreground">{d.name}</span>
+                    <span className="text-[10px] text-muted-foreground">{INVEST_TYPE_KEYS.find(k => k.value === d.name) ? t(INVEST_TYPE_KEYS.find(k => k.value === d.name)!.tKey) : d.name}</span>
                   </div>
                 ))}
               </div>
