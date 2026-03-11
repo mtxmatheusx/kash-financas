@@ -338,9 +338,9 @@ export const FloatingChat: React.FC = () => {
         onToggle: isListening ? stopListening : startListening,
       } : undefined}
     >
-      {/* Consultant Toggle */}
-      <div className="px-4 pt-3 pb-1">
-        <div className="flex gap-1 bg-muted rounded-lg p-1">
+      {/* Consultant Toggle + Clear */}
+      <div className="px-4 pt-3 pb-1 flex items-center gap-2">
+        <div className="flex-1 flex gap-1 bg-muted rounded-lg p-1">
           {(["financial", "sales"] as const).map((type) => {
             const Icon = consultantConfig[type].icon;
             const isActive = consultantType === type;
@@ -369,6 +369,15 @@ export const FloatingChat: React.FC = () => {
             );
           })}
         </div>
+        {messages.length > 1 && (
+          <button
+            onClick={clearHistory}
+            title="Limpar histórico"
+            className="p-1.5 rounded-md text-muted-foreground hover:text-fin-expense hover:bg-muted/50 transition-colors"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* Mic button is now in the chat controls bar */}
