@@ -42,11 +42,32 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
+  // Build monthly income map for dynamic percentage recalculation
+  const monthlyIncomeMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    all.filter(t => t.account_type === account.type && t.type === 'income')
+      .forEach(t => {
+        const m = t.date.slice(0, 7);
+        map[m] = (map[m] || 0) + t.amount;
+      });
+    return map;
+  }, [all, account.type]);
+
   const transactions = useMemo(() => {
     let filtered = all.filter(t => t.account_type === account.type);
     if (typeFilter) filtered = filtered.filter(t => t.type === typeFilter);
+
+    // Dynamically recalculate percentage-based expenses
+    filtered = filtered.map(t => {
+      if (t.is_percentage && t.percentage && t.type === 'expense') {
+        const monthIncome = monthlyIncomeMap[t.date.slice(0, 7)] || 0;
+        return { ...t, amount: (monthIncome * t.percentage) / 100 };
+      }
+      return t;
+    });
+
     return filtered.sort((a, b) => b.date.localeCompare(a.date));
-  }, [all, account.type, typeFilter]);
+  }, [all, account.type, typeFilter, monthlyIncomeMap]);
 
   const create = useCallback(async (tx: Omit<TransactionRow, 'id' | 'created_at'> & { recurring_months?: number; percentage_base?: 'total' | 'monthly' }) => {
     if (!user) return;
@@ -56,16 +77,6 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
     const count = isRecurring ? tx.recurring_months! : isInstallment ? tx.installments! : 1;
     const freq = tx.frequency === 'yearly' ? 12 : 1;
 
-    // Pre-compute monthly income map for percentage-based expenses
-    let monthlyIncomeMap: Record<string, number> = {};
-    if (tx.is_percentage && tx.percentage && tx.percentage_base === 'monthly' && count > 1) {
-      const incomeTransactions = all.filter(t => t.type === 'income' && t.account_type === tx.account_type);
-      incomeTransactions.forEach(t => {
-        const m = t.date.slice(0, 7);
-        monthlyIncomeMap[m] = (monthlyIncomeMap[m] || 0) + t.amount;
-      });
-    }
-
     const rows = [];
     const baseDate = new Date(tx.date + 'T12:00:00');
 
@@ -73,17 +84,11 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
       const d = new Date(baseDate);
       d.setMonth(d.getMonth() + i * freq);
       const dateStr = d.toISOString().split('T')[0];
-      const monthKey = dateStr.slice(0, 7);
 
+      // For percentage-based monthly expenses, store 0 as amount — it's recalculated dynamically
       let amount = tx.amount;
-      if (tx.is_percentage && tx.percentage) {
-        if (tx.percentage_base === 'monthly') {
-          const monthIncome = monthlyIncomeMap[monthKey] || 0;
-          amount = (monthIncome * tx.percentage) / 100;
-        }
-        // 'total' base already calculated in the form's handleSubmit
-      }
       if (isInstallment) amount = tx.amount / count;
+      if (tx.is_percentage && tx.percentage_base === 'monthly') amount = 0;
 
       rows.push({
         user_id: user.id,
@@ -150,12 +155,20 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
   }, []);
 
   const totals = useMemo(() => {
-    const income = all.filter(t => t.account_type === account.type && t.type === 'income')
+    const acctTx = all.filter(t => t.account_type === account.type);
+    const income = acctTx.filter(t => t.type === 'income')
       .reduce((s, t) => s + t.amount, 0);
-    const expense = all.filter(t => t.account_type === account.type && t.type === 'expense')
-      .reduce((s, t) => s + t.amount, 0);
+    const expense = acctTx.filter(t => t.type === 'expense')
+      .map(t => {
+        if (t.is_percentage && t.percentage) {
+          const monthIncome = monthlyIncomeMap[t.date.slice(0, 7)] || 0;
+          return (monthIncome * t.percentage) / 100;
+        }
+        return t.amount;
+      })
+      .reduce((s, a) => s + a, 0);
     return { income, expense, balance: income - expense };
-  }, [all, account.type]);
+  }, [all, account.type, monthlyIncomeMap]);
 
   return { transactions, create, update, remove, totals, allTransactions: all, loading };
 }
