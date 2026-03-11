@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { PageTransition } from "@/components/PageTransition";
 import { WhatsAppAlertBanner } from "@/components/WhatsAppAlertBanner";
 import { useTransactions } from "@/hooks/useTransactions";
