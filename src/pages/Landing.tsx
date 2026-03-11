@@ -265,7 +265,7 @@ const Landing: React.FC = () => {
             <motion.div {...fadeUp(0)}>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[hsl(160,100%,50%)/0.2] bg-[hsl(160,100%,50%)/0.05] backdrop-blur-sm text-[11px] font-semibold text-[hsl(160,100%,50%)] mb-5 sm:mb-6 neon-box-glow">
                 <WhatsAppIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                Copiloto por WhatsApp
+                {t("landing.hero.badge")}
                 <ChevronRight className="h-3 w-3" />
               </div>
             </motion.div>
