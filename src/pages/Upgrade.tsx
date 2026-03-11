@@ -122,7 +122,7 @@ const Upgrade: React.FC = () => {
       >
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground">Escolha seu plano</h1>
-          <p className="text-muted-foreground mt-2">Desbloqueie todo o potencial do Kash</p>
+          <p className="text-muted-foreground mt-2">Desbloqueie todo o potencial do Faciliten</p>
 
           {/* Trial banner */}
           {isTrialing && trialDaysLeft !== null && (

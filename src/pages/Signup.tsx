@@ -81,9 +81,9 @@ const Signup: React.FC = () => {
       >
         <div className="text-center mb-8">
           <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center mx-auto mb-4">
-            <span className="text-primary-foreground font-bold text-lg">K</span>
+            <span className="text-primary-foreground font-bold text-lg">F</span>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Kash</h1>
+          <h1 className="text-2xl font-bold text-foreground">Faciliten</h1>
           <p className="text-muted-foreground mt-1">30 dias de Premium grátis</p>
         </div>
 
