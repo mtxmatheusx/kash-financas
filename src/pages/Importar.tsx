@@ -742,7 +742,7 @@ const Importar: React.FC = () => {
                               ? "bg-fin-income/10 text-fin-income border-fin-income/20"
                               : "bg-fin-expense/10 text-fin-expense border-fin-expense/20"
                           )}>
-                            {row.type === "income" ? "Receita" : "Despesa"}
+                            {row.type === "income" ? t("kpi.income") : t("kpi.expenses")}
                           </Badge>
                         </td>
                         <td className={cn(
