@@ -559,7 +559,6 @@ const Configuracoes: React.FC = () => {
           {/* ═══════════ Assinatura ═══════════ */}
           <TabsContent value="subscription">
             <div className="rounded-xl border border-border bg-card overflow-hidden">
-              {/* Status banner */}
               <div
                 className="p-6 md:p-8"
                 style={{
@@ -574,21 +573,21 @@ const Configuracoes: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-foreground font-display-fin">
-                      {isPremium ? "Plano Premium Ativo" : "Plano Gratuito"}
+                      {isPremium ? t("settings.premiumActive") : t("settings.freePlan")}
                     </h3>
                     <p className="text-xs text-muted-foreground">
                       {isTrialing && trialDaysLeft !== null
-                        ? `Período de teste — ${trialDaysLeft} dia${trialDaysLeft !== 1 ? "s" : ""} restante${trialDaysLeft !== 1 ? "s" : ""}`
+                        ? t("settings.trialDays").replace("{count}", String(trialDaysLeft))
                         : isPremium && subscriptionEnd
-                          ? `Renova em ${new Date(subscriptionEnd).toLocaleDateString("pt-BR")}`
-                          : "Recursos básicos disponíveis"}
+                          ? t("settings.renewsAt").replace("{date}", new Date(subscriptionEnd).toLocaleDateString())
+                          : t("settings.basicFeatures")}
                     </p>
                   </div>
                 </div>
 
                 {isPremium && (
                   <div className="grid grid-cols-3 gap-3 mt-5">
-                    {["Relatórios ilimitados", "Agente IA", "Integrações"].map((f) => (
+                    {[t("settings.unlimitedReports"), t("settings.aiAgent"), t("settings.integrationsLabel")].map((f) => (
                       <div key={f} className="text-center py-2 px-1 rounded-lg bg-background/50 border border-border">
                         <p className="text-[11px] font-medium text-foreground">{f}</p>
                       </div>
@@ -597,24 +596,20 @@ const Configuracoes: React.FC = () => {
                 )}
               </div>
 
-              {/* Action */}
               <div className="p-6 border-t border-border">
                 {isPremium ? (
                   <Button
                     variant="outline"
                     className="w-full gap-2 border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                    onClick={() => toast.info("Portal de pagamentos será integrado em breve!")}
+                    onClick={() => toast.info("Portal coming soon")}
                   >
                     <ExternalLink className="w-4 h-4" />
-                    Gerenciar Pagamentos
+                    {t("settings.managePayments")}
                   </Button>
                 ) : (
-                  <Button
-                    className="w-full gap-2"
-                    onClick={() => window.location.href = "/upgrade"}
-                  >
+                  <Button className="w-full gap-2" onClick={() => window.location.href = "/upgrade"}>
                     <Crown className="w-4 h-4" />
-                    Fazer Upgrade para Premium
+                    {t("settings.upgradePremium")}
                   </Button>
                 )}
               </div>
@@ -622,10 +617,9 @@ const Configuracoes: React.FC = () => {
           </TabsContent>
         </Tabs>
 
-        {/* Save button (visible on all tabs except subscription) */}
         <Button onClick={handleSave} disabled={saving} className="gap-2 w-full">
           <Save className="w-4 h-4" />
-          {saving ? "Salvando..." : "Salvar Configurações"}
+          {saving ? t("common.saving") : t("settings.saveSettings")}
         </Button>
       </div>
     </PageTransition>
