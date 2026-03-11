@@ -37,7 +37,8 @@ const fields: FieldDef[] = [
 ];
 
 const EBITDA: React.FC = () => {
-  const { formatMoney: formatBRL, t } = usePreferences();
+  const { formatMoney: formatBRL, t, language } = usePreferences();
+  const dateLocale = language === "en" ? enUS : language === "es" ? esLocale : ptBR;
   const { allTransactions } = useTransactions();
   const { account } = useAccount();
   const [values, setValues] = useState<Record<string, string>>({});
