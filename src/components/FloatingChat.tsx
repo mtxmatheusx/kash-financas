@@ -9,11 +9,12 @@ import {
 } from "@/components/ui/chat-bubble";
 import { ChatMessageList } from "@/components/ui/chat-message-list";
 import { FloatingAiAssistant, type Attachment } from "@/components/ui/glowing-ai-chat-assistant";
-import { TransactionConfirmCard, type ParsedTransaction } from "@/components/TransactionConfirmCard";
+import { TransactionConfirmCard, type ParsedTransaction, type ParsedInvestment } from "@/components/TransactionConfirmCard";
 import { InvestorDisclaimer } from "@/components/InvestorDisclaimer";
 import { GeneralDisclaimer } from "@/components/GeneralDisclaimer";
 import { useAccount } from "@/contexts/AccountContext";
 import { useTransactions } from "@/hooks/useTransactions";
+import { useInvestments } from "@/hooks/useInvestments";
 import { useSpeechToText } from "@/hooks/useSpeechToText";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useAuth } from "@/contexts/AuthContext";
@@ -141,7 +142,7 @@ async function streamChat({
   onDone();
 }
 
-async function parseTransaction(message: string): Promise<ParsedTransaction | null> {
+async function parseTransaction(message: string): Promise<{ transaction: ParsedTransaction | null; investment: ParsedInvestment | null }> {
   try {
     console.log("[parseTransaction] Calling with:", message.slice(0, 80));
     const resp = await fetch(PARSE_URL, {
@@ -151,22 +152,23 @@ async function parseTransaction(message: string): Promise<ParsedTransaction | nu
     });
     if (!resp.ok) {
       console.warn("[parseTransaction] Error response:", resp.status);
-      return null;
+      return { transaction: null, investment: null };
     }
     const data = await resp.json();
     console.log("[parseTransaction] Result:", data);
-    return data.transaction || null;
+    return { transaction: data.transaction || null, investment: data.investment || null };
   } catch (e) {
     console.error("[parseTransaction] Exception:", e);
-    return null;
+    return { transaction: null, investment: null };
   }
 }
 
 export const FloatingChat: React.FC = () => {
   const { account } = useAccount();
   const { create } = useTransactions();
+  const { create: createInvestment } = useInvestments();
   const { user } = useAuth();
-  const { t } = usePreferences();
+  const { t, formatMoney } = usePreferences();
 
   const consultantConfig = useMemo<Record<ConsultantType, ConsultantConfig>>(() => ({
     financial: { label: t("chat.financial.label"), shortLabel: t("chat.financial.short"), icon: Bot, fallback: "CF", placeholder: t("chat.financial.placeholder"), greeting: t("chat.financial.greeting") },
@@ -206,6 +208,7 @@ export const FloatingChat: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [historyLoaded, setHistoryLoaded] = useState(false);
   const [pendingTx, setPendingTx] = useState<ParsedTransaction | null>(null);
+  const [pendingInv, setPendingInv] = useState<ParsedInvestment | null>(null);
   const [stagedMsg, setStagedMsg] = useState<{ text: string; images: string[] } | null>(null);
   const [investorDisclaimerAccepted, setInvestorDisclaimerAccepted] = useState<boolean | null>(null);
   const [generalDisclaimerAccepted, setGeneralDisclaimerAccepted] = useState<boolean | null>(null);
@@ -364,6 +367,22 @@ export const FloatingChat: React.FC = () => {
   };
 
   const handleConfirmTx = useCallback(() => {
+    if (pendingInv) {
+      createInvestment({
+        name: pendingInv.name,
+        type: pendingInv.investment_type,
+        amount: pendingInv.amount,
+        current_value: pendingInv.amount,
+        date: new Date().toISOString().slice(0, 10),
+        account_type: account.type,
+      });
+      const confirmContent = `✅ **${t("investment.title")} registrado!**\n\n${pendingInv.name} — ${formatMoney(pendingInv.amount)} (${pendingInv.investment_type})`;
+      setMessages(prev => [...prev, { role: "assistant", content: confirmContent }]);
+      saveMessage("assistant", confirmContent);
+      toast.success(`${t("investment.title")} registrado!`);
+      setPendingInv(null);
+      return;
+    }
     if (!pendingTx) return;
     create({
       type: pendingTx.type,
@@ -377,19 +396,21 @@ export const FloatingChat: React.FC = () => {
       ...(pendingTx.frequency ? { frequency: pendingTx.frequency } : {}),
       ...(pendingTx.installments ? { installments: pendingTx.installments } : {}),
     });
-    const confirmContent = `✅ **${pendingTx.type === "income" ? "Receita" : "Despesa"} registrada!**\n\n${pendingTx.description} — R$ ${pendingTx.amount.toFixed(2).replace(".", ",")} (${pendingTx.category})`;
+    const typeLabel = pendingTx.type === "income" ? t("income.title") : t("expense.title");
+    const confirmContent = `✅ **${typeLabel} registrada!**\n\n${pendingTx.description} — ${formatMoney(pendingTx.amount)} (${pendingTx.category})`;
     setMessages(prev => [...prev, { role: "assistant", content: confirmContent }]);
     saveMessage("assistant", confirmContent);
-    toast.success(`${pendingTx.type === "income" ? "Receita" : "Despesa"} registrada!`);
+    toast.success(`${typeLabel} registrada!`);
     setPendingTx(null);
-  }, [pendingTx, create, account.type, saveMessage]);
+  }, [pendingTx, pendingInv, create, createInvestment, account.type, saveMessage, t]);
 
   const handleCancelTx = useCallback(() => {
-    const cancelContent = "Ok, registro cancelado. 👍 Como posso ajudar?";
+    const cancelContent = t("chat.financial.greeting").includes("Hello") ? "Ok, registration cancelled. 👍 How can I help?" : "Ok, registro cancelado. 👍 Como posso ajudar?";
     setMessages(prev => [...prev, { role: "assistant", content: cancelContent }]);
     saveMessage("assistant", cancelContent);
     setPendingTx(null);
-  }, [saveMessage]);
+    setPendingInv(null);
+  }, [saveMessage, t]);
 
   /** Stage a message for preview (don't send yet) */
   const stageMessage = async (userText: string, attachments?: Attachment[]) => {
@@ -435,14 +456,14 @@ export const FloatingChat: React.FC = () => {
     
     // Run parse-transaction in parallel — with retry
     // Note: we pass userCountry to the chat edge function for contextualized advice
-    const parseWithRetry = async (): Promise<ParsedTransaction | null> => {
-      if (!text) return null;
+    const parseWithRetry = async (): Promise<{ transaction: ParsedTransaction | null; investment: ParsedInvestment | null }> => {
+      if (!text) return { transaction: null, investment: null };
       const result = await parseTransaction(text);
-      if (result && result.amount > 0) return result;
+      if ((result.transaction && result.transaction.amount > 0) || (result.investment && result.investment.amount > 0)) return result;
       // Retry once after a short delay
       await new Promise(r => setTimeout(r, 800));
       const retry = await parseTransaction(text);
-      return retry && retry.amount > 0 ? retry : null;
+      return ((retry.transaction && retry.transaction.amount > 0) || (retry.investment && retry.investment.amount > 0)) ? retry : { transaction: null, investment: null };
     };
     const parsePromise = parseWithRetry();
 
@@ -462,7 +483,6 @@ export const FloatingChat: React.FC = () => {
         },
         onDone: () => {
           setIsLoading(false);
-          // Save complete assistant response to DB
           if (assistantSoFar.trim()) saveMessage("assistant", assistantSoFar);
         },
         onError: (err) => { toast.error(err); setIsLoading(false); },
@@ -473,12 +493,14 @@ export const FloatingChat: React.FC = () => {
     }
 
     const parsed = await parsePromise;
-    if (parsed) {
-      setPendingTx(parsed);
+    if (parsed.investment) {
+      setPendingInv(parsed.investment);
+    } else if (parsed.transaction) {
+      setPendingTx(parsed.transaction);
     } else if (text && assistantSoFar.includes("✅")) {
-      // AI said it would register but parse failed — try parsing the AI response
       const fallback = await parseTransaction(assistantSoFar);
-      if (fallback && fallback.amount > 0) setPendingTx(fallback);
+      if (fallback.investment) setPendingInv(fallback.investment);
+      else if (fallback.transaction && fallback.transaction.amount > 0) setPendingTx(fallback.transaction);
     }
   };
 
@@ -493,6 +515,7 @@ export const FloatingChat: React.FC = () => {
       .eq('consultant_type', consultantType);
     setMessages([{ role: "assistant", content: config.greeting }]);
     setPendingTx(null);
+    setPendingInv(null);
     toast.success("Histórico limpo!");
   };
 
@@ -728,10 +751,11 @@ export const FloatingChat: React.FC = () => {
         </motion.div>
       )}
 
-      {/* Pending transaction confirmation */}
-      {pendingTx && (
+      {/* Pending transaction/investment confirmation */}
+      {(pendingTx || pendingInv) && (
         <TransactionConfirmCard
           transaction={pendingTx}
+          investment={pendingInv}
           onConfirm={handleConfirmTx}
           onCancel={handleCancelTx}
         />
