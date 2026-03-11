@@ -28,6 +28,7 @@ interface Group {
 export const TransactionGroupedList: React.FC<GroupedListProps> = ({
   transactions, type, onEdit, onRemove, onToggleStatus,
 }) => {
+  const { formatMoney: formatBRL } = usePreferences();
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   const { groups, singles } = useMemo(() => {
