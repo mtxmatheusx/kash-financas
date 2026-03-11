@@ -30,7 +30,6 @@ const CATEGORY_MAP: Record<string, TranslationKey> = {
   "Despesas Comerciais": "cat.dre.commercial",
   "Impostos e Taxas": "cat.dre.taxes",
   "Outras Despesas": "cat.dre.otherExpenses",
-  // Extra categories
   "Casa": "cat.expense.housing",
   // Investment Types
   "Renda Fixa": "cat.invest.fixedIncome",
