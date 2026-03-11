@@ -3,13 +3,14 @@ import { PageTransition } from "@/components/PageTransition";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAccount } from "@/contexts/AccountContext";
 import { format, startOfMonth, endOfMonth, subMonths } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { ptBR, enUS, es as esLocale } from "date-fns/locale";
 import { ChevronLeft, ChevronRight, Info, Download, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "sonner";
+import { translateCategory } from "@/lib/categoryI18n";
 
 /* ── Category → DRE group mapping ── */
 const COST_CATEGORIES = ["Fornecedores", "Infraestrutura"]; // CPV / Custos diretos
@@ -37,7 +38,8 @@ interface DRELine {
 const pct = (part: number, total: number) => (total !== 0 ? (part / total) * 100 : 0);
 
 const DRE: React.FC = () => {
-  const { formatMoney: formatBRL, t } = usePreferences();
+  const { formatMoney: formatBRL, t, language } = usePreferences();
+  const dateLocale = language === "en" ? enUS : language === "es" ? esLocale : ptBR;
   const { allTransactions } = useTransactions();
   const { account } = useAccount();
   const [refDate, setRefDate] = useState(new Date());
@@ -139,7 +141,7 @@ const DRE: React.FC = () => {
     r.push({ label: t("dre.line.grossRevenue"), value: current.receitaBruta, prevValue: previous.receitaBruta, bold: true, highlight: true, tooltip: t("dre.line.tooltipGrossRevenue") });
     Object.entries(current.incomeByCategory).forEach(([cat, val]) => {
       const prev = previous.incomeByCategory[cat] || 0;
-      r.push({ label: cat, value: val, prevValue: prev, indent: 1 });
+      r.push({ label: translateCategory(cat, t), value: val, prevValue: prev, indent: 1 });
     });
     r.push({ label: "", value: 0, separator: true });
 
@@ -152,7 +154,7 @@ const DRE: React.FC = () => {
     r.push({ label: t("dre.line.cogs"), value: -current.cpv, prevValue: -previous.cpv, bold: true, tooltip: t("dre.line.tooltipCogs") });
     Object.entries(current.cpvByCategory).forEach(([cat, val]) => {
       const prev = previous.cpvByCategory[cat] || 0;
-      r.push({ label: cat, value: -val, prevValue: -prev, indent: 2 });
+      r.push({ label: translateCategory(cat, t), value: -val, prevValue: -prev, indent: 2 });
     });
     r.push({ label: "", value: 0, separator: true });
 
@@ -162,10 +164,10 @@ const DRE: React.FC = () => {
 
     Object.entries(current.opexGroups).forEach(([group, data]) => {
       const prevGroup = previous.opexGroups[group];
-      r.push({ label: `(-) ${group}`, value: -data.total, prevValue: prevGroup ? -prevGroup.total : 0, bold: true });
+      r.push({ label: `(-) ${translateCategory(group, t)}`, value: -data.total, prevValue: prevGroup ? -prevGroup.total : 0, bold: true });
       Object.entries(data.categories).forEach(([cat, val]) => {
         const prev = prevGroup?.categories[cat] || 0;
-        r.push({ label: cat, value: -val, prevValue: -prev, indent: 2 });
+        r.push({ label: translateCategory(cat, t), value: -val, prevValue: -prev, indent: 2 });
       });
     });
     if (current.uncategorized > 0) {
@@ -204,7 +206,7 @@ const DRE: React.FC = () => {
       const u = w - m * 2; // usable width
       let y = m;
 
-      const monthLabel = format(refDate, "MMMM yyyy", { locale: ptBR });
+      const monthLabel = format(refDate, "MMMM yyyy", { locale: dateLocale });
       const capitalMonth = monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1);
 
       // ── Palette ──
@@ -264,12 +266,14 @@ const DRE: React.FC = () => {
       pdf.setFontSize(12);
       pdf.setFont("helvetica", "bold");
       pdf.setTextColor(...white);
-      pdf.text(`DRE — ${capitalMonth}`, w - m, 10, { align: "right" });
+      const pdfTitle = language === "en" ? "P&L" : language === "es" ? "Estado de Resultados" : "DRE";
+      pdf.text(`${pdfTitle} — ${capitalMonth}`, w - m, 10, { align: "right" });
 
       pdf.setFontSize(7.5);
       pdf.setFont("helvetica", "normal");
       pdf.setTextColor(161, 161, 170); // zinc-400
-      pdf.text(`Emitido em ${format(new Date(), "dd/MM/yyyy 'às' HH:mm")}`, w - m, 16, { align: "right" });
+      const dateFormat = language === "en" ? "MM/dd/yyyy 'at' HH:mm" : "dd/MM/yyyy 'às' HH:mm";
+      pdf.text(t("dre.pdf.issuedAt").replace("{date}", format(new Date(), dateFormat, { locale: dateLocale })), w - m, 16, { align: "right" });
 
       // Accent line below header
       pdf.setFillColor(...accentRed);
@@ -282,12 +286,12 @@ const DRE: React.FC = () => {
       // ════════════════════════════════════════════════
       let aiText = "";
       if (current.receitaBruta === 0 && current.totalExpenses === 0) {
-        aiText = "Nenhuma movimentação registrada neste período.";
+        aiText = t("dre.pdf.noMovements");
       } else if (current.lucroLiquido >= 0) {
-        aiText = `Resultado positivo no período com lucro líquido de ${formatBRL(current.lucroLiquido)} e margem de ${current.margemLiquida.toFixed(1)}%.`;
-        if (current.margemBruta > 0 && current.margemBruta < 30) aiText += " Atenção: margem bruta abaixo de 30%.";
+        aiText = t("dre.pdf.positiveResult").replace("{amount}", formatBRL(current.lucroLiquido)).replace("{pct}", current.margemLiquida.toFixed(1));
+        if (current.margemBruta > 0 && current.margemBruta < 30) aiText += t("dre.pdf.lowGrossMargin");
       } else {
-        aiText = `Resultado negativo no período com prejuízo de ${formatBRL(Math.abs(current.lucroLiquido))}. Recomenda-se revisão de custos e despesas operacionais.`;
+        aiText = t("dre.pdf.negativeResult").replace("{amount}", formatBRL(Math.abs(current.lucroLiquido)));
       }
       const aiTextLines = pdf.splitTextToSize(aiText, u - 18);
       const aiBoxH = 10 + aiTextLines.length * 4;
@@ -306,7 +310,7 @@ const DRE: React.FC = () => {
       pdf.setFontSize(8.5);
       pdf.setFont("helvetica", "bold");
       pdf.setTextColor(...black);
-      pdf.text("✦  Resumo Executivo da IA", m + 6, y + 6);
+      pdf.text(t("dre.pdf.aiSummaryTitle"), m + 6, y + 6);
 
       // Body
       pdf.setFontSize(7.5);
@@ -319,9 +323,9 @@ const DRE: React.FC = () => {
       // 3. KPIs — SaaS Cards with shadow feel
       // ════════════════════════════════════════════════
       const kpis: { label: string; value: number; color: C3 }[] = [
-        { label: "Receita Bruta", value: current.receitaBruta, color: [...green600] },
-        { label: "Total Despesas", value: current.totalExpenses, color: [...red600] },
-        { label: "Lucro Líquido", value: current.lucroLiquido, color: current.lucroLiquido >= 0 ? [...green600] : [...red600] },
+        { label: t("dre.grossRevenue"), value: current.receitaBruta, color: [...green600] },
+        { label: t("dre.totalExpenses"), value: current.totalExpenses, color: [...red600] },
+        { label: t("dre.netProfit"), value: current.lucroLiquido, color: current.lucroLiquido >= 0 ? [...green600] : [...red600] },
       ];
 
       const kpiW = (u - 8) / 3;
@@ -364,9 +368,9 @@ const DRE: React.FC = () => {
       pdf.setFontSize(7);
       pdf.setFont("helvetica", "bold");
       pdf.setTextColor(...white);
-      pdf.text("DESCRIÇÃO", m + 4, y + 5.5);
-      pdf.text("MÊS ATUAL", m + u - 56, y + 5.5);
-      pdf.text("MÊS ANTERIOR", m + u - 24, y + 5.5);
+      pdf.text(t("dre.pdf.tableDescription"), m + 4, y + 5.5);
+      pdf.text(t("dre.pdf.tableCurrentMonth"), m + u - 56, y + 5.5);
+      pdf.text(t("dre.pdf.tablePreviousMonth"), m + u - 24, y + 5.5);
       y += 8;
 
       let rowIdx = 0;
@@ -441,9 +445,9 @@ const DRE: React.FC = () => {
       y += 5;
       addPage();
       const margins = [
-        { label: "Margem Bruta", value: `${current.margemBruta.toFixed(1)}%` },
-        { label: "Margem Operacional", value: `${current.margemOperacional.toFixed(1)}%` },
-        { label: "Margem Líquida", value: `${current.margemLiquida.toFixed(1)}%` },
+        { label: t("dre.grossMargin"), value: `${current.margemBruta.toFixed(1)}%` },
+        { label: t("dre.opMargin"), value: `${current.margemOperacional.toFixed(1)}%` },
+        { label: t("dre.netMargin"), value: `${current.margemLiquida.toFixed(1)}%` },
       ];
       const mCardW = (u - 8) / 3;
       margins.forEach((mg, i) => {
@@ -481,19 +485,19 @@ const DRE: React.FC = () => {
         pdf.setFontSize(7);
         pdf.setFont("helvetica", "normal");
         pdf.setTextColor(...white);
-        pdf.text("Faciliten · Gestão Financeira Inteligente", m, h - 4.5);
-        pdf.text(`Página ${p} de ${pageCount}`, w - m, h - 4.5, { align: "right" });
+        pdf.text(t("dre.pdf.footer"), m, h - 4.5);
+        pdf.text(t("dre.pdf.page").replace("{current}", String(p)).replace("{total}", String(pageCount)), w - m, h - 4.5, { align: "right" });
       }
 
       pdf.save(`DRE_${format(refDate, "yyyy-MM")}.pdf`);
-      toast.success("PDF exportado com sucesso!");
+      toast.success(t("dre.pdf.exported"));
     } catch (err) {
-      console.error("Erro ao exportar PDF:", err);
-      toast.error("Erro ao exportar PDF");
+      console.error("PDF export error:", err);
+      toast.error(t("dre.pdf.error"));
     } finally {
       setExporting(false);
     }
-  }, [refDate, current, lines, formatBRL]);
+  }, [refDate, current, lines, formatBRL, t, language, dateLocale]);
 
   return (
     <PageTransition>
@@ -515,7 +519,7 @@ const DRE: React.FC = () => {
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
                 <span className="text-sm font-medium text-foreground min-w-[120px] text-center capitalize">
-                  {format(refDate, "MMMM yyyy", { locale: ptBR })}
+                  {format(refDate, "MMMM yyyy", { locale: dateLocale })}
                 </span>
                 <Button variant="ghost" size="icon" onClick={() => setRefDate(d => subMonths(d, -1))}>
                   <ChevronRight className="w-4 h-4" />
@@ -529,7 +533,7 @@ const DRE: React.FC = () => {
             {/* PDF Header (hidden on screen, visible in export) */}
             <div className="hidden print:block text-center mb-4">
               <h2 className="text-xl font-bold">Demonstração do Resultado do Exercício</h2>
-              <p className="text-sm text-muted-foreground capitalize">{format(refDate, "MMMM yyyy", { locale: ptBR })}</p>
+              <p className="text-sm text-muted-foreground capitalize">{format(refDate, "MMMM yyyy", { locale: dateLocale })}</p>
             </div>
 
           {/* Summary Cards */}
@@ -633,7 +637,7 @@ const DRE: React.FC = () => {
                   {Object.entries(current.opexGroups).length > 0 && (
                     <p>
                       {t("dre.topExpenseGroup")}{" "}
-                      <strong>{Object.entries(current.opexGroups).sort((a, b) => b[1].total - a[1].total)[0][0]}</strong>{" "}
+                      <strong>{translateCategory(Object.entries(current.opexGroups).sort((a, b) => b[1].total - a[1].total)[0][0], t)}</strong>{" "}
                       ({formatBRL(Object.entries(current.opexGroups).sort((a, b) => b[1].total - a[1].total)[0][1].total)})
                     </p>
                   )}
