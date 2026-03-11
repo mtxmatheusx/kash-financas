@@ -79,7 +79,7 @@ const MobileWhatsAppPreview: React.FC = () => (
         <WhatsAppIcon className="w-3.5 h-3.5 text-white" />
       </div>
       <div>
-        <p className="text-[11px] font-semibold text-white">Kash Copiloto</p>
+        <p className="text-[11px] font-semibold text-white">Faciliten Copiloto</p>
         <p className="text-[9px] text-[hsl(160,100%,50%)]">online</p>
       </div>
     </div>
