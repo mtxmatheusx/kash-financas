@@ -41,9 +41,6 @@ interface UserSettings {
   pix_key_type: string;
   // Integrations
   n8n_webhook_url: string;
-  evolution_api_url: string;
-  evolution_api_key: string;
-  evolution_instance: string;
   // Notifications
   notify_whatsapp: boolean;
   notify_email: boolean;
