@@ -25,13 +25,13 @@ interface MenuItem {
 }
 
 interface MenuSection {
-  title: string;
+  titleKey: TranslationKey;
   items: MenuItem[];
 }
 
 const menuSections: MenuSection[] = [
   {
-    title: "Visão Geral",
+    titleKey: "sidebar.section.overview",
     items: [
       { path: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
       { path: "/planejamento", labelKey: "nav.planning", icon: Compass },
@@ -39,21 +39,21 @@ const menuSections: MenuSection[] = [
     ],
   },
   {
-    title: "Movimentações",
+    titleKey: "sidebar.section.transactions",
     items: [
       { path: "/receitas", labelKey: "nav.income", icon: TrendingUp },
       { path: "/despesas", labelKey: "nav.expenses", icon: TrendingDown },
     ],
   },
   {
-    title: "Crescimento",
+    titleKey: "sidebar.section.growth",
     items: [
       { path: "/investimentos", labelKey: "nav.investments", icon: PieChart },
       { path: "/metas", labelKey: "nav.goals", icon: Target },
     ],
   },
   {
-    title: "Relatórios",
+    titleKey: "sidebar.section.reports",
     items: [
       { path: "/dre", labelKey: "nav.dre", icon: FileText, account: "business" },
       { path: "/ebitda", labelKey: "nav.ebitda", icon: Calculator, account: "business" },
@@ -109,10 +109,10 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
           if (visibleItems.length === 0) return null;
 
           return (
-            <div key={section.title} className={cn(sIdx > 0 && "mt-4")}>
+            <div key={section.titleKey} className={cn(sIdx > 0 && "mt-4")}>
               {!collapsed && (
                 <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-sidebar-muted/60">
-                  {section.title}
+                  {t(section.titleKey)}
                 </p>
               )}
               {collapsed && sIdx > 0 && (

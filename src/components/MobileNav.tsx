@@ -22,7 +22,7 @@ interface NavItem {
 }
 
 interface NavSection {
-  title: string;
+  titleKey: TranslationKey;
   items: NavItem[];
 }
 
@@ -35,20 +35,20 @@ const mainItems: NavItem[] = [
 
 const moreSections: NavSection[] = [
   {
-    title: "Visão Geral",
+    titleKey: "sidebar.section.overview",
     items: [
       { path: "/planejamento", labelKey: "nav.planning", icon: Compass, descKey: "more.planning" },
       { path: "/mensal", labelKey: "nav.monthly", icon: CalendarRange, descKey: "more.monthly" },
     ],
   },
   {
-    title: "Crescimento",
+    titleKey: "sidebar.section.growth",
     items: [
       { path: "/metas", labelKey: "nav.goals", icon: Target, descKey: "more.goals" },
     ],
   },
   {
-    title: "Relatórios",
+    titleKey: "sidebar.section.reports",
     items: [
       { path: "/dre", labelKey: "nav.dre", icon: FileText, account: "business", descKey: "more.dre" },
       { path: "/ebitda", labelKey: "nav.ebitda", icon: Calculator, account: "business", descKey: "more.ebitda" },
@@ -56,7 +56,7 @@ const moreSections: NavSection[] = [
     ],
   },
   {
-    title: "Configurações",
+    titleKey: "sidebar.section.settings",
     items: [
       { path: "/configuracoes", labelKey: "nav.settings", icon: Settings, descKey: "more.settings" },
     ],
@@ -109,10 +109,10 @@ export const MobileNav: React.FC = () => {
                 </div>
                 <nav className="px-1.5 pb-1.5" role="menu" aria-label="Menu adicional">
                   {filteredSections.map((section, sIdx) => (
-                    <div key={section.title}>
+                    <div key={section.titleKey}>
                       {/* Section title */}
                       <p className="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/50">
-                        {section.title}
+                        {t(section.titleKey)}
                       </p>
                       <div className="space-y-0.5">
                         {section.items.map((item) => {
