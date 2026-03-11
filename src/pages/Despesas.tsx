@@ -16,8 +16,25 @@ import { useAutoCategory } from "@/hooks/useAutoCategory";
 import { usePreferences, CURRENCIES, type CurrencyCode } from "@/contexts/PreferencesContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const PERSONAL_CATS = ['Alimentação', 'Transporte', 'Moradia', 'Saúde', 'Lazer', 'Educação', 'Outros'];
-const BUSINESS_CATS = ['Fornecedores', 'Impostos', 'Funcionários', 'Marketing', 'Infraestrutura', 'Outros'];
+const PERSONAL_CAT_KEYS = [
+  { value: 'Alimentação', tKey: 'cat.expense.food' as const },
+  { value: 'Transporte', tKey: 'cat.expense.transport' as const },
+  { value: 'Moradia', tKey: 'cat.expense.housing' as const },
+  { value: 'Saúde', tKey: 'cat.expense.health' as const },
+  { value: 'Lazer', tKey: 'cat.expense.leisure' as const },
+  { value: 'Educação', tKey: 'cat.expense.education' as const },
+  { value: 'Outros', tKey: 'cat.expense.other' as const },
+];
+const BUSINESS_CAT_KEYS = [
+  { value: 'Fornecedores', tKey: 'cat.expense.suppliers' as const },
+  { value: 'Impostos', tKey: 'cat.expense.taxes' as const },
+  { value: 'Funcionários', tKey: 'cat.expense.employees' as const },
+  { value: 'Marketing', tKey: 'cat.expense.marketing' as const },
+  { value: 'Infraestrutura', tKey: 'cat.expense.infrastructure' as const },
+  { value: 'Outros', tKey: 'cat.expense.other' as const },
+];
+const PERSONAL_CATS = PERSONAL_CAT_KEYS.map(c => c.value);
+const BUSINESS_CATS = BUSINESS_CAT_KEYS.map(c => c.value);
 
 const Despesas: React.FC = () => {
   const { formatMoney: formatBRL, t, currency: defaultCurrency } = usePreferences();
@@ -27,6 +44,7 @@ const Despesas: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const categories = account.type === 'personal' ? PERSONAL_CATS : BUSINESS_CATS;
+  const categoryKeys = account.type === 'personal' ? PERSONAL_CAT_KEYS : BUSINESS_CAT_KEYS;
 
   const emptyForm = () => ({
     description: '', amount: '', category: categories[0],
@@ -255,7 +273,7 @@ const Despesas: React.FC = () => {
               </div>
               <select value={form.category} onChange={e => { setForm({ ...form, category: e.target.value }); setUserChangedCategory(true); }}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                {categoryKeys.map(c => <option key={c.value} value={c.value}>{t(c.tKey)}</option>)}
               </select>
             </div>
             <div>

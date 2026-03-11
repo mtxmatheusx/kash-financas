@@ -9,7 +9,9 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { transactions, investments, goals, preferences } = await req.json();
+    const { transactions, investments, goals, preferences, language } = await req.json();
+    const langMap: Record<string, string> = { "pt-BR": "português brasileiro", en: "English", es: "español" };
+    const responseLang = langMap[language] || "português brasileiro";
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -17,7 +19,7 @@ serve(async (req) => {
       ? `\n\nPREFERÊNCIAS DO USUÁRIO (RESPEITE OBRIGATORIAMENTE):\n${preferences.map((p: string) => `- ${p}`).join("\n")}\n\nNUNCA gere insights que contradigam as preferências acima. Esses são princípios pessoais do usuário que devem ser respeitados.`
       : "";
 
-    const prompt = `Você é um consultor financeiro pessoal inteligente. Analise os dados financeiros abaixo e gere de 3 a 5 insights personalizados e acionáveis em português brasileiro.
+    const prompt = `Você é um consultor financeiro pessoal inteligente. Analise os dados financeiros abaixo e gere de 3 a 5 insights personalizados e acionáveis. RESPONDA INTEIRAMENTE EM ${responseLang}.
 
 DADOS DO USUÁRIO:
 ${JSON.stringify({ transactions, investments, goals }, null, 2)}

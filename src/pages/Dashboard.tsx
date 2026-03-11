@@ -7,6 +7,7 @@ import { useTransactions } from "@/hooks/useTransactions";
 import { useInvestments } from "@/hooks/useInvestments";
 import { TrendingUp, TrendingDown, Wallet, PiggyBank, Activity } from "lucide-react";
 import { usePreferences } from "@/contexts/PreferencesContext";
+import { translateCategory } from "@/lib/categoryI18n";
 import {
   BarChart, Bar, XAxis, YAxis,
   Tooltip, ResponsiveContainer, CartesianGrid,
@@ -214,20 +215,20 @@ const Dashboard: React.FC = () => {
           <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-3">{t("dashboard.recentTransactions")}</h3>
           {filtered.length > 0 ? (
             <motion.div className="space-y-0.5" variants={staggerContainer} initial="initial" animate="animate">
-              {filtered.slice(0, 8).map(t => (
-                <motion.div key={t.id} variants={staggerItem}
+              {filtered.slice(0, 8).map(tx => (
+                <motion.div key={tx.id} variants={staggerItem}
                   whileHover={{ x: 3, transition: { duration: 0.1 } }}
                   className="flex items-center justify-between py-2 px-2.5 rounded-lg hover:bg-accent/50 transition-colors cursor-default">
                   <div className="flex items-center gap-2.5">
-                    <div className={`w-1.5 h-1.5 rounded-full ${t.type === 'income' ? 'bg-fin-income' : 'bg-fin-expense'}`}
-                      style={{ boxShadow: t.type === 'income' ? '0 0 4px hsl(var(--fin-income))' : '0 0 4px hsl(var(--fin-expense))' }} />
+                    <div className={`w-1.5 h-1.5 rounded-full ${tx.type === 'income' ? 'bg-fin-income' : 'bg-fin-expense'}`}
+                      style={{ boxShadow: tx.type === 'income' ? '0 0 4px hsl(var(--fin-income))' : '0 0 4px hsl(var(--fin-expense))' }} />
                     <div>
-                      <p className="text-sm font-medium text-card-foreground">{t.description}</p>
-                      <p className="text-[10px] text-muted-foreground">{t.category} · {new Date(t.date).toLocaleDateString('pt-BR')}</p>
+                      <p className="text-sm font-medium text-card-foreground">{tx.description}</p>
+                      <p className="text-[10px] text-muted-foreground">{translateCategory(tx.category, t)} · {new Date(tx.date).toLocaleDateString('pt-BR')}</p>
                     </div>
                   </div>
-                  <span className={`font-mono-fin text-sm font-semibold ${t.type === 'income' ? 'text-fin-income' : 'text-fin-expense'}`}>
-                    {t.type === 'income' ? '+' : '−'} {formatBRL(t.amount)}
+                  <span className={`font-mono-fin text-sm font-semibold ${tx.type === 'income' ? 'text-fin-income' : 'text-fin-expense'}`}>
+                    {tx.type === 'income' ? '+' : '−'} {formatBRL(tx.amount)}
                   </span>
                 </motion.div>
               ))}

@@ -3,6 +3,7 @@ import { ChevronDown, ChevronRight, Pencil, Trash2, Check, Clock } from "lucide-
 import { cn } from "@/lib/utils";
 import type { TransactionRow } from "@/lib/types";
 import { usePreferences } from "@/contexts/PreferencesContext";
+import { translateCategory } from "@/lib/categoryI18n";
 
 interface GroupedListProps {
   transactions: TransactionRow[];
@@ -113,7 +114,7 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
                     ? `${t("txList.recurringMonthly").split(" (")[0]} ${g.frequency === "yearly" ? `(${t("form.yearly")})` : `(${t("form.monthly")})`}`
                     : t("txList.installment")}</span>
                   <span>· {g.items.length} {t("txList.installments")}</span>
-                  <span>· {g.category}</span>
+                  <span>· {translateCategory(g.category, t)}</span>
                   <span className="inline-flex items-center gap-0.5">
                     <span className="text-fin-income">{g.paidCount}✓</span>
                     {g.pendingCount > 0 && <span className="text-fin-pending">{g.pendingCount}⏳</span>}
@@ -122,7 +123,7 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
               </div>
             </div>
 
-            <span className="text-xs text-muted-foreground hidden md:block">{g.category}</span>
+            <span className="text-xs text-muted-foreground hidden md:block">{translateCategory(g.category, t)}</span>
 
             <div className="hidden md:flex justify-center px-2 gap-1.5">
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-fin-income/10 text-fin-income">
@@ -221,7 +222,7 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
             <p className="text-sm font-medium text-foreground truncate">{tx.description}</p>
             <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1 flex-wrap">
               <span>{new Date(tx.date).toLocaleDateString("pt-BR")}</span>
-              <span>· {tx.category}</span>
+              <span>· {translateCategory(tx.category, t)}</span>
               <span className="md:hidden">·
                 {tx.status === "paid" ? (
                   <span className="text-fin-income"> {statusLabel.paid}</span>
@@ -232,7 +233,7 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
             </p>
           </div>
 
-          <span className="text-xs text-muted-foreground hidden md:block">{tx.category}</span>
+          <span className="text-xs text-muted-foreground hidden md:block">{translateCategory(tx.category, t)}</span>
 
           <div className="hidden md:flex justify-center px-2">
             <button

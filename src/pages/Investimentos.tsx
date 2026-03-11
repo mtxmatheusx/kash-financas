@@ -13,7 +13,15 @@ import { usePreferences } from "@/contexts/PreferencesContext";
 import { PieChart as RechartsPie, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { cn } from "@/lib/utils";
 
-const TYPES = ['Renda Fixa', 'Renda Variável', 'Fundos', 'Cripto', 'Imóveis', 'Outros'];
+const INVEST_TYPE_KEYS = [
+  { value: 'Renda Fixa', tKey: 'cat.invest.fixedIncome' as const },
+  { value: 'Renda Variável', tKey: 'cat.invest.variableIncome' as const },
+  { value: 'Fundos', tKey: 'cat.invest.funds' as const },
+  { value: 'Cripto', tKey: 'cat.invest.crypto' as const },
+  { value: 'Imóveis', tKey: 'cat.invest.realEstate' as const },
+  { value: 'Outros', tKey: 'cat.invest.other' as const },
+];
+const TYPES = INVEST_TYPE_KEYS.map(c => c.value);
 const TYPE_COLORS = [
   'hsl(var(--primary))',
   'hsl(var(--fin-income))',
@@ -139,7 +147,7 @@ const Investimentos: React.FC = () => {
                 {pieData.map((d) => (
                   <div key={d.name} className="flex items-center gap-1.5">
                     <div className="w-2 h-2 rounded-full" style={{ background: TYPE_COLORS[TYPES.indexOf(d.name) % TYPE_COLORS.length] }} />
-                    <span className="text-[10px] text-muted-foreground">{d.name}</span>
+                    <span className="text-[10px] text-muted-foreground">{INVEST_TYPE_KEYS.find(k => k.value === d.name) ? t(INVEST_TYPE_KEYS.find(k => k.value === d.name)!.tKey) : d.name}</span>
                   </div>
                 ))}
               </div>
@@ -163,7 +171,7 @@ const Investimentos: React.FC = () => {
                       <p className="text-sm font-semibold text-card-foreground truncate">{inv.name}</p>
                       <div className="flex items-center gap-1.5 mt-0.5">
                         <div className="w-1.5 h-1.5 rounded-full bg-fin-investment" style={{ boxShadow: '0 0 4px hsl(var(--fin-investment))' }} />
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{inv.type}</p>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{INVEST_TYPE_KEYS.find(k => k.value === inv.type) ? t(INVEST_TYPE_KEYS.find(k => k.value === inv.type)!.tKey) : inv.type}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-0.5 shrink-0">
@@ -224,7 +232,7 @@ const Investimentos: React.FC = () => {
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("investment.type")}</label>
               <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                {INVEST_TYPE_KEYS.map(c => <option key={c.value} value={c.value}>{t(c.tKey)}</option>)}
               </select>
             </div>
             <div>
