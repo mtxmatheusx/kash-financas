@@ -90,7 +90,8 @@ const Despesas: React.FC = () => {
     if (form.is_percentage) {
       const pct = parseFloat(form.percentage.replace(',', '.'));
       if (!form.description || !pct || pct <= 0) return;
-      amount = (totals.income * pct) / 100;
+      const base = form.percentage_base === 'monthly' ? monthlyIncome : totals.income;
+      amount = (base * pct) / 100;
     } else {
       amount = amountCents / 100;
       if (!form.description || !amount) return;
