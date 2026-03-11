@@ -1061,6 +1061,10 @@ const en: typeof pt = {
   "investment.applicationDate": "Application date",
   "investment.saveInvestment": "Save Investment",
   "investment.updateValue": "Current value",
+  "investment.country": "Country / Market",
+  "investment.selectCountries": "Select countries",
+  "investment.allCountries": "All countries",
+  "investment.filterByCountry": "Filter by country",
 
   "goals.title": "Financial Goals",
   "goals.subtitle": "Track your financial objectives",
