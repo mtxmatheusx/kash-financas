@@ -61,7 +61,7 @@ const defaultSettings: UserSettings = {
 
 const Configuracoes: React.FC = () => {
   const { user, profile, isPremium, isTrialing, trialDaysLeft, subscriptionEnd } = useAuth();
-  const { currency, setCurrency, language, setLanguage } = usePreferences();
+  const { currency, setCurrency, language, setLanguage, t } = usePreferences();
   const [settings, setSettings] = useState<UserSettings>(defaultSettings);
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(false);
