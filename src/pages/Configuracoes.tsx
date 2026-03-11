@@ -67,19 +67,13 @@ const Configuracoes: React.FC = () => {
   const [qrLoading, setQrLoading] = useState(false);
 
   const handleGenerateQr = async () => {
-    if (!settings.n8n_webhook_url) {
-      toast.error("Configure a URL do webhook N8N primeiro.");
-      return;
-    }
     setQrLoading(true);
     setQrCodeImage(null);
     try {
-      const res = await fetch(settings.n8n_webhook_url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "generate_qr", user_id: user?.id }),
+      const { data, error } = await supabase.functions.invoke("whatsapp-connect", {
+        body: { action: "generate_qr" },
       });
-      const data = await res.json();
+      if (error) throw error;
       if (data?.qrCode || data?.base64) {
         const img = data.qrCode || data.base64;
         setQrCodeImage(img.startsWith("data:") ? img : `data:image/png;base64,${img}`);
@@ -88,9 +82,23 @@ const Configuracoes: React.FC = () => {
         toast.error("Não foi possível gerar o QR Code.");
       }
     } catch {
-      toast.error("Erro ao conectar com o servidor. Verifique a URL do webhook.");
+      toast.error("Erro ao gerar QR Code. Tente novamente.");
     }
     setQrLoading(false);
+  };
+
+  const handleSyncData = async () => {
+    setSaving(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("whatsapp-connect", {
+        body: { action: "sync" },
+      });
+      if (error) throw error;
+      toast.success(data?.message || "Dados sincronizados com sucesso!");
+    } catch {
+      toast.error("Erro ao sincronizar. Tente novamente.");
+    }
+    setSaving(false);
   };
 
   useEffect(() => {
