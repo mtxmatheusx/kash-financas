@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/chat-bubble";
 import { ChatMessageList } from "@/components/ui/chat-message-list";
 import { FloatingAiAssistant, type Attachment } from "@/components/ui/glowing-ai-chat-assistant";
-import { TransactionConfirmCard, type ParsedTransaction } from "@/components/TransactionConfirmCard";
+import { TransactionConfirmCard, type ParsedTransaction, type ParsedInvestment } from "@/components/TransactionConfirmCard";
 import { InvestorDisclaimer } from "@/components/InvestorDisclaimer";
 import { GeneralDisclaimer } from "@/components/GeneralDisclaimer";
 import { useAccount } from "@/contexts/AccountContext";
