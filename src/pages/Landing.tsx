@@ -193,7 +193,7 @@ const Landing: React.FC = () => {
 
   if (user) return <Navigate to="/dashboard" replace />;
 
-  const signupLink = "/signup" + (localStorage.getItem("kash_referral_code") ? `?ref=${localStorage.getItem("kash_referral_code")}` : "");
+  const signupLink = "/signup" + (localStorage.getItem("faciliten_referral_code") ? `?ref=${localStorage.getItem("faciliten_referral_code")}` : "");
 
   return (
     <div className="landing-dark noise-texture min-h-screen overflow-x-hidden font-['DM_Sans']">
