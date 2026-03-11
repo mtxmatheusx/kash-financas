@@ -76,35 +76,6 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
         )}
       </div>
 
-      {/* Account Toggle */}
-      {!collapsed && (
-        <div className="px-3 py-3 border-b border-sidebar-border">
-          <div className="flex gap-1 bg-sidebar-accent rounded-lg p-1">
-            <button
-              onClick={() => setAccountType('personal')}
-              className={cn(
-                "flex-1 py-1.5 rounded-md text-xs font-medium transition-all",
-                account.type === 'personal'
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                  : "text-sidebar-muted hover:text-sidebar-foreground"
-              )}
-            >
-              {t("sidebar.personal")}
-            </button>
-            <button
-              onClick={() => setAccountType('business')}
-              className={cn(
-                "flex-1 py-1.5 rounded-md text-xs font-medium transition-all",
-                account.type === 'business'
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                  : "text-sidebar-muted hover:text-sidebar-foreground"
-              )}
-            >
-              {t("sidebar.business")}
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Nav Items */}
       <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
