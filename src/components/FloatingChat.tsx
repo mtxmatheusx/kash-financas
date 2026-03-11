@@ -214,15 +214,15 @@ export const FloatingChat: React.FC = () => {
   const [countryLoaded, setCountryLoaded] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
-  // Check disclaimers
+  // Check disclaimers + country preference
   useEffect(() => {
     if (!user) return;
-    const checkDisclaimers = async () => {
+    const checkPrefs = async () => {
       const { data } = await supabase
         .from('user_financial_preferences')
         .select('preference')
         .eq('user_id', user.id)
-        .in('preference', ['investor_disclaimer_accepted', 'general_disclaimer_accepted']);
+        .in('category', ['disclaimer', 'country']);
       const prefs = data?.map(d => d.preference) ?? [];
       setInvestorDisclaimerAccepted(prefs.includes('investor_disclaimer_accepted'));
       const generalAccepted = prefs.includes('general_disclaimer_accepted');
@@ -230,8 +230,16 @@ export const FloatingChat: React.FC = () => {
       if (!generalAccepted) {
         setShowGeneralDisclaimer(true);
       }
+      // Load country
+      const countryPref = prefs.find(p => p.startsWith('country:'));
+      if (countryPref) {
+        const code = countryPref.split(':')[1];
+        const found = COUNTRY_OPTIONS.find(c => c.code === code);
+        if (found) setUserCountry(found);
+      }
+      setCountryLoaded(true);
     };
-    checkDisclaimers();
+    checkPrefs();
   }, [user]);
 
   // Load chat history from database
