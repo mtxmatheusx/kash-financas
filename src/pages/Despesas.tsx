@@ -18,7 +18,7 @@ const PERSONAL_CATS = ['Alimentação', 'Transporte', 'Moradia', 'Saúde', 'Laze
 const BUSINESS_CATS = ['Fornecedores', 'Impostos', 'Funcionários', 'Marketing', 'Infraestrutura', 'Outros'];
 
 const Despesas: React.FC = () => {
-  const { transactions, create, update, remove, totals } = useTransactions('expense');
+  const { transactions, create, update, remove, totals, allTransactions } = useTransactions('expense');
   const { account } = useAccount();
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
