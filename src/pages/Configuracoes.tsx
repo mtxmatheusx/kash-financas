@@ -288,7 +288,7 @@ const Configuracoes: React.FC = () => {
           {/* ═══════════ Dados da Empresa ═══════════ */}
           <TabsContent value="company">
             <Card>
-              <Field icon={FileText} label="Tipo de Documento">
+              <Field icon={FileText} label={t("settings.docType")}>
                 <Select value={settings.document_type} onValueChange={(v) => update("document_type", v)}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -309,20 +309,20 @@ const Configuracoes: React.FC = () => {
 
               {settings.document_type === "cnpj" && (
                 <>
-                  <Field icon={Building2} label="Razão Social">
-                    <Input value={settings.company_name} onChange={(e) => update("company_name", e.target.value)} placeholder="Razão social" maxLength={200} />
+                  <Field icon={Building2} label={t("settings.companyName")}>
+                    <Input value={settings.company_name} onChange={(e) => update("company_name", e.target.value)} placeholder={t("settings.companyName")} maxLength={200} />
                   </Field>
                   <div className="grid grid-cols-2 gap-3">
-                    <Field icon={FileText} label="Inscrição Estadual">
+                    <Field icon={FileText} label={t("settings.stateReg")}>
                       <Input value={settings.state_registration} onChange={(e) => update("state_registration", e.target.value)} placeholder="IE" maxLength={20} />
                     </Field>
-                    <Field icon={FileText} label="Inscrição Municipal">
+                    <Field icon={FileText} label={t("settings.cityReg")}>
                       <Input value={settings.city_registration} onChange={(e) => update("city_registration", e.target.value)} placeholder="IM" maxLength={20} />
                     </Field>
                   </div>
-                  <Field icon={FileText} label="Regime Tributário">
+                  <Field icon={FileText} label={t("settings.taxRegime")}>
                     <Select value={settings.tax_regime} onValueChange={(v) => update("tax_regime", v)}>
-                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder={t("common.search")} /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="mei">MEI</SelectItem>
                         <SelectItem value="simples">Simples Nacional</SelectItem>
@@ -337,10 +337,10 @@ const Configuracoes: React.FC = () => {
               {/* Endereço */}
               <div className="pt-4 border-t border-border space-y-4">
                 <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4 text-primary" /> Endereço
+                  <MapPin className="w-4 h-4 text-primary" /> {t("settings.address")}
                 </h3>
 
-                <Field icon={MapPin} label="CEP" hint="Digite o CEP para preencher automaticamente">
+                <Field icon={MapPin} label={t("settings.zipCode")} hint={t("settings.zipHint")}>
                   <div className="relative">
                     <Input
                       value={settings.zip_code}
@@ -357,29 +357,29 @@ const Configuracoes: React.FC = () => {
                   </div>
                 </Field>
 
-                <Field label="Logradouro">
-                  <Input value={settings.address} onChange={(e) => update("address", e.target.value)} placeholder="Rua, Avenida..." maxLength={200} />
+                <Field label={t("settings.street")}>
+                  <Input value={settings.address} onChange={(e) => update("address", e.target.value)} placeholder={t("settings.street")} maxLength={200} />
                 </Field>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <Field label="Número">
+                  <Field label={t("settings.number")}>
                     <Input value={settings.address_number} onChange={(e) => update("address_number", e.target.value)} placeholder="Nº" maxLength={10} />
                   </Field>
-                  <Field label="Complemento">
-                    <Input value={settings.address_complement} onChange={(e) => update("address_complement", e.target.value)} placeholder="Sala, Andar..." maxLength={100} />
+                  <Field label={t("settings.complement")}>
+                    <Input value={settings.address_complement} onChange={(e) => update("address_complement", e.target.value)} placeholder={t("settings.complement")} maxLength={100} />
                   </Field>
                 </div>
 
-                <Field label="Bairro">
-                  <Input value={settings.neighborhood} onChange={(e) => update("neighborhood", e.target.value)} placeholder="Bairro" maxLength={100} />
+                <Field label={t("settings.neighborhood")}>
+                  <Input value={settings.neighborhood} onChange={(e) => update("neighborhood", e.target.value)} placeholder={t("settings.neighborhood")} maxLength={100} />
                 </Field>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <Field label="Cidade">
-                    <Input value={settings.city} onChange={(e) => update("city", e.target.value)} placeholder="Cidade" maxLength={100} />
+                  <Field label={t("settings.city")}>
+                    <Input value={settings.city} onChange={(e) => update("city", e.target.value)} placeholder={t("settings.city")} maxLength={100} />
                   </Field>
-                  <Field label="UF">
-                    <Input value={settings.state} onChange={(e) => update("state", e.target.value)} placeholder="SP" maxLength={2} className="uppercase" />
+                  <Field label={t("settings.stateAbbr")}>
+                    <Input value={settings.state} onChange={(e) => update("state", e.target.value)} placeholder={t("settings.stateAbbr")} maxLength={2} className="uppercase" />
                   </Field>
                 </div>
               </div>
@@ -387,33 +387,33 @@ const Configuracoes: React.FC = () => {
               {/* Banking */}
               <div className="pt-4 border-t border-border space-y-4">
                 <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                  <Landmark className="w-4 h-4 text-primary" /> Dados Bancários
+                  <Landmark className="w-4 h-4 text-primary" /> {t("settings.bankData")}
                 </h3>
 
-                <Field icon={Landmark} label="Banco">
-                  <Input value={settings.bank_name} onChange={(e) => update("bank_name", e.target.value)} placeholder="Ex: Nubank, Itaú" maxLength={100} />
+                <Field icon={Landmark} label={t("settings.bank")}>
+                  <Input value={settings.bank_name} onChange={(e) => update("bank_name", e.target.value)} placeholder={t("settings.bank")} maxLength={100} />
                 </Field>
                 <div className="grid grid-cols-2 gap-3">
-                  <Field icon={Landmark} label="Agência">
+                  <Field icon={Landmark} label={t("settings.agency")}>
                     <Input value={settings.bank_agency} onChange={(e) => update("bank_agency", e.target.value)} placeholder="0000" maxLength={10} />
                   </Field>
-                  <Field icon={CreditCard} label="Conta">
+                  <Field icon={CreditCard} label={t("settings.account")}>
                     <Input value={settings.bank_account} onChange={(e) => update("bank_account", e.target.value)} placeholder="00000-0" maxLength={20} />
                   </Field>
                 </div>
-                <Field icon={Smartphone} label="Tipo da Chave PIX">
+                <Field icon={Smartphone} label={t("settings.pixKeyType")}>
                   <Select value={settings.pix_key_type} onValueChange={(v) => update("pix_key_type", v)}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder={t("common.search")} /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="cpf">CPF/CNPJ</SelectItem>
                       <SelectItem value="email">E-mail</SelectItem>
-                      <SelectItem value="phone">Telefone</SelectItem>
-                      <SelectItem value="random">Chave aleatória</SelectItem>
+                      <SelectItem value="phone">{t("settings.phone")}</SelectItem>
+                      <SelectItem value="random">{t("settings.pixKey")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </Field>
-                <Field icon={Smartphone} label="Chave PIX">
-                  <Input value={settings.pix_key} onChange={(e) => update("pix_key", e.target.value)} placeholder="Sua chave PIX" maxLength={100} />
+                <Field icon={Smartphone} label={t("settings.pixKey")}>
+                  <Input value={settings.pix_key} onChange={(e) => update("pix_key", e.target.value)} placeholder={t("settings.pixKey")} maxLength={100} />
                 </Field>
               </div>
             </Card>
