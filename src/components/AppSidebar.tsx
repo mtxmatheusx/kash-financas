@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import {
   LayoutDashboard, TrendingUp, TrendingDown, PieChart, Target, CalendarRange,
   Sun, Moon, ChevronLeft, ChevronRight, Compass, FileText, Calculator, Upload,
-  Crown, LogOut, UserCog, Settings,
+  Crown, LogOut, Settings,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAccount } from "@/contexts/AccountContext";
@@ -13,7 +13,6 @@ import { usePreferences } from "@/contexts/PreferencesContext";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { TranslationKey } from "@/i18n/translations";
-
 import type { AccountType } from "@/contexts/AccountContext";
 
 const FREE_PATHS = ["/dashboard", "/receitas", "/despesas"];
@@ -25,17 +24,42 @@ interface MenuItem {
   account?: AccountType;
 }
 
-const menuItems: MenuItem[] = [
-  { path: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
-  { path: "/planejamento", labelKey: "nav.planning", icon: Compass },
-  { path: "/receitas", labelKey: "nav.income", icon: TrendingUp },
-  { path: "/despesas", labelKey: "nav.expenses", icon: TrendingDown },
-  { path: "/investimentos", labelKey: "nav.investments", icon: PieChart },
-  { path: "/metas", labelKey: "nav.goals", icon: Target },
-  { path: "/mensal", labelKey: "nav.monthly", icon: CalendarRange },
-  { path: "/dre", labelKey: "nav.dre", icon: FileText, account: "business" },
-  { path: "/ebitda", labelKey: "nav.ebitda", icon: Calculator, account: "business" },
-  { path: "/importar", labelKey: "nav.import", icon: Upload },
+interface MenuSection {
+  title: string;
+  items: MenuItem[];
+}
+
+const menuSections: MenuSection[] = [
+  {
+    title: "Visão Geral",
+    items: [
+      { path: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
+      { path: "/planejamento", labelKey: "nav.planning", icon: Compass },
+      { path: "/mensal", labelKey: "nav.monthly", icon: CalendarRange },
+    ],
+  },
+  {
+    title: "Movimentações",
+    items: [
+      { path: "/receitas", labelKey: "nav.income", icon: TrendingUp },
+      { path: "/despesas", labelKey: "nav.expenses", icon: TrendingDown },
+    ],
+  },
+  {
+    title: "Crescimento",
+    items: [
+      { path: "/investimentos", labelKey: "nav.investments", icon: PieChart },
+      { path: "/metas", labelKey: "nav.goals", icon: Target },
+    ],
+  },
+  {
+    title: "Relatórios",
+    items: [
+      { path: "/dre", labelKey: "nav.dre", icon: FileText, account: "business" },
+      { path: "/ebitda", labelKey: "nav.ebitda", icon: Calculator, account: "business" },
+      { path: "/importar", labelKey: "nav.import", icon: Upload },
+    ],
+  },
 ];
 
 interface Props {
@@ -76,47 +100,65 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
         )}
       </div>
 
+      {/* Nav Items by Section */}
+      <nav className="flex-1 py-3 px-2 overflow-y-auto">
+        {menuSections.map((section, sIdx) => {
+          const visibleItems = section.items.filter(
+            item => !item.account || item.account === account.type
+          );
+          if (visibleItems.length === 0) return null;
 
-      {/* Nav Items */}
-      <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
-        {menuItems
-          .filter(item => !item.account || item.account === account.type)
-          .map(item => {
-          const isActive = location.pathname === item.path;
-          const isLocked = !isPremium && !FREE_PATHS.includes(item.path);
-          const label = t(item.labelKey);
           return (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              title={collapsed ? label : undefined}
-              className={cn(
-                "group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all relative",
-                isActive
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                  : "text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50",
-                isLocked && "opacity-60"
-              )}
-            >
-              {isActive && (
-                <motion.div
-                  layoutId="sidebar-indicator"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-sidebar-primary"
-                />
-              )}
-              <item.icon className="w-[18px] h-[18px] shrink-0" />
+            <div key={section.title} className={cn(sIdx > 0 && "mt-4")}>
               {!collapsed && (
-                <span className="font-medium flex-1">{label}</span>
+                <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-sidebar-muted/60">
+                  {section.title}
+                </p>
               )}
-              {!collapsed && isLocked && (
-                <Crown className="w-3.5 h-3.5 text-fin-pending shrink-0" />
+              {collapsed && sIdx > 0 && (
+                <div className="mx-3 mb-2 border-t border-sidebar-border" />
               )}
-              {collapsed && (
-                <span className="absolute left-full ml-2 px-2 py-1 rounded-md bg-popover text-popover-foreground text-xs font-medium shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
-                  {label}
-                </span>
-              )}
-            </NavLink>
+              <div className="space-y-0.5">
+                {visibleItems.map(item => {
+                  const isActive = location.pathname === item.path;
+                  const isLocked = !isPremium && !FREE_PATHS.includes(item.path);
+                  const label = t(item.labelKey);
+                  return (
+                    <NavLink
+                      key={item.path}
+                      to={item.path}
+                      title={collapsed ? label : undefined}
+                      className={cn(
+                        "group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all relative",
+                        isActive
+                          ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                          : "text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50",
+                        isLocked && "opacity-60"
+                      )}
+                    >
+                      {isActive && (
+                        <motion.div
+                          layoutId="sidebar-indicator"
+                          className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-sidebar-primary"
+                        />
+                      )}
+                      <item.icon className="w-[18px] h-[18px] shrink-0" />
+                      {!collapsed && (
+                        <span className="font-medium flex-1">{label}</span>
+                      )}
+                      {!collapsed && isLocked && (
+                        <Crown className="w-3.5 h-3.5 text-fin-pending shrink-0" />
+                      )}
+                      {collapsed && (
+                        <span className="absolute left-full ml-2 px-2 py-1 rounded-md bg-popover text-popover-foreground text-xs font-medium shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
+                          {label}
+                        </span>
+                      )}
+                    </NavLink>
+                  );
+                })}
+              </div>
+            </div>
           );
         })}
       </nav>
