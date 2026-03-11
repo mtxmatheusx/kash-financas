@@ -1345,6 +1345,13 @@ const en: typeof pt = {
   "whatsapp.description": "Automate your records — send a voice note and Faciliten logs income and expenses for you.",
   "whatsapp.cta": "Activate on WhatsApp",
 
+  "dateFilter.all": "All",
+  "dateFilter.today": "Today",
+  "dateFilter.yesterday": "Yesterday",
+  "dateFilter.week": "Week",
+  "dateFilter.month": "Month",
+  "dateFilter.period": "Period",
+
   "insights.title": "AI Insights",
   "insights.preference": "preference",
   "insights.preferences": "preferences",
