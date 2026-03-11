@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      chat_messages: {
+        Row: {
+          consultant_type: string
+          content: string
+          created_at: string
+          id: string
+          images: string[] | null
+          role: string
+          user_id: string
+        }
+        Insert: {
+          consultant_type?: string
+          content?: string
+          created_at?: string
+          id?: string
+          images?: string[] | null
+          role: string
+          user_id: string
+        }
+        Update: {
+          consultant_type?: string
+          content?: string
+          created_at?: string
+          id?: string
+          images?: string[] | null
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       goals: {
         Row: {
           account_type: Database["public"]["Enums"]["account_type"]
