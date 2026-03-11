@@ -25,7 +25,7 @@ const TYPE_COLORS = [
 
 const Investimentos: React.FC = () => {
   const { formatMoney: formatBRL } = usePreferences();
-  const { investments, create, remove, total, loading } = useInvestments();
+  const { investments, create, update, remove, total, loading } = useInvestments();
   const { account } = useAccount();
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
