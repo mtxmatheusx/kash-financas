@@ -446,8 +446,8 @@ const Importar: React.FC = () => {
     <PageTransition>
       <div className="space-y-6 max-w-3xl mx-auto">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Importar Planilha</h1>
-          <p className="text-sm text-muted-foreground">Importe transações de qualquer planilha — a IA identifica as colunas automaticamente</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t("import.title")}</h1>
+          <p className="text-sm text-muted-foreground">{t("import.subtitle")}</p>
         </div>
 
         {/* Step Indicator */}
