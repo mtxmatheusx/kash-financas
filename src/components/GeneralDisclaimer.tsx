@@ -56,39 +56,42 @@ export const GeneralDisclaimer: React.FC<GeneralDisclaimerProps> = ({ onAccept, 
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="absolute inset-0 z-50 flex flex-col bg-background/95 backdrop-blur-sm rounded-2xl"
+      className="absolute inset-0 z-50 flex flex-col bg-background backdrop-blur-sm rounded-2xl overflow-hidden"
       onClick={(e) => e.stopPropagation()}
     >
-      {/* Header */}
-      <div className="px-4 pt-5 pb-3 text-center space-y-2 shrink-0">
-        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-          <ShieldCheck className="w-6 h-6 text-primary" />
+      {/* Header — compact */}
+      <div className="px-5 pt-5 pb-3 text-center space-y-1.5 shrink-0">
+        <div className="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+          <ShieldCheck className="w-5 h-5 text-primary" />
         </div>
-        <h3 className="text-base font-bold text-foreground">Termo de Responsabilidade</h3>
-        <p className="text-xs text-muted-foreground leading-relaxed">
+        <h3 className="text-[15px] font-bold text-foreground leading-tight">Termo de Responsabilidade</h3>
+        <p className="text-[11px] text-muted-foreground leading-relaxed max-w-[260px] mx-auto">
           Leia e aceite os termos abaixo antes de utilizar os consultores de IA.
         </p>
       </div>
 
-      {/* Content */}
-      <ScrollArea className="flex-1 px-4">
-        <div className="space-y-4 pb-4">
+      {/* Content — scrollable */}
+      <ScrollArea className="flex-1 min-h-0">
+        <div className="px-5 space-y-3.5 pb-3">
           {SECTIONS.map((section, si) => {
             const Icon = section.icon;
             return (
               <motion.div
                 key={si}
-                initial={{ opacity: 0, y: 8 }}
+                initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + si * 0.08 }}
+                transition={{ delay: 0.08 + si * 0.06 }}
+                className="rounded-xl border border-border/40 bg-muted/30 p-3"
               >
-                <div className="flex items-center gap-2 mb-2">
-                  <Icon className="w-4 h-4 text-primary shrink-0" />
-                  <h4 className="text-xs font-bold text-foreground">{section.title}</h4>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
+                    <Icon className="w-3.5 h-3.5 text-primary" />
+                  </div>
+                  <h4 className="text-[12px] font-bold text-foreground">{section.title}</h4>
                 </div>
-                <div className="space-y-1.5 pl-6">
+                <div className="space-y-1 pl-8">
                   {section.items.map((item, ii) => (
-                    <p key={ii} className="text-[11px] text-muted-foreground leading-relaxed">
+                    <p key={ii} className="text-[11px] text-muted-foreground leading-[1.6]">
                       {item.split("**").map((part, j) =>
                         j % 2 === 1 ? (
                           <strong key={j} className="font-semibold text-foreground">{part}</strong>
@@ -105,24 +108,29 @@ export const GeneralDisclaimer: React.FC<GeneralDisclaimerProps> = ({ onAccept, 
         </div>
       </ScrollArea>
 
-      {/* Footer */}
-      <div className="px-4 pb-5 pt-2 space-y-3 border-t border-border/50 shrink-0">
-        <label className="flex items-start gap-3 cursor-pointer p-2 rounded-lg hover:bg-accent/30 transition-colors select-none">
+      {/* Footer — always visible */}
+      <div className="px-5 pb-5 pt-3 space-y-3 border-t border-border/40 shrink-0 bg-background">
+        <label className="flex items-start gap-2.5 cursor-pointer p-2.5 rounded-xl border border-border/40 bg-muted/20 hover:bg-accent/30 transition-colors select-none active:scale-[0.99]">
           <Checkbox
             checked={accepted}
             onCheckedChange={(v) => setAccepted(v === true)}
-            className="mt-0.5 shrink-0"
+            className="mt-0.5 shrink-0 h-5 w-5"
           />
-          <span className="text-xs text-foreground leading-relaxed">
+          <span className="text-[11px] text-foreground leading-relaxed">
             Declaro que li e compreendi os termos acima e aceito as condições de uso dos consultores de IA do Faciliten.
           </span>
         </label>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="flex-1 h-10" onClick={onDecline}>
+          <Button variant="outline" size="sm" className="flex-1 h-11 text-xs" onClick={onDecline}>
             Voltar
           </Button>
-          <Button size="sm" className="flex-1 h-10 gap-1.5" disabled={!accepted} onClick={onAccept}>
-            <CheckCircle2 className="w-3.5 h-3.5" />
+          <Button
+            size="sm"
+            className="flex-1 h-11 gap-1.5 text-xs font-semibold"
+            disabled={!accepted}
+            onClick={onAccept}
+          >
+            <CheckCircle2 className="w-4 h-4" />
             Aceitar e continuar
           </Button>
         </div>
