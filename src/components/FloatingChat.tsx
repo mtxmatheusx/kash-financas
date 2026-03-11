@@ -13,10 +13,13 @@ import { TransactionConfirmCard, type ParsedTransaction } from "@/components/Tra
 import { useAccount } from "@/contexts/AccountContext";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useSpeechToText } from "@/hooks/useSpeechToText";
+import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+
+const PROCESS_AUDIO_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/process-audio`;
 
 type ConsultantType = "financial" | "sales";
 
@@ -199,6 +202,45 @@ export const FloatingChat: React.FC = () => {
     onError: (err) => toast.error(err),
   });
 
+  // Real audio recorder — captures audio, converts to base64, sends to webhook
+  const sendAudioToWebhook = useCallback(async (base64Audio: string, mimeType: string) => {
+    try {
+      const resp = await fetch(PROCESS_AUDIO_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ audio_base64: base64Audio, mime_type: mimeType }),
+      });
+
+      if (!resp.ok) {
+        const data = await resp.json().catch(() => ({}));
+        throw new Error(data.error || "Falha ao processar áudio");
+      }
+
+      const data = await resp.json();
+      toast.success("Lançamento processado pela IA com sucesso!");
+
+      // If the webhook returns a transaction or text, stage it
+      if (data.result?.transaction) {
+        setPendingTx(data.result.transaction);
+      } else if (data.result?.message) {
+        stageMessage(data.result.message);
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Erro ao enviar áudio para processamento.");
+    }
+  }, []);
+
+  const { isRecording: isAudioRecording, isSending: isAudioSending, duration: recordingDuration, start: startRecording, stop: stopRecording } = useAudioRecorder({
+    onRecordingComplete: sendAudioToWebhook,
+    onError: (err) => toast.error(err),
+    maxDurationMs: 120_000,
+  });
+
+  const isRecordingOrSending = isAudioRecording || isAudioSending;
+
   const switchConsultant = (type: ConsultantType) => {
     if (type === consultantType) return;
     abortRef.current?.abort();
@@ -328,15 +370,15 @@ export const FloatingChat: React.FC = () => {
       onSend={stageMessage}
       isLoading={isLoading}
       title={config.label}
-      placeholder={isListening ? "🎙️ Ouvindo..." : config.placeholder}
+      placeholder={isAudioRecording ? `🎙️ Gravando... ${recordingDuration}s` : isAudioSending ? "⏳ Processando áudio..." : isListening ? "🎙️ Ouvindo..." : config.placeholder}
       headerBadges={[
         { label: consultantType === "financial" ? "Financeiro" : "Vendas", variant: "primary" },
         { label: "IA", variant: "accent" },
       ]}
-      micProps={micSupported ? {
-        isListening,
-        onToggle: isListening ? stopListening : startListening,
-      } : undefined}
+      micProps={{
+        isListening: isAudioRecording || isAudioSending,
+        onToggle: isAudioRecording ? stopRecording : startRecording,
+      }}
     >
       {/* Consultant Toggle + Clear */}
       <div className="px-4 pt-3 pb-1 flex items-center gap-2">
