@@ -1,6 +1,9 @@
 export type TranslationKey = keyof typeof pt;
 
 const pt = {
+  // SEO
+  "seo.landing.title": "Faciliten — Finanças simplificadas com IA",
+  "seo.landing.description": "Controle financeiro inteligente com IA. Registre receitas e despesas por voz, WhatsApp ou chat. Gratuito para começar.",
   // Navigation
   "nav.home": "Home",
   "nav.income": "Receitas",
