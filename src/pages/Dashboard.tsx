@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { PageTransition, staggerContainer, staggerItem, slideUp, fadeIn } from "@/components/PageTransition";
+import { SummaryBar } from "@/components/SummaryBar";
 import { KPICard } from "@/components/KPICard";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useInvestments } from "@/hooks/useInvestments";
@@ -119,21 +120,11 @@ const Dashboard: React.FC = () => {
         </motion.div>
 
         {/* KPIs */}
-        <motion.div
-          className="grid grid-cols-2 gap-2.5 md:gap-3 lg:grid-cols-4"
-          variants={staggerContainer}
-          initial="initial"
-          animate="animate"
-        >
-          <KPICard title="Saldo" value={formatBRL(filteredTotals.balance)} icon={Wallet}
-            color="bg-primary/10 text-primary" />
-          <KPICard title="Receitas" value={formatBRL(filteredTotals.income)} icon={TrendingUp}
-            color="bg-fin-income/10 text-fin-income" />
-          <KPICard title="Despesas" value={formatBRL(filteredTotals.expense)} icon={TrendingDown}
-            color="bg-fin-expense/10 text-fin-expense" />
-          <KPICard title="Investimentos" value={formatBRL(investmentTotal)} icon={PiggyBank}
-            color="bg-fin-investment/10 text-fin-investment" />
-        </motion.div>
+        <SummaryBar items={[
+          { label: "Receitas", value: formatBRL(filteredTotals.income), color: "income", icon: TrendingUp },
+          { label: "Despesas", value: formatBRL(filteredTotals.expense), color: "expense", icon: TrendingDown },
+          { label: "Saldo", value: formatBRL(filteredTotals.balance), color: "primary", icon: Wallet },
+        ]} />
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 md:gap-3">
