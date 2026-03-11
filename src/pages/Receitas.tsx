@@ -133,63 +133,13 @@ const Receitas: React.FC = () => {
           <Input placeholder="Buscar receitas..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10 h-9 md:h-10" />
         </div>
 
-        <div className="rounded-xl border border-border bg-card shadow-lg overflow-hidden">
-          <div className="grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center bg-muted/50 px-4 md:px-6 py-3 border-b border-border/50">
-            <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider">Descrição</span>
-            <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:block">Categoria</span>
-            <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider text-center">Status</span>
-            <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider text-right">Valor</span>
-            <span className="w-16" />
-          </div>
-
-          {filtered.length > 0 ? (
-            <div>
-              {filtered.map(t => (
-                <div key={t.id} className="grid grid-cols-[1fr_auto_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center px-4 md:px-6 py-3.5 md:py-4 border-b border-border/50 last:border-b-0 hover:bg-muted/30 transition-colors duration-150 group">
-                  <div className="min-w-0 pr-3">
-                    <p className="text-sm font-medium text-foreground truncate">{t.description}</p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">
-                      {new Date(t.date).toLocaleDateString('pt-BR')}
-                      {t.entry_type === 'recurring' && ` · Recorrente ${t.frequency === 'yearly' ? '(Anual)' : '(Mensal)'}`}
-                      {t.entry_type === 'installment' && ` · Contrato ${t.installments} meses`}
-                      <span className="md:hidden"> · {t.category}</span>
-                    </p>
-                  </div>
-
-                  <span className="text-xs text-muted-foreground hidden md:block">{t.category}</span>
-
-                  <div className="flex justify-center px-2">
-                    <span className={cn(
-                      "inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide",
-                      t.status === 'paid'
-                        ? "bg-fin-income/10 text-fin-income border border-fin-income/20"
-                        : "bg-fin-pending/10 text-fin-pending border border-fin-pending/20"
-                    )}>
-                      {t.status === 'paid' ? 'Recebido' : 'Pendente'}
-                    </span>
-                  </div>
-
-                  <span className="font-mono-fin text-sm font-semibold text-fin-income text-right pl-3 whitespace-nowrap">
-                    + {formatBRL(t.amount)}
-                  </span>
-
-                  <div className="flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => openEdit(t)} className="p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-muted/50 transition-colors">
-                      <Pencil className="w-3.5 h-3.5" />
-                    </button>
-                    <button onClick={() => remove(t.id)} className="p-1.5 rounded-md text-muted-foreground hover:text-fin-expense hover:bg-muted/50 transition-colors">
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground text-center py-16">
-              {search ? 'Nenhuma receita encontrada' : 'Nenhuma receita registrada'}
-            </p>
-          )}
-        </div>
+        <TransactionGroupedList
+          transactions={filtered}
+          type="income"
+          onEdit={openEdit}
+          onRemove={remove}
+          onToggleStatus={(id, status) => update(id, { status })}
+        />
       </div>
 
       <Dialog open={showForm} onOpenChange={v => { if (!v) { setEditingId(null); } setShowForm(v); }}>
