@@ -255,18 +255,38 @@ const DRE: React.FC = () => {
               <h1 className="text-2xl font-bold text-foreground">DRE</h1>
               <p className="text-sm text-muted-foreground">Demonstração do Resultado do Exercício</p>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" onClick={() => setRefDate(d => subMonths(d, 1))}>
-                <ChevronLeft className="w-4 h-4" />
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleExportPDF}
+                disabled={exporting}
+                className="gap-2"
+              >
+                {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                Exportar PDF
               </Button>
-              <span className="text-sm font-medium text-foreground min-w-[120px] text-center capitalize">
-                {format(refDate, "MMMM yyyy", { locale: ptBR })}
-              </span>
-              <Button variant="ghost" size="icon" onClick={() => setRefDate(d => subMonths(d, -1))}>
-                <ChevronRight className="w-4 h-4" />
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="icon" onClick={() => setRefDate(d => subMonths(d, 1))}>
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                <span className="text-sm font-medium text-foreground min-w-[120px] text-center capitalize">
+                  {format(refDate, "MMMM yyyy", { locale: ptBR })}
+                </span>
+                <Button variant="ghost" size="icon" onClick={() => setRefDate(d => subMonths(d, -1))}>
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </div>
+
+          {/* PDF-exportable content */}
+          <div ref={dreRef} className="space-y-6 bg-background">
+            {/* PDF Header (hidden on screen, visible in export) */}
+            <div className="hidden print:block text-center mb-4">
+              <h2 className="text-xl font-bold">Demonstração do Resultado do Exercício</h2>
+              <p className="text-sm text-muted-foreground capitalize">{format(refDate, "MMMM yyyy", { locale: ptBR })}</p>
+            </div>
 
           {/* Summary Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
