@@ -778,11 +778,11 @@ const Importar: React.FC = () => {
             <div className="w-12 h-12 rounded-full bg-fin-income/10 flex items-center justify-center mx-auto">
               <Check className="w-6 h-6 text-fin-income" />
             </div>
-            <h2 className="text-lg font-bold text-foreground">Importação concluída!</h2>
+            <h2 className="text-lg font-bold text-foreground">{t("import.doneTitle")}</h2>
             <p className="text-sm text-muted-foreground">
-              {importCount} transações foram importadas com sucesso para a conta {account.type === "personal" ? "Pessoal" : "Empresa"}.
+              {t("import.doneDesc").replace("{count}", String(importCount)).replace("{account}", account.type === "personal" ? t("topbar.personal") : t("topbar.business"))}
             </p>
-            <Button onClick={reset}>Importar outro arquivo</Button>
+            <Button onClick={reset}>{t("import.importAnother")}</Button>
           </div>
         )}
       </div>
