@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from "react";
-import { Bot, TrendingUp, Mic, MicOff, ImageIcon, Check, X, Send, Plus, Minus, BarChart3 } from "lucide-react";
+import { Bot, TrendingUp, Mic, MicOff, ImageIcon, Check, X, Send, Plus, Minus, BarChart3, Lightbulb, LineChart } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import {
@@ -352,6 +352,8 @@ export const FloatingChat: React.FC = () => {
                 { label: "Registrar receita", icon: Plus, msg: "Quero registrar uma receita", color: "text-fin-income border-fin-income/30 bg-fin-income/5 hover:bg-fin-income/10" },
                 { label: "Registrar despesa", icon: Minus, msg: "Quero registrar uma despesa", color: "text-fin-expense border-fin-expense/30 bg-fin-expense/5 hover:bg-fin-expense/10" },
                 { label: "Ver resumo", icon: BarChart3, msg: "Me mostre um resumo financeiro do mês", color: "text-primary border-primary/30 bg-primary/5 hover:bg-primary/10" },
+                { label: "Dica de economia", icon: Lightbulb, msg: "Me dê uma dica prática para economizar dinheiro no dia a dia", color: "text-fin-pending border-fin-pending/30 bg-fin-pending/5 hover:bg-fin-pending/10" },
+                { label: "Simular investimento", icon: LineChart, msg: "Quero simular um investimento. Me ajude a calcular rendimentos", color: "text-fin-investment border-fin-investment/30 bg-fin-investment/5 hover:bg-fin-investment/10" },
               ].map((s) => (
                 <button
                   key={s.label}
