@@ -65,6 +65,35 @@ const Configuracoes: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [fetchingCep, setFetchingCep] = useState(false);
+  const [qrCodeImage, setQrCodeImage] = useState<string | null>(null);
+  const [qrLoading, setQrLoading] = useState(false);
+
+  const handleGenerateQr = async () => {
+    if (!settings.n8n_webhook_url) {
+      toast.error("Configure a URL do webhook N8N primeiro.");
+      return;
+    }
+    setQrLoading(true);
+    setQrCodeImage(null);
+    try {
+      const res = await fetch(settings.n8n_webhook_url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "generate_qr", user_id: user?.id }),
+      });
+      const data = await res.json();
+      if (data?.qrCode || data?.base64) {
+        const img = data.qrCode || data.base64;
+        setQrCodeImage(img.startsWith("data:") ? img : `data:image/png;base64,${img}`);
+        toast.success("QR Code gerado! Escaneie com seu celular.");
+      } else {
+        toast.error("Não foi possível gerar o QR Code.");
+      }
+    } catch {
+      toast.error("Erro ao conectar com o servidor. Verifique a URL do webhook.");
+    }
+    setQrLoading(false);
+  };
 
   useEffect(() => {
     if (!user) return;
