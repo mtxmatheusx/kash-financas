@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import {
   LayoutDashboard, TrendingUp, TrendingDown, PieChart, Target, CalendarRange,
   Sun, Moon, ChevronLeft, ChevronRight, Compass, FileText, Calculator, Upload,
-  Crown, LogOut,
+  Crown, LogOut, UserCog,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAccount } from "@/contexts/AccountContext";
@@ -35,6 +35,7 @@ const menuItems: MenuItem[] = [
   { path: "/dre", label: "DRE", icon: FileText, account: "business" },
   { path: "/ebitda", label: "EBITDA", icon: Calculator, account: "business" },
   { path: "/importar", label: "Importar", icon: Upload },
+  { path: "/perfil", label: "Meu Perfil", icon: UserCog },
 ];
 
 interface Props {

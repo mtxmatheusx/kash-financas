@@ -13,6 +13,7 @@ interface Profile {
   subscription_tier: SubscriptionTier;
   trial_end: string | null;
   referral_code: string | null;
+  whatsapp_number: string | null;
 }
 
 interface AuthContextType {
