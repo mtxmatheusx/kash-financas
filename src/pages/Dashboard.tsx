@@ -168,9 +168,9 @@ const Dashboard: React.FC = () => {
                   tick={{ fill: 'hsl(220, 10%, 48%)', fontSize: 10, fontFamily: 'JetBrains Mono' }}
                   tickFormatter={formatCompact} />
                 <Tooltip content={<CockpitTooltip />} cursor={{ fill: 'hsl(var(--muted))', opacity: 0.3 }} />
-                <Bar dataKey="income" name="Receitas" fill="hsl(var(--fin-income))" radius={[4, 4, 0, 0]}
+                <Bar dataKey="income" name={t("kpi.income")} fill="hsl(var(--fin-income))" radius={[4, 4, 0, 0]}
                   opacity={0.85} animationDuration={800} />
-                <Bar dataKey="expense" name="Despesas" fill="hsl(var(--fin-expense))" radius={[4, 4, 0, 0]}
+                <Bar dataKey="expense" name={t("kpi.expenses")} fill="hsl(var(--fin-expense))" radius={[4, 4, 0, 0]}
                   opacity={0.85} animationDuration={800} animationBegin={200} />
               </BarChart>
             </ResponsiveContainer>
