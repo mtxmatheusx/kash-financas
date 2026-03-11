@@ -171,7 +171,7 @@ const Investimentos: React.FC = () => {
                       <p className="text-sm font-semibold text-card-foreground truncate">{inv.name}</p>
                       <div className="flex items-center gap-1.5 mt-0.5">
                         <div className="w-1.5 h-1.5 rounded-full bg-fin-investment" style={{ boxShadow: '0 0 4px hsl(var(--fin-investment))' }} />
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{inv.type}</p>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{INVEST_TYPE_KEYS.find(k => k.value === inv.type) ? t(INVEST_TYPE_KEYS.find(k => k.value === inv.type)!.tKey) : inv.type}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-0.5 shrink-0">
