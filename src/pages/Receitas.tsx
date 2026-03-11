@@ -61,6 +61,7 @@ const Receitas: React.FC = () => {
       entry_type: t.entry_type ?? 'single',
       installments: String(t.installments ?? 2),
       frequency: t.frequency ?? 'monthly',
+      recurring_months: '12',
     });
     setAmountCents(Math.round(t.amount * 100));
     setShowForm(true);
