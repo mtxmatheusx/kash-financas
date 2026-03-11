@@ -469,13 +469,8 @@ const Landing: React.FC = () => {
                     </li>
                   ))}
                 </ul>
-                    <li key={item} className="flex items-start gap-3 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
-                      <Check className="w-4 h-4 text-[hsl(160,100%,50%)] shrink-0 mt-0.5" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
               </div>
+            </motion.div>
             </motion.div>
           </div>
         </div>
