@@ -130,7 +130,7 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
       setAll(prev => [...mapped, ...prev]);
       if (count > 1) toast.success(`${count} lançamentos criados automaticamente!`);
     }
-  }, [user]);
+  }, [user, all]);
 
   const update = useCallback(async (id: string, updates: Partial<TransactionRow> & { recurring_months?: number }) => {
     // Strip non-db fields before sending to Supabase
