@@ -37,7 +37,7 @@ const Receitas: React.FC = () => {
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState(emptyForm());
+  const [form, setForm] = useState(emptyForm(defaultCurrency));
   const [amountCents, setAmountCents] = useState(0);
   const [userChangedCategory, setUserChangedCategory] = useState(false);
 
