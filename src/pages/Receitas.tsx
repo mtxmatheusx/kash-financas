@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { SummaryBar } from "@/components/SummaryBar";
 import { CurrencyInput } from "@/components/CurrencyInput";
 import type { TransactionRow } from "@/lib/types";
 import { useAutoCategory } from "@/hooks/useAutoCategory";
