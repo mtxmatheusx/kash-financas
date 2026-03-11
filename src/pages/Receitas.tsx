@@ -17,7 +17,17 @@ import { Sparkles } from "lucide-react";
 import { usePreferences, CURRENCIES, type CurrencyCode } from "@/contexts/PreferencesContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const CATEGORIES = ['Salário', 'Freelance', 'Vendas', 'Serviços', 'Aluguel', 'Dividendos', 'Outros'];
+// Category keys mapped to translation keys for i18n display
+const INCOME_CAT_KEYS = [
+  { value: 'Salário', tKey: 'cat.income.salary' as const },
+  { value: 'Freelance', tKey: 'cat.income.freelance' as const },
+  { value: 'Vendas', tKey: 'cat.income.sales' as const },
+  { value: 'Serviços', tKey: 'cat.income.services' as const },
+  { value: 'Aluguel', tKey: 'cat.income.rent' as const },
+  { value: 'Dividendos', tKey: 'cat.income.dividends' as const },
+  { value: 'Outros', tKey: 'cat.income.other' as const },
+];
+const CATEGORIES = INCOME_CAT_KEYS.map(c => c.value);
 
 const emptyForm = (defaultCurrency: CurrencyCode = 'BRL') => ({
   description: '', amount: '', category: CATEGORIES[0],
