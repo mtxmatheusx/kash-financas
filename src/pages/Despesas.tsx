@@ -131,6 +131,7 @@ const Despesas: React.FC = () => {
       status: form.status,
       entry_type: form.entry_type,
       account_type: account.type,
+      currency: form.currency,
       is_percentage: form.is_percentage,
       percentage_base: form.percentage_base,
       ...(form.is_percentage ? { percentage: pct } : {}),
