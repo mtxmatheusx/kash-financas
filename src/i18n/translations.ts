@@ -533,6 +533,13 @@ const pt = {
   "whatsapp.description": "Automatize seus registros — envie um áudio e a Faciliten lança receitas e despesas por você.",
   "whatsapp.cta": "Ativar no WhatsApp",
 
+  "dateFilter.all": "Todos",
+  "dateFilter.today": "Hoje",
+  "dateFilter.yesterday": "Ontem",
+  "dateFilter.week": "Semana",
+  "dateFilter.month": "Mês",
+  "dateFilter.period": "Período",
+
   // Financial Insights
   "insights.title": "Insights com IA",
   "insights.preference": "preferência",
@@ -1338,6 +1345,13 @@ const en: typeof pt = {
   "whatsapp.description": "Automate your records — send a voice note and Faciliten logs income and expenses for you.",
   "whatsapp.cta": "Activate on WhatsApp",
 
+  "dateFilter.all": "All",
+  "dateFilter.today": "Today",
+  "dateFilter.yesterday": "Yesterday",
+  "dateFilter.week": "Week",
+  "dateFilter.month": "Month",
+  "dateFilter.period": "Period",
+
   "insights.title": "AI Insights",
   "insights.preference": "preference",
   "insights.preferences": "preferences",
@@ -2129,6 +2143,13 @@ const es: typeof pt = {
   "whatsapp.title": "Grabación de Voz en WhatsApp",
   "whatsapp.description": "Automatiza tus registros — envía un audio y Faciliten registra ingresos y gastos por ti.",
   "whatsapp.cta": "Activar en WhatsApp",
+
+  "dateFilter.all": "Todos",
+  "dateFilter.today": "Hoy",
+  "dateFilter.yesterday": "Ayer",
+  "dateFilter.week": "Semana",
+  "dateFilter.month": "Mes",
+  "dateFilter.period": "Período",
 
   "insights.title": "Insights con IA",
   "insights.preference": "preferencia",

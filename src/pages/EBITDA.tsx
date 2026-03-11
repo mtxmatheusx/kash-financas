@@ -8,7 +8,7 @@ import { usePreferences } from "@/contexts/PreferencesContext";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAccount } from "@/contexts/AccountContext";
 import { format, startOfMonth, endOfMonth, subMonths } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { ptBR, enUS, es as esLocale } from "date-fns/locale";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const parseNumber = (v: string) => {
@@ -37,7 +37,8 @@ const fields: FieldDef[] = [
 ];
 
 const EBITDA: React.FC = () => {
-  const { formatMoney: formatBRL, t } = usePreferences();
+  const { formatMoney: formatBRL, t, language } = usePreferences();
+  const dateLocale = language === "en" ? enUS : language === "es" ? esLocale : ptBR;
   const { allTransactions } = useTransactions();
   const { account } = useAccount();
   const [values, setValues] = useState<Record<string, string>>({});
@@ -103,7 +104,7 @@ const EBITDA: React.FC = () => {
                 <ChevronLeft className="w-4 h-4" />
               </Button>
               <span className="text-sm font-medium text-foreground min-w-[120px] text-center capitalize">
-                {format(refDate, "MMMM yyyy", { locale: ptBR })}
+                {format(refDate, "MMMM yyyy", { locale: dateLocale })}
               </span>
               <Button variant="ghost" size="icon" onClick={() => setRefDate(d => subMonths(d, -1))}>
                 <ChevronRight className="w-4 h-4" />

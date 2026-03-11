@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { format, startOfDay, subDays, startOfWeek, startOfMonth, endOfMonth } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { ptBR, enUS, es as esLocale } from "date-fns/locale";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
@@ -16,38 +17,32 @@ interface Props {
   onCustomRangeChange: (range: { from?: Date; to?: Date }) => void;
 }
 
-const chips: { key: DateFilter; label: string }[] = [
-  { key: 'all', label: 'Todos' },
-  { key: 'today', label: 'Hoje' },
-  { key: 'yesterday', label: 'Ontem' },
-  { key: 'week', label: 'Semana' },
-  { key: 'month', label: 'Mês' },
-];
-
 export function getDateRange(filter: DateFilter, customRange: { from?: Date; to?: Date }) {
   const now = new Date();
   switch (filter) {
-    case 'today':
-      return { from: startOfDay(now), to: now };
-    case 'yesterday': {
-      const y = subDays(now, 1);
-      return { from: startOfDay(y), to: startOfDay(now) };
-    }
-    case 'week':
-      return { from: startOfWeek(now, { weekStartsOn: 0 }), to: now };
-    case 'month':
-      return { from: startOfMonth(now), to: endOfMonth(now) };
-    case 'custom':
-      return { from: customRange.from, to: customRange.to };
-    default:
-      return { from: undefined, to: undefined };
+    case 'today': return { from: startOfDay(now), to: now };
+    case 'yesterday': { const y = subDays(now, 1); return { from: startOfDay(y), to: startOfDay(now) }; }
+    case 'week': return { from: startOfWeek(now, { weekStartsOn: 1 }), to: now };
+    case 'month': return { from: startOfMonth(now), to: endOfMonth(now) };
+    case 'custom': return { from: customRange.from, to: customRange.to };
+    default: return { from: undefined, to: undefined };
   }
 }
 
 export const DashboardDateFilter: React.FC<Props> = ({ filter, onFilterChange, customRange, onCustomRangeChange }) => {
+  const { t, language } = usePreferences();
+  const dateLocale = language === "en" ? enUS : language === "es" ? esLocale : ptBR;
   const [calOpen, setCalOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef<HTMLButtonElement>(null);
+
+  const chips: { key: DateFilter; label: string }[] = [
+    { key: 'all', label: t("dateFilter.all") },
+    { key: 'today', label: t("dateFilter.today") },
+    { key: 'yesterday', label: t("dateFilter.yesterday") },
+    { key: 'week', label: t("dateFilter.week") },
+    { key: 'month', label: t("dateFilter.month") },
+  ];
 
   useEffect(() => {
     if (activeRef.current && scrollRef.current) {
@@ -108,8 +103,8 @@ export const DashboardDateFilter: React.FC<Props> = ({ filter, onFilterChange, c
               <span className="relative z-10 inline-flex items-center gap-1.5">
                 <CalendarIcon className="w-3 h-3" />
                 {filter === 'custom' && customRange.from
-                  ? `${format(customRange.from, 'dd/MM', { locale: ptBR })}${customRange.to ? ` – ${format(customRange.to, 'dd/MM', { locale: ptBR })}` : ''}`
-                  : 'Período'}
+                  ? `${format(customRange.from, 'dd/MM', { locale: dateLocale })}${customRange.to ? ` – ${format(customRange.to, 'dd/MM', { locale: dateLocale })}` : ''}`
+                  : t("dateFilter.period")}
               </span>
             </button>
           </PopoverTrigger>
@@ -122,7 +117,7 @@ export const DashboardDateFilter: React.FC<Props> = ({ filter, onFilterChange, c
                 if (range?.from && range?.to) setCalOpen(false);
               }}
               numberOfMonths={1}
-              locale={ptBR}
+              locale={dateLocale}
               className="p-3 pointer-events-auto"
             />
           </PopoverContent>
