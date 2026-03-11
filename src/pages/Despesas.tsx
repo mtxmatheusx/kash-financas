@@ -71,6 +71,7 @@ const Despesas: React.FC = () => {
       is_percentage: t.is_percentage ?? false,
       percentage: t.percentage ? String(t.percentage) : '',
       recurring_months: '12',
+      percentage_base: 'total',
     });
     setAmountCents(Math.round(t.amount * 100));
     setShowForm(true);
