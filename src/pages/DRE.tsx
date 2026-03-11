@@ -4,27 +4,36 @@ import { useTransactions } from "@/hooks/useTransactions";
 import { useAccount } from "@/contexts/AccountContext";
 import { format, startOfMonth, endOfMonth, subMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { usePreferences } from "@/contexts/PreferencesContext";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
+/* ── Category → DRE group mapping ── */
+const COST_CATEGORIES = ["Fornecedores", "Infraestrutura"]; // CPV / Custos diretos
 const EXPENSE_GROUPS: Record<string, string[]> = {
-  "Custos Operacionais": ["Fornecedores", "Infraestrutura", "Funcionários"],
-  "Despesas Administrativas": ["Casa", "Transporte", "Saúde"],
+  "Despesas com Pessoal": ["Funcionários"],
+  "Despesas Administrativas": ["Casa", "Transporte", "Saúde", "Alimentação"],
   "Despesas Comerciais": ["Marketing", "Lazer"],
   "Impostos e Taxas": ["Impostos"],
-  "Outras Despesas": ["Outros", "Alimentação"],
+  "Outras Despesas": ["Outros"],
 };
 
+/* ── DRE line type ── */
 interface DRELine {
   label: string;
   value: number;
+  prevValue?: number;
   indent?: number;
   bold?: boolean;
   highlight?: boolean;
   separator?: boolean;
+  tooltip?: string;
 }
+
+/* ── Helpers ── */
+const pct = (part: number, total: number) => (total !== 0 ? (part / total) * 100 : 0);
 
 const DRE: React.FC = () => {
   const { formatMoney: formatBRL } = usePreferences();
@@ -46,49 +55,74 @@ const DRE: React.FC = () => {
     const incomes = txs.filter(t => t.type === "income");
     const expenses = txs.filter(t => t.type === "expense");
 
+    // 1. Receita Bruta
     const receitaBruta = incomes.reduce((s, t) => s + t.amount, 0);
-
-    // Group income by category
     const incomeByCategory: Record<string, number> = {};
     incomes.forEach(t => {
       incomeByCategory[t.category] = (incomeByCategory[t.category] || 0) + t.amount;
     });
 
-    // Group expenses
-    const expenseGroupTotals: Record<string, { total: number; categories: Record<string, number> }> = {};
+    // 2. Deduções (placeholder — user can add later)
+    const deducoes = 0;
+
+    // 3. Receita Líquida
+    const receitaLiquida = receitaBruta - deducoes;
+
+    // 4. CPV — Custos dos Produtos Vendidos
+    const cpv = expenses
+      .filter(t => COST_CATEGORIES.includes(t.category))
+      .reduce((s, t) => s + t.amount, 0);
+    const cpvByCategory: Record<string, number> = {};
+    expenses.filter(t => COST_CATEGORIES.includes(t.category)).forEach(t => {
+      cpvByCategory[t.category] = (cpvByCategory[t.category] || 0) + t.amount;
+    });
+
+    // 5. Lucro Bruto
+    const lucroBruto = receitaLiquida - cpv;
+
+    // 6. Despesas Operacionais (agrupadas)
+    const allOpexCats = Object.values(EXPENSE_GROUPS).flat();
+    const opexGroups: Record<string, { total: number; categories: Record<string, number> }> = {};
+    let totalOpex = 0;
     Object.entries(EXPENSE_GROUPS).forEach(([group, cats]) => {
       const groupData: Record<string, number> = {};
       let groupTotal = 0;
       cats.forEach(cat => {
         const catTotal = expenses.filter(t => t.category === cat).reduce((s, t) => s + t.amount, 0);
-        if (catTotal > 0) {
-          groupData[cat] = catTotal;
-          groupTotal += catTotal;
-        }
+        if (catTotal > 0) { groupData[cat] = catTotal; groupTotal += catTotal; }
       });
       if (groupTotal > 0) {
-        expenseGroupTotals[group] = { total: groupTotal, categories: groupData };
+        opexGroups[group] = { total: groupTotal, categories: groupData };
+        totalOpex += groupTotal;
       }
     });
 
-    // Uncategorized expenses
-    const allMappedCats = Object.values(EXPENSE_GROUPS).flat();
-    const uncategorized = expenses
-      .filter(t => !allMappedCats.includes(t.category))
-      .reduce((s, t) => s + t.amount, 0);
+    // Despesas não classificadas
+    const mappedCats = [...COST_CATEGORIES, ...allOpexCats];
+    const uncategorized = expenses.filter(t => !mappedCats.includes(t.category)).reduce((s, t) => s + t.amount, 0);
+    totalOpex += uncategorized;
+
+    // 7. Lucro Operacional (EBIT)
+    const lucroOperacional = lucroBruto - totalOpex;
+
+    // 8. Outras receitas / despesas (placeholder)
+    const outrasReceitas = 0;
+    const outrasDespesas = 0;
+
+    // 9. Lucro Líquido
+    const lucroLiquido = lucroOperacional + outrasReceitas - outrasDespesas;
 
     const totalExpenses = expenses.reduce((s, t) => s + t.amount, 0);
-    const resultadoOperacional = receitaBruta - totalExpenses;
-    const margem = receitaBruta > 0 ? (resultadoOperacional / receitaBruta) * 100 : 0;
 
     return {
-      receitaBruta,
-      incomeByCategory,
-      expenseGroupTotals,
-      uncategorized,
+      receitaBruta, incomeByCategory, deducoes, receitaLiquida,
+      cpv, cpvByCategory, lucroBruto,
+      opexGroups, totalOpex, uncategorized,
+      lucroOperacional, outrasReceitas, outrasDespesas, lucroLiquido,
       totalExpenses,
-      resultadoOperacional,
-      margem,
+      margemBruta: pct(lucroBruto, receitaLiquida),
+      margemOperacional: pct(lucroOperacional, receitaLiquida),
+      margemLiquida: pct(lucroLiquido, receitaLiquida),
     };
   };
 
@@ -96,183 +130,232 @@ const DRE: React.FC = () => {
   const previous = useMemo(() => buildDRE(prevMonthStart, prevMonthEnd), [allTransactions, account.type, refDate]);
 
   const lines = useMemo((): DRELine[] => {
-    const result: DRELine[] = [];
+    const r: DRELine[] = [];
 
-    // RECEITAS
-    result.push({ label: "RECEITA OPERACIONAL BRUTA", value: current.receitaBruta, bold: true, highlight: true });
+    // ── RECEITA BRUTA ──
+    r.push({ label: "RECEITA BRUTA", value: current.receitaBruta, prevValue: previous.receitaBruta, bold: true, highlight: true, tooltip: "Total de vendas/receitas no período" });
     Object.entries(current.incomeByCategory).forEach(([cat, val]) => {
-      result.push({ label: cat, value: val, indent: 1 });
+      const prev = previous.incomeByCategory[cat] || 0;
+      r.push({ label: cat, value: val, prevValue: prev, indent: 1 });
     });
-    result.push({ label: "", value: 0, separator: true });
+    r.push({ label: "", value: 0, separator: true });
 
-    // DEDUÇÕES (placeholder)
-    result.push({ label: "(-) Deduções sobre receita", value: 0, indent: 1 });
-    result.push({ label: "RECEITA OPERACIONAL LÍQUIDA", value: current.receitaBruta, bold: true, highlight: true });
-    result.push({ label: "", value: 0, separator: true });
+    // ── DEDUÇÕES ──
+    r.push({ label: "(-) Deduções sobre receita", value: -current.deducoes, prevValue: -previous.deducoes, indent: 1, tooltip: "Devoluções, descontos e abatimentos" });
+    r.push({ label: "", value: 0, separator: true });
 
-    // DESPESAS
-    Object.entries(current.expenseGroupTotals).forEach(([group, data]) => {
-      result.push({ label: `(-) ${group}`, value: -data.total, bold: true });
+    // ── RECEITA LÍQUIDA ──
+    r.push({ label: "RECEITA LÍQUIDA", value: current.receitaLiquida, prevValue: previous.receitaLiquida, bold: true, highlight: true, tooltip: "Receita Bruta menos deduções" });
+    r.push({ label: "", value: 0, separator: true });
+
+    // ── CPV ──
+    r.push({ label: "(-) Custos dos Produtos/Serviços (CPV)", value: -current.cpv, prevValue: -previous.cpv, bold: true, tooltip: "Custos diretos de produção ou aquisição" });
+    Object.entries(current.cpvByCategory).forEach(([cat, val]) => {
+      const prev = previous.cpvByCategory[cat] || 0;
+      r.push({ label: cat, value: -val, prevValue: -prev, indent: 2 });
+    });
+    r.push({ label: "", value: 0, separator: true });
+
+    // ── LUCRO BRUTO ──
+    r.push({ label: "LUCRO BRUTO", value: current.lucroBruto, prevValue: previous.lucroBruto, bold: true, highlight: true, tooltip: "Receita Líquida menos CPV" });
+    r.push({ label: `Margem bruta: ${current.margemBruta.toFixed(1)}%`, value: 0, indent: 1 });
+    r.push({ label: "", value: 0, separator: true });
+
+    // ── DESPESAS OPERACIONAIS ──
+    Object.entries(current.opexGroups).forEach(([group, data]) => {
+      const prevGroup = previous.opexGroups[group];
+      r.push({ label: `(-) ${group}`, value: -data.total, prevValue: prevGroup ? -prevGroup.total : 0, bold: true });
       Object.entries(data.categories).forEach(([cat, val]) => {
-        result.push({ label: cat, value: -val, indent: 2 });
+        const prev = prevGroup?.categories[cat] || 0;
+        r.push({ label: cat, value: -val, prevValue: -prev, indent: 2 });
       });
     });
-
     if (current.uncategorized > 0) {
-      result.push({ label: "(-) Despesas não classificadas", value: -current.uncategorized, indent: 1 });
+      r.push({ label: "(-) Despesas não classificadas", value: -current.uncategorized, prevValue: -previous.uncategorized, indent: 1 });
     }
+    r.push({ label: "", value: 0, separator: true });
+    r.push({ label: "TOTAL DESPESAS OPERACIONAIS", value: -current.totalOpex, prevValue: -previous.totalOpex, bold: true });
+    r.push({ label: "", value: 0, separator: true });
 
-    result.push({ label: "", value: 0, separator: true });
-    result.push({ label: "TOTAL DE DESPESAS", value: -current.totalExpenses, bold: true });
-    result.push({ label: "", value: 0, separator: true });
+    // ── LUCRO OPERACIONAL ──
+    r.push({ label: "LUCRO OPERACIONAL (EBIT)", value: current.lucroOperacional, prevValue: previous.lucroOperacional, bold: true, highlight: true, tooltip: "Lucro Bruto menos Despesas Operacionais" });
+    r.push({ label: `Margem operacional: ${current.margemOperacional.toFixed(1)}%`, value: 0, indent: 1 });
+    r.push({ label: "", value: 0, separator: true });
 
-    // RESULTADO
-    result.push({ label: "RESULTADO OPERACIONAL", value: current.resultadoOperacional, bold: true, highlight: true });
-    result.push({ label: `Margem operacional: ${current.margem.toFixed(1)}%`, value: 0, indent: 1 });
+    // ── OUTRAS RECEITAS/DESPESAS ──
+    r.push({ label: "(+) Outras Receitas", value: current.outrasReceitas, prevValue: previous.outrasReceitas, indent: 1, tooltip: "Receitas não operacionais (juros, etc.)" });
+    r.push({ label: "(-) Outras Despesas", value: -current.outrasDespesas, prevValue: -previous.outrasDespesas, indent: 1, tooltip: "Despesas financeiras, juros, etc." });
+    r.push({ label: "", value: 0, separator: true });
 
-    return result;
-  }, [current]);
+    // ── LUCRO LÍQUIDO ──
+    r.push({ label: "LUCRO LÍQUIDO DO EXERCÍCIO", value: current.lucroLiquido, prevValue: previous.lucroLiquido, bold: true, highlight: true, tooltip: "Resultado final após todas as deduções" });
+    r.push({ label: `Margem líquida: ${current.margemLiquida.toFixed(1)}%`, value: 0, indent: 1 });
 
-  const variation = previous.resultadoOperacional !== 0
-    ? ((current.resultadoOperacional - previous.resultadoOperacional) / Math.abs(previous.resultadoOperacional)) * 100
+    return r;
+  }, [current, previous]);
+
+  const variation = previous.lucroLiquido !== 0
+    ? ((current.lucroLiquido - previous.lucroLiquido) / Math.abs(previous.lucroLiquido)) * 100
     : 0;
 
   return (
     <PageTransition>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">DRE</h1>
-            <p className="text-sm text-muted-foreground">Demonstração do Resultado do Exercício</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={() => setRefDate(d => subMonths(d, 1))}>
-              <ChevronLeft className="w-4 h-4" />
-            </Button>
-            <span className="text-sm font-medium text-foreground min-w-[120px] text-center capitalize">
-              {format(refDate, "MMMM yyyy", { locale: ptBR })}
-            </span>
-            <Button variant="ghost" size="icon" onClick={() => setRefDate(d => subMonths(d, -1))}>
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
-
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="rounded-xl border border-border bg-card p-4">
-            <p className="text-xs text-muted-foreground mb-1">Receita Bruta</p>
-            <p className="text-lg font-bold text-fin-income">{formatBRL(current.receitaBruta)}</p>
-          </div>
-          <div className="rounded-xl border border-border bg-card p-4">
-            <p className="text-xs text-muted-foreground mb-1">Total Despesas</p>
-            <p className="text-lg font-bold text-fin-expense">{formatBRL(current.totalExpenses)}</p>
-          </div>
-          <div className="rounded-xl border border-border bg-card p-4">
-            <p className="text-xs text-muted-foreground mb-1">Resultado</p>
-            <p className={cn("text-lg font-bold", current.resultadoOperacional >= 0 ? "text-fin-income" : "text-fin-expense")}>
-              {formatBRL(current.resultadoOperacional)}
-            </p>
-            {variation !== 0 && (
-              <p className={cn("text-xs mt-1", variation > 0 ? "text-fin-income" : "text-fin-expense")}>
-                {variation > 0 ? "+" : ""}{variation.toFixed(1)}% vs mês anterior
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* DRE Table */}
-        <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="grid grid-cols-[1fr_auto_auto] gap-x-6 px-4 py-3 border-b border-border bg-muted/30">
-            <span className="text-xs font-semibold text-muted-foreground uppercase">Descrição</span>
-            <span className="text-xs font-semibold text-muted-foreground uppercase text-right min-w-[100px]">Mês Atual</span>
-            <span className="text-xs font-semibold text-muted-foreground uppercase text-right min-w-[100px]">Mês Anterior</span>
+      <TooltipProvider>
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">DRE</h1>
+              <p className="text-sm text-muted-foreground">Demonstração do Resultado do Exercício</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="icon" onClick={() => setRefDate(d => subMonths(d, 1))}>
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              <span className="text-sm font-medium text-foreground min-w-[120px] text-center capitalize">
+                {format(refDate, "MMMM yyyy", { locale: ptBR })}
+              </span>
+              <Button variant="ghost" size="icon" onClick={() => setRefDate(d => subMonths(d, -1))}>
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
 
-          {lines.map((line, i) => {
-            if (line.separator) {
-              return <div key={i} className="border-t border-border" />;
-            }
-
-            // Find matching previous value for comparison
-            let prevValue = 0;
-            if (line.label === "RECEITA OPERACIONAL BRUTA" || line.label === "RECEITA OPERACIONAL LÍQUIDA") {
-              prevValue = previous.receitaBruta;
-            } else if (line.label === "TOTAL DE DESPESAS") {
-              prevValue = -previous.totalExpenses;
-            } else if (line.label === "RESULTADO OPERACIONAL") {
-              prevValue = previous.resultadoOperacional;
-            }
-
-            return (
-              <div
-                key={i}
-                className={cn(
-                  "grid grid-cols-[1fr_auto_auto] gap-x-6 px-4 py-2.5 border-b border-border/50 last:border-0",
-                  line.highlight && "bg-muted/20"
+          {/* Summary Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            {[
+              { label: "Receita Bruta", value: current.receitaBruta, color: "text-fin-income" },
+              { label: "Lucro Bruto", value: current.lucroBruto, color: current.lucroBruto >= 0 ? "text-fin-income" : "text-fin-expense" },
+              { label: "Total Despesas", value: current.totalExpenses, color: "text-fin-expense" },
+              { label: "Lucro Líquido", value: current.lucroLiquido, color: current.lucroLiquido >= 0 ? "text-fin-income" : "text-fin-expense" },
+            ].map((card, i) => (
+              <div key={i} className="rounded-xl border border-border bg-card p-4">
+                <p className="text-xs text-muted-foreground mb-1">{card.label}</p>
+                <p className={cn("text-lg font-bold", card.color)}>{formatBRL(Math.abs(card.value))}</p>
+                {i === 3 && variation !== 0 && (
+                  <p className={cn("text-xs mt-1", variation > 0 ? "text-fin-income" : "text-fin-expense")}>
+                    {variation > 0 ? "+" : ""}{variation.toFixed(1)}% vs mês anterior
+                  </p>
                 )}
-              >
-                <span
-                  className={cn(
-                    "text-sm",
-                    line.bold ? "font-semibold text-foreground" : "text-muted-foreground",
-                  )}
-                  style={{ paddingLeft: (line.indent || 0) * 16 }}
-                >
-                  {line.label}
-                </span>
-                <span
-                  className={cn(
-                    "text-sm text-right min-w-[100px]",
-                    line.bold ? "font-semibold" : "",
-                    line.value > 0 ? "text-fin-income" : line.value < 0 ? "text-fin-expense" : "text-muted-foreground"
-                  )}
-                >
-                  {line.value !== 0 ? formatBRL(Math.abs(line.value)) : "—"}
-                </span>
-                <span className="text-sm text-right min-w-[100px] text-muted-foreground">
-                  {prevValue !== 0 ? formatBRL(Math.abs(prevValue)) : "—"}
-                </span>
               </div>
-            );
-          })}
-        </div>
+            ))}
+          </div>
 
-        {/* Health Indicator */}
-        <div className="rounded-xl border border-border bg-card p-5">
-          <h3 className="text-sm font-semibold text-foreground mb-3">Análise Automática</h3>
-          <div className="space-y-2 text-sm text-muted-foreground">
-            {current.receitaBruta === 0 && current.totalExpenses === 0 ? (
-              <p>Nenhuma movimentação registrada neste mês.</p>
-            ) : (
-              <>
-                {current.resultadoOperacional > 0 ? (
-                  <p className="text-fin-income">
-                    ✓ Resultado positivo — sua operação gerou lucro de {formatBRL(current.resultadoOperacional)} ({current.margem.toFixed(1)}% de margem).
-                  </p>
-                ) : (
-                  <p className="text-fin-expense">
-                    ✗ Resultado negativo — suas despesas excedem receitas em {formatBRL(Math.abs(current.resultadoOperacional))}.
-                  </p>
-                )}
-                {current.margem < 10 && current.margem > 0 && (
-                  <p className="text-fin-pending">⚠ Margem operacional abaixo de 10% — atenção aos custos.</p>
-                )}
-                {Object.entries(current.expenseGroupTotals).length > 0 && (
-                  <p>
-                    Maior grupo de despesa:{" "}
-                    <strong>
-                      {Object.entries(current.expenseGroupTotals).sort((a, b) => b[1].total - a[1].total)[0][0]}
-                    </strong>{" "}
-                    ({formatBRL(Object.entries(current.expenseGroupTotals).sort((a, b) => b[1].total - a[1].total)[0][1].total)})
-                  </p>
-                )}
-              </>
-            )}
+          {/* DRE Table */}
+          <div className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="grid grid-cols-[1fr_auto_auto] gap-x-6 px-4 py-3 border-b border-border bg-muted/30">
+              <span className="text-xs font-semibold text-muted-foreground uppercase">Descrição</span>
+              <span className="text-xs font-semibold text-muted-foreground uppercase text-right min-w-[100px]">Mês Atual</span>
+              <span className="text-xs font-semibold text-muted-foreground uppercase text-right min-w-[100px]">Mês Anterior</span>
+            </div>
+
+            {lines.map((line, i) => {
+              if (line.separator) return <div key={i} className="border-t border-border" />;
+
+              return (
+                <div
+                  key={i}
+                  className={cn(
+                    "grid grid-cols-[1fr_auto_auto] gap-x-6 px-4 py-2.5 border-b border-border/50 last:border-0",
+                    line.highlight && "bg-muted/20"
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "text-sm flex items-center gap-1.5",
+                      line.bold ? "font-semibold text-foreground" : "text-muted-foreground",
+                    )}
+                    style={{ paddingLeft: (line.indent || 0) * 16 }}
+                  >
+                    {line.label}
+                    {line.tooltip && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="w-3.5 h-3.5 text-muted-foreground/50 cursor-help shrink-0" />
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="max-w-[200px] text-xs">
+                          {line.tooltip}
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                  </span>
+                  <span
+                    className={cn(
+                      "text-sm text-right min-w-[100px]",
+                      line.bold ? "font-semibold" : "",
+                      line.value > 0 ? "text-fin-income" : line.value < 0 ? "text-fin-expense" : "text-muted-foreground"
+                    )}
+                  >
+                    {line.value !== 0 ? formatBRL(Math.abs(line.value)) : "—"}
+                  </span>
+                  <span className="text-sm text-right min-w-[100px] text-muted-foreground">
+                    {(line.prevValue ?? 0) !== 0 ? formatBRL(Math.abs(line.prevValue!)) : "—"}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Health Indicator */}
+          <div className="rounded-xl border border-border bg-card p-5">
+            <h3 className="text-sm font-semibold text-foreground mb-3">Análise Automática</h3>
+            <div className="space-y-2 text-sm text-muted-foreground">
+              {current.receitaBruta === 0 && current.totalExpenses === 0 ? (
+                <p>Nenhuma movimentação registrada neste mês.</p>
+              ) : (
+                <>
+                  {current.lucroLiquido > 0 ? (
+                    <p className="text-fin-income">
+                      ✓ Resultado positivo — lucro líquido de {formatBRL(current.lucroLiquido)} ({current.margemLiquida.toFixed(1)}% de margem).
+                    </p>
+                  ) : (
+                    <p className="text-fin-expense">
+                      ✗ Resultado negativo — prejuízo de {formatBRL(Math.abs(current.lucroLiquido))}.
+                    </p>
+                  )}
+                  {current.margemBruta > 0 && current.margemBruta < 30 && (
+                    <p className="text-fin-pending">⚠ Margem bruta abaixo de 30% — seus custos diretos estão elevados.</p>
+                  )}
+                  {current.margemOperacional > 0 && current.margemOperacional < 10 && (
+                    <p className="text-fin-pending">⚠ Margem operacional abaixo de 10% — atenção às despesas.</p>
+                  )}
+                  {Object.entries(current.opexGroups).length > 0 && (
+                    <p>
+                      Maior grupo de despesa:{" "}
+                      <strong>
+                        {Object.entries(current.opexGroups).sort((a, b) => b[1].total - a[1].total)[0][0]}
+                      </strong>{" "}
+                      ({formatBRL(Object.entries(current.opexGroups).sort((a, b) => b[1].total - a[1].total)[0][1].total)})
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Guide */}
+          <div className="rounded-xl border border-border bg-card p-5">
+            <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+              <Info className="w-4 h-4 text-primary" />
+              Como ler sua DRE
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-muted-foreground">
+              <div className="space-y-1">
+                <p className="font-medium text-foreground">Receita → Lucro Bruto</p>
+                <p>Receita Bruta menos deduções e custos diretos (CPV). Mostra a eficiência na produção/venda.</p>
+              </div>
+              <div className="space-y-1">
+                <p className="font-medium text-foreground">Lucro Bruto → EBIT</p>
+                <p>Lucro Bruto menos despesas operacionais (pessoal, admin, comercial). Mostra o resultado da operação.</p>
+              </div>
+              <div className="space-y-1">
+                <p className="font-medium text-foreground">EBIT → Lucro Líquido</p>
+                <p>EBIT ajustado por receitas/despesas não operacionais. É o resultado final do exercício.</p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </TooltipProvider>
     </PageTransition>
   );
 };
