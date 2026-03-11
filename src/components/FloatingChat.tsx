@@ -751,10 +751,11 @@ export const FloatingChat: React.FC = () => {
         </motion.div>
       )}
 
-      {/* Pending transaction confirmation */}
-      {pendingTx && (
+      {/* Pending transaction/investment confirmation */}
+      {(pendingTx || pendingInv) && (
         <TransactionConfirmCard
           transaction={pendingTx}
+          investment={pendingInv}
           onConfirm={handleConfirmTx}
           onCancel={handleCancelTx}
         />
