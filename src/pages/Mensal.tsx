@@ -1,10 +1,18 @@
 import React, { useState, useMemo } from "react";
 import { PageTransition } from "@/components/PageTransition";
+import { SummaryBar } from "@/components/SummaryBar";
 import { useTransactions } from "@/hooks/useTransactions";
-import { CalendarRange } from "lucide-react";
+import { CalendarRange, TrendingUp, TrendingDown, Wallet } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { createAnimatedBarShape } from "@/components/AnimatedBar";
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formatBRL = (v: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 
@@ -39,13 +47,11 @@ const Mensal: React.FC = () => {
     };
   }, [filteredData, monthlyData, selectedMonth]);
 
-  const summaryLabel = selectedMonth !== null ? MONTHS[selectedMonth] : "no ano";
-
   return (
     <PageTransition>
       <div className="space-y-4 md:space-y-6">
         {/* Header */}
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2">
               <CalendarRange className="w-5 h-5 md:w-6 md:h-6 text-primary" /> Visão Mensal
@@ -56,65 +62,39 @@ const Mensal: React.FC = () => {
                 : `Comparativo mensal de ${year}`}
             </p>
           </div>
-          <div className="flex gap-2">
-            <button onClick={() => setYear(y => y - 1)} className="px-3 py-1.5 rounded-lg border border-border text-xs md:text-sm hover:bg-accent transition-colors">
-              ← {year - 1}
-            </button>
-            <span className="px-3 py-1.5 text-xs md:text-sm font-semibold">{year}</span>
-            <button onClick={() => setYear(y => y + 1)} className="px-3 py-1.5 rounded-lg border border-border text-xs md:text-sm hover:bg-accent transition-colors">
-              {year + 1} →
-            </button>
-          </div>
-        </div>
-
-        {/* Month selector - horizontal scroll on mobile */}
-        <div className="overflow-x-auto -mx-3 px-3 md:mx-0 md:px-0">
-          <div className="flex gap-1.5 md:gap-2 md:flex-wrap min-w-max md:min-w-0">
-            <button
-              onClick={() => setSelectedMonth(null)}
-              className={cn(
-                "px-2.5 py-1.5 rounded-lg text-[11px] md:text-xs font-medium transition-all border whitespace-nowrap",
-                selectedMonth === null
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "border-border text-muted-foreground hover:bg-accent hover:text-foreground"
-              )}
-            >
-              Todos
-            </button>
-            {MONTHS.map((m, i) => (
-              <button
-                key={m}
-                onClick={() => setSelectedMonth(selectedMonth === i ? null : i)}
-                className={cn(
-                  "px-2.5 py-1.5 rounded-lg text-[11px] md:text-xs font-medium transition-all border whitespace-nowrap",
-                  selectedMonth === i
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "border-border text-muted-foreground hover:bg-accent hover:text-foreground"
-                )}
-              >
-                {m}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <button onClick={() => setYear(y => y - 1)} className="px-2.5 py-1.5 rounded-lg border border-border text-xs hover:bg-accent transition-colors">
+                ← {year - 1}
               </button>
-            ))}
+              <span className="px-2.5 py-1.5 text-xs font-semibold">{year}</span>
+              <button onClick={() => setYear(y => y + 1)} className="px-2.5 py-1.5 rounded-lg border border-border text-xs hover:bg-accent transition-colors">
+                {year + 1} →
+              </button>
+            </div>
+            <Select
+              value={selectedMonth !== null ? String(selectedMonth) : "all"}
+              onValueChange={(v) => setSelectedMonth(v === "all" ? null : parseInt(v))}
+            >
+              <SelectTrigger className="w-[140px] h-8 text-xs">
+                <SelectValue placeholder="Filtrar por mês..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os meses</SelectItem>
+                {MONTHS.map((m, i) => (
+                  <SelectItem key={m} value={String(i)}>{m}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
         {/* Summary */}
-        <div className="flex gap-2 overflow-x-auto -mx-3 px-3 md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-4">
-          <div className="rounded-xl border border-border bg-card p-3 md:p-5 enterprise-shadow min-w-[120px] shrink-0 md:shrink md:min-w-0">
-            <p className="text-[9px] md:text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">Receitas</p>
-            <p className="text-sm md:text-xl font-bold font-mono-fin text-fin-income">{formatBRL(summaryData.income)}</p>
-          </div>
-          <div className="rounded-xl border border-border bg-card p-3 md:p-5 enterprise-shadow min-w-[120px] shrink-0 md:shrink md:min-w-0">
-            <p className="text-[9px] md:text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">Despesas</p>
-            <p className="text-sm md:text-xl font-bold font-mono-fin text-fin-expense">{formatBRL(summaryData.expense)}</p>
-          </div>
-          <div className="rounded-xl border border-border bg-card p-3 md:p-5 enterprise-shadow min-w-[120px] shrink-0 md:shrink md:min-w-0">
-            <p className="text-[9px] md:text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">Saldo</p>
-            <p className={`text-sm md:text-xl font-bold font-mono-fin ${summaryData.income - summaryData.expense >= 0 ? 'text-fin-income' : 'text-fin-expense'}`}>
-              {formatBRL(summaryData.income - summaryData.expense)}
-            </p>
-          </div>
-        </div>
+        <SummaryBar items={[
+          { label: "Receitas", value: formatBRL(summaryData.income), color: "income", icon: TrendingUp },
+          { label: "Despesas", value: formatBRL(summaryData.expense), color: "expense", icon: TrendingDown },
+          { label: "Saldo", value: formatBRL(summaryData.income - summaryData.expense), color: summaryData.income - summaryData.expense >= 0 ? "income" : "expense", icon: Wallet },
+        ]} />
 
         {/* Chart */}
         <div className="rounded-xl border border-border bg-card p-3 md:p-5 enterprise-shadow">
@@ -129,7 +109,7 @@ const Mensal: React.FC = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* Month table - scrollable on mobile */}
+        {/* Month table */}
         <div className="rounded-xl border border-border bg-card enterprise-shadow overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm min-w-[400px]">

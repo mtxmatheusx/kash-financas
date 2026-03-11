@@ -53,10 +53,7 @@ const colorMap = {
 };
 
 export const SummaryBar: React.FC<SummaryBarProps> = ({ items }) => (
-  <div
-    className="grid gap-3"
-    style={{ gridTemplateColumns: `repeat(${items.length}, 1fr)` }}
-  >
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
     {items.map((item, i) => {
       const c = colorMap[item.color];
       const Icon = item.icon;
@@ -77,11 +74,11 @@ export const SummaryBar: React.FC<SummaryBarProps> = ({ items }) => (
 
           <div className="flex items-center gap-1.5 mb-1.5">
             {Icon && <Icon className={cn("w-3.5 h-3.5", c.text, "opacity-70")} />}
-            <p className="text-[9px] sm:text-[10px] md:text-xs font-semibold text-muted-foreground uppercase tracking-wider truncate">
+            <p className="text-[10px] md:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               {item.label}
             </p>
           </div>
-          <p className={cn("text-sm sm:text-base md:text-xl font-bold font-mono-fin tracking-tight truncate", c.text)}>
+          <p className={cn("text-lg md:text-xl font-bold font-mono-fin tracking-tight", c.text)}>
             {item.value}
           </p>
 
