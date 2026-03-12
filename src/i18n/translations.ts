@@ -837,6 +837,7 @@ const pt = {
   // Upgrade page
   "upgrade.title": "Escolha seu plano",
   "upgrade.subtitle": "Desbloqueie todo o potencial do Faciliten",
+  "upgrade.noCard": "Sem cartão de crédito • Cancele quando quiser",
   "upgrade.trialBanner": "{days} dia{plural} restante{plural} de trial",
   "upgrade.trialExpiredToday": "Seu trial expirou hoje",
   "upgrade.trialExpired": "Seu trial expirou — assine para continuar",
