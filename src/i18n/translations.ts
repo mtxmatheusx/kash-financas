@@ -765,6 +765,8 @@ const pt = {
   "auth.signup.referralLabel": "Código de indicação (opcional)",
   "auth.signup.referralPlaceholder": "Ex: AB12CD34",
   "auth.signup.referralHint": "Tem um código? Quem te indicou ganha +60 dias grátis!",
+  "auth.signup.referralPromoTitle": "🎁 Ganhe +30 dias grátis!",
+  "auth.signup.referralPromoDesc": "Cadastre-se agora e ganhe 30 dias de Premium grátis. Indique amigos e ambos ganham ainda mais dias!",
   "auth.signup.submit": "Começar 30 dias grátis",
   "auth.signup.loading": "Criando conta...",
   "auth.signup.hasAccount": "Já tem conta?",
