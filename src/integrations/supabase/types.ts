@@ -87,6 +87,7 @@ export type Database = {
           date: string
           id: string
           name: string
+          portfolio_id: string | null
           type: string
           user_id: string
         }
@@ -99,6 +100,7 @@ export type Database = {
           date?: string
           id?: string
           name?: string
+          portfolio_id?: string | null
           type?: string
           user_id: string
         }
@@ -111,7 +113,43 @@ export type Database = {
           date?: string
           id?: string
           name?: string
+          portfolio_id?: string | null
           type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investments_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portfolios: {
+        Row: {
+          account_type: Database["public"]["Enums"]["account_type"]
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          account_type?: Database["public"]["Enums"]["account_type"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          user_id: string
+        }
+        Update: {
+          account_type?: Database["public"]["Enums"]["account_type"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
           user_id?: string
         }
         Relationships: []

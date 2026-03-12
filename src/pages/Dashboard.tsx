@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { PageTransition, staggerContainer, staggerItem, slideUp, fadeIn } from "@/components/PageTransition";
+import { cn } from "@/lib/utils";
 import { SummaryBar } from "@/components/SummaryBar";
 import { KPICard } from "@/components/KPICard";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useInvestments } from "@/hooks/useInvestments";
-import { TrendingUp, TrendingDown, Wallet, PiggyBank, Activity } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, PiggyBank, Activity, Calendar } from "lucide-react";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { translateCategory } from "@/lib/categoryI18n";
 import {
@@ -56,6 +57,23 @@ const Dashboard: React.FC = () => {
 
   const [dateFilter, setDateFilter] = useState<DateFilter>('all');
   const [customRange, setCustomRange] = useState<{ from?: Date; to?: Date }>({});
+
+  // Weekly summary data
+  const weeklySummary = useMemo(() => {
+    const now = new Date();
+    const weekAgo = new Date(now);
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    weekAgo.setHours(0, 0, 0, 0);
+
+    const weekTxs = transactions.filter(tx => {
+      const d = new Date(tx.date + 'T12:00:00');
+      return d >= weekAgo && d <= now;
+    });
+
+    const income = weekTxs.filter(tx => tx.type === 'income').reduce((s, tx) => s + tx.amount, 0);
+    const expense = weekTxs.filter(tx => tx.type === 'expense').reduce((s, tx) => s + tx.amount, 0);
+    return { income, expense, balance: income - expense, count: weekTxs.length };
+  }, [transactions]);
 
   const filtered = useMemo(() => {
     const { from, to } = getDateRange(dateFilter, customRange);
@@ -200,6 +218,35 @@ const Dashboard: React.FC = () => {
             )}
           </motion.div>
         </div>
+
+        {/* Weekly Summary */}
+        <motion.div {...slideUp(0.25)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
+          <div className="flex items-center gap-2 mb-4">
+            <Calendar className="w-4 h-4 text-primary" />
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">{t("dashboard.weeklyTitle")}</h3>
+            <span className="text-[10px] text-muted-foreground ml-auto">{weeklySummary.count} {t("dashboard.weeklyTransactions")}</span>
+          </div>
+          {weeklySummary.count > 0 ? (
+            <div className="grid grid-cols-3 gap-3">
+              <div className="text-center p-3 rounded-lg bg-fin-income/5 border border-fin-income/10">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">{t("dashboard.weeklyIncome")}</p>
+                <p className="text-sm font-bold font-mono-fin text-fin-income">+{formatBRL(weeklySummary.income)}</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-fin-expense/5 border border-fin-expense/10">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">{t("dashboard.weeklyExpense")}</p>
+                <p className="text-sm font-bold font-mono-fin text-fin-expense">−{formatBRL(weeklySummary.expense)}</p>
+              </div>
+              <div className={cn("text-center p-3 rounded-lg border", weeklySummary.balance >= 0 ? "bg-primary/5 border-primary/10" : "bg-fin-expense/5 border-fin-expense/10")}>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">{t("dashboard.weeklyBalance")}</p>
+                <p className={cn("text-sm font-bold font-mono-fin", weeklySummary.balance >= 0 ? "text-primary" : "text-fin-expense")}>
+                  {formatBRL(weeklySummary.balance)}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <p className="text-xs text-muted-foreground text-center py-4">{t("dashboard.weeklyNoData")}</p>
+          )}
+        </motion.div>
 
         {/* AI Insights */}
         <motion.div {...slideUp(0.3)}>
