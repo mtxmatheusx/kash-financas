@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useSessionControl } from "@/hooks/useSessionControl";
 import type { User, Session } from "@supabase/supabase-js";
 
 type SubscriptionTier = "free" | "premium";
