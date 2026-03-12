@@ -2344,6 +2344,15 @@ const es: typeof pt = {
   "partner.expired": "Expirado",
   "partner.sharedPremium": "Premium compartido con tu pareja",
 
+  "sessions.title": "Dispositivos Conectados",
+  "sessions.subtitle": "Máximo de 2 dispositivos simultáneos. Elimina dispositivos que no reconozcas.",
+  "sessions.noDevices": "Ningún dispositivo registrado",
+  "sessions.thisDevice": "este dispositivo",
+  "sessions.active": "Activo ahora",
+  "sessions.deviceRemoved": "Dispositivo eliminado",
+  "sessions.blocked": "Límite de dispositivos alcanzado",
+  "sessions.blockedDesc": "Ya estás conectado en 2 dispositivos. Desconecta un dispositivo en la configuración para continuar.",
+
   "resetPw.invalidLink": "Enlace inválido o expirado. Solicita un nuevo enlace de recuperación.",
   "resetPw.requestNew": "Solicitar nuevo enlace",
   "resetPw.newPassword": "Nueva contraseña",
