@@ -26,6 +26,7 @@ interface AuthContextType {
   isTrialing: boolean;
   trialDaysLeft: number | null;
   subscriptionEnd: string | null;
+  sessionBlocked: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   checkSubscription: () => Promise<void>;
@@ -40,6 +41,7 @@ const AuthContext = createContext<AuthContextType>({
   isTrialing: false,
   trialDaysLeft: null,
   subscriptionEnd: null,
+  sessionBlocked: false,
   signOut: async () => {},
   refreshProfile: async () => {},
   checkSubscription: async () => {},
