@@ -493,14 +493,27 @@ export const FloatingChat: React.FC = () => {
     }
 
     const parsed = await parsePromise;
+    
+    // Check if this is a correction message (user saying "not X, it's Y")
+    const correctionPatterns = /não é (receita|despesa|investimento)|isso é (receita|despesa|investimento)|errad|corrig|na verdade|is not|it's a|actually|wrong/i;
+    const isCorrection = text ? correctionPatterns.test(text) : false;
+    
     if (parsed.investment) {
       setPendingInv(parsed.investment);
+      setPendingTx(null);
     } else if (parsed.transaction) {
       setPendingTx(parsed.transaction);
-    } else if (text && assistantSoFar.includes("✅")) {
+      setPendingInv(null);
+    } else if (text && (assistantSoFar.includes("✅") || isCorrection)) {
+      // Try to parse the AI's response which should contain the corrected data
       const fallback = await parseTransaction(assistantSoFar);
-      if (fallback.investment) setPendingInv(fallback.investment);
-      else if (fallback.transaction && fallback.transaction.amount > 0) setPendingTx(fallback.transaction);
+      if (fallback.investment) {
+        setPendingInv(fallback.investment);
+        setPendingTx(null);
+      } else if (fallback.transaction && fallback.transaction.amount > 0) {
+        setPendingTx(fallback.transaction);
+        setPendingInv(null);
+      }
     }
   };
 
