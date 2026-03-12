@@ -629,6 +629,16 @@ const pt = {
   "partner.expired": "Expirado",
   "partner.sharedPremium": "Premium compartilhado com seu parceiro(a)",
 
+  // Sessions / Devices
+  "sessions.title": "Dispositivos Conectados",
+  "sessions.subtitle": "Máximo de 2 dispositivos simultâneos. Remova dispositivos que não reconhece.",
+  "sessions.noDevices": "Nenhum dispositivo registrado",
+  "sessions.thisDevice": "este dispositivo",
+  "sessions.active": "Ativo agora",
+  "sessions.deviceRemoved": "Dispositivo removido",
+  "sessions.blocked": "Limite de dispositivos atingido",
+  "sessions.blockedDesc": "Você já está conectado em 2 dispositivos. Desconecte um dispositivo nas configurações para continuar.",
+
   // Reset Password
   "resetPw.invalidLink": "Link inválido ou expirado. Solicite um novo link de recuperação.",
   "resetPw.requestNew": "Solicitar novo link",
