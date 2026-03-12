@@ -107,6 +107,10 @@ const Upgrade: React.FC = () => {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground">{t("upgrade.title")}</h1>
           <p className="text-muted-foreground mt-2">{t("upgrade.subtitle")}</p>
+          <div className="mt-3 inline-flex items-center gap-2 bg-fin-income/10 text-fin-income px-4 py-2 rounded-full text-sm font-semibold">
+            <ShieldCheck className="h-4 w-4" />
+            {t("upgrade.noCard")}
+          </div>
           {isTrialing && trialDaysLeft !== null && (
             <div className="mt-4 inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
               <Clock className="h-4 w-4" />

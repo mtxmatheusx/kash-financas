@@ -2554,6 +2554,7 @@ const es: typeof pt = {
 
   "upgrade.title": "Elige tu plan",
   "upgrade.subtitle": "Desbloquea todo el potencial de Faciliten",
+  "upgrade.noCard": "Sin tarjeta de crédito • Cancela cuando quieras",
   "upgrade.trialBanner": "{days} día{plural} restante{plural} de prueba",
   "upgrade.trialExpiredToday": "Tu prueba expiró hoy",
   "upgrade.trialExpired": "Tu prueba expiró — suscríbete para continuar",
