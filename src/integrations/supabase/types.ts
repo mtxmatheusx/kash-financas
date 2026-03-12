@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_invites: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          invitee_email: string
+          inviter_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          invitee_email: string
+          inviter_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          invitee_email?: string
+          inviter_id?: string
+          status?: string
+        }
+        Relationships: []
+      }
       chat_messages: {
         Row: {
           consultant_type: string
@@ -215,6 +242,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      shared_accounts: {
+        Row: {
+          created_at: string
+          id: string
+          owner_id: string
+          partner_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          owner_id: string
+          partner_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          owner_id?: string
+          partner_id?: string
+        }
+        Relationships: []
       }
       transactions: {
         Row: {
@@ -433,6 +481,7 @@ export type Database = {
         Returns: boolean
       }
       generate_referral_code: { Args: never; Returns: string }
+      get_partner_id: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -440,6 +489,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_premium_shared: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       account_type: "personal" | "business"
