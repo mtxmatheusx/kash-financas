@@ -1696,6 +1696,7 @@ const en: typeof pt = {
 
   "upgrade.title": "Choose your plan",
   "upgrade.subtitle": "Unlock the full potential of Faciliten",
+  "upgrade.noCard": "No credit card required • Cancel anytime",
   "upgrade.trialBanner": "{days} day{plural} remaining in trial",
   "upgrade.trialExpiredToday": "Your trial expired today",
   "upgrade.trialExpired": "Your trial expired — subscribe to continue",
