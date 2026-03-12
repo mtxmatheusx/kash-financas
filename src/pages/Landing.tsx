@@ -361,6 +361,34 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
+      {/* ═══ UPGRADE BANNER ═══ */}
+      <section className="py-10 sm:py-16 px-4 sm:px-6">
+        <motion.div
+          {...fadeUp()}
+          className="max-w-5xl mx-auto rounded-3xl border border-[hsl(160,100%,50%)/0.2] bg-gradient-to-br from-[hsl(160,100%,50%)/0.08] via-[hsl(217,91%,60%)/0.05] to-transparent p-8 sm:p-12 text-center relative overflow-hidden"
+        >
+          <div className="absolute -top-12 -right-12 w-48 h-48 bg-[hsl(160,100%,50%)/0.08] rounded-full blur-3xl" />
+          <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-[hsl(217,91%,60%)/0.08] rounded-full blur-3xl" />
+          <div className="relative z-10">
+            <Crown className="w-10 h-10 sm:w-14 sm:h-14 text-[hsl(160,100%,50%)] mx-auto mb-4" />
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white mb-3 tracking-tight">
+              {t("landing.upgradeBanner.title")}
+            </h2>
+            <p className="text-sm sm:text-lg text-[hsl(0,0%,55%)] max-w-xl mx-auto mb-6 leading-relaxed">
+              {t("landing.upgradeBanner.desc")}
+            </p>
+            <Link to={signupLink}>
+              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                <Button size="lg" className="text-sm sm:text-base px-8 h-12 sm:h-14 bg-[hsl(160,100%,50%)] hover:bg-[hsl(160,100%,45%)] text-[hsl(0,0%,2%)] font-bold border-0 shadow-lg shadow-[hsl(160,100%,50%)/0.25]">
+                  <Crown className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                  {t("landing.upgradeBanner.cta")}
+                </Button>
+              </motion.div>
+            </Link>
+          </div>
+        </motion.div>
+      </section>
+
       {/* ═══ 3 STEPS ═══ */}
       <section id="como-funciona" className="py-14 sm:py-28 px-4 sm:px-6 relative">
         <Particles />
