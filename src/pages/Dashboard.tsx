@@ -57,6 +57,23 @@ const Dashboard: React.FC = () => {
   const [dateFilter, setDateFilter] = useState<DateFilter>('all');
   const [customRange, setCustomRange] = useState<{ from?: Date; to?: Date }>({});
 
+  // Weekly summary data
+  const weeklySummary = useMemo(() => {
+    const now = new Date();
+    const weekAgo = new Date(now);
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    weekAgo.setHours(0, 0, 0, 0);
+
+    const weekTxs = transactions.filter(tx => {
+      const d = new Date(tx.date + 'T12:00:00');
+      return d >= weekAgo && d <= now;
+    });
+
+    const income = weekTxs.filter(tx => tx.type === 'income').reduce((s, tx) => s + tx.amount, 0);
+    const expense = weekTxs.filter(tx => tx.type === 'expense').reduce((s, tx) => s + tx.amount, 0);
+    return { income, expense, balance: income - expense, count: weekTxs.length };
+  }, [transactions]);
+
   const filtered = useMemo(() => {
     const { from, to } = getDateRange(dateFilter, customRange);
     if (!from) return transactions;
