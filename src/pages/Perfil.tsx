@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { User, Phone, Mail, Save } from "lucide-react";
 import { toast } from "sonner";
+import { PartnerSection } from "@/components/PartnerSection";
 
 const Perfil: React.FC = () => {
   const { profile, user, refreshProfile } = useAuth();
@@ -71,6 +72,9 @@ const Perfil: React.FC = () => {
             {saving ? t("common.saving") : t("profile.saveProfile")}
           </Button>
         </div>
+
+        {/* Partner / Shared Account Section */}
+        <PartnerSection />
 
         {profile?.referral_code && (
           <div className="rounded-xl border border-border bg-card p-5">
