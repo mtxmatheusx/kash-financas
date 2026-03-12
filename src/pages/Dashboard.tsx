@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { PageTransition, staggerContainer, staggerItem, slideUp, fadeIn } from "@/components/PageTransition";
+import { cn } from "@/lib/utils";
 import { SummaryBar } from "@/components/SummaryBar";
 import { KPICard } from "@/components/KPICard";
 import { useTransactions } from "@/hooks/useTransactions";
