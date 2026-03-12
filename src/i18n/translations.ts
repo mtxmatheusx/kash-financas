@@ -238,6 +238,25 @@ const pt = {
   "investment.selectCountries": "Selecione os países",
   "investment.allCountries": "Todos os países",
   "investment.filterByCountry": "Filtrar por país",
+  "investment.portfolio": "Portfólio",
+  "investment.portfolios": "Portfólios",
+  "investment.newPortfolio": "Novo Portfólio",
+  "investment.portfolioName": "Nome do portfólio",
+  "investment.portfolioNamePlaceholder": "Ex: Aposentadoria, Reserva",
+  "investment.portfolioDescription": "Descrição (opcional)",
+  "investment.allPortfolios": "Todos os portfólios",
+  "investment.noPortfolio": "Sem portfólio",
+  "investment.deletePortfolio": "Excluir portfólio",
+  "investment.allocation": "Alocação",
+  "investment.savePortfolio": "Salvar Portfólio",
+
+  // Dashboard
+  "dashboard.weeklyTitle": "Resumo da Semana",
+  "dashboard.weeklyIncome": "Receitas da Semana",
+  "dashboard.weeklyExpense": "Despesas da Semana",
+  "dashboard.weeklyBalance": "Saldo da Semana",
+  "dashboard.weeklyTransactions": "Transações na semana",
+  "dashboard.weeklyNoData": "Nenhuma transação nos últimos 7 dias",
 
   // Goals
   "goals.title": "Metas Financeiras",
