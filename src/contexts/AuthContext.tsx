@@ -169,7 +169,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <AuthContext.Provider value={{
-      user, session, profile, loading, isPremium,
+      user, session, profile, loading, isPremium, sessionBlocked,
       isTrialing: isTrialActive && !hasStripeSubscription,
       trialDaysLeft,
       subscriptionEnd, signOut, refreshProfile, checkSubscription
