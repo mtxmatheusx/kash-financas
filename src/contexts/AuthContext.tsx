@@ -135,7 +135,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Premium if: has Stripe subscription OR trial is active
   const hasStripeSubscription = profile?.subscription_tier === "premium" && !!subscriptionEnd;
-  const isPremium = hasStripeSubscription || isTrialActive;
+  const ownPremium = hasStripeSubscription || isTrialActive;
+
+  // Check if partner is premium (shared premium)
+  const [partnerPremium, setPartnerPremium] = useState(false);
+  useEffect(() => {
+    if (!user || ownPremium) { setPartnerPremium(false); return; }
+    supabase.rpc("is_premium_shared", { _user_id: user.id }).then(({ data }) => {
+      if (data) setPartnerPremium(true);
+    });
+  }, [user, ownPremium]);
+
+  const isPremium = ownPremium || partnerPremium;
 
   return (
     <AuthContext.Provider value={{
