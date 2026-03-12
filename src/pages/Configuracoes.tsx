@@ -11,6 +11,7 @@ import {
   Settings, User, Building2, CreditCard, Save, Crown, ExternalLink,
   FileText, Landmark, Bell, Webhook, Smartphone, MapPin, Loader2, MessageCircle, QrCode, Bot,
 } from "lucide-react";
+import { ActiveDevices } from "@/components/ActiveDevices";
 import { toast } from "sonner";
 import { maskCPF, maskCNPJ, maskPhone, maskCEP, unmask } from "@/lib/masks";
 import { usePreferences, CURRENCIES, LANGUAGES, type CurrencyCode, type LanguageCode } from "@/contexts/PreferencesContext";
@@ -613,6 +614,11 @@ const Configuracoes: React.FC = () => {
                   </Button>
                 )}
               </div>
+            </div>
+
+            {/* Active Devices */}
+            <div className="mt-6">
+              <ActiveDevices />
             </div>
           </TabsContent>
         </Tabs>

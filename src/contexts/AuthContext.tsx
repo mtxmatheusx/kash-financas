@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useSessionControl } from "@/hooks/useSessionControl";
 import type { User, Session } from "@supabase/supabase-js";
 
 type SubscriptionTier = "free" | "premium";
@@ -25,6 +26,7 @@ interface AuthContextType {
   isTrialing: boolean;
   trialDaysLeft: number | null;
   subscriptionEnd: string | null;
+  sessionBlocked: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   checkSubscription: () => Promise<void>;
@@ -39,6 +41,7 @@ const AuthContext = createContext<AuthContextType>({
   isTrialing: false,
   trialDaysLeft: null,
   subscriptionEnd: null,
+  sessionBlocked: false,
   signOut: async () => {},
   refreshProfile: async () => {},
   checkSubscription: async () => {},
@@ -52,6 +55,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
+  const [sessionBlocked, setSessionBlocked] = useState(false);
+  const { registerSession, logoutSession } = useSessionControl(user?.id);
 
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase
@@ -119,12 +124,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => clearInterval(interval);
   }, [user, checkSubscription]);
 
+  // Register session on login
+  useEffect(() => {
+    if (!user) { setSessionBlocked(false); return; }
+    registerSession().then((result) => {
+      if (!result.allowed) {
+        setSessionBlocked(true);
+      } else {
+        setSessionBlocked(false);
+      }
+    });
+  }, [user, registerSession]);
+
   const signOut = async () => {
+    await logoutSession();
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);
     setProfile(null);
     setSubscriptionEnd(null);
+    setSessionBlocked(false);
   };
 
   // Trial logic
@@ -150,7 +169,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <AuthContext.Provider value={{
-      user, session, profile, loading, isPremium,
+      user, session, profile, loading, isPremium, sessionBlocked,
       isTrialing: isTrialActive && !hasStripeSubscription,
       trialDaysLeft,
       subscriptionEnd, signOut, refreshProfile, checkSubscription

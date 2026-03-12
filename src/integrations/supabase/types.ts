@@ -363,6 +363,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_sessions: {
+        Row: {
+          created_at: string
+          device_id: string
+          device_name: string | null
+          id: string
+          ip_address: string | null
+          last_active_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_id: string
+          device_name?: string | null
+          id?: string
+          ip_address?: string | null
+          last_active_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_id?: string
+          device_name?: string | null
+          id?: string
+          ip_address?: string | null
+          last_active_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_settings: {
         Row: {
           address: string | null
@@ -480,6 +510,8 @@ export type Database = {
         Args: { new_user_id: string; referrer_code: string }
         Returns: boolean
       }
+      cleanup_stale_sessions: { Args: never; Returns: undefined }
+      count_active_sessions: { Args: { _user_id: string }; Returns: number }
       generate_referral_code: { Args: never; Returns: string }
       get_partner_id: { Args: { _user_id: string }; Returns: string }
       has_role: {
