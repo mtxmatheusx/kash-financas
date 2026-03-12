@@ -124,12 +124,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => clearInterval(interval);
   }, [user, checkSubscription]);
 
+  // Register session on login
+  useEffect(() => {
+    if (!user) { setSessionBlocked(false); return; }
+    registerSession().then((result) => {
+      if (!result.allowed) {
+        setSessionBlocked(true);
+      } else {
+        setSessionBlocked(false);
+      }
+    });
+  }, [user, registerSession]);
+
   const signOut = async () => {
+    await logoutSession();
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);
     setProfile(null);
     setSubscriptionEnd(null);
+    setSessionBlocked(false);
   };
 
   // Trial logic
