@@ -81,11 +81,24 @@ const Signup: React.FC = () => {
         transition={{ duration: 0.4 }}
         className="w-full max-w-md"
       >
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <img src={facilitenLogo} alt="Faciliten" className="w-12 h-12 rounded-xl mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-foreground">Faciliten</h1>
           <p className="text-muted-foreground mt-1">{t("auth.signup.trialBadge")}</p>
         </div>
+
+        {/* Referral promotion banner */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mb-6 rounded-2xl border-2 border-primary/30 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-5 text-center relative overflow-hidden"
+        >
+          <div className="absolute -top-6 -right-6 w-24 h-24 bg-primary/10 rounded-full blur-2xl" />
+          <Gift className="w-8 h-8 text-primary mx-auto mb-2" />
+          <h3 className="text-base font-bold text-foreground mb-1">{t("auth.signup.referralPromoTitle")}</h3>
+          <p className="text-sm text-muted-foreground leading-relaxed">{t("auth.signup.referralPromoDesc")}</p>
+        </motion.div>
 
         <Card className="border-border/50">
           <CardHeader>
