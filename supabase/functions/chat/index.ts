@@ -13,17 +13,18 @@ serve(async (req) => {
     
     // Build country context block for system prompts
     const countryContext = country
-      ? `\n\n**CONTEXTO DO USUÁRIO:**
-- País: ${country.name} (${country.code})
-- Moeda local: ${country.currency}
-- Idioma: ${country.language}
+      ? `\n\n**USER CONTEXT (MANDATORY):**
+- Country: ${country.name} (${country.code})
+- Local currency: ${country.currency}
+- Language: ${country.language}
 
-**REGRAS OBRIGATÓRIAS:**
-- SEMPRE use a moeda local (${country.currency}) em todos os exemplos e valores
-- Referencie investimentos, impostos e regulamentações do país ${country.name}
-- Responda no idioma ${country.language}
-- Use exemplos de mercado e produtos financeiros específicos de ${country.name}
-- NÃO use referências financeiras de outros países a menos que o usuário peça comparações`
+**MANDATORY RULES:**
+- ALWAYS respond in ${country.language} — this overrides the system prompt language
+- ALWAYS use the local currency (${country.currency}) in all examples and values
+- Reference investments, taxes and regulations of ${country.name}
+- Use market and financial product examples specific to ${country.name}
+- DO NOT use financial references from other countries unless the user asks for comparisons
+- When registering transactions/investments, format values with the correct currency symbol`
       : "";
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
