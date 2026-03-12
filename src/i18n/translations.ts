@@ -1625,6 +1625,8 @@ const en: typeof pt = {
   "auth.signup.referralLabel": "Referral code (optional)",
   "auth.signup.referralPlaceholder": "e.g. AB12CD34",
   "auth.signup.referralHint": "Have a code? The person who referred you gets +60 free days!",
+  "auth.signup.referralPromoTitle": "🎁 Get +30 free days!",
+  "auth.signup.referralPromoDesc": "Sign up now and get 30 days of Premium for free. Refer friends and both of you earn even more days!",
   "auth.signup.submit": "Start 30 free days",
   "auth.signup.loading": "Creating account...",
   "auth.signup.hasAccount": "Already have an account?",
