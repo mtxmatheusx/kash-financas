@@ -55,6 +55,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
+  const [sessionBlocked, setSessionBlocked] = useState(false);
+  const { registerSession, logoutSession } = useSessionControl(user?.id);
 
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase
