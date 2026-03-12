@@ -615,6 +615,11 @@ const Configuracoes: React.FC = () => {
                 )}
               </div>
             </div>
+
+            {/* Active Devices */}
+            <div className="mt-6">
+              <ActiveDevices />
+            </div>
           </TabsContent>
         </Tabs>
 
