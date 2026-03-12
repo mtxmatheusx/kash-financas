@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Crown, Loader2, Gift, Copy, Clock } from "lucide-react";
+import { Check, Crown, Loader2, Gift, Copy, Clock, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -107,6 +107,10 @@ const Upgrade: React.FC = () => {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground">{t("upgrade.title")}</h1>
           <p className="text-muted-foreground mt-2">{t("upgrade.subtitle")}</p>
+          <div className="mt-3 inline-flex items-center gap-2 bg-fin-income/10 text-fin-income px-4 py-2 rounded-full text-sm font-semibold">
+            <ShieldCheck className="h-4 w-4" />
+            {t("upgrade.noCard")}
+          </div>
           {isTrialing && trialDaysLeft !== null && (
             <div className="mt-4 inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
               <Clock className="h-4 w-4" />

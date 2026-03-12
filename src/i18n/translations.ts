@@ -837,6 +837,7 @@ const pt = {
   // Upgrade page
   "upgrade.title": "Escolha seu plano",
   "upgrade.subtitle": "Desbloqueie todo o potencial do Faciliten",
+  "upgrade.noCard": "Sem cartão de crédito • Cancele quando quiser",
   "upgrade.trialBanner": "{days} dia{plural} restante{plural} de trial",
   "upgrade.trialExpiredToday": "Seu trial expirou hoje",
   "upgrade.trialExpired": "Seu trial expirou — assine para continuar",
@@ -1695,6 +1696,7 @@ const en: typeof pt = {
 
   "upgrade.title": "Choose your plan",
   "upgrade.subtitle": "Unlock the full potential of Faciliten",
+  "upgrade.noCard": "No credit card required • Cancel anytime",
   "upgrade.trialBanner": "{days} day{plural} remaining in trial",
   "upgrade.trialExpiredToday": "Your trial expired today",
   "upgrade.trialExpired": "Your trial expired — subscribe to continue",
@@ -2552,6 +2554,7 @@ const es: typeof pt = {
 
   "upgrade.title": "Elige tu plan",
   "upgrade.subtitle": "Desbloquea todo el potencial de Faciliten",
+  "upgrade.noCard": "Sin tarjeta de crédito • Cancela cuando quieras",
   "upgrade.trialBanner": "{days} día{plural} restante{plural} de prueba",
   "upgrade.trialExpiredToday": "Tu prueba expiró hoy",
   "upgrade.trialExpired": "Tu prueba expiró — suscríbete para continuar",
