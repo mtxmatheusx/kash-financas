@@ -1492,6 +1492,15 @@ const en: typeof pt = {
   "partner.expired": "Expired",
   "partner.sharedPremium": "Premium shared with your partner",
 
+  "sessions.title": "Connected Devices",
+  "sessions.subtitle": "Maximum of 2 simultaneous devices. Remove devices you don't recognize.",
+  "sessions.noDevices": "No devices registered",
+  "sessions.thisDevice": "this device",
+  "sessions.active": "Active now",
+  "sessions.deviceRemoved": "Device removed",
+  "sessions.blocked": "Device limit reached",
+  "sessions.blockedDesc": "You are already connected on 2 devices. Disconnect a device in settings to continue.",
+
   "resetPw.invalidLink": "Invalid or expired link. Request a new recovery link.",
   "resetPw.requestNew": "Request new link",
   "resetPw.newPassword": "New password",
