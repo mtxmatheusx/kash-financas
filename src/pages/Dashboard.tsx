@@ -218,6 +218,35 @@ const Dashboard: React.FC = () => {
           </motion.div>
         </div>
 
+        {/* Weekly Summary */}
+        <motion.div {...slideUp(0.25)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
+          <div className="flex items-center gap-2 mb-4">
+            <Calendar className="w-4 h-4 text-primary" />
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">{t("dashboard.weeklyTitle")}</h3>
+            <span className="text-[10px] text-muted-foreground ml-auto">{weeklySummary.count} {t("dashboard.weeklyTransactions")}</span>
+          </div>
+          {weeklySummary.count > 0 ? (
+            <div className="grid grid-cols-3 gap-3">
+              <div className="text-center p-3 rounded-lg bg-fin-income/5 border border-fin-income/10">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">{t("dashboard.weeklyIncome")}</p>
+                <p className="text-sm font-bold font-mono-fin text-fin-income">+{formatBRL(weeklySummary.income)}</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-fin-expense/5 border border-fin-expense/10">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">{t("dashboard.weeklyExpense")}</p>
+                <p className="text-sm font-bold font-mono-fin text-fin-expense">−{formatBRL(weeklySummary.expense)}</p>
+              </div>
+              <div className={cn("text-center p-3 rounded-lg border", weeklySummary.balance >= 0 ? "bg-primary/5 border-primary/10" : "bg-fin-expense/5 border-fin-expense/10")}>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">{t("dashboard.weeklyBalance")}</p>
+                <p className={cn("text-sm font-bold font-mono-fin", weeklySummary.balance >= 0 ? "text-primary" : "text-fin-expense")}>
+                  {formatBRL(weeklySummary.balance)}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <p className="text-xs text-muted-foreground text-center py-4">{t("dashboard.weeklyNoData")}</p>
+          )}
+        </motion.div>
+
         {/* AI Insights */}
         <motion.div {...slideUp(0.3)}>
           <FinancialInsights
