@@ -25,6 +25,15 @@ export interface InvestmentRow {
   date: string;
   account_type: 'personal' | 'business';
   country?: string;
+  portfolio_id?: string;
+  created_at: string;
+}
+
+export interface PortfolioRow {
+  id: string;
+  name: string;
+  description?: string;
+  account_type: 'personal' | 'business';
   created_at: string;
 }
 
