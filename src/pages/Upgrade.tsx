@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Crown, Loader2, Gift, Copy, Clock } from "lucide-react";
+import { Check, Crown, Loader2, Gift, Copy, Clock, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { supabase } from "@/integrations/supabase/client";
