@@ -962,6 +962,8 @@ const en: typeof pt = {
   "topbar.personal": "Personal",
   "topbar.business": "Business",
   "topbar.encrypted": "100% encrypted",
+  "topbar.encryptionTooltipTitle": "AES-256 Encryption",
+  "topbar.encryptionTooltipDesc": "All your financial data is protected with bank-grade encryption. No one but you has access.",
   "landing.encryption.notice": "Your data is protected end-to-end",
 
   "chat.history": "History",
