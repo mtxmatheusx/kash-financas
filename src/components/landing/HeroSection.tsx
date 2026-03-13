@@ -1,9 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, ChevronRight, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ChevronRight } from "lucide-react";
 import { GridOverlay, Particles, fadeUp } from "./LandingAnimations";
+import { LandingCTA } from "./LandingComponents";
 import { WhatsAppIcon, MobileWhatsAppPreview, IPhoneMockup } from "./WhatsAppMockup";
 
 interface HeroSectionProps {
@@ -30,7 +29,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ t, signupLink }) => (
       {/* Left — Copy */}
       <div className="text-center lg:text-left">
         <motion.div {...fadeUp(0)}>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[hsl(var(--landing-neon)/0.2)] bg-[hsl(var(--landing-neon)/0.05)] backdrop-blur-sm text-[11px] font-semibold text-[hsl(var(--landing-neon))] mb-5 sm:mb-6 neon-box-glow">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[hsl(var(--landing-neon)/0.2)] bg-[hsl(var(--landing-neon)/0.05)] backdrop-blur-sm text-[11px] font-semibold text-[hsl(var(--landing-neon))] mb-5 sm:mb-6 neon-box-glow min-h-[44px]">
             <WhatsAppIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             {t("landing.hero.badge")}
             <ChevronRight className="h-3 w-3" aria-hidden="true" />
@@ -49,22 +48,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ t, signupLink }) => (
 
         <motion.p
           {...fadeUp(0.2)}
-          className="text-sm sm:text-lg text-[hsl(0,0%,50%)] max-w-lg mx-auto lg:mx-0 mb-6 sm:mb-8 leading-relaxed"
+          className="text-sm sm:text-lg text-[hsl(0,0%,55%)] max-w-lg mx-auto lg:mx-0 mb-6 sm:mb-8 leading-relaxed"
         >
           {t("landing.hero.subtitle")}{" "}
           <span className="text-[hsl(var(--landing-neon))] font-semibold">{t("landing.hero.subtitleHighlight")}</span>.
         </motion.p>
 
         <motion.div {...fadeUp(0.3)} className="space-y-3">
-          <Link to={signupLink}>
-            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 15 }}>
-              <Button size="lg" className="text-sm sm:text-base px-6 sm:px-8 h-12 sm:h-14 bg-[hsl(var(--landing-cta))] hover:bg-[hsl(var(--landing-cta)/0.85)] text-white border-0 cta-glow font-bold w-full sm:w-auto">
-                <Sparkles className="mr-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
-                {t("landing.hero.cta")}
-              </Button>
-            </motion.div>
-          </Link>
-          <p className="text-[11px] text-[hsl(0,0%,35%)]">{t("landing.hero.ctaNote")}</p>
+          <LandingCTA to={signupLink} className="w-full sm:w-auto">
+            {t("landing.hero.cta")}
+          </LandingCTA>
+          <p className="text-[11px] text-[hsl(0,0%,42%)]">{t("landing.hero.ctaNote")}</p>
         </motion.div>
 
         <MobileWhatsAppPreview t={t} />
