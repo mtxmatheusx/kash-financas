@@ -947,6 +947,10 @@ const en: typeof pt = {
   "topbar.personal": "Personal",
   "topbar.business": "Business",
 
+  "chat.history": "History",
+  "chat.newChat": "New chat",
+  "chat.noHistory": "No previous conversations",
+  "chat.deleteConversation": "Delete conversation",
   "chat.financial.label": "Financial Advisor",
   "chat.financial.short": "Financial",
   "chat.financial.placeholder": "Ask or send an image (invoice, statement)...",
