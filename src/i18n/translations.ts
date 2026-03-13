@@ -2434,7 +2434,7 @@ const es: typeof pt = {
   "landing.hero.subtitle": "Basta de planillas abandonadas. Envía un audio por WhatsApp. Faciliten organiza, categoriza y te da estrategias para",
   "landing.hero.subtitleHighlight": "ganar más",
   "landing.hero.cta": "Activar Mi Copiloto (30 Días Gratis)",
-  "landing.hero.ctaNote": "$9.90/mes después de la prueba. Refiere a un socio y gana +60 días.",
+  "landing.hero.ctaNote": "$9.90/mes después de la prueba. Refiere a un socio y gana +30 días.",
   "landing.trust.subtitle": "Infraestructura de nivel bancario, impulsada por inteligencia artificial",
   "landing.trust.encryption": "Cifrado AES-256",
   "landing.trust.ai": "Powered by OpenAI",
