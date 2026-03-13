@@ -1659,7 +1659,7 @@ const en: typeof pt = {
   "auth.signup.passwordMismatch": "Passwords don't match",
   "auth.signup.referralLabel": "Referral code (optional)",
   "auth.signup.referralPlaceholder": "e.g. AB12CD34",
-  "auth.signup.referralHint": "Have a code? The person who referred you gets +60 free days!",
+  "auth.signup.referralHint": "Only fill this if someone referred you to Faciliten. The referrer gets +60 free days!",
   "auth.signup.referralPromoTitle": "🎁 Get +30 free days!",
   "auth.signup.referralPromoDesc": "Sign up now and get 30 days of Premium for free. Refer friends and both of you earn even more days!",
   "auth.signup.submit": "Start 30 free days",
