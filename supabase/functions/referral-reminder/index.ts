@@ -80,11 +80,11 @@ Deno.serve(async (req) => {
     const mensagem = [
       `🎁 *Faciliten — Indique e Ganhe!*`,
       ``,
-      `${nome}, você sabia que pode ganhar *+60 dias grátis* de Premium?`,
+      `${nome}, você sabia que pode ganhar *+30 dias grátis* de Premium?`,
       ``,
       `📋 É simples:`,
       `1️⃣ Compartilhe seu código: *${code}*`,
-      `2️⃣ Quando alguém se cadastrar com ele, você ganha +60 dias!`,
+      `2️⃣ Quando alguém se cadastrar com ele, você ganha +30 dias!`,
       `3️⃣ Sem limite de indicações!`,
       ``,
       `⏳ Seu trial termina em *${daysLeft} dias* — indique agora e continue Premium!`,
