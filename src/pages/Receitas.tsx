@@ -164,22 +164,22 @@ const Receitas: React.FC = () => {
       </div>
 
       <Dialog open={showForm} onOpenChange={v => { if (!v) { setEditingId(null); } setShowForm(v); }}>
-        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg max-h-[85vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>{editingId ? t("income.editTitle") : t("income.new")}</DialogTitle></DialogHeader>
-          <div className="space-y-4 py-4">
+        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl">
+          <DialogHeader><DialogTitle className="text-center text-lg font-bold">{editingId ? t("income.editTitle") : t("income.new")}</DialogTitle></DialogHeader>
+          <div className="space-y-5 py-4">
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("common.description")}</label>
-              <Input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder={t("income.descPlaceholder")} />
+              <Input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder={t("income.descPlaceholder")} className="rounded-xl h-12 mt-1.5" />
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("common.amount")}</label>
-              <div className="flex gap-2">
+              <div className="flex gap-2 mt-1.5">
                 <div className="flex-1">
-                  <CurrencyInput value={form.amount} onValueChange={(formatted, cents) => { setForm({ ...form, amount: formatted }); setAmountCents(cents); }} />
+                  <CurrencyInput value={form.amount} onValueChange={(formatted, cents) => { setForm({ ...form, amount: formatted }); setAmountCents(cents); }} className="rounded-xl h-12" />
                 </div>
                 <Select value={form.currency} onValueChange={(v) => setForm({ ...form, currency: v as CurrencyCode })}>
-                  <SelectTrigger className="w-[100px]"><SelectValue /></SelectTrigger>
-                  <SelectContent>
+                  <SelectTrigger className="w-[110px] rounded-xl h-12"><SelectValue /></SelectTrigger>
+                  <SelectContent className="rounded-xl">
                     {CURRENCIES.map(c => <SelectItem key={c.code} value={c.code}>{c.symbol} {c.code}</SelectItem>)}
                   </SelectContent>
                 </Select>
@@ -194,14 +194,14 @@ const Receitas: React.FC = () => {
                 )}
               </div>
               <select value={form.category} onChange={e => { setForm({ ...form, category: e.target.value }); setUserChangedCategory(true); }}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm mt-1.5 h-12">
                 {INCOME_CAT_KEYS.map(c => <option key={c.value} value={c.value}>{t(c.tKey)}</option>)}
               </select>
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("common.status")}</label>
               <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as 'paid' | 'pending' })}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm mt-1.5 h-12">
                 <option value="paid">{t("income.received")}</option>
                 <option value="pending">{t("common.pending")}</option>
               </select>
@@ -209,7 +209,7 @@ const Receitas: React.FC = () => {
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("income.entryType")}</label>
               <select value={form.entry_type} onChange={e => setForm({ ...form, entry_type: e.target.value as 'single' | 'installment' | 'recurring' })}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm mt-1.5 h-12">
                 <option value="single">{t("income.singleEntry")}</option>
                 <option value="installment">{t("income.contractEntry")}</option>
                 <option value="recurring">{t("income.recurringEntry")}</option>
@@ -218,7 +218,7 @@ const Receitas: React.FC = () => {
             {form.entry_type === 'installment' && (
               <div>
                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("income.numEntries")}</label>
-                <Input type="number" min="1" value={form.installments} onChange={e => setForm({ ...form, installments: e.target.value })} />
+                <Input type="number" min="1" value={form.installments} onChange={e => setForm({ ...form, installments: e.target.value })} className="rounded-xl h-12 mt-1.5" />
               </div>
             )}
             {form.entry_type === 'recurring' && (
@@ -226,14 +226,14 @@ const Receitas: React.FC = () => {
                 <div>
                   <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("form.frequency")}</label>
                   <select value={form.frequency} onChange={e => setForm({ ...form, frequency: e.target.value as 'monthly' | 'yearly' })}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                    className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm mt-1.5 h-12">
                     <option value="monthly">{t("form.monthly")}</option>
                     <option value="yearly">{t("form.yearly")}</option>
                   </select>
                 </div>
                 <div>
                   <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("income.duration")}</label>
-                  <Input type="number" min="1" max="120" value={form.recurring_months} onChange={e => setForm({ ...form, recurring_months: e.target.value })} placeholder="Ex: 12" />
+                  <Input type="number" min="1" max="120" value={form.recurring_months} onChange={e => setForm({ ...form, recurring_months: e.target.value })} placeholder="Ex: 12" className="rounded-xl h-12 mt-1.5" />
                   <p className="text-[10px] text-muted-foreground mt-1">
                     {t("income.autoLaunchNote").replace("{count}", form.recurring_months || "0")}
                   </p>
@@ -242,12 +242,12 @@ const Receitas: React.FC = () => {
             )}
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("common.date")}</label>
-              <Input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
+              <Input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} className="rounded-xl h-12 mt-1.5" />
             </div>
           </div>
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button variant="outline" onClick={() => setShowForm(false)} className="w-full sm:w-auto">{t("common.cancel")}</Button>
-            <Button onClick={handleSubmit} className="w-full sm:w-auto">{editingId ? t("income.saveChanges") : t("income.saveNew")}</Button>
+            <Button variant="outline" onClick={() => setShowForm(false)} className="w-full sm:w-auto rounded-xl h-12">{t("common.cancel")}</Button>
+            <Button onClick={handleSubmit} className="w-full sm:w-auto rounded-xl h-12">{editingId ? t("income.saveChanges") : t("income.saveNew")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
