@@ -129,8 +129,8 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
                       to={item.path}
                       title={collapsed ? label : undefined}
                       className={cn(
-                        "group relative flex items-center justify-center gap-3 rounded-lg text-sm transition-all",
-                        collapsed ? "p-3" : "px-3 py-2.5",
+                        "group relative flex items-center gap-3 rounded-lg text-sm transition-all",
+                        collapsed ? "p-3 justify-center" : "px-3 py-2.5",
                         isActive
                           ? "bg-sidebar-accent text-sidebar-accent-foreground"
                           : "text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50",
@@ -174,8 +174,8 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
         <NavLink
           to="/configuracoes"
           className={cn(
-            "relative flex items-center justify-center gap-3 rounded-lg text-sm transition-all w-full",
-            collapsed ? "p-3" : "px-3 py-2.5",
+            "relative flex items-center gap-3 rounded-lg text-sm transition-all w-full",
+            collapsed ? "p-3 justify-center" : "px-3 py-2.5",
             location.pathname === "/configuracoes"
               ? "bg-sidebar-accent text-sidebar-accent-foreground"
               : "text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
@@ -193,8 +193,8 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
         <button
           onClick={toggleTheme}
           className={cn(
-            "flex items-center justify-center gap-3 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full",
-            collapsed ? "p-3" : "px-3 py-2.5"
+            "flex items-center gap-3 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full",
+            collapsed ? "p-3 justify-center" : "px-3 py-2.5"
           )}
         >
           {theme === 'light' ? <Moon size={20} className="w-5 h-5 shrink-0" /> : <Sun size={20} className="w-5 h-5 shrink-0" />}
@@ -203,8 +203,8 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
         <button
           onClick={onToggle}
           className={cn(
-            "flex items-center justify-center gap-3 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full",
-            collapsed ? "p-3" : "px-3 py-2.5"
+            "flex items-center gap-3 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full",
+            collapsed ? "p-3 justify-center" : "px-3 py-2.5"
           )}
         >
           {collapsed ? <ChevronRight size={20} className="w-5 h-5 shrink-0" /> : <ChevronLeft size={20} className="w-5 h-5 shrink-0" />}
@@ -213,8 +213,8 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
         <button
           onClick={signOut}
           className={cn(
-            "flex items-center justify-center gap-3 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full",
-            collapsed ? "p-3" : "px-3 py-2.5"
+            "flex items-center gap-3 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full",
+            collapsed ? "p-3 justify-center" : "px-3 py-2.5"
           )}
         >
           <LogOut size={20} className="w-5 h-5 shrink-0" />
