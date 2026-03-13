@@ -172,7 +172,7 @@ const Dashboard: React.FC = () => {
         ]} />
 
         {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 md:gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 md:gap-3">
           <motion.div {...slideUp(0.15)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">{t("dashboard.incomeVsExpense")}</h3>
@@ -235,7 +235,7 @@ const Dashboard: React.FC = () => {
             <span className="text-[10px] text-muted-foreground ml-auto">{weeklySummary.count} {t("dashboard.weeklyTransactions")}</span>
           </div>
           {weeklySummary.count > 0 ? (
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="text-center p-3 rounded-lg bg-fin-income/5 border border-fin-income/10">
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">{t("dashboard.weeklyIncome")}</p>
                 <p className="text-sm font-bold font-mono-fin text-fin-income">+{formatBRL(weeklySummary.income)}</p>
