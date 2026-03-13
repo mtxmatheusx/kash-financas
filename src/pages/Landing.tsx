@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo } from "react";
+import { cn } from "@/lib/utils";
 import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
