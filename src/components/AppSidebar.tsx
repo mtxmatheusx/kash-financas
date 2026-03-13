@@ -72,10 +72,26 @@ interface Props {
 export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
   const { theme, toggleTheme } = useTheme();
   const { account, setAccountType } = useAccount();
-  const { isPremium, signOut, profile } = useAuth();
+  const { isPremium, signOut, profile, user } = useAuth();
   const { t } = usePreferences();
   const isMobile = useIsMobile();
   const location = useLocation();
+
+  const { data: isAdmin } = useQuery({
+    queryKey: ["admin-role-sidebar", user?.id],
+    queryFn: async () => {
+      if (!user) return false;
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      return !!data;
+    },
+    enabled: !!user,
+    staleTime: 1000 * 60 * 10,
+  });
 
   if (isMobile) return null;
 
