@@ -10,25 +10,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {
   Settings, User, Building2, CreditCard, Save, Crown, ExternalLink,
   FileText, Landmark, Bell, Webhook, Smartphone, MapPin, Loader2, MessageCircle, QrCode, Bot,
+  Globe, Coins,
 } from "lucide-react";
 import { ActiveDevices } from "@/components/ActiveDevices";
 import { toast } from "sonner";
 import { maskCPF, maskCNPJ, maskPhone, maskCEP, unmask } from "@/lib/masks";
 import { usePreferences, CURRENCIES, LANGUAGES, type CurrencyCode, type LanguageCode } from "@/contexts/PreferencesContext";
-import { Globe, Coins } from "lucide-react";
 
 interface UserSettings {
-  // Profile
   full_name: string;
   phone: string;
-  // Fiscal
   document_type: string;
   document_number: string;
   company_name: string;
   state_registration: string;
   city_registration: string;
   tax_regime: string;
-  // Address
   zip_code: string;
   address: string;
   address_number: string;
@@ -36,13 +33,11 @@ interface UserSettings {
   neighborhood: string;
   city: string;
   state: string;
-  // Banking
   bank_name: string;
   bank_agency: string;
   bank_account: string;
   pix_key: string;
   pix_key_type: string;
-  // Notifications
   notify_whatsapp: boolean;
   notify_email: boolean;
   notify_due_dates: boolean;
@@ -60,14 +55,15 @@ const defaultSettings: UserSettings = {
   notify_whatsapp: true, notify_email: true, notify_due_dates: true, notify_due_days_before: 3, notification_time: "08:00",
 };
 
+/* ── Extracted outside render to avoid re-creation on every keystroke ── */
 const SettingsCard: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = "" }) => (
-  <div className={`rounded-xl border border-border bg-card p-5 md:p-6 space-y-5 transition-all duration-200 ${className}`}>{children}</div>
+  <div className={`rounded-xl border border-border bg-card p-5 md:p-6 space-y-5 ${className}`}>{children}</div>
 );
 
 const SettingsField: React.FC<{ icon?: React.ElementType; label: string; hint?: string; children: React.ReactNode }> = ({
   icon: Icon, label, hint, children,
 }) => (
-  <div className="transition-all duration-150">
+  <div>
     <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
       {Icon && <Icon className="w-3.5 h-3.5" />} {label}
     </label>
@@ -142,8 +138,8 @@ const Configuracoes: React.FC = () => {
     })();
   }, [user]);
 
-  const update = (key: keyof UserSettings, value: any) =>
-    setSettings((prev) => ({ ...prev, [key]: value }));
+  const update = useCallback((key: keyof UserSettings, value: any) =>
+    setSettings((prev) => ({ ...prev, [key]: value })), []);
 
   const handleSave = async () => {
     if (!user) return;
@@ -194,27 +190,20 @@ const Configuracoes: React.FC = () => {
     );
   }
 
-  const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = "" }) => (
-    <div className={`rounded-xl border border-border bg-card p-5 md:p-6 space-y-5 ${className}`}>{children}</div>
-  );
-
-  const Field: React.FC<{ icon?: React.ElementType; label: string; hint?: string; children: React.ReactNode }> = ({
-    icon: Icon, label, hint, children,
-  }) => (
-    <div>
-      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
-        {Icon && <Icon className="w-3.5 h-3.5" />} {label}
-      </label>
-      {children}
-      {hint && <p className="text-[10px] text-muted-foreground mt-1">{hint}</p>}
-    </div>
-  );
-
   const documentMask = settings.document_type === "cnpj" ? maskCNPJ : maskCPF;
 
   return (
     <PageTransition>
       <div className="space-y-6 max-w-2xl">
+        {/* Header */}
+        <div>
+          <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2 font-display-fin">
+            <Settings className="w-5 h-5 md:w-6 md:h-6 text-primary" /> {t("settings.title")}
+          </h1>
+          <p className="text-xs md:text-sm text-muted-foreground">
+            {t("settings.subtitle")}
+          </p>
+        </div>
 
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="w-full grid grid-cols-5 mb-5">
@@ -237,17 +226,17 @@ const Configuracoes: React.FC = () => {
 
           {/* ═══════════ Meu Perfil ═══════════ */}
           <TabsContent value="profile">
-            <Card>
-              <Field icon={User} label={t("settings.fullName")}>
+            <SettingsCard>
+              <SettingsField icon={User} label={t("settings.fullName")}>
                 <Input
                   value={settings.full_name}
                   onChange={(e) => update("full_name", e.target.value)}
                   placeholder={t("settings.fullName")}
                   maxLength={120}
                 />
-              </Field>
+              </SettingsField>
 
-              <Field icon={Smartphone} label={t("settings.phone")} hint={t("settings.phoneHint")}>
+              <SettingsField icon={Smartphone} label={t("settings.phone")} hint={t("settings.phoneHint")}>
                 <Input
                   value={settings.phone}
                   onChange={(e) => update("phone", maskPhone(e.target.value))}
@@ -255,7 +244,7 @@ const Configuracoes: React.FC = () => {
                   maxLength={15}
                   inputMode="tel"
                 />
-              </Field>
+              </SettingsField>
 
               <div className="pt-2 border-t border-border">
                 <p className="text-[11px] text-muted-foreground mb-1">{t("settings.email")}</p>
@@ -268,7 +257,7 @@ const Configuracoes: React.FC = () => {
                   <Globe className="w-4 h-4 text-primary" /> {t("settings.preferences")}
                 </h3>
 
-                <Field icon={Coins} label={t("settings.currency")} hint={t("settings.currencyHint")}>
+                <SettingsField icon={Coins} label={t("settings.currency")} hint={t("settings.currencyHint")}>
                   <Select value={currency} onValueChange={(v) => setCurrency(v as CurrencyCode)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -277,9 +266,9 @@ const Configuracoes: React.FC = () => {
                       ))}
                     </SelectContent>
                   </Select>
-                </Field>
+                </SettingsField>
 
-                <Field icon={Globe} label={t("settings.language")} hint={t("settings.languageHint")}>
+                <SettingsField icon={Globe} label={t("settings.language")} hint={t("settings.languageHint")}>
                   <Select value={language} onValueChange={(v) => setLanguage(v as LanguageCode)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -288,15 +277,15 @@ const Configuracoes: React.FC = () => {
                       ))}
                     </SelectContent>
                   </Select>
-                </Field>
+                </SettingsField>
               </div>
-            </Card>
+            </SettingsCard>
           </TabsContent>
 
           {/* ═══════════ Dados da Empresa ═══════════ */}
           <TabsContent value="company">
-            <Card>
-              <Field icon={FileText} label={t("settings.docType")}>
+            <SettingsCard>
+              <SettingsField icon={FileText} label={t("settings.docType")}>
                 <Select value={settings.document_type} onValueChange={(v) => update("document_type", v)}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -304,31 +293,31 @@ const Configuracoes: React.FC = () => {
                     <SelectItem value="cnpj">CNPJ — Pessoa Jurídica</SelectItem>
                   </SelectContent>
                 </Select>
-              </Field>
+              </SettingsField>
 
-              <Field icon={FileText} label={settings.document_type === "cnpj" ? "CNPJ" : "CPF"}>
+              <SettingsField icon={FileText} label={settings.document_type === "cnpj" ? "CNPJ" : "CPF"}>
                 <Input
                   value={settings.document_number}
                   onChange={(e) => update("document_number", documentMask(e.target.value))}
                   placeholder={settings.document_type === "cnpj" ? "00.000.000/0000-00" : "000.000.000-00"}
                   maxLength={18}
                 />
-              </Field>
+              </SettingsField>
 
               {settings.document_type === "cnpj" && (
                 <>
-                  <Field icon={Building2} label={t("settings.companyName")}>
+                  <SettingsField icon={Building2} label={t("settings.companyName")}>
                     <Input value={settings.company_name} onChange={(e) => update("company_name", e.target.value)} placeholder={t("settings.companyName")} maxLength={200} />
-                  </Field>
+                  </SettingsField>
                   <div className="grid grid-cols-2 gap-3">
-                    <Field icon={FileText} label={t("settings.stateReg")}>
+                    <SettingsField icon={FileText} label={t("settings.stateReg")}>
                       <Input value={settings.state_registration} onChange={(e) => update("state_registration", e.target.value)} placeholder="IE" maxLength={20} />
-                    </Field>
-                    <Field icon={FileText} label={t("settings.cityReg")}>
+                    </SettingsField>
+                    <SettingsField icon={FileText} label={t("settings.cityReg")}>
                       <Input value={settings.city_registration} onChange={(e) => update("city_registration", e.target.value)} placeholder="IM" maxLength={20} />
-                    </Field>
+                    </SettingsField>
                   </div>
-                  <Field icon={FileText} label={t("settings.taxRegime")}>
+                  <SettingsField icon={FileText} label={t("settings.taxRegime")}>
                     <Select value={settings.tax_regime} onValueChange={(v) => update("tax_regime", v)}>
                       <SelectTrigger><SelectValue placeholder={t("common.search")} /></SelectTrigger>
                       <SelectContent>
@@ -338,7 +327,7 @@ const Configuracoes: React.FC = () => {
                         <SelectItem value="real">Lucro Real</SelectItem>
                       </SelectContent>
                     </Select>
-                  </Field>
+                  </SettingsField>
                 </>
               )}
 
@@ -348,7 +337,7 @@ const Configuracoes: React.FC = () => {
                   <MapPin className="w-4 h-4 text-primary" /> {t("settings.address")}
                 </h3>
 
-                <Field icon={MapPin} label={t("settings.zipCode")} hint={t("settings.zipHint")}>
+                <SettingsField icon={MapPin} label={t("settings.zipCode")} hint={t("settings.zipHint")}>
                   <div className="relative">
                     <Input
                       value={settings.zip_code}
@@ -363,32 +352,32 @@ const Configuracoes: React.FC = () => {
                     />
                     {fetchingCep && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-primary" />}
                   </div>
-                </Field>
+                </SettingsField>
 
-                <Field label={t("settings.street")}>
+                <SettingsField label={t("settings.street")}>
                   <Input value={settings.address} onChange={(e) => update("address", e.target.value)} placeholder={t("settings.street")} maxLength={200} />
-                </Field>
+                </SettingsField>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <Field label={t("settings.number")}>
+                  <SettingsField label={t("settings.number")}>
                     <Input value={settings.address_number} onChange={(e) => update("address_number", e.target.value)} placeholder="Nº" maxLength={10} />
-                  </Field>
-                  <Field label={t("settings.complement")}>
+                  </SettingsField>
+                  <SettingsField label={t("settings.complement")}>
                     <Input value={settings.address_complement} onChange={(e) => update("address_complement", e.target.value)} placeholder={t("settings.complement")} maxLength={100} />
-                  </Field>
+                  </SettingsField>
                 </div>
 
-                <Field label={t("settings.neighborhood")}>
+                <SettingsField label={t("settings.neighborhood")}>
                   <Input value={settings.neighborhood} onChange={(e) => update("neighborhood", e.target.value)} placeholder={t("settings.neighborhood")} maxLength={100} />
-                </Field>
+                </SettingsField>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <Field label={t("settings.city")}>
+                  <SettingsField label={t("settings.city")}>
                     <Input value={settings.city} onChange={(e) => update("city", e.target.value)} placeholder={t("settings.city")} maxLength={100} />
-                  </Field>
-                  <Field label={t("settings.stateAbbr")}>
+                  </SettingsField>
+                  <SettingsField label={t("settings.stateAbbr")}>
                     <Input value={settings.state} onChange={(e) => update("state", e.target.value)} placeholder={t("settings.stateAbbr")} maxLength={2} className="uppercase" />
-                  </Field>
+                  </SettingsField>
                 </div>
               </div>
 
@@ -398,18 +387,18 @@ const Configuracoes: React.FC = () => {
                   <Landmark className="w-4 h-4 text-primary" /> {t("settings.bankData")}
                 </h3>
 
-                <Field icon={Landmark} label={t("settings.bank")}>
+                <SettingsField icon={Landmark} label={t("settings.bank")}>
                   <Input value={settings.bank_name} onChange={(e) => update("bank_name", e.target.value)} placeholder={t("settings.bank")} maxLength={100} />
-                </Field>
+                </SettingsField>
                 <div className="grid grid-cols-2 gap-3">
-                  <Field icon={Landmark} label={t("settings.agency")}>
+                  <SettingsField icon={Landmark} label={t("settings.agency")}>
                     <Input value={settings.bank_agency} onChange={(e) => update("bank_agency", e.target.value)} placeholder="0000" maxLength={10} />
-                  </Field>
-                  <Field icon={CreditCard} label={t("settings.account")}>
+                  </SettingsField>
+                  <SettingsField icon={CreditCard} label={t("settings.account")}>
                     <Input value={settings.bank_account} onChange={(e) => update("bank_account", e.target.value)} placeholder="00000-0" maxLength={20} />
-                  </Field>
+                  </SettingsField>
                 </div>
-                <Field icon={Smartphone} label={t("settings.pixKeyType")}>
+                <SettingsField icon={Smartphone} label={t("settings.pixKeyType")}>
                   <Select value={settings.pix_key_type} onValueChange={(v) => update("pix_key_type", v)}>
                     <SelectTrigger><SelectValue placeholder={t("common.search")} /></SelectTrigger>
                     <SelectContent>
@@ -419,12 +408,12 @@ const Configuracoes: React.FC = () => {
                       <SelectItem value="random">{t("settings.pixKey")}</SelectItem>
                     </SelectContent>
                   </Select>
-                </Field>
-                <Field icon={Smartphone} label={t("settings.pixKey")}>
+                </SettingsField>
+                <SettingsField icon={Smartphone} label={t("settings.pixKey")}>
                   <Input value={settings.pix_key} onChange={(e) => update("pix_key", e.target.value)} placeholder={t("settings.pixKey")} maxLength={100} />
-                </Field>
+                </SettingsField>
               </div>
-            </Card>
+            </SettingsCard>
           </TabsContent>
 
           {/* ═══════════ Integrações ═══════════ */}
@@ -488,7 +477,7 @@ const Configuracoes: React.FC = () => {
 
           {/* ═══════════ Notificações ═══════════ */}
           <TabsContent value="notifications">
-            <Card>
+            <SettingsCard>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-foreground">{t("settings.whatsappAlerts")}</p>
@@ -511,7 +500,7 @@ const Configuracoes: React.FC = () => {
                 <Switch checked={settings.notify_due_dates} onCheckedChange={(v) => update("notify_due_dates", v)} />
               </div>
               {settings.notify_due_dates && (
-                <Field icon={Bell} label={t("settings.daysBefore")}>
+                <SettingsField icon={Bell} label={t("settings.daysBefore")}>
                   <Select value={String(settings.notify_due_days_before)} onValueChange={(v) => update("notify_due_days_before", Number(v))}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -522,7 +511,7 @@ const Configuracoes: React.FC = () => {
                       <SelectItem value="7">7 {t("settings.days")}</SelectItem>
                     </SelectContent>
                   </Select>
-                </Field>
+                </SettingsField>
               )}
 
               <div className="rounded-xl border border-border bg-card p-5 md:p-6 space-y-4 mt-4">
@@ -561,7 +550,7 @@ const Configuracoes: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-            </Card>
+            </SettingsCard>
           </TabsContent>
 
           {/* ═══════════ Assinatura ═══════════ */}
