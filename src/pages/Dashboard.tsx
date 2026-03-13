@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { FinancialInsights } from "@/components/FinancialInsights";
 import { useGoals } from "@/hooks/useGoals";
+import { ReferralDashboardBanner } from "@/components/ReferralDashboardBanner";
 
 
 const formatCompact = (v: number) => {
