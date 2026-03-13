@@ -1087,6 +1087,7 @@ const en: typeof pt = {
   "income.recurringEntry": "Recurring",
   "income.numEntries": "Number of Entries (months)",
   "income.installmentValueHint": "installment value",
+  "income.recurringValueHint": "monthly value",
   "income.duration": "Duration (months)",
   "income.autoLaunchNote": "{count} automatic entries will be created from the selected date",
 
