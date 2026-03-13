@@ -186,6 +186,7 @@ const pt = {
   "income.recurringEntry": "Recorrente",
   "income.numEntries": "Nº de Entradas (meses)",
   "income.installmentValueHint": "valor da parcela",
+  "income.recurringValueHint": "valor mensal",
   "income.duration": "Duração (meses)",
   "income.autoLaunchNote": "Serão criados {count} lançamentos automáticos a partir da data selecionada",
 
