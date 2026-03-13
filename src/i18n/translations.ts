@@ -1503,7 +1503,7 @@ const en: typeof pt = {
   "profile.whatsappHint": "Number with country code (e.g. 1 for USA) — used for the AI agent via WhatsApp",
   "profile.saveProfile": "Save Profile",
   "profile.referralCode": "Referral code",
-  "profile.referralHint": "Share and earn +60 premium days per referral",
+  "profile.referralHint": "Share and earn +30 premium days per referral",
 
   "partner.title": "Shared Account (Couple)",
   "partner.subtitle": "Invite your partner to manage finances together",
