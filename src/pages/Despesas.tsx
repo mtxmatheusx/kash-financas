@@ -205,17 +205,17 @@ const Despesas: React.FC = () => {
       </div>
 
       <Dialog open={showForm} onOpenChange={v => { if (!v) { setEditingId(null); } setShowForm(v); }}>
-        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg">
-          <DialogHeader><DialogTitle>{editingId ? t("expense.editTitle") : t("expense.new")}</DialogTitle></DialogHeader>
-          <div className="space-y-4 py-4">
+        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl">
+          <DialogHeader><DialogTitle className="text-center text-lg font-bold">{editingId ? t("expense.editTitle") : t("expense.new")}</DialogTitle></DialogHeader>
+          <div className="space-y-5 py-4">
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("common.description")}</label>
-              <Input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder={t("expense.descPlaceholder")} />
+              <Input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder={t("expense.descPlaceholder")} className="rounded-xl h-12 mt-1.5" />
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("expense.valueMode")}</label>
               <select value={form.is_percentage ? 'percentage' : 'fixed'} onChange={e => setForm({ ...form, is_percentage: e.target.value === 'percentage', amount: '', percentage: '' })}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm mt-1.5 h-12">
                 <option value="fixed">{t("expense.fixedValue")}</option>
                 <option value="percentage">{t("expense.revenuePercent")}</option>
               </select>
@@ -225,7 +225,7 @@ const Despesas: React.FC = () => {
                 <div>
                   <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("expense.calcBase")}</label>
                   <select value={form.percentage_base} onChange={e => setForm({ ...form, percentage_base: e.target.value as 'total' | 'monthly' })}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                    className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm mt-1.5 h-12">
                     <option value="total">{t("expense.totalRevenue")} ({formatBRL(totals.income)})</option>
                     <option value="monthly">{t("expense.monthlyRevenue")} ({formatBRL(monthlyIncome)})</option>
                   </select>
@@ -233,8 +233,8 @@ const Despesas: React.FC = () => {
                 <div>
                   <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("expense.percentageLabel")}</label>
                   <div className="relative">
-                    <Input value={form.percentage} onChange={e => setForm({ ...form, percentage: e.target.value })} placeholder="Ex: 10" inputMode="decimal" className="pr-10" />
-                    <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input value={form.percentage} onChange={e => setForm({ ...form, percentage: e.target.value })} placeholder="Ex: 10" inputMode="decimal" className="rounded-xl h-12 mt-1.5 pr-10" />
+                    <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground mt-[3px]" />
                   </div>
                   {form.percentage && (
                     <p className="text-xs text-muted-foreground mt-1">
@@ -250,13 +250,13 @@ const Despesas: React.FC = () => {
             ) : (
               <div>
                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("common.amount")}</label>
-                <div className="flex gap-2">
+                <div className="flex gap-2 mt-1.5">
                   <div className="flex-1">
-                    <CurrencyInput value={form.amount} onValueChange={(formatted, cents) => { setForm({ ...form, amount: formatted }); setAmountCents(cents); }} />
+                    <CurrencyInput value={form.amount} onValueChange={(formatted, cents) => { setForm({ ...form, amount: formatted }); setAmountCents(cents); }} className="rounded-xl h-12" />
                   </div>
                   <Select value={form.currency} onValueChange={(v) => setForm({ ...form, currency: v as CurrencyCode })}>
-                    <SelectTrigger className="w-[100px]"><SelectValue /></SelectTrigger>
-                    <SelectContent>
+                    <SelectTrigger className="w-[110px] rounded-xl h-12"><SelectValue /></SelectTrigger>
+                    <SelectContent className="rounded-xl">
                       {CURRENCIES.map(c => <SelectItem key={c.code} value={c.code}>{c.symbol} {c.code}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -272,14 +272,14 @@ const Despesas: React.FC = () => {
                 )}
               </div>
               <select value={form.category} onChange={e => { setForm({ ...form, category: e.target.value }); setUserChangedCategory(true); }}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm mt-1.5 h-12">
                 {categoryKeys.map(c => <option key={c.value} value={c.value}>{t(c.tKey)}</option>)}
               </select>
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("common.status")}</label>
               <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as 'paid' | 'pending' })}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm mt-1.5 h-12">
                 <option value="paid">{t("expense.paidLabel")}</option>
                 <option value="pending">{t("common.pending")}</option>
               </select>
@@ -287,7 +287,7 @@ const Despesas: React.FC = () => {
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("expense.paymentType")}</label>
               <select value={form.entry_type} onChange={e => setForm({ ...form, entry_type: e.target.value as 'single' | 'installment' | 'recurring' })}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm mt-1.5 h-12">
                 <option value="single">{t("expense.singlePayment")}</option>
                 <option value="installment">{t("expense.installmentPayment")}</option>
                 <option value="recurring">{t("expense.recurringPayment")}</option>
@@ -296,7 +296,7 @@ const Despesas: React.FC = () => {
             {form.entry_type === 'installment' && (
               <div>
                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("expense.numInstallments")}</label>
-                <Input type="number" min="1" value={form.installments} onChange={e => setForm({ ...form, installments: e.target.value })} />
+                <Input type="number" min="1" value={form.installments} onChange={e => setForm({ ...form, installments: e.target.value })} className="rounded-xl h-12 mt-1.5" />
               </div>
             )}
             {form.entry_type === 'recurring' && (
@@ -304,14 +304,14 @@ const Despesas: React.FC = () => {
                 <div>
                   <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("form.frequency")}</label>
                   <select value={form.frequency} onChange={e => setForm({ ...form, frequency: e.target.value as 'monthly' | 'yearly' })}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                    className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm mt-1.5 h-12">
                     <option value="monthly">{t("form.monthly")}</option>
                     <option value="yearly">{t("form.yearly")}</option>
                   </select>
                 </div>
                 <div>
                   <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("expense.duration")}</label>
-                  <Input type="number" min="1" max="120" value={form.recurring_months} onChange={e => setForm({ ...form, recurring_months: e.target.value })} placeholder="Ex: 12" />
+                  <Input type="number" min="1" max="120" value={form.recurring_months} onChange={e => setForm({ ...form, recurring_months: e.target.value })} placeholder="Ex: 12" className="rounded-xl h-12 mt-1.5" />
                   <p className="text-[10px] text-muted-foreground mt-1">
                     {t("expense.autoLaunchNote").replace("{count}", form.recurring_months || "0")}
                   </p>
@@ -320,12 +320,12 @@ const Despesas: React.FC = () => {
             )}
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("common.date")}</label>
-              <Input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
+              <Input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} className="rounded-xl h-12 mt-1.5" />
             </div>
           </div>
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button variant="outline" onClick={() => setShowForm(false)} className="w-full sm:w-auto">{t("common.cancel")}</Button>
-            <Button onClick={handleSubmit} className="w-full sm:w-auto">{editingId ? t("expense.saveChanges") : t("expense.saveNew")}</Button>
+            <Button variant="outline" onClick={() => setShowForm(false)} className="w-full sm:w-auto rounded-xl h-12">{t("common.cancel")}</Button>
+            <Button onClick={handleSubmit} className="w-full sm:w-auto rounded-xl h-12">{editingId ? t("expense.saveChanges") : t("expense.saveNew")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
