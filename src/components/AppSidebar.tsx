@@ -184,7 +184,27 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
 
       {/* Footer */}
       <div className="p-3 border-t border-sidebar-border space-y-1">
-        {!collapsed && profile && (
+        {isAdmin && (
+          <NavLink
+            to="/admin"
+            className={cn(
+              "relative flex items-center gap-3 rounded-lg text-sm transition-all w-full",
+              collapsed ? "p-3 justify-center" : "px-3 py-2.5",
+              location.pathname === "/admin"
+                ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                : "text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+            )}
+          >
+            {location.pathname === "/admin" && (
+              <motion.div
+                layoutId="sidebar-indicator"
+                className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-sidebar-primary"
+              />
+            )}
+            <ShieldCheck size={20} className="w-5 h-5 shrink-0" />
+            {!collapsed && <span className="flex-1">Admin</span>}
+          </NavLink>
+        )}
           <div className="px-3 py-2 text-xs text-sidebar-muted truncate">
             {profile.display_name || profile.email}
           </div>
