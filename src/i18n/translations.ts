@@ -2019,6 +2019,10 @@ const es: typeof pt = {
   "dashboard.referral.desc": "Comparte tu código de referencia. Cuando alguien se registre, ¡ganas +60 días de Premium gratis!",
   "dashboard.referral.copy": "Copiar",
   "dashboard.referral.copied": "¡Copiado!",
+  "dashboard.upgrade.title": "⏳ ¡Tu prueba Premium está activa!",
+  "dashboard.upgrade.desc": "Disfruta todas las funciones Premium. ¡Suscríbete antes de que termine tu prueba!",
+  "dashboard.upgrade.daysLeft": "días restantes",
+  "dashboard.upgrade.cta": "Suscribir Premium",
 
   "goals.title": "Metas Financieras",
   "goals.subtitle": "Sigue tus objetivos financieros",
