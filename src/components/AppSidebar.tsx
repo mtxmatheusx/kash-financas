@@ -1,10 +1,12 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard, TrendingUp, TrendingDown, PieChart, Target, CalendarRange,
   Sun, Moon, ChevronLeft, ChevronRight, Compass, FileText, Calculator, Upload,
-  Crown, LogOut, Settings,
+  Crown, LogOut, Settings, ShieldCheck,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAccount } from "@/contexts/AccountContext";
@@ -70,10 +72,26 @@ interface Props {
 export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
   const { theme, toggleTheme } = useTheme();
   const { account, setAccountType } = useAccount();
-  const { isPremium, signOut, profile } = useAuth();
+  const { isPremium, signOut, profile, user } = useAuth();
   const { t } = usePreferences();
   const isMobile = useIsMobile();
   const location = useLocation();
+
+  const { data: isAdmin } = useQuery({
+    queryKey: ["admin-role-sidebar", user?.id],
+    queryFn: async () => {
+      if (!user) return false;
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      return !!data;
+    },
+    enabled: !!user,
+    staleTime: 1000 * 60 * 10,
+  });
 
   if (isMobile) return null;
 
@@ -166,6 +184,27 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
 
       {/* Footer */}
       <div className="p-3 border-t border-sidebar-border space-y-1">
+        {isAdmin && (
+          <NavLink
+            to="/admin"
+            className={cn(
+              "relative flex items-center gap-3 rounded-lg text-sm transition-all w-full",
+              collapsed ? "p-3 justify-center" : "px-3 py-2.5",
+              location.pathname === "/admin"
+                ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                : "text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+            )}
+          >
+            {location.pathname === "/admin" && (
+              <motion.div
+                layoutId="sidebar-indicator"
+                className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-sidebar-primary"
+              />
+            )}
+            <ShieldCheck size={20} className="w-5 h-5 shrink-0" />
+            {!collapsed && <span className="flex-1">Admin</span>}
+          </NavLink>
+        )}
         {!collapsed && profile && (
           <div className="px-3 py-2 text-xs text-sidebar-muted truncate">
             {profile.display_name || profile.email}
