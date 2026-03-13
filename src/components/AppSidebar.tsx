@@ -129,7 +129,8 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
                       to={item.path}
                       title={collapsed ? label : undefined}
                       className={cn(
-                        "group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all relative",
+                        "group relative flex items-center justify-center gap-3 rounded-lg text-sm transition-all",
+                        collapsed ? "p-3" : "px-3 py-2.5",
                         isActive
                           ? "bg-sidebar-accent text-sidebar-accent-foreground"
                           : "text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50",
@@ -142,12 +143,12 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
                           className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-sidebar-primary"
                         />
                       )}
-                      <item.icon className="w-4 h-4 shrink-0" />
+                      <item.icon size={20} className="w-5 h-5 shrink-0" />
                       {!collapsed && (
                         <span className="font-medium flex-1">{label}</span>
                       )}
                       {!collapsed && isLocked && (
-                        <Crown className="w-3.5 h-3.5 text-fin-pending shrink-0" />
+                        <Crown size={14} className="w-3.5 h-3.5 text-fin-pending shrink-0" />
                       )}
                       {collapsed && (
                         <span className="absolute left-full ml-2 px-2 py-1 rounded-md bg-popover text-popover-foreground text-xs font-medium shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
