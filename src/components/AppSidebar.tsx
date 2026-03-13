@@ -142,7 +142,7 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
                           className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-sidebar-primary"
                         />
                       )}
-                      <item.icon className="w-[18px] h-[18px] shrink-0" />
+                      <item.icon className="w-4 h-4 shrink-0" />
                       {!collapsed && (
                         <span className="font-medium flex-1">{label}</span>
                       )}
@@ -179,28 +179,28 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
               : "text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
           )}
         >
-          <Settings className="w-[18px] h-[18px] shrink-0" />
+          <Settings className="w-4 h-4 shrink-0" />
           {!collapsed && <span>{t("nav.settings")}</span>}
         </NavLink>
         <button
           onClick={toggleTheme}
           className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full"
         >
-          {theme === 'light' ? <Moon className="w-[18px] h-[18px]" /> : <Sun className="w-[18px] h-[18px]" />}
+          {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
           {!collapsed && <span>{theme === 'light' ? t("sidebar.darkMode") : t("sidebar.lightMode")}</span>}
         </button>
         <button
           onClick={onToggle}
           className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full"
         >
-          {collapsed ? <ChevronRight className="w-[18px] h-[18px]" /> : <ChevronLeft className="w-[18px] h-[18px]" />}
+          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           {!collapsed && <span>{t("sidebar.collapse")}</span>}
         </button>
         <button
           onClick={signOut}
           className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full"
         >
-          <LogOut className="w-[18px] h-[18px]" />
+          <LogOut className="w-4 h-4" />
           {!collapsed && <span>{t("sidebar.logout")}</span>}
         </button>
       </div>
