@@ -205,6 +205,7 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
             {!collapsed && <span className="flex-1">Admin</span>}
           </NavLink>
         )}
+        {!collapsed && profile && (
           <div className="px-3 py-2 text-xs text-sidebar-muted truncate">
             {profile.display_name || profile.email}
           </div>
