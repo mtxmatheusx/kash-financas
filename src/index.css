@@ -310,4 +310,91 @@
   /* ═══ Truncation ═══ */
   .line-clamp-1 { @apply overflow-hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
   .line-clamp-2 { @apply overflow-hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+  /* ═══════════════════════════════════════════════
+     Page Formatting Standard — Consistent Pattern
+     ═══════════════════════════════════════════════ */
+
+  /* ── Page container: standard margins & max-width ── */
+  .page-container {
+    @apply max-w-[1400px] mx-auto px-3 py-3 md:px-5 md:py-5 lg:px-8 lg:py-8;
+  }
+
+  /* ── Page header: title + optional subtitle ── */
+  .page-header {
+    @apply mb-4 md:mb-6 lg:mb-8;
+  }
+  .page-header h1, .page-title {
+    @apply text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-foreground leading-tight;
+  }
+  .page-subtitle {
+    @apply text-sm sm:text-base text-muted-foreground mt-1;
+  }
+
+  /* ── Section spacing ── */
+  .page-section {
+    @apply mb-6 md:mb-8 lg:mb-10;
+  }
+  .page-section-title {
+    @apply text-base sm:text-lg font-semibold text-foreground tracking-tight mb-3 md:mb-4;
+  }
+
+  /* ── Prose: body text formatting for reports / content areas ── */
+  .prose-fin {
+    @apply text-sm sm:text-base leading-relaxed text-foreground;
+  }
+  .prose-fin h1 { @apply text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-foreground mb-4 mt-8 first:mt-0; }
+  .prose-fin h2 { @apply text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-3 mt-6; }
+  .prose-fin h3 { @apply text-base sm:text-lg font-semibold text-foreground mb-2 mt-5; }
+  .prose-fin h4 { @apply text-sm sm:text-base font-semibold text-foreground mb-2 mt-4; }
+  .prose-fin p { @apply mb-3 leading-relaxed; }
+  .prose-fin strong { @apply font-semibold text-foreground; }
+
+  /* ── Lists ── */
+  .prose-fin ul { @apply list-disc pl-5 mb-3 space-y-1; }
+  .prose-fin ol { @apply list-decimal pl-5 mb-3 space-y-1; }
+  .prose-fin li { @apply text-sm sm:text-base leading-relaxed; }
+
+  /* ── Tables (inside prose) ── */
+  .prose-fin table { @apply w-full text-sm border-collapse mb-4; }
+  .prose-fin thead th {
+    @apply text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground
+           px-3 py-2 border-b border-border bg-muted/30;
+  }
+  .prose-fin tbody td {
+    @apply px-3 py-2 border-b border-border align-top;
+  }
+  .prose-fin tbody tr:last-child td { @apply border-b-0; }
+
+  /* ── Standardized table styling (standalone) ── */
+  .table-standard { @apply w-full text-sm; }
+  .table-standard th {
+    @apply text-left text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-muted-foreground
+           px-3 py-2.5 border-b border-border bg-muted/30;
+  }
+  .table-standard td {
+    @apply px-3 py-2.5 border-b border-border text-sm text-foreground;
+  }
+  .table-standard tr:last-child td { @apply border-b-0; }
+  .table-standard tr:hover td { @apply bg-muted/30; }
+
+  /* ── Card grid: consistent card layouts ── */
+  .card-grid {
+    @apply grid gap-3 md:gap-4 lg:gap-5;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+
+  /* ── Print styles ── */
+  @media print {
+    .page-container { @apply px-0 py-0 max-w-none; }
+    .page-header h1, .page-title { @apply text-xl; font-size: 18pt; }
+    .page-section-title { font-size: 14pt; }
+    .prose-fin { font-size: 11pt; line-height: 1.5; }
+    .prose-fin h1 { font-size: 18pt; }
+    .prose-fin h2 { font-size: 14pt; }
+    .prose-fin h3 { font-size: 12pt; }
+    .table-standard th, .table-standard td,
+    .prose-fin thead th, .prose-fin tbody td { font-size: 10pt; padding: 4px 8px; }
+    .no-print { display: none !important; }
+  }
 }
