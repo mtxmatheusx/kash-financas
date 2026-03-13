@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { Lock, Brain, Database, Crown, ShieldCheck, Cpu, TrendingUp, Check, X as XIcon } from "lucide-react";
 import { WhatsAppIcon } from "./WhatsAppMockup";
@@ -10,58 +10,6 @@ interface FeaturesSectionProps {
   signupLink: string;
 }
 
-/* ── Animated counter hook ── */
-const useCountUp = (end: string, duration = 2000) => {
-  const [display, setDisplay] = useState("0");
-  const ref = useRef<HTMLDivElement>(null);
-  const hasAnimated = useRef(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true;
-          const numericPart = end.replace(/[^0-9.]/g, "");
-          const num = parseFloat(numericPart);
-          const suffix = end.replace(/[0-9.,]/g, "");
-          const prefix = end.match(/^[^0-9]*/)?.[0] || "";
-          const isDecimal = numericPart.includes(".");
-          const startTime = performance.now();
-
-          const animate = (now: number) => {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            const current = num * eased;
-            const formatted = isDecimal ? current.toFixed(1) : Math.floor(current).toLocaleString("pt-BR");
-            setDisplay(`${prefix}${formatted}${suffix}`);
-            if (progress < 1) requestAnimationFrame(animate);
-          };
-          requestAnimationFrame(animate);
-        }
-      },
-      { threshold: 0.5 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [end, duration]);
-
-  return { ref, display };
-};
-
-/* ── Social Proof Counter ── */
-const SocialCounter: React.FC<{ value: string; label: string; delay: number }> = ({ value, label, delay }) => {
-  const { ref, display } = useCountUp(value);
-  return (
-    <motion.div {...fadeUp(delay)} ref={ref} className="text-center px-4 sm:px-6">
-      <p className="text-xl sm:text-3xl font-black text-white tracking-tight font-mono-fin">{display}</p>
-      <p className="text-[10px] sm:text-xs text-[hsl(0,0%,55%)] font-medium mt-0.5">{label}</p>
-    </motion.div>
-  );
-};
-
 export const TrustBanner: React.FC<{ t: (k: any) => string }> = ({ t }) => {
   const trustBadges = [
     { icon: Lock, label: t("landing.trust.encryption") },
@@ -70,46 +18,27 @@ export const TrustBanner: React.FC<{ t: (k: any) => string }> = ({ t }) => {
     { icon: WhatsAppIcon, label: t("landing.trust.api"), isCustom: true },
   ];
 
-  const socialStats = [
-    { value: t("landing.social.users"), label: t("landing.social.usersLabel") },
-    { value: t("landing.social.managed"), label: t("landing.social.managedLabel") },
-    { value: t("landing.social.rating"), label: t("landing.social.ratingLabel") },
-  ];
-
   return (
     <section className="py-8 sm:py-12 px-4 sm:px-6 relative" aria-label="Trust badges">
-      <div className="max-w-4xl mx-auto">
-        {/* Social proof counters */}
-        <div className="flex items-center justify-center gap-4 sm:gap-8 mb-8 sm:mb-10">
-          {socialStats.map((stat, i) => (
-            <React.Fragment key={stat.label}>
-              {i > 0 && <div className="w-px h-8 bg-[hsl(0,0%,15%)]" />}
-              <SocialCounter value={stat.value} label={stat.label} delay={i * 0.1} />
-            </React.Fragment>
+      <div className="max-w-4xl mx-auto text-center">
+        <motion.p {...fadeUp()} className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-[hsl(0,0%,42%)] font-medium mb-5 sm:mb-6">
+          {t("landing.trust.subtitle")}
+        </motion.p>
+        <div className="flex items-center justify-center gap-4 sm:gap-8 flex-wrap">
+          {trustBadges.map((badge, i) => (
+            <motion.div
+              key={badge.label}
+              {...fadeUp(i * 0.06)}
+              className="flex items-center gap-2 opacity-50 min-h-[44px] min-w-[44px] px-2"
+            >
+              {badge.isCustom ? (
+                <WhatsAppIcon className="w-4 h-4 text-[hsl(0,0%,52%)]" />
+              ) : (
+                <badge.icon className="w-4 h-4 text-[hsl(0,0%,52%)]" aria-hidden="true" />
+              )}
+              <span className="text-[10px] sm:text-[11px] text-[hsl(0,0%,52%)] font-medium whitespace-nowrap">{badge.label}</span>
+            </motion.div>
           ))}
-        </div>
-
-        {/* Trust badges — improved touch targets */}
-        <div className="text-center">
-          <motion.p {...fadeUp()} className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-[hsl(0,0%,42%)] font-medium mb-5 sm:mb-6">
-            {t("landing.trust.subtitle")}
-          </motion.p>
-          <div className="flex items-center justify-center gap-4 sm:gap-8 flex-wrap">
-            {trustBadges.map((badge, i) => (
-              <motion.div
-                key={badge.label}
-                {...fadeUp(i * 0.06)}
-                className="flex items-center gap-2 opacity-50 min-h-[44px] min-w-[44px] px-2"
-              >
-                {badge.isCustom ? (
-                  <WhatsAppIcon className="w-4 h-4 text-[hsl(0,0%,52%)]" />
-                ) : (
-                  <badge.icon className="w-4 h-4 text-[hsl(0,0%,52%)]" aria-hidden="true" />
-                )}
-                <span className="text-[10px] sm:text-[11px] text-[hsl(0,0%,52%)] font-medium whitespace-nowrap">{badge.label}</span>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </div>
     </section>
