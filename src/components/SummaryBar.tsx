@@ -78,7 +78,7 @@ export const SummaryBar: React.FC<SummaryBarProps> = ({ items }) => (
               {item.label}
             </p>
           </div>
-          <p className={cn("text-lg md:text-xl font-bold font-mono-fin tracking-tight", c.text)}>
+          <p className={cn("text-base sm:text-lg md:text-xl font-bold font-mono-fin tracking-tight whitespace-nowrap", c.text)}>
             {item.value}
           </p>
 
