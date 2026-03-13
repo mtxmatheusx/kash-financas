@@ -86,11 +86,9 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
       d.setMonth(d.getMonth() + i * freq);
       const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
-      // For percentage-based monthly expenses, store 0 as amount — it's recalculated dynamically
+      // User enters the monthly value for both installments and recurring
       let amount = tx.amount;
-      // For installments, divide the total by number of installments
-      if (isInstallment) amount = tx.amount / count;
-      // For recurring, keep the full amount per month (user enters the monthly value)
+      // For percentage-based monthly expenses, store 0 as amount — it's recalculated dynamically
       if (tx.is_percentage && tx.percentage_base === 'monthly') amount = 0;
 
       rows.push({
