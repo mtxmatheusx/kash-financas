@@ -193,8 +193,8 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
         <button
           onClick={toggleTheme}
           className={cn(
-            "flex items-center justify-center gap-3 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full",
-            collapsed ? "p-3" : "px-3 py-2.5"
+            "flex items-center gap-3 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all w-full",
+            collapsed ? "p-3 justify-center" : "px-3 py-2.5"
           )}
         >
           {theme === 'light' ? <Moon size={20} className="w-5 h-5 shrink-0" /> : <Sun size={20} className="w-5 h-5 shrink-0" />}
