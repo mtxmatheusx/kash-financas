@@ -125,16 +125,20 @@ const MobileWhatsAppPreview: React.FC<{ t: (k: any) => string }> = ({ t }) => (
     {...fadeUp(0.4)}
     className="mt-10 mx-auto lg:hidden flex justify-center"
   >
-    <div className="relative w-[220px] h-[470px] rounded-[44px] border-[3px] border-[hsl(0,0%,18%)] bg-[hsl(0,0%,5%)] shadow-2xl shadow-[hsl(0,0%,0%)/0.7] overflow-hidden"
-      style={{ boxShadow: "0 0 0 1px hsl(0 0% 25%), 0 20px 60px -10px rgba(0,0,0,0.8)" }}
+    <div className="relative w-[220px] h-[470px] rounded-[44px] border-[3px] border-[hsl(0,0%,18%)] bg-[hsl(0,0%,5%)] overflow-hidden"
+      style={{ boxShadow: "0 0 0 1px hsl(0 0% 28%), 0 20px 60px -10px rgba(0,0,0,0.8), inset 0 1px 0 0 hsl(0 0% 30%)" }}
     >
+      {/* Edge highlight / reflection */}
+      <div className="absolute inset-0 rounded-[44px] pointer-events-none z-30"
+        style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.04) 100%)" }}
+      />
       {/* Dynamic Island */}
       <div className="absolute top-[8px] left-1/2 -translate-x-1/2 w-[72px] h-[20px] bg-[hsl(0,0%,2%)] rounded-full z-20" />
       {/* Side buttons */}
-      <div className="absolute top-[80px] -left-[2px] w-[3px] h-[28px] rounded-l bg-[hsl(0,0%,20%)]" />
-      <div className="absolute top-[120px] -left-[2px] w-[3px] h-[44px] rounded-l bg-[hsl(0,0%,20%)]" />
-      <div className="absolute top-[170px] -left-[2px] w-[3px] h-[44px] rounded-l bg-[hsl(0,0%,20%)]" />
-      <div className="absolute top-[110px] -right-[2px] w-[3px] h-[56px] rounded-r bg-[hsl(0,0%,20%)]" />
+      <div className="absolute top-[80px] -left-[2px] w-[3px] h-[28px] rounded-l bg-[hsl(0,0%,22%)]" style={{ boxShadow: "inset 0 1px 0 hsl(0 0% 35%)" }} />
+      <div className="absolute top-[120px] -left-[2px] w-[3px] h-[44px] rounded-l bg-[hsl(0,0%,22%)]" style={{ boxShadow: "inset 0 1px 0 hsl(0 0% 35%)" }} />
+      <div className="absolute top-[170px] -left-[2px] w-[3px] h-[44px] rounded-l bg-[hsl(0,0%,22%)]" style={{ boxShadow: "inset 0 1px 0 hsl(0 0% 35%)" }} />
+      <div className="absolute top-[110px] -right-[2px] w-[3px] h-[56px] rounded-r bg-[hsl(0,0%,22%)]" style={{ boxShadow: "inset 0 1px 0 hsl(0 0% 35%)" }} />
 
       {/* Screen */}
       <div className="absolute inset-[3px] rounded-[41px] overflow-hidden bg-[hsl(210,8%,7%)] flex flex-col">
@@ -176,17 +180,21 @@ const IPhoneMockup: React.FC<{ t: (k: any) => string }> = ({ t }) => (
     className="relative flex items-center justify-center"
   >
     <div className="absolute w-[320px] h-[500px] rounded-full blur-[80px] bg-[hsl(160,100%,50%)/0.08]" />
-    <div className="relative w-[270px] h-[570px] rounded-[48px] border-[3px] border-[hsl(0,0%,18%)] bg-[hsl(0,0%,5%)] shadow-2xl overflow-hidden"
-      style={{ boxShadow: "0 0 0 1px hsl(0 0% 25%), 0 25px 80px -15px rgba(0,0,0,0.85)" }}
+    <div className="relative w-[270px] h-[570px] rounded-[48px] border-[3px] border-[hsl(0,0%,18%)] bg-[hsl(0,0%,5%)] overflow-hidden"
+      style={{ boxShadow: "0 0 0 1px hsl(0 0% 28%), 0 25px 80px -15px rgba(0,0,0,0.85), inset 0 1px 0 0 hsl(0 0% 30%)" }}
     >
+      {/* Edge highlight / reflection */}
+      <div className="absolute inset-0 rounded-[48px] pointer-events-none z-30"
+        style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.14) 0%, transparent 35%, transparent 65%, rgba(255,255,255,0.05) 100%)" }}
+      />
       {/* Dynamic Island */}
       <div className="absolute top-[10px] left-1/2 -translate-x-1/2 w-[84px] h-[24px] bg-[hsl(0,0%,2%)] rounded-full z-20" />
       {/* Side buttons — volume + action */}
-      <div className="absolute top-[90px] -left-[2px] w-[3px] h-[30px] rounded-l bg-[hsl(0,0%,22%)]" />
-      <div className="absolute top-[135px] -left-[2px] w-[3px] h-[50px] rounded-l bg-[hsl(0,0%,22%)]" />
-      <div className="absolute top-[195px] -left-[2px] w-[3px] h-[50px] rounded-l bg-[hsl(0,0%,22%)]" />
+      <div className="absolute top-[90px] -left-[2px] w-[3px] h-[30px] rounded-l bg-[hsl(0,0%,22%)]" style={{ boxShadow: "inset 0 1px 0 hsl(0 0% 35%)" }} />
+      <div className="absolute top-[135px] -left-[2px] w-[3px] h-[50px] rounded-l bg-[hsl(0,0%,22%)]" style={{ boxShadow: "inset 0 1px 0 hsl(0 0% 35%)" }} />
+      <div className="absolute top-[195px] -left-[2px] w-[3px] h-[50px] rounded-l bg-[hsl(0,0%,22%)]" style={{ boxShadow: "inset 0 1px 0 hsl(0 0% 35%)" }} />
       {/* Power button */}
-      <div className="absolute top-[130px] -right-[2px] w-[3px] h-[64px] rounded-r bg-[hsl(0,0%,22%)]" />
+      <div className="absolute top-[130px] -right-[2px] w-[3px] h-[64px] rounded-r bg-[hsl(0,0%,22%)]" style={{ boxShadow: "inset 0 1px 0 hsl(0 0% 35%)" }} />
 
       <div className="absolute inset-[3px] rounded-[45px] overflow-hidden bg-[hsl(210,8%,7%)] flex flex-col">
         <WaHeader />
