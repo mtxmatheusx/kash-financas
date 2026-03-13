@@ -85,9 +85,9 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
       className="fixed left-0 top-0 h-screen z-40 bg-sidebar flex flex-col border-r border-sidebar-border"
     >
       {/* Logo */}
-      <div className="h-16 flex items-center px-4 border-b border-sidebar-border">
-        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
-          <img src="/favicon.png" alt="F" className="w-5 h-5 object-contain" />
+      <div className={cn("h-14 flex items-center border-b border-sidebar-border", collapsed ? "justify-center px-0" : "px-4")}>
+        <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center shrink-0">
+          <img src="/favicon.png" alt="F" className="w-4 h-4 object-contain" />
         </div>
         {!collapsed && (
           <motion.span
