@@ -53,33 +53,11 @@ const Dashboard: React.FC = () => {
     );
   };
 
-  const { transactions: dbTransactions, totals } = useTransactions();
-  const { clientTransactions, clientLoading } = useClientProfiles();
+  const { transactions, totals } = useTransactions();
   const { total: investmentTotal } = useInvestments();
   const { goals } = useGoals();
 
-  // Merge transactions from both tables into a unified list
-  const transactions = useMemo(() => {
-    const fromClient = clientTransactions.map(ct => ({
-      id: ct.id,
-      type: ct.type as 'income' | 'expense',
-      amount: ct.amount_cents / 100,
-      description: ct.description,
-      category: ct.category,
-      date: ct.date,
-      status: 'paid' as const,
-      account_type: 'personal' as const,
-      entry_type: 'single' as const,
-      frequency: null,
-      currency: 'BRL',
-      created_at: ct.created_at,
-      _source: 'client_profiles' as const,
-    }));
-    const fromTx = dbTransactions.map(t => ({ ...t, _source: 'transactions' as const }));
-    return [...fromTx, ...fromClient].sort((a, b) => b.date.localeCompare(a.date));
-  }, [dbTransactions, clientTransactions]);
-
-  const hasNoData = transactions.length === 0 && !clientLoading;
+  const hasNoData = transactions.length === 0;
 
   const [dateFilter, setDateFilter] = useState<DateFilter>('all');
   const [customRange, setCustomRange] = useState<{ from?: Date; to?: Date }>({});
