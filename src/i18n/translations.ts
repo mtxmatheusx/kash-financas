@@ -2376,7 +2376,7 @@ const es: typeof pt = {
   "profile.whatsappHint": "Número con código de país (ej: 54 para Argentina) — usado para el agente IA vía WhatsApp",
   "profile.saveProfile": "Guardar Perfil",
   "profile.referralCode": "Código de referido",
-  "profile.referralHint": "Comparte y gana +60 días premium por referido",
+  "profile.referralHint": "Comparte y gana +30 días premium por referido",
 
   "partner.title": "Cuenta Compartida (Pareja)",
   "partner.subtitle": "Invita a tu pareja a gestionar las finanzas juntos",
