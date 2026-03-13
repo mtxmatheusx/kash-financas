@@ -60,6 +60,22 @@ const defaultSettings: UserSettings = {
   notify_whatsapp: true, notify_email: true, notify_due_dates: true, notify_due_days_before: 3, notification_time: "08:00",
 };
 
+const SettingsCard: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = "" }) => (
+  <div className={`rounded-xl border border-border bg-card p-5 md:p-6 space-y-5 transition-all duration-200 ${className}`}>{children}</div>
+);
+
+const SettingsField: React.FC<{ icon?: React.ElementType; label: string; hint?: string; children: React.ReactNode }> = ({
+  icon: Icon, label, hint, children,
+}) => (
+  <div className="transition-all duration-150">
+    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
+      {Icon && <Icon className="w-3.5 h-3.5" />} {label}
+    </label>
+    {children}
+    {hint && <p className="text-[10px] text-muted-foreground mt-1">{hint}</p>}
+  </div>
+);
+
 const Configuracoes: React.FC = () => {
   const { user, profile, isPremium, isTrialing, trialDaysLeft, subscriptionEnd } = useAuth();
   const { currency, setCurrency, language, setLanguage, t } = usePreferences();
