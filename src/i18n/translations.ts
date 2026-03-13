@@ -186,6 +186,7 @@ const pt = {
   "income.recurringEntry": "Recorrente",
   "income.numEntries": "Nº de Entradas (meses)",
   "income.installmentValueHint": "valor da parcela",
+  "income.recurringValueHint": "valor mensal",
   "income.duration": "Duração (meses)",
   "income.autoLaunchNote": "Serão criados {count} lançamentos automáticos a partir da data selecionada",
 
@@ -1086,6 +1087,7 @@ const en: typeof pt = {
   "income.recurringEntry": "Recurring",
   "income.numEntries": "Number of Entries (months)",
   "income.installmentValueHint": "installment value",
+  "income.recurringValueHint": "monthly value",
   "income.duration": "Duration (months)",
   "income.autoLaunchNote": "{count} automatic entries will be created from the selected date",
 
@@ -1957,6 +1959,7 @@ const es: typeof pt = {
   "income.recurringEntry": "Recurrente",
   "income.numEntries": "Nº de Entradas (meses)",
   "income.installmentValueHint": "valor de la cuota",
+  "income.recurringValueHint": "valor mensual",
   "income.duration": "Duración (meses)",
   "income.autoLaunchNote": "Se crearán {count} registros automáticos desde la fecha seleccionada",
 
