@@ -31,7 +31,7 @@ interface Props {
 
 export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
   const { theme, toggleTheme } = useTheme();
-  const { signOut, whatsappUser } = useAuth();
+  const { signOut, profile } = useAuth();
   const { t } = usePreferences();
   const isMobile = useIsMobile();
   const location = useLocation();
