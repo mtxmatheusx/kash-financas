@@ -1843,6 +1843,8 @@ const es: typeof pt = {
 
   "topbar.personal": "Personal",
   "topbar.business": "Empresarial",
+  "topbar.encrypted": "100% encriptado",
+  "landing.encryption.notice": "Sus datos están protegidos de extremo a extremo",
 
   "chat.history": "Historial",
   "chat.newChat": "Nueva conversación",
