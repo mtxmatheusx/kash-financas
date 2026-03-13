@@ -10,54 +10,8 @@ interface FeaturesSectionProps {
   signupLink: string;
 }
 
-/* ── Animated counter hook ── */
-const useCountUp = (end: string, duration = 2000) => {
-  const [display, setDisplay] = useState("0");
-  const ref = useRef<HTMLDivElement>(null);
-  const hasAnimated = useRef(false);
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true;
-          const numericPart = end.replace(/[^0-9.]/g, "");
-          const num = parseFloat(numericPart);
-          const suffix = end.replace(/[0-9.,]/g, "");
-          const prefix = end.match(/^[^0-9]*/)?.[0] || "";
-          const isDecimal = numericPart.includes(".");
-          const startTime = performance.now();
 
-          const animate = (now: number) => {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            const current = num * eased;
-            const formatted = isDecimal ? current.toFixed(1) : Math.floor(current).toLocaleString("pt-BR");
-            setDisplay(`${prefix}${formatted}${suffix}`);
-            if (progress < 1) requestAnimationFrame(animate);
-          };
-          requestAnimationFrame(animate);
-        }
-      },
-      { threshold: 0.5 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [end, duration]);
-
-  return { ref, display };
-};
-
-/* ── Social Proof Counter ── */
-const SocialCounter: React.FC<{ value: string; label: string; delay: number }> = ({ value, label, delay }) => {
-  const { ref, display } = useCountUp(value);
-  return (
-    <motion.div {...fadeUp(delay)} ref={ref} className="text-center px-4 sm:px-6">
-      <p className="text-xl sm:text-3xl font-black text-white tracking-tight font-mono-fin">{display}</p>
-      <p className="text-[10px] sm:text-xs text-[hsl(0,0%,55%)] font-medium mt-0.5">{label}</p>
     </motion.div>
   );
 };
