@@ -45,7 +45,7 @@ export const AmandaLinkSection: React.FC<Props> = ({ userId }) => {
               value={whatsappUrl}
               size={200}
               bgColor="transparent"
-              fgColor="hsl(var(--foreground))"
+              fgColor="currentColor"
               level="M"
             />
           </div>
