@@ -26,7 +26,7 @@ export const AppLayout: React.FC = () => {
         className="min-h-screen pb-[72px] md:pb-0"
       >
         <TopBar />
-        <main className="px-3 py-3 md:p-6 lg:p-8 max-w-[1400px] mx-auto">
+        <main className="px-3 py-3 md:px-5 md:py-5 lg:p-8 max-w-[1400px] mx-auto">
           <AnimatePresence mode="wait">
             <motion.div key={location.pathname}>
               <Outlet />
