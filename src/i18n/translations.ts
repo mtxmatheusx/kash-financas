@@ -1818,6 +1818,10 @@ const es: typeof pt = {
   "topbar.personal": "Personal",
   "topbar.business": "Empresarial",
 
+  "chat.history": "Historial",
+  "chat.newChat": "Nueva conversación",
+  "chat.noHistory": "Sin conversaciones anteriores",
+  "chat.deleteConversation": "Eliminar conversación",
   "chat.financial.label": "Asesor Financiero",
   "chat.financial.short": "Financiero",
   "chat.financial.placeholder": "Pregunta o envía una imagen (factura, extracto)...",
