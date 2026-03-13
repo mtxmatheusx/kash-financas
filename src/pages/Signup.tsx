@@ -101,8 +101,8 @@ const Signup: React.FC = () => {
           <Gift className="w-8 h-8 text-primary mx-auto mb-2" />
           <h3 className="text-base font-bold text-foreground mb-1">{t("auth.signup.referralPromoTitle")}</h3>
           <p className="text-sm text-muted-foreground leading-relaxed">{t("auth.signup.referralPromoDesc")}</p>
-          <div className="mt-3 inline-flex items-center gap-1.5 bg-fin-income/10 text-fin-income px-3 py-1.5 rounded-full text-xs font-semibold">
-            ✅ {t("auth.signup.description")}
+          <div className="mt-3 inline-flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1.5 rounded-full text-xs font-semibold">
+            ✓ {t("auth.signup.description")}
           </div>
         </motion.div>
 
