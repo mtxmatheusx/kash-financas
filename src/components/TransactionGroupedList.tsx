@@ -1,9 +1,15 @@
 import React, { useMemo, useState } from "react";
-import { ChevronDown, ChevronRight, Pencil, Trash2, Check, Clock } from "lucide-react";
+import { ChevronDown, ChevronRight, Pencil, Trash2, Check, Clock, MoreVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { TransactionRow } from "@/lib/types";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { translateCategory } from "@/lib/categoryI18n";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface GroupedListProps {
   transactions: TransactionRow[];
@@ -24,6 +30,42 @@ interface Group {
   pendingCount: number;
   items: TransactionRow[];
 }
+
+/** Mobile actions dropdown for a single transaction */
+const MobileActions: React.FC<{
+  tx: TransactionRow;
+  isIncome: boolean;
+  statusLabel: Record<string, string>;
+  onEdit: (t: TransactionRow) => void;
+  onRemove: (id: string) => void;
+  onToggleStatus: (id: string, newStatus: "paid" | "pending") => void;
+}> = ({ tx, isIncome, statusLabel, onEdit, onRemove, onToggleStatus }) => (
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <button className="md:hidden p-1.5 rounded-lg text-muted-foreground hover:bg-muted/50 transition-colors -mr-1">
+        <MoreVertical className="w-4 h-4" />
+      </button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="end" className="rounded-xl min-w-[160px]">
+      <DropdownMenuItem
+        onClick={() => onToggleStatus(tx.id, tx.status === "paid" ? "pending" : "paid")}
+        className="gap-2 text-xs"
+      >
+        {tx.status === "paid" ? (
+          <><Clock className="w-3.5 h-3.5 text-fin-pending" /> {statusLabel.pending}</>
+        ) : (
+          <><Check className="w-3.5 h-3.5 text-fin-income" /> {statusLabel.paid}</>
+        )}
+      </DropdownMenuItem>
+      <DropdownMenuItem onClick={() => onEdit(tx)} className="gap-2 text-xs">
+        <Pencil className="w-3.5 h-3.5" /> Editar
+      </DropdownMenuItem>
+      <DropdownMenuItem onClick={() => onRemove(tx.id)} className="gap-2 text-xs text-fin-expense focus:text-fin-expense">
+        <Trash2 className="w-3.5 h-3.5" /> Excluir
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+);
 
 export const TransactionGroupedList: React.FC<GroupedListProps> = ({
   transactions, type, onEdit, onRemove, onToggleStatus,
@@ -86,7 +128,7 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
         <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:block">{t("txList.category")}</span>
         <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:block text-center">{t("txList.status")}</span>
         <span className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-wider text-right">{t("txList.amount")}</span>
-        <span className="w-8 md:w-16 hidden md:block" />
+        <span className="w-8 md:w-16" />
       </div>
 
       {groups.length === 0 && singles.length === 0 && (
@@ -151,7 +193,7 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
               {g.items.map((tx, idx) => (
                 <div
                   key={tx.id}
-                  className="grid grid-cols-[1fr_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center px-3 md:px-6 pl-9 md:pl-14 py-2.5 border-b border-border/20 last:border-b-0 hover:bg-muted/40 transition-colors group"
+                  className="grid grid-cols-[1fr_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center px-3 md:px-6 pl-9 md:pl-14 py-2.5 border-b border-border/20 last:border-b-0 hover:bg-muted/40 transition-colors group"
                 >
                   <div className="min-w-0 pr-2">
                     <p className="text-xs font-medium text-foreground/80">
@@ -201,6 +243,17 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
                     {isIncome ? "+" : "−"} {formatBRL(tx.amount)}
                   </span>
 
+                  {/* Mobile actions */}
+                  <MobileActions
+                    tx={tx}
+                    isIncome={isIncome}
+                    statusLabel={statusLabel}
+                    onEdit={onEdit}
+                    onRemove={onRemove}
+                    onToggleStatus={onToggleStatus}
+                  />
+
+                  {/* Desktop actions */}
                   <div className="hidden md:flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button onClick={() => onEdit(tx)} className="p-1 rounded-md text-muted-foreground hover:text-primary hover:bg-muted/50 transition-colors">
                       <Pencil className="w-3 h-3" />
@@ -217,7 +270,7 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
       ))}
 
       {singles.map(tx => (
-        <div key={tx.id} className="grid grid-cols-[1fr_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center px-3 md:px-6 py-3 md:py-4 border-b border-border/50 last:border-b-0 hover:bg-muted/30 transition-colors duration-150 group">
+        <div key={tx.id} className="grid grid-cols-[1fr_auto_auto] md:grid-cols-[2fr_1fr_1fr_auto_auto] items-center px-3 md:px-6 py-3 md:py-4 border-b border-border/50 last:border-b-0 hover:bg-muted/30 transition-colors duration-150 group">
           <div className="min-w-0 pr-2">
             <p className="text-sm font-medium text-foreground truncate">{tx.description}</p>
             <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1 flex-wrap">
@@ -260,6 +313,17 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
             {isIncome ? "+" : "−"} {formatBRL(tx.amount)}
           </span>
 
+          {/* Mobile actions */}
+          <MobileActions
+            tx={tx}
+            isIncome={isIncome}
+            statusLabel={statusLabel}
+            onEdit={onEdit}
+            onRemove={onRemove}
+            onToggleStatus={onToggleStatus}
+          />
+
+          {/* Desktop actions */}
           <div className="hidden md:flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <button onClick={() => onEdit(tx)} className="p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-muted/50 transition-colors">
               <Pencil className="w-3.5 h-3.5" />
