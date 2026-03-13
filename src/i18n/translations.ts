@@ -770,7 +770,7 @@ const pt = {
   "auth.login.errorInvalid": "E-mail ou senha incorretos",
   "auth.login.success": "Login realizado com sucesso!",
   "auth.signup.title": "Criar conta",
-  "auth.signup.description": "Comece com acesso completo por 30 dias — sem cartão de crédito",
+  "auth.signup.description": "Aproveite 30 dias de Premium completo — sem precisar cadastrar cartão de crédito",
   "auth.signup.trialBadge": "30 dias de Premium grátis",
   "auth.signup.noCreditCard": "Sem cartão de crédito • Cancele quando quiser",
   "auth.signup.displayName": "Nome de exibição",
