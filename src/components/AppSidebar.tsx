@@ -142,7 +142,7 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
                           className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-sidebar-primary"
                         />
                       )}
-                      <item.icon className="w-[18px] h-[18px] shrink-0" />
+                      <item.icon className="w-4 h-4 shrink-0" />
                       {!collapsed && (
                         <span className="font-medium flex-1">{label}</span>
                       )}
