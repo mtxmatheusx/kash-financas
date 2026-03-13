@@ -261,6 +261,10 @@ const pt = {
   "dashboard.referral.desc": "Compartilhe seu código de indicação. Quando alguém se cadastrar, você ganha +60 dias de Premium grátis!",
   "dashboard.referral.copy": "Copiar",
   "dashboard.referral.copied": "Copiado!",
+  "dashboard.upgrade.title": "⏳ Seu trial Premium está ativo!",
+  "dashboard.upgrade.desc": "Aproveite todos os recursos Premium. Assine antes do trial acabar e não perca nada!",
+  "dashboard.upgrade.daysLeft": "dias restantes",
+  "dashboard.upgrade.cta": "Assinar Premium",
 
   // Goals
   "goals.title": "Metas Financeiras",
