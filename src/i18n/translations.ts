@@ -1848,6 +1848,8 @@ const es: typeof pt = {
   "topbar.personal": "Personal",
   "topbar.business": "Empresarial",
   "topbar.encrypted": "100% encriptado",
+  "topbar.encryptionTooltipTitle": "Cifrado AES-256",
+  "topbar.encryptionTooltipDesc": "Todos sus datos financieros están protegidos con cifrado de nivel bancario. Nadie más que usted tiene acceso.",
   "landing.encryption.notice": "Sus datos están protegidos de extremo a extremo",
 
   "chat.history": "Historial",
