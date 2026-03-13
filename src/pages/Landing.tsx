@@ -73,35 +73,72 @@ const WhatsAppIcon: React.FC<{ className?: string; style?: React.CSSProperties }
   </svg>
 );
 
-/* ── Compact WhatsApp Preview (mobile) ── */
+/* ── Compact WhatsApp Preview (mobile) — iPhone-style frame ── */
 const MobileWhatsAppPreview: React.FC<{ t: (k: any) => string }> = ({ t }) => (
   <motion.div
     {...fadeUp(0.4)}
-    className="mt-10 mx-auto max-w-sm rounded-2xl border border-[hsl(0,0%,12%)] bg-[hsl(0,0%,4%)] p-4 lg:hidden"
+    className="mt-10 mx-auto lg:hidden flex justify-center"
   >
-    <div className="flex items-center gap-2.5 mb-3">
-      <div className="w-7 h-7 rounded-full bg-[hsl(142,70%,45%)] flex items-center justify-center">
-        <WhatsAppIcon className="w-3.5 h-3.5 text-white" />
-      </div>
-      <div>
-        <p className="text-[11px] font-semibold text-white">Faciliten Copiloto</p>
-        <p className="text-[9px] text-[hsl(160,100%,50%)]">online</p>
-      </div>
-    </div>
-    <div className="space-y-2">
-      <div className="flex justify-end">
-        <div className="bg-[hsl(142,40%,18%)] rounded-2xl rounded-tr-sm px-3 py-2 max-w-[80%]">
-          <div className="flex items-center gap-1.5 text-[11px] text-[hsl(0,0%,85%)]">
-            <AudioLines className="w-3 h-3 text-[hsl(160,100%,50%)]" />
-            <span>{t("mockup.userMsg1")}</span>
+    <div className="relative w-[260px] h-[480px] rounded-[36px] border-2 border-[hsl(0,0%,18%)] bg-[hsl(0,0%,6%)] shadow-2xl shadow-[hsl(0,0%,0%)/0.5] overflow-hidden">
+      {/* Notch */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[100px] h-[24px] bg-[hsl(0,0%,2%)] rounded-b-2xl z-20" />
+      
+      {/* Screen */}
+      <div className="absolute inset-[3px] rounded-[33px] overflow-hidden bg-[hsl(200,5%,8%)] flex flex-col">
+        {/* Header */}
+        <div className="bg-[hsl(200,8%,12%)] px-3 pt-9 pb-2.5 flex items-center gap-2.5 shrink-0">
+          <div className="w-7 h-7 rounded-full bg-[hsl(142,70%,45%)] flex items-center justify-center">
+            <WhatsAppIcon className="w-3.5 h-3.5 text-white" />
+          </div>
+          <div>
+            <p className="text-[11px] font-semibold text-white">Faciliten Copiloto</p>
+            <p className="text-[9px] text-[hsl(160,100%,50%)]">online</p>
           </div>
         </div>
-      </div>
-      <div className="flex justify-start">
-        <div className="bg-[hsl(0,0%,10%)] rounded-2xl rounded-tl-sm px-3 py-2 max-w-[85%]">
-          <p className="text-[11px] text-[hsl(0,0%,85%)] leading-relaxed">
-            {t("mockup.botMsg1Short")}. 📊
-          </p>
+
+        {/* Messages */}
+        <div className="flex-1 p-3 space-y-2 overflow-hidden">
+          <div className="flex justify-end">
+            <div className="bg-[hsl(142,40%,18%)] rounded-2xl rounded-tr-sm px-3 py-2 max-w-[85%]">
+              <div className="flex items-center gap-1.5 text-[11px] text-[hsl(0,0%,85%)]">
+                <AudioLines className="w-3 h-3 text-[hsl(160,100%,50%)]" />
+                <span>{t("mockup.userMsg1")}</span>
+              </div>
+              <p className="text-[8px] text-[hsl(0,0%,50%)] text-right mt-0.5">10:32</p>
+            </div>
+          </div>
+          <div className="flex justify-start">
+            <div className="bg-[hsl(0,0%,12%)] rounded-2xl rounded-tl-sm px-3 py-2 max-w-[90%]">
+              <p className="text-[11px] text-[hsl(0,0%,85%)] leading-relaxed">
+                {t("mockup.botMsg1Short")} 📊
+              </p>
+              <p className="text-[8px] text-[hsl(0,0%,50%)] text-right mt-0.5">10:32</p>
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <div className="bg-[hsl(142,40%,18%)] rounded-2xl rounded-tr-sm px-3 py-2 max-w-[80%]">
+              <p className="text-[11px] text-[hsl(0,0%,85%)]">{t("mockup.userMsg2")}</p>
+              <p className="text-[8px] text-[hsl(0,0%,50%)] text-right mt-0.5">10:33</p>
+            </div>
+          </div>
+          <div className="flex justify-start">
+            <div className="bg-[hsl(0,0%,12%)] rounded-2xl rounded-tl-sm px-3 py-2 max-w-[90%]">
+              <p className="text-[11px] text-[hsl(0,0%,85%)] leading-relaxed">
+                {t("mockup.botMsg2")}
+              </p>
+              <p className="text-[8px] text-[hsl(0,0%,50%)] text-right mt-0.5">10:33</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Input bar */}
+        <div className="px-3 pb-3 shrink-0">
+          <div className="flex items-center gap-2 bg-[hsl(0,0%,12%)] rounded-full px-3 py-2">
+            <div className="flex-1 text-[10px] text-[hsl(0,0%,40%)]">Mensagem</div>
+            <div className="w-6 h-6 rounded-full bg-[hsl(142,70%,45%)] flex items-center justify-center">
+              <AudioLines className="w-3 h-3 text-white" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
