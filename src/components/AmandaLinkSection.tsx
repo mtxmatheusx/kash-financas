@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { MessageCircle, Smartphone, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const WHATSAPP_NUMBER = "5511954223325";
 
@@ -21,6 +22,7 @@ export const AmandaLinkSection: React.FC<Props> = ({ userId }) => {
 
   const handleOpen = () => {
     window.open(whatsappUrl, "_blank");
+    toast.success("Vínculo iniciado! Envie a mensagem no WhatsApp para concluir.");
   };
 
   return (
