@@ -172,7 +172,12 @@ const Receitas: React.FC = () => {
               <Input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder={t("income.descPlaceholder")} className="rounded-xl h-12 mt-1.5" />
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("common.amount")}</label>
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                {t("common.amount")}
+                {form.entry_type === 'installment' && (
+                  <span className="ml-1 normal-case text-primary/70 font-normal">({t("income.installmentValueHint")})</span>
+                )}
+              </label>
               <div className="flex gap-2 mt-1.5">
                 <div className="flex-1">
                   <CurrencyInput value={form.amount} onValueChange={(formatted, cents) => { setForm({ ...form, amount: formatted }); setAmountCents(cents); }} className="rounded-xl h-12" />
