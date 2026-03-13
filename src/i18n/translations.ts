@@ -959,6 +959,8 @@ const en: typeof pt = {
 
   "topbar.personal": "Personal",
   "topbar.business": "Business",
+  "topbar.encrypted": "100% encrypted",
+  "landing.encryption.notice": "Your data is protected end-to-end",
 
   "chat.history": "History",
   "chat.newChat": "New chat",
