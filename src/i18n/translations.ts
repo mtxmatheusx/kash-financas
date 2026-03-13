@@ -1145,6 +1145,10 @@ const en: typeof pt = {
   "dashboard.weeklyBalance": "Weekly Balance",
   "dashboard.weeklyTransactions": "Transactions this week",
   "dashboard.weeklyNoData": "No transactions in the last 7 days",
+  "dashboard.referral.title": "🎁 Refer friends and get +60 free days!",
+  "dashboard.referral.desc": "Share your referral code. When someone signs up, you get +60 days of Premium for free!",
+  "dashboard.referral.copy": "Copy",
+  "dashboard.referral.copied": "Copied!",
 
   "goals.title": "Financial Goals",
   "goals.subtitle": "Track your financial objectives",
