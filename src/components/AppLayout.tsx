@@ -36,7 +36,7 @@ export const AppLayout: React.FC = () => {
 
       <motion.div
         initial={false}
-        animate={{ marginLeft: isMobile ? 0 : collapsed ? 72 : 220 }}
+        animate={{ marginLeft: isMobile ? 0 : collapsed ? 56 : 192 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
         className="min-h-screen pb-[72px] md:pb-0"
       >
