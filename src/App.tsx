@@ -13,10 +13,19 @@ import Landing from "@/pages/Landing";
 import Dashboard from "@/pages/Dashboard";
 import Receitas from "@/pages/Receitas";
 import Despesas from "@/pages/Despesas";
+import Investimentos from "@/pages/Investimentos";
+import Metas from "@/pages/Metas";
+import Mensal from "@/pages/Mensal";
+import PlanejamentoFinanceiro from "@/pages/PlanejamentoFinanceiro";
+import DRE from "@/pages/DRE";
+import EBITDA from "@/pages/EBITDA";
+import Importar from "@/pages/Importar";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import ForgotPassword from "@/pages/ForgotPassword";
 import ResetPassword from "@/pages/ResetPassword";
+import Upgrade from "@/pages/Upgrade";
+import Perfil from "@/pages/Perfil";
 import Configuracoes from "@/pages/Configuracoes";
 import NotFound from "./pages/NotFound";
 
@@ -39,13 +48,25 @@ const App = () => (
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/upgrade" element={<Upgrade />} />
 
                 {/* Protected routes */}
                 <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+                  {/* Free tier */}
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/receitas" element={<Receitas />} />
                   <Route path="/despesas" element={<Despesas />} />
+                  <Route path="/perfil" element={<Perfil />} />
                   <Route path="/configuracoes" element={<Configuracoes />} />
+
+                  {/* Premium tier */}
+                  <Route path="/investimentos" element={<ProtectedRoute requirePremium><Investimentos /></ProtectedRoute>} />
+                  <Route path="/metas" element={<ProtectedRoute requirePremium><Metas /></ProtectedRoute>} />
+                  <Route path="/mensal" element={<ProtectedRoute requirePremium><Mensal /></ProtectedRoute>} />
+                  <Route path="/planejamento" element={<ProtectedRoute requirePremium><PlanejamentoFinanceiro /></ProtectedRoute>} />
+                  <Route path="/dre" element={<ProtectedRoute requirePremium><DRE /></ProtectedRoute>} />
+                  <Route path="/ebitda" element={<ProtectedRoute requirePremium><EBITDA /></ProtectedRoute>} />
+                  <Route path="/importar" element={<ProtectedRoute requirePremium><Importar /></ProtectedRoute>} />
                 </Route>
 
                 <Route path="*" element={<NotFound />} />

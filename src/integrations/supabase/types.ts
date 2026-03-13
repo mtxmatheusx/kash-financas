@@ -109,42 +109,6 @@ export type Database = {
           },
         ]
       }
-      client_profiles: {
-        Row: {
-          amount_cents: number
-          category: string
-          created_at: string
-          date: string
-          description: string
-          id: string
-          type: string
-          user_id: string
-          whatsapp_number: string | null
-        }
-        Insert: {
-          amount_cents?: number
-          category?: string
-          created_at?: string
-          date?: string
-          description?: string
-          id?: string
-          type?: string
-          user_id: string
-          whatsapp_number?: string | null
-        }
-        Update: {
-          amount_cents?: number
-          category?: string
-          created_at?: string
-          date?: string
-          description?: string
-          id?: string
-          type?: string
-          user_id?: string
-          whatsapp_number?: string | null
-        }
-        Relationships: []
-      }
       goals: {
         Row: {
           account_type: Database["public"]["Enums"]["account_type"]

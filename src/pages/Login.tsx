@@ -1,19 +1,18 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { LogIn, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LogIn } from "lucide-react";
 import { motion } from "framer-motion";
 import facilitenLogo from "@/assets/faciliten-logo.png";
-import { useAuth } from "@/contexts/AuthContext";
 import { usePreferences } from "@/contexts/PreferencesContext";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { signIn } = useAuth();
   const { t } = usePreferences();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,12 +22,17 @@ const Login: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await signIn(email, password);
+
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
     if (error) {
-      toast.error(error.message);
+      toast.error(error.message === "Invalid login credentials"
+        ? t("auth.login.errorInvalid")
+        : error.message
+      );
     } else {
-      toast.success("Bem-vindo ao Faciliten!");
-      navigate("/dashboard");
+      toast.success(t("auth.login.success"));
+      navigate("/");
     }
     setLoading(false);
   };
@@ -50,71 +54,92 @@ const Login: React.FC = () => {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.1, type: "spring", stiffness: 200, damping: 15 }}
           />
-          <h1 className="text-2xl font-bold text-foreground">Faciliten</h1>
-          <p className="text-muted-foreground mt-1">Gestão financeira simplificada</p>
+          <motion.h1
+            className="text-2xl font-bold text-foreground"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+          >
+            Faciliten
+          </motion.h1>
+          <motion.p
+            className="text-muted-foreground mt-1"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+          >
+            {t("auth.subtitle")}
+          </motion.p>
         </div>
 
-        <Card className="border-border/50">
-          <CardHeader>
-            <CardTitle className="text-lg">Entrar</CardTitle>
-          </CardHeader>
-          <form onSubmit={handleLogin}>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">E-mail</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
-                <div className="relative">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.25 }}
+        >
+          <Card className="border-border/50">
+            <CardHeader>
+              <CardTitle className="text-lg">{t("auth.login.title")}</CardTitle>
+              <CardDescription>{t("auth.login.description")}</CardDescription>
+            </CardHeader>
+            <form onSubmit={handleLogin}>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">{t("auth.login.email")}</Label>
                   <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    id="email"
+                    type="email"
+                    placeholder={t("auth.login.emailPlaceholder")}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
                 </div>
-              </div>
-            </CardContent>
-            <CardFooter className="flex flex-col gap-3">
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Entrando..." : (
-                  <>
-                    <LogIn className="h-4 w-4 mr-2" />
-                    Entrar
-                  </>
-                )}
-              </Button>
-              <div className="flex flex-col gap-1 text-sm text-center">
-                <Link to="/forgot-password" className="text-primary hover:underline">
-                  Esqueci minha senha
-                </Link>
-                <p className="text-muted-foreground">
-                  Não tem conta?{" "}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">{t("auth.login.password")}</Label>
+                    <Link to="/forgot-password" className="text-xs text-primary hover:underline">
+                      {t("auth.login.forgotPassword")}
+                    </Link>
+                  </div>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="flex flex-col gap-3">
+                <Button type="submit" className="w-full transition-transform active:scale-[0.98]" disabled={loading}>
+                  {loading ? t("auth.login.loading") : (
+                    <>
+                      <LogIn className="h-4 w-4 mr-2" />
+                      {t("auth.login.submit")}
+                    </>
+                  )}
+                </Button>
+                <p className="text-sm text-muted-foreground text-center">
+                  {t("auth.login.noAccount")}{" "}
                   <Link to="/signup" className="text-primary hover:underline font-medium">
-                    Criar conta
+                    {t("auth.login.createAccount")}
                   </Link>
                 </p>
-              </div>
-            </CardFooter>
-          </form>
-        </Card>
+              </CardFooter>
+            </form>
+          </Card>
+        </motion.div>
       </motion.div>
     </div>
   );

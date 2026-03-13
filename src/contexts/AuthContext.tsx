@@ -1,13 +1,20 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
+import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import type { Session, User } from "@supabase/supabase-js";
+import { useSessionControl } from "@/hooks/useSessionControl";
+import type { User, Session } from "@supabase/supabase-js";
+
+type SubscriptionTier = "free" | "premium";
 
 interface Profile {
+  id: string;
+  user_id: string;
   display_name: string | null;
   email: string | null;
-  whatsapp_number: string | null;
+  avatar_url: string | null;
+  subscription_tier: SubscriptionTier;
+  trial_end: string | null;
   referral_code: string | null;
-  subscription_tier: string;
+  whatsapp_number: string | null;
 }
 
 interface AuthContextType {
@@ -20,8 +27,6 @@ interface AuthContextType {
   trialDaysLeft: number | null;
   subscriptionEnd: string | null;
   sessionBlocked: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, meta?: Record<string, any>) => Promise<{ error: any; data: any }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   checkSubscription: () => Promise<void>;
@@ -37,8 +42,6 @@ const AuthContext = createContext<AuthContextType>({
   trialDaysLeft: null,
   subscriptionEnd: null,
   sessionBlocked: false,
-  signIn: async () => ({ error: null }),
-  signUp: async () => ({ error: null, data: null }),
   signOut: async () => {},
   refreshProfile: async () => {},
   checkSubscription: async () => {},
@@ -51,86 +54,125 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
+  const [sessionBlocked, setSessionBlocked] = useState(false);
+  const { registerSession, logoutSession } = useSessionControl(user?.id);
 
-  const fetchProfile = useCallback(async (userId: string) => {
+  const fetchProfile = async (userId: string) => {
     const { data } = await supabase
       .from("profiles")
-      .select("display_name, email, whatsapp_number, referral_code, subscription_tier")
+      .select("*")
       .eq("user_id", userId)
       .single();
-    if (data) setProfile(data as Profile);
-  }, []);
+    setProfile(data as Profile | null);
+  };
+
+  const checkSubscription = useCallback(async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke("check-subscription");
+      if (error) {
+        console.error("check-subscription error:", error);
+        return;
+      }
+      if (data?.subscription_end) {
+        setSubscriptionEnd(data.subscription_end);
+      }
+      if (user) await fetchProfile(user.id);
+    } catch (e) {
+      console.error("check-subscription failed:", e);
+    }
+  }, [user]);
+
+  const refreshProfile = async () => {
+    if (user) {
+      await checkSubscription();
+    }
+  };
 
   useEffect(() => {
-    // Set up auth listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        // Defer profile fetch to avoid blocking auth state
-        setTimeout(() => fetchProfile(session.user.id), 0);
-      } else {
-        setProfile(null);
-      }
-    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, newSession) => {
+        setSession(newSession);
+        setUser(newSession?.user ?? null);
 
-    // Then check existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) fetchProfile(session.user.id);
+        if (newSession?.user) {
+          setTimeout(() => fetchProfile(newSession.user.id), 0);
+        } else {
+          setProfile(null);
+          setSubscriptionEnd(null);
+        }
+        setLoading(false);
+      }
+    );
+
+    supabase.auth.getSession().then(({ data: { session: existingSession } }) => {
+      setSession(existingSession);
+      setUser(existingSession?.user ?? null);
+      if (existingSession?.user) {
+        fetchProfile(existingSession.user.id);
+      }
       setLoading(false);
     });
 
     return () => subscription.unsubscribe();
-  }, [fetchProfile]);
-
-  const signIn = useCallback(async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error };
   }, []);
 
-  const signUp = useCallback(async (email: string, password: string, meta?: Record<string, any>) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: meta,
-        emailRedirectTo: window.location.origin,
-      },
+  useEffect(() => {
+    if (!user) return;
+    checkSubscription();
+    const interval = setInterval(checkSubscription, 60000);
+    return () => clearInterval(interval);
+  }, [user, checkSubscription]);
+
+  // Register session on login
+  useEffect(() => {
+    if (!user) { setSessionBlocked(false); return; }
+    registerSession().then((result) => {
+      if (!result.allowed) {
+        setSessionBlocked(true);
+      } else {
+        setSessionBlocked(false);
+      }
     });
-    return { data, error };
-  }, []);
+  }, [user, registerSession]);
 
-  const signOut = useCallback(async () => {
+  const signOut = async () => {
+    await logoutSession();
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);
     setProfile(null);
-  }, []);
+    setSubscriptionEnd(null);
+    setSessionBlocked(false);
+  };
 
-  const refreshProfile = useCallback(async () => {
-    if (user) await fetchProfile(user.id);
-  }, [user, fetchProfile]);
+  // Trial logic
+  const now = new Date();
+  const trialEnd = profile?.trial_end ? new Date(profile.trial_end) : null;
+  const isTrialActive = trialEnd ? trialEnd > now : false;
+  const trialDaysLeft = trialEnd ? Math.max(0, Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))) : null;
 
-  const isPremium = profile?.subscription_tier === "premium";
+  // Premium if: has Stripe subscription OR trial is active
+  const hasStripeSubscription = profile?.subscription_tier === "premium" && !!subscriptionEnd;
+  const ownPremium = hasStripeSubscription || isTrialActive;
+
+  // Check if partner is premium (shared premium)
+  const [partnerPremium, setPartnerPremium] = useState(false);
+  useEffect(() => {
+    if (!user || ownPremium) { setPartnerPremium(false); return; }
+    supabase.rpc("is_premium_shared", { _user_id: user.id }).then(({ data }) => {
+      if (data) setPartnerPremium(true);
+    });
+  }, [user, ownPremium]);
+
+  const isPremium = ownPremium || partnerPremium;
 
   return (
     <AuthContext.Provider value={{
-      user,
-      session,
-      profile,
-      loading,
-      isPremium,
-      isTrialing: false,
-      trialDaysLeft: null,
-      subscriptionEnd: null,
-      sessionBlocked: false,
-      signIn,
-      signUp,
-      signOut,
-      refreshProfile,
-      checkSubscription: async () => {},
+      user, session, profile, loading, isPremium, sessionBlocked,
+      isTrialing: isTrialActive && !hasStripeSubscription,
+      trialDaysLeft,
+      subscriptionEnd, signOut, refreshProfile, checkSubscription
     }}>
       {children}
     </AuthContext.Provider>
