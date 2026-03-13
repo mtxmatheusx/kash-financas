@@ -2007,6 +2007,10 @@ const es: typeof pt = {
   "dashboard.weeklyBalance": "Saldo de la Semana",
   "dashboard.weeklyTransactions": "Transacciones esta semana",
   "dashboard.weeklyNoData": "Sin transacciones en los últimos 7 días",
+  "dashboard.referral.title": "🎁 ¡Refiere amigos y gana +60 días gratis!",
+  "dashboard.referral.desc": "Comparte tu código de referencia. Cuando alguien se registre, ¡ganas +60 días de Premium gratis!",
+  "dashboard.referral.copy": "Copiar",
+  "dashboard.referral.copied": "¡Copiado!",
 
   "goals.title": "Metas Financieras",
   "goals.subtitle": "Sigue tus objetivos financieros",

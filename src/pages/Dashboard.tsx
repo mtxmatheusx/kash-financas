@@ -157,6 +157,9 @@ const Dashboard: React.FC = () => {
           </Select>
         </motion.div>
 
+        {/* Referral Banner */}
+        <ReferralDashboardBanner />
+
         {/* KPIs */}
         <SummaryBar items={[
           { label: t("kpi.income"), value: formatBRL(filteredTotals.income), color: "income", icon: TrendingUp },
