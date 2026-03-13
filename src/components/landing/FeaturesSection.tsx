@@ -10,12 +10,6 @@ interface FeaturesSectionProps {
   signupLink: string;
 }
 
-
-
-    </motion.div>
-  );
-};
-
 export const TrustBanner: React.FC<{ t: (k: any) => string }> = ({ t }) => {
   const trustBadges = [
     { icon: Lock, label: t("landing.trust.encryption") },
@@ -24,46 +18,27 @@ export const TrustBanner: React.FC<{ t: (k: any) => string }> = ({ t }) => {
     { icon: WhatsAppIcon, label: t("landing.trust.api"), isCustom: true },
   ];
 
-  const socialStats = [
-    { value: t("landing.social.users"), label: t("landing.social.usersLabel") },
-    { value: t("landing.social.managed"), label: t("landing.social.managedLabel") },
-    { value: t("landing.social.rating"), label: t("landing.social.ratingLabel") },
-  ];
-
   return (
     <section className="py-8 sm:py-12 px-4 sm:px-6 relative" aria-label="Trust badges">
-      <div className="max-w-4xl mx-auto">
-        {/* Social proof counters */}
-        <div className="flex items-center justify-center gap-4 sm:gap-8 mb-8 sm:mb-10">
-          {socialStats.map((stat, i) => (
-            <React.Fragment key={stat.label}>
-              {i > 0 && <div className="w-px h-8 bg-[hsl(0,0%,15%)]" />}
-              <SocialCounter value={stat.value} label={stat.label} delay={i * 0.1} />
-            </React.Fragment>
+      <div className="max-w-4xl mx-auto text-center">
+        <motion.p {...fadeUp()} className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-[hsl(0,0%,42%)] font-medium mb-5 sm:mb-6">
+          {t("landing.trust.subtitle")}
+        </motion.p>
+        <div className="flex items-center justify-center gap-4 sm:gap-8 flex-wrap">
+          {trustBadges.map((badge, i) => (
+            <motion.div
+              key={badge.label}
+              {...fadeUp(i * 0.06)}
+              className="flex items-center gap-2 opacity-50 min-h-[44px] min-w-[44px] px-2"
+            >
+              {badge.isCustom ? (
+                <WhatsAppIcon className="w-4 h-4 text-[hsl(0,0%,52%)]" />
+              ) : (
+                <badge.icon className="w-4 h-4 text-[hsl(0,0%,52%)]" aria-hidden="true" />
+              )}
+              <span className="text-[10px] sm:text-[11px] text-[hsl(0,0%,52%)] font-medium whitespace-nowrap">{badge.label}</span>
+            </motion.div>
           ))}
-        </div>
-
-        {/* Trust badges — improved touch targets */}
-        <div className="text-center">
-          <motion.p {...fadeUp()} className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-[hsl(0,0%,42%)] font-medium mb-5 sm:mb-6">
-            {t("landing.trust.subtitle")}
-          </motion.p>
-          <div className="flex items-center justify-center gap-4 sm:gap-8 flex-wrap">
-            {trustBadges.map((badge, i) => (
-              <motion.div
-                key={badge.label}
-                {...fadeUp(i * 0.06)}
-                className="flex items-center gap-2 opacity-50 min-h-[44px] min-w-[44px] px-2"
-              >
-                {badge.isCustom ? (
-                  <WhatsAppIcon className="w-4 h-4 text-[hsl(0,0%,52%)]" />
-                ) : (
-                  <badge.icon className="w-4 h-4 text-[hsl(0,0%,52%)]" aria-hidden="true" />
-                )}
-                <span className="text-[10px] sm:text-[11px] text-[hsl(0,0%,52%)] font-medium whitespace-nowrap">{badge.label}</span>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </div>
     </section>
