@@ -85,8 +85,8 @@ const Signup: React.FC = () => {
           <img src={facilitenLogo} alt="Faciliten" className="w-12 h-12 rounded-xl mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-foreground">Faciliten</h1>
           <p className="text-muted-foreground mt-1">{t("auth.signup.trialBadge")}</p>
-          <div className="mt-2 inline-flex items-center gap-1.5 bg-fin-income/10 text-fin-income px-4 py-1.5 rounded-full text-xs font-medium">
-            ✅ {t("auth.signup.noCreditCard")}
+          <div className="mt-2 inline-flex items-center gap-1.5 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-medium">
+            ✓ {t("auth.signup.noCreditCard")}
           </div>
         </div>
 
