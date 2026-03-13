@@ -199,7 +199,7 @@ const Signup: React.FC = () => {
                   onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
                   maxLength={8}
                 />
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs font-semibold text-primary/80">
                   {t("auth.signup.referralHint")}
                 </p>
               </div>
