@@ -79,7 +79,9 @@ export const TransactionGroupedList: React.FC<GroupedListProps> = ({
 
     transactions.forEach(t => {
       if (t.entry_type === "recurring" || t.entry_type === "installment") {
-        const key = `${t.description}__${t.category}__${t.entry_type}`;
+        // Strip installment suffix like " (1/3)" to group all installments together
+        const baseDesc = t.description.replace(/ \(\d+\/\d+\)$/, "");
+        const key = `${baseDesc}__${t.category}__${t.entry_type}`;
         if (!recurringMap[key]) recurringMap[key] = [];
         recurringMap[key].push(t);
       } else {
