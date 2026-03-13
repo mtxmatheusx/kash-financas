@@ -119,6 +119,7 @@ export type Database = {
           id: string
           type: string
           user_id: string
+          whatsapp_number: string | null
         }
         Insert: {
           amount_cents?: number
@@ -129,6 +130,7 @@ export type Database = {
           id?: string
           type?: string
           user_id: string
+          whatsapp_number?: string | null
         }
         Update: {
           amount_cents?: number
@@ -139,6 +141,7 @@ export type Database = {
           id?: string
           type?: string
           user_id?: string
+          whatsapp_number?: string | null
         }
         Relationships: []
       }

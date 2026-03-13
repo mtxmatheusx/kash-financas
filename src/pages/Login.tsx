@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { LogIn, Phone } from "lucide-react";
+import { LogIn, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import facilitenLogo from "@/assets/faciliten-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
@@ -15,20 +15,21 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const { signIn } = useAuth();
   const { t } = usePreferences();
-  const [whatsapp, setWhatsapp] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const cleaned = whatsapp.replace(/\D/g, "");
-    if (cleaned.length < 10) {
-      toast.error("Informe um número de WhatsApp válido (com DDD).");
-      return;
-    }
     setLoading(true);
-    signIn(cleaned);
-    toast.success("Bem-vindo ao Faciliten!");
-    navigate("/dashboard");
+    const { error } = await signIn(email, password);
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Bem-vindo ao Faciliten!");
+      navigate("/dashboard");
+    }
     setLoading(false);
   };
 
@@ -49,68 +50,71 @@ const Login: React.FC = () => {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.1, type: "spring", stiffness: 200, damping: 15 }}
           />
-          <motion.h1
-            className="text-2xl font-bold text-foreground"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-          >
-            Faciliten
-          </motion.h1>
-          <motion.p
-            className="text-muted-foreground mt-1"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.3 }}
-          >
-            Gestão financeira simplificada
-          </motion.p>
+          <h1 className="text-2xl font-bold text-foreground">Faciliten</h1>
+          <p className="text-muted-foreground mt-1">Gestão financeira simplificada</p>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, delay: 0.25 }}
-        >
-          <Card className="border-border/50">
-            <CardHeader>
-              <CardTitle className="text-lg">Entrar com WhatsApp</CardTitle>
-            </CardHeader>
-            <form onSubmit={handleLogin}>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="whatsapp">Número do WhatsApp</Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input
-                      id="whatsapp"
-                      type="tel"
-                      placeholder="(11) 99999-9999"
-                      value={whatsapp}
-                      onChange={(e) => setWhatsapp(e.target.value)}
-                      className="pl-10"
-                      inputMode="tel"
-                      required
-                    />
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    Use o mesmo número cadastrado no WhatsApp.
-                  </p>
+        <Card className="border-border/50">
+          <CardHeader>
+            <CardTitle className="text-lg">Entrar</CardTitle>
+          </CardHeader>
+          <form onSubmit={handleLogin}>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">E-mail</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Senha</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
-              </CardContent>
-              <CardFooter>
-                <Button type="submit" className="w-full transition-transform active:scale-[0.98]" disabled={loading}>
-                  {loading ? "Entrando..." : (
-                    <>
-                      <LogIn className="h-4 w-4 mr-2" />
-                      Entrar
-                    </>
-                  )}
-                </Button>
-              </CardFooter>
-            </form>
-          </Card>
-        </motion.div>
+              </div>
+            </CardContent>
+            <CardFooter className="flex flex-col gap-3">
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Entrando..." : (
+                  <>
+                    <LogIn className="h-4 w-4 mr-2" />
+                    Entrar
+                  </>
+                )}
+              </Button>
+              <div className="flex flex-col gap-1 text-sm text-center">
+                <Link to="/forgot-password" className="text-primary hover:underline">
+                  Esqueci minha senha
+                </Link>
+                <p className="text-muted-foreground">
+                  Não tem conta?{" "}
+                  <Link to="/signup" className="text-primary hover:underline font-medium">
+                    Criar conta
+                  </Link>
+                </p>
+              </div>
+            </CardFooter>
+          </form>
+        </Card>
       </motion.div>
     </div>
   );

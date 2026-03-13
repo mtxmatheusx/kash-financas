@@ -7,16 +7,16 @@ import type { TransactionRow } from '@/lib/types';
 export function useTransactions(typeFilter?: 'income' | 'expense') {
   const [all, setAll] = useState<TransactionRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const { whatsappUser } = useAuth();
+  const { user } = useAuth();
 
   const fetchAll = useCallback(async () => {
-    if (!whatsappUser) { setAll([]); setLoading(false); return; }
+    if (!user) { setAll([]); setLoading(false); return; }
     setLoading(true);
 
     const { data, error } = await supabase
       .from('client_profiles' as any)
       .select('*')
-      .eq('user_id', whatsappUser)
+      .eq('user_id', user.id)
       .order('date', { ascending: false });
 
     if (error) {
@@ -37,7 +37,7 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
       })));
     }
     setLoading(false);
-  }, [whatsappUser]);
+  }, [user]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
@@ -48,10 +48,10 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
   }, [all, typeFilter]);
 
   const create = useCallback(async (tx: Omit<TransactionRow, 'id' | 'created_at'> & { recurring_months?: number; percentage_base?: string }) => {
-    if (!whatsappUser) return;
+    if (!user) return;
 
     const row = {
-      user_id: whatsappUser,
+      user_id: user.id,
       type: tx.type,
       amount_cents: Math.round(tx.amount * 100),
       description: tx.description,
@@ -79,7 +79,7 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
       }));
       setAll(prev => [...mapped, ...prev]);
     }
-  }, [whatsappUser]);
+  }, [user]);
 
   const update = useCallback(async (id: string, updates: Partial<TransactionRow> & { recurring_months?: number }) => {
     const { recurring_months, ...rest } = updates as any;
