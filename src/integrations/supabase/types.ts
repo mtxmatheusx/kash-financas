@@ -41,10 +41,38 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_conversations: {
+        Row: {
+          consultant_type: string
+          created_at: string
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          consultant_type?: string
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          consultant_type?: string
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       chat_messages: {
         Row: {
           consultant_type: string
           content: string
+          conversation_id: string | null
           created_at: string
           id: string
           images: string[] | null
@@ -54,6 +82,7 @@ export type Database = {
         Insert: {
           consultant_type?: string
           content?: string
+          conversation_id?: string | null
           created_at?: string
           id?: string
           images?: string[] | null
@@ -63,13 +92,22 @@ export type Database = {
         Update: {
           consultant_type?: string
           content?: string
+          conversation_id?: string | null
           created_at?: string
           id?: string
           images?: string[] | null
           role?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "chat_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       goals: {
         Row: {
