@@ -25,20 +25,40 @@ const Landing: React.FC = () => {
   const { language, setLanguage, t } = usePreferences();
   useReferralCapture();
 
-  const jsonLd = useMemo(() => ({
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: "Faciliten",
-    applicationCategory: "FinanceApplication",
-    operatingSystem: "Web",
-    url: "https://kash-financas.lovable.app",
-    description: t("seo.landing.description"),
-    offers: [
-      { "@type": "Offer", price: "0", priceCurrency: "BRL", description: "Free" },
-      { "@type": "Offer", price: "29.90", priceCurrency: "BRL", description: "Premium" },
-    ],
-    aggregateRating: { "@type": "AggregateRating", ratingValue: "4.8", ratingCount: "150" },
-  }), [t]);
+  const jsonLd = useMemo(() => [
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: "Faciliten",
+      applicationCategory: "FinanceApplication",
+      operatingSystem: "Web",
+      url: "https://kash-financas.lovable.app",
+      description: t("seo.landing.description"),
+      offers: [
+        { "@type": "Offer", price: "0", priceCurrency: "BRL", description: "Free" },
+        { "@type": "Offer", price: "29.90", priceCurrency: "BRL", description: "Premium" },
+      ],
+      aggregateRating: { "@type": "AggregateRating", ratingValue: "4.8", ratingCount: "150" },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "Faciliten",
+      url: "https://kash-financas.lovable.app",
+      logo: "https://kash-financas.lovable.app/favicon.png",
+      sameAs: [],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [
+        { "@type": "Question", name: t("landing.faq.q1"), acceptedAnswer: { "@type": "Answer", text: t("landing.faq.a1") } },
+        { "@type": "Question", name: t("landing.faq.q2"), acceptedAnswer: { "@type": "Answer", text: t("landing.faq.a2") } },
+        { "@type": "Question", name: t("landing.faq.q3"), acceptedAnswer: { "@type": "Answer", text: t("landing.faq.a3") } },
+        { "@type": "Question", name: t("landing.faq.q4"), acceptedAnswer: { "@type": "Answer", text: t("landing.faq.a4") } },
+      ],
+    },
+  ], [t]);
 
   useSEO({
     title: t("seo.landing.title"),
