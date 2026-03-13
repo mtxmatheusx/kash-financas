@@ -1651,6 +1651,7 @@ const en: typeof pt = {
   "auth.signup.title": "Create account",
   "auth.signup.description": "Start with full access for 30 days — no credit card required",
   "auth.signup.trialBadge": "30 days free Premium",
+  "auth.signup.noCreditCard": "No credit card required • Cancel anytime",
   "auth.signup.displayName": "Display name",
   "auth.signup.displayNamePlaceholder": "Your name",
   "auth.signup.email": "Email",
