@@ -37,6 +37,8 @@ const pt = {
   "topbar.personal": "Pessoal",
   "topbar.business": "Empresarial",
   "topbar.encrypted": "100% criptografado",
+  "topbar.encryptionTooltipTitle": "Criptografia AES-256",
+  "topbar.encryptionTooltipDesc": "Todos os seus dados financeiros são protegidos com criptografia de nível bancário. Ninguém além de você tem acesso.",
   "landing.encryption.notice": "Seus dados são protegidos de ponta a ponta",
 
   // Chat
@@ -960,6 +962,8 @@ const en: typeof pt = {
   "topbar.personal": "Personal",
   "topbar.business": "Business",
   "topbar.encrypted": "100% encrypted",
+  "topbar.encryptionTooltipTitle": "AES-256 Encryption",
+  "topbar.encryptionTooltipDesc": "All your financial data is protected with bank-grade encryption. No one but you has access.",
   "landing.encryption.notice": "Your data is protected end-to-end",
 
   "chat.history": "History",
@@ -1844,6 +1848,8 @@ const es: typeof pt = {
   "topbar.personal": "Personal",
   "topbar.business": "Empresarial",
   "topbar.encrypted": "100% encriptado",
+  "topbar.encryptionTooltipTitle": "Cifrado AES-256",
+  "topbar.encryptionTooltipDesc": "Todos sus datos financieros están protegidos con cifrado de nivel bancario. Nadie más que usted tiene acceso.",
   "landing.encryption.notice": "Sus datos están protegidos de extremo a extremo",
 
   "chat.history": "Historial",
