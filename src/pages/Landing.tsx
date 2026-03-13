@@ -125,16 +125,20 @@ const MobileWhatsAppPreview: React.FC<{ t: (k: any) => string }> = ({ t }) => (
     {...fadeUp(0.4)}
     className="mt-10 mx-auto lg:hidden flex justify-center"
   >
-    <div className="relative w-[220px] h-[470px] rounded-[44px] border-[3px] border-[hsl(0,0%,18%)] bg-[hsl(0,0%,5%)] shadow-2xl shadow-[hsl(0,0%,0%)/0.7] overflow-hidden"
-      style={{ boxShadow: "0 0 0 1px hsl(0 0% 25%), 0 20px 60px -10px rgba(0,0,0,0.8)" }}
+    <div className="relative w-[220px] h-[470px] rounded-[44px] border-[3px] border-[hsl(0,0%,18%)] bg-[hsl(0,0%,5%)] overflow-hidden"
+      style={{ boxShadow: "0 0 0 1px hsl(0 0% 28%), 0 20px 60px -10px rgba(0,0,0,0.8), inset 0 1px 0 0 hsl(0 0% 30%)" }}
     >
+      {/* Edge highlight / reflection */}
+      <div className="absolute inset-0 rounded-[44px] pointer-events-none z-30"
+        style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.04) 100%)" }}
+      />
       {/* Dynamic Island */}
       <div className="absolute top-[8px] left-1/2 -translate-x-1/2 w-[72px] h-[20px] bg-[hsl(0,0%,2%)] rounded-full z-20" />
       {/* Side buttons */}
-      <div className="absolute top-[80px] -left-[2px] w-[3px] h-[28px] rounded-l bg-[hsl(0,0%,20%)]" />
-      <div className="absolute top-[120px] -left-[2px] w-[3px] h-[44px] rounded-l bg-[hsl(0,0%,20%)]" />
-      <div className="absolute top-[170px] -left-[2px] w-[3px] h-[44px] rounded-l bg-[hsl(0,0%,20%)]" />
-      <div className="absolute top-[110px] -right-[2px] w-[3px] h-[56px] rounded-r bg-[hsl(0,0%,20%)]" />
+      <div className="absolute top-[80px] -left-[2px] w-[3px] h-[28px] rounded-l bg-[hsl(0,0%,22%)]" style={{ boxShadow: "inset 0 1px 0 hsl(0 0% 35%)" }} />
+      <div className="absolute top-[120px] -left-[2px] w-[3px] h-[44px] rounded-l bg-[hsl(0,0%,22%)]" style={{ boxShadow: "inset 0 1px 0 hsl(0 0% 35%)" }} />
+      <div className="absolute top-[170px] -left-[2px] w-[3px] h-[44px] rounded-l bg-[hsl(0,0%,22%)]" style={{ boxShadow: "inset 0 1px 0 hsl(0 0% 35%)" }} />
+      <div className="absolute top-[110px] -right-[2px] w-[3px] h-[56px] rounded-r bg-[hsl(0,0%,22%)]" style={{ boxShadow: "inset 0 1px 0 hsl(0 0% 35%)" }} />
 
       {/* Screen */}
       <div className="absolute inset-[3px] rounded-[41px] overflow-hidden bg-[hsl(210,8%,7%)] flex flex-col">
