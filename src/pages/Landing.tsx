@@ -578,38 +578,49 @@ const Landing: React.FC = () => {
             </p>
             <p className="text-[hsl(160,100%,50%)] font-bold text-base sm:text-lg">{t("landing.pricing.punchline")}</p>
           </motion.div>
-          <div className="grid sm:grid-cols-2 gap-4 sm:gap-5 mt-8 sm:mt-14">
-            <motion.div {...fadeUp(0.1)} className="rounded-xl sm:rounded-2xl border border-[hsl(0,0%,10%)] bg-[hsl(0,0%,3%)] p-5 sm:p-8">
-              <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1">{t("landing.pricing.freeTitle")}</h3>
-              <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">{t("landing.pricing.freeDesc")}</p>
-              <p className="text-4xl sm:text-5xl font-extrabold text-white mb-5 sm:mb-6 font-mono-fin">
-                {t("pricing.currencySymbol")} 0<span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">{t("landing.pricing.freePerMonth")}</span>
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 mt-8 sm:mt-14 items-center">
+            {/* ── Plano Básico (A Sombra) ── */}
+            <motion.div {...fadeUp(0.1)} className="rounded-xl sm:rounded-2xl border-0 bg-[hsl(0,0%,3%)]/40 p-5 sm:p-8">
+              <h3 className="text-lg sm:text-xl font-extrabold text-[hsl(0,0%,55%)] mb-1">{t("landing.pricing.freeTitle")}</h3>
+              <p className="text-xs sm:text-sm text-[hsl(0,0%,32%)] mb-4 sm:mb-5">{t("landing.pricing.freeDesc")}</p>
+              <p className="mb-5 sm:mb-6 font-mono-fin flex items-baseline gap-1">
+                <span className="text-xl text-[hsl(0,0%,40%)] font-bold">{t("pricing.currencySymbol")}</span>
+                <span className="text-5xl sm:text-6xl font-black text-[hsl(0,0%,50%)]">0</span>
+                <span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,28%)]">{t("landing.pricing.freePerMonth")}</span>
               </p>
               <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
                 {[t("landing.pricing.free1"), t("landing.pricing.free2"), t("landing.pricing.free3")].map(f => (
-                  <li key={f} className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
-                    <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(160,100%,50%)] shrink-0" />{f}
+                  <li key={f} className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(0,0%,42%)]">
+                    <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[hsl(0,0%,30%)] shrink-0" />{f}
                   </li>
                 ))}
               </ul>
               <Link to={signupLink}>
                 <motion.div whileTap={{ scale: 0.97 }}>
-                  <Button variant="outline" className="w-full h-11 sm:h-13 text-sm sm:text-base border-[hsl(0,0%,20%)] bg-transparent hover:bg-[hsl(0,0%,8%)] text-[hsl(0,0%,60%)] font-bold">{t("landing.pricing.freeCta")}</Button>
+                  <Button variant="ghost" className="w-full h-11 sm:h-13 text-sm sm:text-base text-[hsl(0,0%,38%)] hover:text-[hsl(0,0%,55%)] hover:bg-[hsl(0,0%,6%)] font-semibold">{t("landing.pricing.freeCta")}</Button>
                 </motion.div>
               </Link>
             </motion.div>
-            <motion.div {...fadeUp(0.2)} className="relative rounded-xl sm:rounded-2xl overflow-hidden">
-              <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[hsl(217,91%,60%)/0.35] via-[hsl(160,100%,50%)/0.15] to-[hsl(217,91%,60%)/0.25] shadow-[0_0_40px_-5px_hsl(217,91%,60%,0.2),0_0_80px_-10px_hsl(160,100%,50%,0.1)]" />
+
+            {/* ── Copiloto Premium (A Estrela) ── */}
+            <motion.div {...fadeUp(0.2)} className="relative rounded-xl sm:rounded-2xl overflow-visible sm:scale-105 origin-center">
+              {/* Badge pill sobreposto */}
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 bg-[hsl(0,0%,3%)] border border-[hsl(348,100%,64%)/0.6] text-[hsl(348,100%,64%)] text-[9px] sm:text-[10px] font-extrabold px-4 py-1 rounded-full uppercase tracking-[0.15em] shadow-[0_0_20px_rgba(239,68,68,0.15)]">
+                {t("landing.pricing.premiumBadge")}
+              </div>
+              {/* Glow border */}
+              <div className="absolute inset-0 rounded-xl sm:rounded-2xl ring-1 ring-[hsl(348,100%,64%)/0.35] shadow-[0_0_40px_rgba(239,68,68,0.12),0_0_80px_rgba(239,68,68,0.06)]" />
               <div className="absolute inset-px rounded-[11px] sm:rounded-[15px] bg-[hsl(0,0%,3%)]" />
-              <div className="absolute -top-px right-5 sm:right-6 bg-[hsl(160,100%,50%)] text-[hsl(0,0%,2%)] text-[9px] sm:text-[10px] font-extrabold px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-b-lg shadow-lg shadow-[hsl(160,100%,50%)/0.3] z-10 uppercase tracking-[0.15em]">{t("landing.pricing.premiumBadge")}</div>
               <div className="relative p-5 sm:p-8">
                 <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1 flex items-center gap-2">
                   <Crown className="h-4 w-4 sm:h-5 sm:w-5 text-[hsl(45,100%,60%)]" /> {t("landing.pricing.premiumTitle")}
                 </h3>
                 <p className="text-xs sm:text-sm text-[hsl(0,0%,42%)] mb-4 sm:mb-5">{t("landing.pricing.premiumDesc")}</p>
-                <p className="text-4xl sm:text-5xl font-extrabold text-white mb-5 sm:mb-6 font-mono-fin">
-                  {t("pricing.currencySymbol")} {t("pricing.premiumPrice")}<span className="text-base sm:text-lg">{t("pricing.premiumCents")}</span>
-                  <span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)]">{t("landing.pricing.freePerMonth")}</span>
+                <p className="mb-5 sm:mb-6 font-mono-fin flex items-baseline gap-0.5">
+                  <span className="text-xl text-[hsl(0,0%,45%)] font-bold">{t("pricing.currencySymbol")}</span>
+                  <span className="text-5xl sm:text-6xl font-black text-white tracking-tight">{t("pricing.premiumPrice")}</span>
+                  <span className="text-lg sm:text-xl text-[hsl(0,0%,45%)] font-bold">{t("pricing.premiumCents")}</span>
+                  <span className="text-xs sm:text-sm font-normal text-[hsl(0,0%,35%)] ml-1">{t("landing.pricing.freePerMonth")}</span>
                 </p>
                 <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
                   {[t("landing.pricing.premium1"), t("landing.pricing.premium2"), t("landing.pricing.premium3"), t("landing.pricing.premium4"), t("landing.pricing.premium5")].map(f => (
