@@ -70,6 +70,7 @@ export const MobileNav: React.FC = () => {
   const { account } = useAccount();
   const { t } = usePreferences();
   const { theme, toggleTheme } = useTheme();
+  const { signOut } = useAuth();
 
   const allMoreItems = moreSections.flatMap(s => s.items);
   const filteredSections = moreSections.map(s => ({
