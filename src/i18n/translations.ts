@@ -2522,7 +2522,7 @@ const es: typeof pt = {
   "auth.login.errorInvalid": "Correo o contraseña incorrectos",
   "auth.login.success": "¡Sesión iniciada con éxito!",
   "auth.signup.title": "Crear cuenta",
-  "auth.signup.description": "Comienza con acceso completo por 30 días — sin tarjeta de crédito",
+  "auth.signup.description": "Disfruta 30 días de Premium completo — sin necesidad de tarjeta de crédito",
   "auth.signup.trialBadge": "30 días de Premium gratis",
   "auth.signup.noCreditCard": "Sin tarjeta de crédito • Cancela cuando quieras",
   "auth.signup.displayName": "Nombre para mostrar",
