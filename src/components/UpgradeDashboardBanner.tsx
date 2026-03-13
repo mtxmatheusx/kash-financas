@@ -30,7 +30,7 @@ export const UpgradeDashboardBanner: React.FC = () => {
           <X className="w-4 h-4" />
         </button>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pr-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 pr-6">
           <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/15 flex items-center justify-center">
             <Crown className="w-6 h-6 text-primary" />
           </div>
