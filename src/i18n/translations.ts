@@ -261,6 +261,10 @@ const pt = {
   "dashboard.referral.desc": "Compartilhe seu código de indicação. Quando alguém se cadastrar, você ganha +60 dias de Premium grátis!",
   "dashboard.referral.copy": "Copiar",
   "dashboard.referral.copied": "Copiado!",
+  "dashboard.upgrade.title": "⏳ Seu trial Premium está ativo!",
+  "dashboard.upgrade.desc": "Aproveite todos os recursos Premium. Assine antes do trial acabar e não perca nada!",
+  "dashboard.upgrade.daysLeft": "dias restantes",
+  "dashboard.upgrade.cta": "Assinar Premium",
 
   // Goals
   "goals.title": "Metas Financeiras",
@@ -1149,6 +1153,10 @@ const en: typeof pt = {
   "dashboard.referral.desc": "Share your referral code. When someone signs up, you get +60 days of Premium for free!",
   "dashboard.referral.copy": "Copy",
   "dashboard.referral.copied": "Copied!",
+  "dashboard.upgrade.title": "⏳ Your Premium trial is active!",
+  "dashboard.upgrade.desc": "Enjoy all Premium features. Subscribe before your trial ends and don't miss anything!",
+  "dashboard.upgrade.daysLeft": "days left",
+  "dashboard.upgrade.cta": "Subscribe Premium",
 
   "goals.title": "Financial Goals",
   "goals.subtitle": "Track your financial objectives",
@@ -2011,6 +2019,10 @@ const es: typeof pt = {
   "dashboard.referral.desc": "Comparte tu código de referencia. Cuando alguien se registre, ¡ganas +60 días de Premium gratis!",
   "dashboard.referral.copy": "Copiar",
   "dashboard.referral.copied": "¡Copiado!",
+  "dashboard.upgrade.title": "⏳ ¡Tu prueba Premium está activa!",
+  "dashboard.upgrade.desc": "Disfruta todas las funciones Premium. ¡Suscríbete antes de que termine tu prueba!",
+  "dashboard.upgrade.daysLeft": "días restantes",
+  "dashboard.upgrade.cta": "Suscribir Premium",
 
   "goals.title": "Metas Financieras",
   "goals.subtitle": "Sigue tus objetivos financieros",

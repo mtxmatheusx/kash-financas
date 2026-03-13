@@ -25,6 +25,7 @@ import {
 import { FinancialInsights } from "@/components/FinancialInsights";
 import { useGoals } from "@/hooks/useGoals";
 import { ReferralDashboardBanner } from "@/components/ReferralDashboardBanner";
+import { UpgradeDashboardBanner } from "@/components/UpgradeDashboardBanner";
 
 
 const formatCompact = (v: number) => {
@@ -159,6 +160,9 @@ const Dashboard: React.FC = () => {
 
         {/* Referral Banner */}
         <ReferralDashboardBanner />
+
+        {/* Upgrade Banner for trial users */}
+        <UpgradeDashboardBanner />
 
         {/* KPIs */}
         <SummaryBar items={[
