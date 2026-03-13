@@ -27,6 +27,7 @@ import ResetPassword from "@/pages/ResetPassword";
 import Upgrade from "@/pages/Upgrade";
 import Perfil from "@/pages/Perfil";
 import Configuracoes from "@/pages/Configuracoes";
+import Admin from "@/pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
