@@ -215,15 +215,6 @@ const Configuracoes: React.FC = () => {
   return (
     <PageTransition>
       <div className="space-y-6 max-w-2xl">
-        {/* Header */}
-        <div>
-          <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2 font-display-fin">
-            <Settings className="w-5 h-5 md:w-6 md:h-6 text-primary" /> {t("settings.title")}
-          </h1>
-          <p className="text-xs md:text-sm text-muted-foreground">
-            {t("settings.subtitle")}
-          </p>
-        </div>
 
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="w-full grid grid-cols-5 mb-5">
