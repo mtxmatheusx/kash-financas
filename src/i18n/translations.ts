@@ -784,7 +784,7 @@ const pt = {
   "auth.signup.referralPlaceholder": "Ex: AB12CD34",
   "auth.signup.referralHint": "Só preencha se alguém te indicou o Faciliten. Quem te indicou ganha +60 dias grátis!",
   "auth.signup.referralPromoTitle": "🎁 Ganhe +30 dias grátis!",
-  "auth.signup.referralPromoDesc": "Cadastre-se agora e ganhe 30 dias de Premium grátis. Indique amigos e ambos ganham ainda mais dias!",
+  "auth.signup.referralPromoDesc": "Cadastre-se e ganhe 30 dias de Premium grátis. Quer mais dias? Indique amigos — quem indicar ganha +60 dias extras!",
   "auth.signup.submit": "Começar 30 dias grátis",
   "auth.signup.loading": "Criando conta...",
   "auth.signup.hasAccount": "Já tem conta?",
