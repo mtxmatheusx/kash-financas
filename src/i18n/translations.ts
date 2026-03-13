@@ -1944,6 +1944,7 @@ const es: typeof pt = {
   "income.contractEntry": "Contrato / Plazo Fijo",
   "income.recurringEntry": "Recurrente",
   "income.numEntries": "Nº de Entradas (meses)",
+  "income.installmentValueHint": "valor de la cuota",
   "income.duration": "Duración (meses)",
   "income.autoLaunchNote": "Se crearán {count} registros automáticos desde la fecha seleccionada",
 
