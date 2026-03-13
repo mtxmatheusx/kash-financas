@@ -189,6 +189,17 @@ const Dashboard: React.FC = () => {
         {/* Upgrade Banner for trial users */}
         <UpgradeDashboardBanner />
 
+        {/* Empty state */}
+        {hasNoData && (
+          <motion.div {...fadeIn(0.1)} className="rounded-xl border border-dashed border-border bg-card p-8 text-center space-y-3">
+            <Inbox className="w-10 h-10 text-muted-foreground/30 mx-auto" />
+            <h3 className="text-sm font-semibold text-foreground">Aguardando primeira transação...</h3>
+            <p className="text-xs text-muted-foreground max-w-md mx-auto">
+              Adicione transações manualmente ou vincule a Assistente Amanda nas configurações para começar a ver seus dados aqui.
+            </p>
+          </motion.div>
+        )}
+
         {/* KPIs */}
         <SummaryBar items={[
           { label: t("kpi.income"), value: formatBRL(filteredTotals.income), color: "income", icon: TrendingUp },
