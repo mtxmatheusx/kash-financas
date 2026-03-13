@@ -83,26 +83,8 @@ const Configuracoes: React.FC = () => {
 
 
 
-  const handleGenerateQr = async () => {
-    setQrLoading(true);
-    setQrCodeImage(null);
-    try {
-      const { data, error } = await supabase.functions.invoke("whatsapp-connect", {
-        body: { action: "generate_qr" },
-      });
-      if (error) throw error;
-      if (data?.qrCode || data?.base64) {
-        const img = data.qrCode || data.base64;
-        setQrCodeImage(img.startsWith("data:") ? img : `data:image/png;base64,${img}`);
-        toast.success("QR Code gerado! Escaneie com seu celular.");
-      } else {
-        toast.error("Não foi possível gerar o QR Code.");
-      }
-    } catch {
-      toast.error("Erro ao gerar QR Code. Tente novamente.");
-    }
-    setQrLoading(false);
-  };
+
+
 
   const handleSyncData = async () => {
     setSaving(true);
