@@ -174,8 +174,8 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
         <NavLink
           to="/configuracoes"
           className={cn(
-            "relative flex items-center justify-center gap-3 rounded-lg text-sm transition-all w-full",
-            collapsed ? "p-3" : "px-3 py-2.5",
+            "relative flex items-center gap-3 rounded-lg text-sm transition-all w-full",
+            collapsed ? "p-3 justify-center" : "px-3 py-2.5",
             location.pathname === "/configuracoes"
               ? "bg-sidebar-accent text-sidebar-accent-foreground"
               : "text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
