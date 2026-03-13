@@ -618,7 +618,7 @@ const pt = {
   "profile.whatsappHint": "Número com código do país (ex: 55 para Brasil) — será usado para o agente IA via WhatsApp",
   "profile.saveProfile": "Salvar Perfil",
   "profile.referralCode": "Código de indicação",
-  "profile.referralHint": "Compartilhe e ganhe +60 dias premium por indicação",
+  "profile.referralHint": "Compartilhe e ganhe +30 dias premium por indicação",
 
   // Partner / Shared account
   "partner.title": "Conta Compartilhada (Casal)",
