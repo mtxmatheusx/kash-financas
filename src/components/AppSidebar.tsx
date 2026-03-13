@@ -129,8 +129,8 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
                       to={item.path}
                       title={collapsed ? label : undefined}
                       className={cn(
-                        "group relative flex items-center justify-center gap-3 rounded-lg text-sm transition-all",
-                        collapsed ? "p-3" : "px-3 py-2.5",
+                        "group relative flex items-center gap-3 rounded-lg text-sm transition-all",
+                        collapsed ? "p-3 justify-center" : "px-3 py-2.5",
                         isActive
                           ? "bg-sidebar-accent text-sidebar-accent-foreground"
                           : "text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50",
