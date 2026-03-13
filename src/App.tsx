@@ -27,6 +27,7 @@ import ResetPassword from "@/pages/ResetPassword";
 import Upgrade from "@/pages/Upgrade";
 import Perfil from "@/pages/Perfil";
 import Configuracoes from "@/pages/Configuracoes";
+import Admin from "@/pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -58,6 +59,7 @@ const App = () => (
                   <Route path="/despesas" element={<Despesas />} />
                   <Route path="/perfil" element={<Perfil />} />
                   <Route path="/configuracoes" element={<Configuracoes />} />
+                  <Route path="/admin" element={<Admin />} />
 
                   {/* Premium tier */}
                   <Route path="/investimentos" element={<ProtectedRoute requirePremium><Investimentos /></ProtectedRoute>} />
