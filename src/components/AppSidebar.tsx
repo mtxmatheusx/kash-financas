@@ -102,9 +102,9 @@ export const AppSidebar: React.FC<Props> = ({ collapsed, onToggle }) => {
 
       {/* Footer */}
       <div className="p-3 border-t border-sidebar-border space-y-1">
-        {!collapsed && whatsappUser && (
+        {!collapsed && profile && (
           <div className="px-3 py-2 text-xs text-sidebar-muted truncate">
-            📱 {whatsappUser}
+            {profile.display_name || profile.email}
           </div>
         )}
         <NavLink
