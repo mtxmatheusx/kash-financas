@@ -1663,7 +1663,7 @@ const en: typeof pt = {
   "auth.signup.referralPlaceholder": "e.g. AB12CD34",
   "auth.signup.referralHint": "Only fill this if someone referred you to Faciliten. The referrer gets +60 free days!",
   "auth.signup.referralPromoTitle": "🎁 Get +30 free days!",
-  "auth.signup.referralPromoDesc": "Sign up now and get 30 days of Premium for free. Refer friends and both of you earn even more days!",
+  "auth.signup.referralPromoDesc": "Sign up and get 30 days of Premium for free. Want more? Refer friends — each referral earns you +60 extra days!",
   "auth.signup.submit": "Start 30 free days",
   "auth.signup.loading": "Creating account...",
   "auth.signup.hasAccount": "Already have an account?",
