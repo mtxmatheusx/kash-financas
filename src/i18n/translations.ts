@@ -772,6 +772,7 @@ const pt = {
   "auth.signup.title": "Criar conta",
   "auth.signup.description": "Comece com acesso completo por 30 dias — sem cartão de crédito",
   "auth.signup.trialBadge": "30 dias de Premium grátis",
+  "auth.signup.noCreditCard": "Sem cartão de crédito • Cancele quando quiser",
   "auth.signup.displayName": "Nome de exibição",
   "auth.signup.displayNamePlaceholder": "Seu nome",
   "auth.signup.email": "E-mail",
