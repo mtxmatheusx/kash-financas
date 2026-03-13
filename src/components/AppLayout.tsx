@@ -16,18 +16,7 @@ export const AppLayout: React.FC = () => {
   const location = useLocation();
   const { isPremium } = useAuth();
 
-  // Auto-collapse sidebar on tablet-sized screens
-  useEffect(() => {
-    const check = () => {
-      const w = window.innerWidth;
-      if (w >= 768 && w < TABLET_BREAKPOINT) {
-        setCollapsed(true);
-      }
-    };
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+  // Sidebar starts expanded; user can collapse manually
 
   return (
     <div className="min-h-screen bg-background">
