@@ -172,7 +172,7 @@ const Dashboard: React.FC = () => {
         ]} />
 
         {/* Charts */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 md:gap-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 lg:gap-3">
           <motion.div {...slideUp(0.15)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">{t("dashboard.incomeVsExpense")}</h3>
