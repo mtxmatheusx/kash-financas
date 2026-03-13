@@ -88,7 +88,9 @@ export function useTransactions(typeFilter?: 'income' | 'expense') {
 
       // For percentage-based monthly expenses, store 0 as amount — it's recalculated dynamically
       let amount = tx.amount;
+      // For installments, divide the total by number of installments
       if (isInstallment) amount = tx.amount / count;
+      // For recurring, keep the full amount per month (user enters the monthly value)
       if (tx.is_percentage && tx.percentage_base === 'monthly') amount = 0;
 
       rows.push({

@@ -164,7 +164,7 @@ const Receitas: React.FC = () => {
       </div>
 
       <Dialog open={showForm} onOpenChange={v => { if (!v) { setEditingId(null); } setShowForm(v); }}>
-        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg">
+        <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{editingId ? t("income.editTitle") : t("income.new")}</DialogTitle></DialogHeader>
           <div className="space-y-4 py-4">
             <div>
