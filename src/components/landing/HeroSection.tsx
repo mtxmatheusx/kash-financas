@@ -61,6 +61,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ t, signupLink }) => (
           <p className="text-[11px] text-[hsl(0,0%,42%)]">{t("landing.hero.ctaNote")}</p>
         </motion.div>
 
+        <motion.div {...fadeUp(0.4)} className="flex items-center gap-2 mt-4 justify-center lg:justify-start">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 backdrop-blur-sm">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-[11px] font-medium text-emerald-400">{t("landing.trust.encryption")}</span>
+          </div>
+          <span className="text-[10px] text-[hsl(0,0%,40%)]">·</span>
+          <span className="text-[10px] text-[hsl(0,0%,40%)]">{t("landing.encryption.notice")}</span>
+        </motion.div>
+
         <MobileWhatsAppPreview t={t} />
       </div>
 

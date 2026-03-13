@@ -1,7 +1,7 @@
 import React from "react";
 import { useAccount } from "@/contexts/AccountContext";
 import { usePreferences } from "@/contexts/PreferencesContext";
-import { Building2, User, ChevronDown } from "lucide-react";
+import { Building2, User, ChevronDown, ShieldCheck } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
