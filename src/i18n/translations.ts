@@ -257,6 +257,10 @@ const pt = {
   "dashboard.weeklyBalance": "Saldo da Semana",
   "dashboard.weeklyTransactions": "Transações na semana",
   "dashboard.weeklyNoData": "Nenhuma transação nos últimos 7 dias",
+  "dashboard.referral.title": "🎁 Indique amigos e ganhe +60 dias grátis!",
+  "dashboard.referral.desc": "Compartilhe seu código de indicação. Quando alguém se cadastrar, você ganha +60 dias de Premium grátis!",
+  "dashboard.referral.copy": "Copiar",
+  "dashboard.referral.copied": "Copiado!",
 
   // Goals
   "goals.title": "Metas Financeiras",
@@ -1141,6 +1145,10 @@ const en: typeof pt = {
   "dashboard.weeklyBalance": "Weekly Balance",
   "dashboard.weeklyTransactions": "Transactions this week",
   "dashboard.weeklyNoData": "No transactions in the last 7 days",
+  "dashboard.referral.title": "🎁 Refer friends and get +60 free days!",
+  "dashboard.referral.desc": "Share your referral code. When someone signs up, you get +60 days of Premium for free!",
+  "dashboard.referral.copy": "Copy",
+  "dashboard.referral.copied": "Copied!",
 
   "goals.title": "Financial Goals",
   "goals.subtitle": "Track your financial objectives",
@@ -1999,6 +2007,10 @@ const es: typeof pt = {
   "dashboard.weeklyBalance": "Saldo de la Semana",
   "dashboard.weeklyTransactions": "Transacciones esta semana",
   "dashboard.weeklyNoData": "Sin transacciones en los últimos 7 días",
+  "dashboard.referral.title": "🎁 ¡Refiere amigos y gana +60 días gratis!",
+  "dashboard.referral.desc": "Comparte tu código de referencia. Cuando alguien se registre, ¡ganas +60 días de Premium gratis!",
+  "dashboard.referral.copy": "Copiar",
+  "dashboard.referral.copied": "¡Copiado!",
 
   "goals.title": "Metas Financieras",
   "goals.subtitle": "Sigue tus objetivos financieros",

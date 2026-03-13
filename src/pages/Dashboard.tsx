@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { FinancialInsights } from "@/components/FinancialInsights";
 import { useGoals } from "@/hooks/useGoals";
+import { ReferralDashboardBanner } from "@/components/ReferralDashboardBanner";
 
 
 const formatCompact = (v: number) => {
@@ -155,6 +156,9 @@ const Dashboard: React.FC = () => {
             </SelectContent>
           </Select>
         </motion.div>
+
+        {/* Referral Banner */}
+        <ReferralDashboardBanner />
 
         {/* KPIs */}
         <SummaryBar items={[
