@@ -1,39 +1,34 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { LogIn, Phone } from "lucide-react";
 import { motion } from "framer-motion";
 import facilitenLogo from "@/assets/faciliten-logo.png";
+import { useAuth } from "@/contexts/AuthContext";
 import { usePreferences } from "@/contexts/PreferencesContext";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const { signIn } = useAuth();
   const { t } = usePreferences();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [whatsapp, setWhatsapp] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-    if (error) {
-      toast.error(error.message === "Invalid login credentials"
-        ? t("auth.login.errorInvalid")
-        : error.message
-      );
-    } else {
-      toast.success(t("auth.login.success"));
-      navigate("/");
+    const cleaned = whatsapp.replace(/\D/g, "");
+    if (cleaned.length < 10) {
+      toast.error("Informe um número de WhatsApp válido (com DDD).");
+      return;
     }
+    setLoading(true);
+    signIn(cleaned);
+    toast.success("Bem-vindo ao Faciliten!");
+    navigate("/dashboard");
     setLoading(false);
   };
 
@@ -68,7 +63,7 @@ const Login: React.FC = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.3 }}
           >
-            {t("auth.subtitle")}
+            Gestão financeira simplificada
           </motion.p>
         </div>
 
@@ -79,63 +74,39 @@ const Login: React.FC = () => {
         >
           <Card className="border-border/50">
             <CardHeader>
-              <CardTitle className="text-lg">{t("auth.login.title")}</CardTitle>
-              <CardDescription>{t("auth.login.description")}</CardDescription>
+              <CardTitle className="text-lg">Entrar com WhatsApp</CardTitle>
             </CardHeader>
             <form onSubmit={handleLogin}>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">{t("auth.login.email")}</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder={t("auth.login.emailPlaceholder")}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="password">{t("auth.login.password")}</Label>
-                    <Link to="/forgot-password" className="text-xs text-primary hover:underline">
-                      {t("auth.login.forgotPassword")}
-                    </Link>
-                  </div>
+                  <Label htmlFor="whatsapp">Número do WhatsApp</Label>
                   <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      id="whatsapp"
+                      type="tel"
+                      placeholder="(11) 99999-9999"
+                      value={whatsapp}
+                      onChange={(e) => setWhatsapp(e.target.value)}
+                      className="pl-10"
+                      inputMode="tel"
                       required
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
                   </div>
+                  <p className="text-xs text-muted-foreground">
+                    Use o mesmo número cadastrado no WhatsApp.
+                  </p>
                 </div>
               </CardContent>
-              <CardFooter className="flex flex-col gap-3">
+              <CardFooter>
                 <Button type="submit" className="w-full transition-transform active:scale-[0.98]" disabled={loading}>
-                  {loading ? t("auth.login.loading") : (
+                  {loading ? "Entrando..." : (
                     <>
                       <LogIn className="h-4 w-4 mr-2" />
-                      {t("auth.login.submit")}
+                      Entrar
                     </>
                   )}
                 </Button>
-                <p className="text-sm text-muted-foreground text-center">
-                  {t("auth.login.noAccount")}{" "}
-                  <Link to="/signup" className="text-primary hover:underline font-medium">
-                    {t("auth.login.createAccount")}
-                  </Link>
-                </p>
               </CardFooter>
             </form>
           </Card>
