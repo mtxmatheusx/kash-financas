@@ -254,6 +254,9 @@ const Despesas: React.FC = () => {
                   {form.entry_type === 'installment' && (
                     <span className="ml-1 normal-case text-primary/70 font-normal">({t("income.installmentValueHint")})</span>
                   )}
+                  {form.entry_type === 'recurring' && (
+                    <span className="ml-1 normal-case text-primary/70 font-normal">({t("income.recurringValueHint")})</span>
+                  )}
                 </label>
                 <div className="flex gap-2 mt-1.5">
                   <div className="flex-1">
