@@ -37,6 +37,8 @@ const pt = {
   "topbar.personal": "Pessoal",
   "topbar.business": "Empresarial",
   "topbar.encrypted": "100% criptografado",
+  "topbar.encryptionTooltipTitle": "Criptografia AES-256",
+  "topbar.encryptionTooltipDesc": "Todos os seus dados financeiros são protegidos com criptografia de nível bancário. Ninguém além de você tem acesso.",
   "landing.encryption.notice": "Seus dados são protegidos de ponta a ponta",
 
   // Chat
