@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { AppSidebar } from "@/components/AppSidebar";
@@ -8,11 +8,26 @@ import { FloatingChat } from "@/components/FloatingChat";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/contexts/AuthContext";
 
+const TABLET_BREAKPOINT = 1024;
+
 export const AppLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const isMobile = useIsMobile();
   const location = useLocation();
   const { isPremium } = useAuth();
+
+  // Auto-collapse sidebar on tablet-sized screens
+  useEffect(() => {
+    const check = () => {
+      const w = window.innerWidth;
+      if (w >= 768 && w < TABLET_BREAKPOINT) {
+        setCollapsed(true);
+      }
+    };
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
