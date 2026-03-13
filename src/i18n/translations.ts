@@ -837,12 +837,12 @@ const pt = {
   "invType.other": "Outros",
 
   // Phone mockup
-  "mockup.userMsg1": "\"Gastei 50 de gasolina\"",
-  "mockup.botMsg1": "✅ <b>R$ 50,00</b> → <c>Transporte</c>. 15% acima do mês passado. 📊",
-  "mockup.botMsg1Short": "✅ <b>R$ 50,00</b> → <c>Transporte</c>",
-  "mockup.botMsg1Detail": "Gasto 15% acima do mês passado. 📊",
+  "mockup.userMsg1": "Gastei 50 de gasolina",
+  "mockup.botMsg1": "✅ R$ 50,00 → Transporte",
+  "mockup.botMsg1Short": "✅ R$ 50,00 → Transporte",
+  "mockup.botMsg1Detail": "15% acima do mês passado 📊",
   "mockup.userMsg2": "Onde posso cortar?",
-  "mockup.botMsg2": "💡 Delivery: R$ 380 (+40%). Cozinhar 3x/semana economiza ~R$ 250/mês.",
+  "mockup.botMsg2": "💡 Delivery: R$ 380 (+40%).\nCozinhar 3x/semana economiza ~R$ 250/mês.",
 
   // Pricing display
   "pricing.currencySymbol": "R$",
@@ -1713,12 +1713,12 @@ const en: typeof pt = {
   "invType.realEstate": "Real Estate",
   "invType.other": "Other",
 
-  "mockup.userMsg1": "\"I spent 50 on gas\"",
-  "mockup.botMsg1": "✅ <b>$50.00</b> → <c>Transport</c>. 15% above last month. 📊",
-  "mockup.botMsg1Short": "✅ <b>$50.00</b> → <c>Transport</c>",
-  "mockup.botMsg1Detail": "Spending 15% above last month. 📊",
-  "mockup.userMsg2": "Where can I cut?",
-  "mockup.botMsg2": "💡 Delivery: $380 (+40%). Cooking 3x/week saves ~$250/mo.",
+  "mockup.userMsg1": "I spent 50 on gas",
+  "mockup.botMsg1": "✅ $50.00 → Transport",
+  "mockup.botMsg1Short": "✅ $50.00 → Transport",
+  "mockup.botMsg1Detail": "15% above last month 📊",
+  "mockup.userMsg2": "Where can I cut costs?",
+  "mockup.botMsg2": "💡 Delivery: $380 (+40%).\nCooking 3x/week saves ~$250/month.",
 
   "pricing.currencySymbol": "$",
   "pricing.premiumPrice": "29",
@@ -2586,12 +2586,12 @@ const es: typeof pt = {
   "invType.realEstate": "Inmuebles",
   "invType.other": "Otros",
 
-  "mockup.userMsg1": "\"Gasté 50 en gasolina\"",
-  "mockup.botMsg1": "✅ <b>$50.00</b> → <c>Transporte</c>. 15% por encima del mes pasado. 📊",
-  "mockup.botMsg1Short": "✅ <b>$50.00</b> → <c>Transporte</c>",
-  "mockup.botMsg1Detail": "Gasto 15% por encima del mes pasado. 📊",
+  "mockup.userMsg1": "Gasté 50 en gasolina",
+  "mockup.botMsg1": "✅ $50.00 → Transporte",
+  "mockup.botMsg1Short": "✅ $50.00 → Transporte",
+  "mockup.botMsg1Detail": "15% por encima del mes pasado 📊",
   "mockup.userMsg2": "¿Dónde puedo recortar?",
-  "mockup.botMsg2": "💡 Delivery: $380 (+40%). Cocinar 3x/semana ahorra ~$250/mes.",
+  "mockup.botMsg2": "💡 Delivery: $380 (+40%).\nCocinar 3x/semana ahorra ~$250/mes.",
 
   "pricing.currencySymbol": "$",
   "pricing.premiumPrice": "29",
