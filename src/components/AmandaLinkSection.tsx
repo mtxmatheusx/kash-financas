@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { MessageCircle, Smartphone, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const WHATSAPP_NUMBER = "5511954223325";
 
