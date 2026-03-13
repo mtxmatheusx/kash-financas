@@ -1153,6 +1153,10 @@ const en: typeof pt = {
   "dashboard.referral.desc": "Share your referral code. When someone signs up, you get +60 days of Premium for free!",
   "dashboard.referral.copy": "Copy",
   "dashboard.referral.copied": "Copied!",
+  "dashboard.upgrade.title": "⏳ Your Premium trial is active!",
+  "dashboard.upgrade.desc": "Enjoy all Premium features. Subscribe before your trial ends and don't miss anything!",
+  "dashboard.upgrade.daysLeft": "days left",
+  "dashboard.upgrade.cta": "Subscribe Premium",
 
   "goals.title": "Financial Goals",
   "goals.subtitle": "Track your financial objectives",
