@@ -2531,7 +2531,7 @@ const es: typeof pt = {
   "auth.signup.passwordMismatch": "Las contraseñas no coinciden",
   "auth.signup.referralLabel": "Código de referido (opcional)",
   "auth.signup.referralPlaceholder": "Ej: AB12CD34",
-  "auth.signup.referralHint": "¿Tienes un código? ¡Quien te refirió obtiene +60 días gratis!",
+  "auth.signup.referralHint": "Solo completa si alguien te recomendó Faciliten. ¡Quien te refirió obtiene +60 días gratis!",
   "auth.signup.referralPromoTitle": "🎁 ¡Obtén +30 días gratis!",
   "auth.signup.referralPromoDesc": "Regístrate ahora y obtén 30 días de Premium gratis. ¡Refiere amigos y ambos ganan más días!",
   "auth.signup.submit": "Comenzar 30 días gratis",
