@@ -235,7 +235,7 @@ const Dashboard: React.FC = () => {
             <span className="text-[10px] text-muted-foreground ml-auto">{weeklySummary.count} {t("dashboard.weeklyTransactions")}</span>
           </div>
           {weeklySummary.count > 0 ? (
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="text-center p-3 rounded-lg bg-fin-income/5 border border-fin-income/10">
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">{t("dashboard.weeklyIncome")}</p>
                 <p className="text-sm font-bold font-mono-fin text-fin-income">+{formatBRL(weeklySummary.income)}</p>
