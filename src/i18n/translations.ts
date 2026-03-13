@@ -38,6 +38,10 @@ const pt = {
   "topbar.business": "Empresarial",
 
   // Chat
+  "chat.history": "Histórico",
+  "chat.newChat": "Nova conversa",
+  "chat.noHistory": "Sem conversas anteriores",
+  "chat.deleteConversation": "Excluir conversa",
   "chat.financial.label": "Consultor Financeiro",
   "chat.financial.short": "Financeiro",
   "chat.financial.placeholder": "Pergunte ou envie uma imagem (fatura, extrato)...",
