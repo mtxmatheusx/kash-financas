@@ -1,15 +1,66 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Lock, Brain, Database, Crown, ShieldCheck, Cpu, TrendingUp, Check, X as XIcon } from "lucide-react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { WhatsAppIcon } from "./WhatsAppMockup";
 import { Particles, fadeUp } from "./LandingAnimations";
+import { LandingSection, SectionHeading, LandingCTA } from "./LandingComponents";
 
 interface FeaturesSectionProps {
   t: (k: any) => string;
   signupLink: string;
 }
+
+/* ── Animated counter hook ── */
+const useCountUp = (end: string, duration = 2000) => {
+  const [display, setDisplay] = useState("0");
+  const ref = useRef<HTMLDivElement>(null);
+  const hasAnimated = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated.current) {
+          hasAnimated.current = true;
+          const numericPart = end.replace(/[^0-9.]/g, "");
+          const num = parseFloat(numericPart);
+          const suffix = end.replace(/[0-9.,]/g, "");
+          const prefix = end.match(/^[^0-9]*/)?.[0] || "";
+          const isDecimal = numericPart.includes(".");
+          const startTime = performance.now();
+
+          const animate = (now: number) => {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = num * eased;
+            const formatted = isDecimal ? current.toFixed(1) : Math.floor(current).toLocaleString("pt-BR");
+            setDisplay(`${prefix}${formatted}${suffix}`);
+            if (progress < 1) requestAnimationFrame(animate);
+          };
+          requestAnimationFrame(animate);
+        }
+      },
+      { threshold: 0.5 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [end, duration]);
+
+  return { ref, display };
+};
+
+/* ── Social Proof Counter ── */
+const SocialCounter: React.FC<{ value: string; label: string; delay: number }> = ({ value, label, delay }) => {
+  const { ref, display } = useCountUp(value);
+  return (
+    <motion.div {...fadeUp(delay)} ref={ref} className="text-center px-4 sm:px-6">
+      <p className="text-xl sm:text-3xl font-black text-white tracking-tight font-mono-fin">{display}</p>
+      <p className="text-[10px] sm:text-xs text-[hsl(0,0%,55%)] font-medium mt-0.5">{label}</p>
+    </motion.div>
+  );
+};
 
 export const TrustBanner: React.FC<{ t: (k: any) => string }> = ({ t }) => {
   const trustBadges = [
@@ -19,23 +70,46 @@ export const TrustBanner: React.FC<{ t: (k: any) => string }> = ({ t }) => {
     { icon: WhatsAppIcon, label: t("landing.trust.api"), isCustom: true },
   ];
 
+  const socialStats = [
+    { value: t("landing.social.users"), label: t("landing.social.usersLabel") },
+    { value: t("landing.social.managed"), label: t("landing.social.managedLabel") },
+    { value: t("landing.social.rating"), label: t("landing.social.ratingLabel") },
+  ];
+
   return (
     <section className="py-8 sm:py-12 px-4 sm:px-6 relative" aria-label="Trust badges">
-      <div className="max-w-4xl mx-auto text-center">
-        <motion.p {...fadeUp()} className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-[hsl(0,0%,35%)] font-medium mb-5 sm:mb-6">
-          {t("landing.trust.subtitle")}
-        </motion.p>
-        <div className="flex items-center justify-center gap-6 sm:gap-10 flex-wrap">
-          {trustBadges.map((badge, i) => (
-            <motion.div key={badge.label} {...fadeUp(i * 0.06)} className="flex items-center gap-2 opacity-40">
-              {badge.isCustom ? (
-                <WhatsAppIcon className="w-4 h-4 text-[hsl(0,0%,45%)]" />
-              ) : (
-                <badge.icon className="w-4 h-4 text-[hsl(0,0%,45%)]" aria-hidden="true" />
-              )}
-              <span className="text-[10px] sm:text-[11px] text-[hsl(0,0%,45%)] font-medium whitespace-nowrap">{badge.label}</span>
-            </motion.div>
+      <div className="max-w-4xl mx-auto">
+        {/* Social proof counters */}
+        <div className="flex items-center justify-center gap-4 sm:gap-8 mb-8 sm:mb-10">
+          {socialStats.map((stat, i) => (
+            <React.Fragment key={stat.label}>
+              {i > 0 && <div className="w-px h-8 bg-[hsl(0,0%,15%)]" />}
+              <SocialCounter value={stat.value} label={stat.label} delay={i * 0.1} />
+            </React.Fragment>
           ))}
+        </div>
+
+        {/* Trust badges — improved touch targets */}
+        <div className="text-center">
+          <motion.p {...fadeUp()} className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-[hsl(0,0%,42%)] font-medium mb-5 sm:mb-6">
+            {t("landing.trust.subtitle")}
+          </motion.p>
+          <div className="flex items-center justify-center gap-4 sm:gap-8 flex-wrap">
+            {trustBadges.map((badge, i) => (
+              <motion.div
+                key={badge.label}
+                {...fadeUp(i * 0.06)}
+                className="flex items-center gap-2 opacity-50 min-h-[44px] min-w-[44px] px-2"
+              >
+                {badge.isCustom ? (
+                  <WhatsAppIcon className="w-4 h-4 text-[hsl(0,0%,52%)]" />
+                ) : (
+                  <badge.icon className="w-4 h-4 text-[hsl(0,0%,52%)]" aria-hidden="true" />
+                )}
+                <span className="text-[10px] sm:text-[11px] text-[hsl(0,0%,52%)] font-medium whitespace-nowrap">{badge.label}</span>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -53,15 +127,10 @@ export const UpgradeBanner: React.FC<FeaturesSectionProps> = ({ t, signupLink })
       <div className="relative z-10">
         <Crown className="w-10 h-10 sm:w-14 sm:h-14 text-[hsl(var(--landing-neon))] mx-auto mb-4" aria-hidden="true" />
         <h2 className="text-2xl sm:text-4xl font-extrabold text-white mb-3 tracking-tight">{t("landing.upgradeBanner.title")}</h2>
-        <p className="text-sm sm:text-lg text-[hsl(0,0%,55%)] max-w-xl mx-auto mb-6 leading-relaxed">{t("landing.upgradeBanner.desc")}</p>
-        <Link to={signupLink}>
-          <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-            <Button size="lg" className="text-sm sm:text-base px-8 h-12 sm:h-14 bg-[hsl(var(--landing-neon))] hover:bg-[hsl(var(--landing-neon)/0.85)] text-[hsl(0,0%,2%)] font-bold border-0 shadow-lg shadow-[hsl(var(--landing-neon)/0.25)]">
-              <Crown className="mr-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
-              {t("landing.upgradeBanner.cta")}
-            </Button>
-          </motion.div>
-        </Link>
+        <p className="text-sm sm:text-lg text-[hsl(0,0%,58%)] max-w-xl mx-auto mb-6 leading-relaxed">{t("landing.upgradeBanner.desc")}</p>
+        <LandingCTA to={signupLink} variant="neon" icon={<Crown className="mr-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />}>
+          {t("landing.upgradeBanner.cta")}
+        </LandingCTA>
       </div>
     </motion.div>
   </section>
@@ -75,17 +144,10 @@ export const StepsSection: React.FC<{ t: (k: any) => string }> = ({ t }) => {
   ];
 
   return (
-    <section id="como-funciona" className="py-14 sm:py-28 px-4 sm:px-6 relative" aria-labelledby="steps-title">
+    <LandingSection id="como-funciona" ariaLabelledBy="steps-title">
       <Particles />
       <div className="max-w-5xl mx-auto relative z-10">
-        <motion.div {...fadeUp()} className="text-center mb-10 sm:mb-20">
-          <span className="inline-block text-[10px] sm:text-xs font-bold uppercase tracking-[0.3em] text-[hsl(var(--landing-neon))] mb-3 sm:mb-4">
-            {t("landing.steps.label")}
-          </span>
-          <h2 id="steps-title" className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
-            {t("landing.steps.title")}
-          </h2>
-        </motion.div>
+        <SectionHeading id="steps-title" label={t("landing.steps.label")} title={t("landing.steps.title")} />
         <div className="space-y-3 sm:space-y-5">
           {steps.map((step, i) => (
             <motion.div
@@ -106,16 +168,16 @@ export const StepsSection: React.FC<{ t: (k: any) => string }> = ({ t }) => {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 sm:gap-3 mb-0.5 sm:mb-1">
-                  <span className="text-[9px] sm:text-[10px] font-mono-fin font-bold text-[hsl(0,0%,22%)] tracking-widest">{step.num}</span>
+                  <span className="text-[9px] sm:text-[10px] font-mono-fin font-bold text-[hsl(0,0%,25%)] tracking-widest">{step.num}</span>
                   <h3 className="text-base sm:text-lg font-extrabold text-white">{step.title}</h3>
                 </div>
-                <p className="text-xs sm:text-sm text-[hsl(0,0%,48%)] leading-relaxed">{step.desc}</p>
+                <p className="text-xs sm:text-sm text-[hsl(0,0%,55%)] leading-relaxed">{step.desc}</p>
               </div>
             </motion.div>
           ))}
         </div>
       </div>
-    </section>
+    </LandingSection>
   );
 };
 
@@ -127,18 +189,18 @@ export const GuaranteeSection: React.FC<{ t: (k: any) => string }> = ({ t }) => 
         <ShieldCheck className="w-7 h-7 sm:w-8 sm:h-8 text-[hsl(var(--landing-cta))]" aria-hidden="true" />
       </div>
       <h2 className="text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white mb-4 sm:mb-5 leading-[1.15]">{t("landing.guarantee.title")}</h2>
-      <p className="text-sm sm:text-base text-[hsl(0,0%,50%)] leading-relaxed max-w-2xl mx-auto mb-6">
+      <p className="text-sm sm:text-base text-[hsl(0,0%,55%)] leading-relaxed max-w-2xl mx-auto mb-6">
         {t("landing.guarantee.text1")}{" "}
         <span className="text-white font-semibold">{t("landing.guarantee.highlight")}</span>
         {t("landing.guarantee.text2")}{" "}
         <span className="text-[hsl(var(--landing-cta))] font-semibold">{t("landing.guarantee.noQuestions")}</span>
       </p>
-      <div className="flex items-center justify-center gap-6 sm:gap-8 text-[hsl(0,0%,40%)]">
-        <div className="flex items-center gap-2 text-[11px] sm:text-xs">
+      <div className="flex items-center justify-center gap-6 sm:gap-8 text-[hsl(0,0%,48%)]">
+        <div className="flex items-center gap-2 text-[11px] sm:text-xs min-h-[44px]">
           <Lock className="w-3.5 h-3.5 text-[hsl(var(--landing-cta)/0.7)]" aria-hidden="true" />
           <span>{t("landing.guarantee.instantCancel")}</span>
         </div>
-        <div className="flex items-center gap-2 text-[11px] sm:text-xs">
+        <div className="flex items-center gap-2 text-[11px] sm:text-xs min-h-[44px]">
           <ShieldCheck className="w-3.5 h-3.5 text-[hsl(var(--landing-cta)/0.7)]" aria-hidden="true" />
           <span>{t("landing.guarantee.noCommitment")}</span>
         </div>
@@ -148,17 +210,15 @@ export const GuaranteeSection: React.FC<{ t: (k: any) => string }> = ({ t }) => 
 );
 
 export const CompareSection: React.FC<{ t: (k: any) => string }> = ({ t }) => (
-  <section className="py-14 sm:py-28 px-4 sm:px-6 relative" aria-labelledby="compare-title">
+  <LandingSection ariaLabelledBy="compare-title">
     <div className="max-w-5xl mx-auto relative z-10">
-      <motion.div {...fadeUp()} className="text-center mb-10 sm:mb-16">
-        <h2 id="compare-title" className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">{t("landing.compare.title")}</h2>
-      </motion.div>
+      <SectionHeading id="compare-title" title={t("landing.compare.title")} />
       <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
         <motion.div {...fadeUp(0.1)} className="rounded-xl sm:rounded-2xl border border-[hsl(0,0%,12%)] bg-[hsl(0,0%,3%)] p-5 sm:p-8">
-          <h3 className="text-base sm:text-lg font-extrabold text-[hsl(0,0%,55%)] mb-5 sm:mb-6">{t("landing.compare.oldTitle")}</h3>
+          <h3 className="text-base sm:text-lg font-extrabold text-[hsl(0,0%,58%)] mb-5 sm:mb-6">{t("landing.compare.oldTitle")}</h3>
           <ul className="space-y-3.5 sm:space-y-4">
             {[t("landing.compare.old1"), t("landing.compare.old2"), t("landing.compare.old3"), t("landing.compare.old4")].map(item => (
-              <li key={item} className="flex items-start gap-3 text-xs sm:text-sm text-[hsl(0,0%,45%)]">
+              <li key={item} className="flex items-start gap-3 text-xs sm:text-sm text-[hsl(0,0%,52%)]">
                 <XIcon className="w-4 h-4 text-[hsl(var(--landing-cta))] shrink-0 mt-0.5" aria-hidden="true" />{item}
               </li>
             ))}
@@ -171,7 +231,7 @@ export const CompareSection: React.FC<{ t: (k: any) => string }> = ({ t }) => (
             <h3 className="text-base sm:text-lg font-extrabold text-[hsl(var(--landing-neon))] mb-5 sm:mb-6">{t("landing.compare.newTitle")}</h3>
             <ul className="space-y-3.5 sm:space-y-4">
               {[t("landing.compare.new1"), t("landing.compare.new2"), t("landing.compare.new3"), t("landing.compare.new4")].map(item => (
-                <li key={item} className="flex items-start gap-3 text-xs sm:text-sm text-[hsl(0,0%,65%)]">
+                <li key={item} className="flex items-start gap-3 text-xs sm:text-sm text-[hsl(0,0%,68%)]">
                   <Check className="w-4 h-4 text-[hsl(var(--landing-neon))] shrink-0 mt-0.5" aria-hidden="true" />{item}
                 </li>
               ))}
@@ -180,5 +240,5 @@ export const CompareSection: React.FC<{ t: (k: any) => string }> = ({ t }) => (
         </motion.div>
       </div>
     </div>
-  </section>
+  </LandingSection>
 );
