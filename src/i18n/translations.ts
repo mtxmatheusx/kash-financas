@@ -681,7 +681,7 @@ const pt = {
   "landing.hero.subtitle": "Chega de planilhas abandonadas. Envie um áudio no WhatsApp. A Faciliten organiza, categoriza e te dá estratégias para",
   "landing.hero.subtitleHighlight": "lucrar mais",
   "landing.hero.cta": "Ativar Meu Copiloto (30 Dias Grátis)",
-  "landing.hero.ctaNote": "R$ 29,90/mês após o teste. Indique um sócio e ganhe +60 dias.",
+  "landing.hero.ctaNote": "R$ 29,90/mês após o teste. Indique um sócio e ganhe +30 dias.",
   "landing.trust.subtitle": "Infraestrutura de nível bancário, movida a inteligência artificial",
   "landing.trust.encryption": "Criptografia AES-256",
   "landing.trust.ai": "Powered by OpenAI",
