@@ -59,10 +59,20 @@ export const TopBar: React.FC = () => {
       </DropdownMenu>
 
       <div className="flex items-center gap-3">
-        <div className="hidden md:flex items-center gap-1 text-emerald-500/80">
-          <ShieldCheck className="w-3 h-3" />
-          <span className="text-[10px] font-medium">{t("topbar.encrypted")}</span>
-        </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="hidden md:flex items-center gap-1 text-emerald-500/80 cursor-help">
+                <ShieldCheck className="w-3 h-3" />
+                <span className="text-[10px] font-medium">{t("topbar.encrypted")}</span>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="max-w-[240px] text-xs">
+              <p className="font-semibold mb-1">{t("topbar.encryptionTooltipTitle")}</p>
+              <p className="text-muted-foreground">{t("topbar.encryptionTooltipDesc")}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <p className="text-[11px] text-muted-foreground hidden sm:block">
           {new Date().toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' })}
         </p>
