@@ -36,6 +36,8 @@ const pt = {
   // TopBar
   "topbar.personal": "Pessoal",
   "topbar.business": "Empresarial",
+  "topbar.encrypted": "100% criptografado",
+  "landing.encryption.notice": "Seus dados são protegidos de ponta a ponta",
 
   // Chat
   "chat.history": "Histórico",
