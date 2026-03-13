@@ -22,6 +22,7 @@ export const AmandaLinkSection: React.FC<Props> = ({ userId }) => {
 
   const handleOpen = () => {
     window.open(whatsappUrl, "_blank");
+    toast.success("Vínculo iniciado! Envie a mensagem no WhatsApp para concluir.");
   };
 
   return (
