@@ -1713,12 +1713,12 @@ const en: typeof pt = {
   "invType.realEstate": "Real Estate",
   "invType.other": "Other",
 
-  "mockup.userMsg1": "\"I spent 50 on gas\"",
-  "mockup.botMsg1": "✅ <b>$50.00</b> → <c>Transport</c>. 15% above last month. 📊",
-  "mockup.botMsg1Short": "✅ <b>$50.00</b> → <c>Transport</c>",
-  "mockup.botMsg1Detail": "Spending 15% above last month. 📊",
-  "mockup.userMsg2": "Where can I cut?",
-  "mockup.botMsg2": "💡 Delivery: $380 (+40%). Cooking 3x/week saves ~$250/mo.",
+  "mockup.userMsg1": "I spent 50 on gas",
+  "mockup.botMsg1": "✅ $50.00 → Transport",
+  "mockup.botMsg1Short": "✅ $50.00 → Transport",
+  "mockup.botMsg1Detail": "15% above last month 📊",
+  "mockup.userMsg2": "Where can I cut costs?",
+  "mockup.botMsg2": "💡 Delivery: $380 (+40%).\nCooking 3x/week saves ~$250/month.",
 
   "pricing.currencySymbol": "$",
   "pricing.premiumPrice": "29",
