@@ -36,6 +36,8 @@ const pt = {
   // TopBar
   "topbar.personal": "Pessoal",
   "topbar.business": "Empresarial",
+  "topbar.encrypted": "100% criptografado",
+  "landing.encryption.notice": "Seus dados são protegidos de ponta a ponta",
 
   // Chat
   "chat.history": "Histórico",
@@ -957,6 +959,8 @@ const en: typeof pt = {
 
   "topbar.personal": "Personal",
   "topbar.business": "Business",
+  "topbar.encrypted": "100% encrypted",
+  "landing.encryption.notice": "Your data is protected end-to-end",
 
   "chat.history": "History",
   "chat.newChat": "New chat",
@@ -1839,6 +1843,8 @@ const es: typeof pt = {
 
   "topbar.personal": "Personal",
   "topbar.business": "Empresarial",
+  "topbar.encrypted": "100% encriptado",
+  "landing.encryption.notice": "Sus datos están protegidos de extremo a extremo",
 
   "chat.history": "Historial",
   "chat.newChat": "Nueva conversación",
