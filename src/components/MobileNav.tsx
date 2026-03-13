@@ -160,8 +160,8 @@ export const MobileNav: React.FC = () => {
                     </div>
                   ))}
 
-                  {/* Theme toggle */}
-                  <div className="mt-1 border-t border-border/30 pt-1">
+                  {/* Theme toggle & Logout */}
+                  <div className="mt-1 border-t border-border/30 pt-1 space-y-0.5">
                     <motion.div
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -177,6 +177,26 @@ export const MobileNav: React.FC = () => {
                         <div className="flex-1 min-w-0 text-left">
                           <p className="text-[13px] font-medium leading-tight text-foreground">
                             {theme === 'light' ? t("sidebar.darkMode") : t("sidebar.lightMode")}
+                          </p>
+                        </div>
+                      </button>
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: (animIdx + 1) * 0.03, duration: 0.2 }}
+                    >
+                      <button
+                        onClick={() => { signOut(); closeMenu(); }}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all active:scale-[0.98] active:bg-destructive/10 w-full"
+                        aria-label={t("sidebar.logout")}
+                      >
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-destructive/10 text-destructive">
+                          <LogOut className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1 min-w-0 text-left">
+                          <p className="text-[13px] font-medium leading-tight text-destructive">
+                            {t("sidebar.logout")}
                           </p>
                         </div>
                       </button>
