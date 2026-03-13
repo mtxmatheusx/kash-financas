@@ -189,7 +189,7 @@ export const MobileNav: React.FC = () => {
 
       {/* Bottom tab bar */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border/40 safe-area-bottom"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border/40 safe-area-bottom"
         role="navigation"
         aria-label="Menu principal"
         style={{
