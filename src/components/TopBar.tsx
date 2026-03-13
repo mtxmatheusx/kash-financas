@@ -52,12 +52,18 @@ export const TopBar: React.FC = () => {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <p className="text-[11px] text-muted-foreground hidden sm:block">
-        {new Date().toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' })}
-      </p>
-      <p className="text-[10px] text-muted-foreground sm:hidden">
-        {new Date().toLocaleDateString(locale, { day: '2-digit', month: 'short' })}
-      </p>
+      <div className="flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-1 text-emerald-500/80">
+          <ShieldCheck className="w-3 h-3" />
+          <span className="text-[10px] font-medium">{t("topbar.encrypted")}</span>
+        </div>
+        <p className="text-[11px] text-muted-foreground hidden sm:block">
+          {new Date().toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' })}
+        </p>
+        <p className="text-[10px] text-muted-foreground sm:hidden">
+          {new Date().toLocaleDateString(locale, { day: '2-digit', month: 'short' })}
+        </p>
+      </div>
     </header>
   );
 };
