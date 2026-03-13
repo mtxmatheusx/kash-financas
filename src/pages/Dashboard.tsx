@@ -1,12 +1,10 @@
 import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { PageTransition, staggerContainer, staggerItem, slideUp, fadeIn } from "@/components/PageTransition";
-import { cn } from "@/lib/utils";
 import { SummaryBar } from "@/components/SummaryBar";
 import { KPICard } from "@/components/KPICard";
 import { useTransactions } from "@/hooks/useTransactions";
-import { useInvestments } from "@/hooks/useInvestments";
-import { TrendingUp, TrendingDown, Wallet, PiggyBank, Activity, Calendar } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, Activity, Calendar } from "lucide-react";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { translateCategory } from "@/lib/categoryI18n";
 import {
@@ -16,17 +14,9 @@ import {
 import { createAnimatedBarShape } from "@/components/AnimatedBar";
 import { getDateRange, type DateFilter } from "@/components/DashboardDateFilter";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { FinancialInsights } from "@/components/FinancialInsights";
-import { useGoals } from "@/hooks/useGoals";
-import { ReferralDashboardBanner } from "@/components/ReferralDashboardBanner";
-import { UpgradeDashboardBanner } from "@/components/UpgradeDashboardBanner";
-
+import { cn } from "@/lib/utils";
 
 const formatCompact = (v: number) => {
   if (Math.abs(v) >= 1000) return `${(v / 1000).toFixed(1)}k`;
@@ -36,7 +26,6 @@ const formatCompact = (v: number) => {
 const Dashboard: React.FC = () => {
   const { formatMoney: formatBRL, t } = usePreferences();
 
-  /* Cockpit-style tooltip */
   const CockpitTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload?.length) return null;
     return (
@@ -54,28 +43,8 @@ const Dashboard: React.FC = () => {
   };
 
   const { transactions, totals } = useTransactions();
-  const { total: investmentTotal } = useInvestments();
-  const { goals } = useGoals();
-
   const [dateFilter, setDateFilter] = useState<DateFilter>('all');
-  const [customRange, setCustomRange] = useState<{ from?: Date; to?: Date }>({});
-
-  // Weekly summary data
-  const weeklySummary = useMemo(() => {
-    const now = new Date();
-    const weekAgo = new Date(now);
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    weekAgo.setHours(0, 0, 0, 0);
-
-    const weekTxs = transactions.filter(tx => {
-      const d = new Date(tx.date + 'T12:00:00');
-      return d >= weekAgo && d <= now;
-    });
-
-    const income = weekTxs.filter(tx => tx.type === 'income').reduce((s, tx) => s + tx.amount, 0);
-    const expense = weekTxs.filter(tx => tx.type === 'expense').reduce((s, tx) => s + tx.amount, 0);
-    return { income, expense, balance: income - expense, count: weekTxs.length };
-  }, [transactions]);
+  const [customRange] = useState<{ from?: Date; to?: Date }>({});
 
   const filtered = useMemo(() => {
     const { from, to } = getDateRange(dateFilter, customRange);
@@ -95,7 +64,6 @@ const Dashboard: React.FC = () => {
   }, [filtered]);
 
   const monthlyData = useMemo(() => {
-    // Show all 12 months of the current year
     const year = new Date().getFullYear();
     const monthKeys = ['month.jan','month.feb','month.mar','month.apr','month.may','month.jun','month.jul','month.aug','month.sep','month.oct','month.nov','month.dec'] as const;
     const monthNames = monthKeys.map(k => t(k));
@@ -121,16 +89,26 @@ const Dashboard: React.FC = () => {
     filtered.filter(t => t.type === 'expense').forEach(t => {
       cats[t.category] = (cats[t.category] || 0) + t.amount;
     });
-    return Object.entries(cats)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5)
-      .map(([name, value]) => ({ name, value }));
+    return Object.entries(cats).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([name, value]) => ({ name, value }));
   }, [filtered]);
+
+  const weeklySummary = useMemo(() => {
+    const now = new Date();
+    const weekAgo = new Date(now);
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    weekAgo.setHours(0, 0, 0, 0);
+    const weekTxs = transactions.filter(tx => {
+      const d = new Date(tx.date + 'T12:00:00');
+      return d >= weekAgo && d <= now;
+    });
+    const income = weekTxs.filter(tx => tx.type === 'income').reduce((s, tx) => s + tx.amount, 0);
+    const expense = weekTxs.filter(tx => tx.type === 'expense').reduce((s, tx) => s + tx.amount, 0);
+    return { income, expense, balance: income - expense, count: weekTxs.length };
+  }, [transactions]);
 
   return (
     <PageTransition>
       <div className="space-y-3 md:space-y-5">
-        {/* Header + Filters */}
         <motion.div {...fadeIn(0)} className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -141,51 +119,29 @@ const Dashboard: React.FC = () => {
               <p className="text-xs text-muted-foreground">{t("dashboard.subtitle")}</p>
             </div>
           </div>
-          <Select
-            value={dateFilter}
-            onValueChange={(v) => setDateFilter(v as DateFilter)}
-          >
+          <Select value={dateFilter} onValueChange={(v) => setDateFilter(v as DateFilter)}>
             <SelectTrigger className="w-[180px] h-9 text-xs bg-card border-border">
               <SelectValue placeholder={t("filter.period")} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t("filter.all")}</SelectItem>
               <SelectItem value="today">{t("filter.today")}</SelectItem>
-              <SelectItem value="yesterday">{t("filter.yesterday")}</SelectItem>
               <SelectItem value="week">{t("filter.week")}</SelectItem>
               <SelectItem value="month">{t("filter.month")}</SelectItem>
             </SelectContent>
           </Select>
         </motion.div>
 
-        {/* Referral Banner */}
-        <ReferralDashboardBanner />
-
-        {/* Upgrade Banner for trial users */}
-        <UpgradeDashboardBanner />
-
-        {/* KPIs */}
         <SummaryBar items={[
           { label: t("kpi.income"), value: formatBRL(filteredTotals.income), color: "income", icon: TrendingUp },
           { label: t("kpi.expenses"), value: formatBRL(filteredTotals.expense), color: "expense", icon: TrendingDown },
           { label: t("kpi.balance"), value: formatBRL(filteredTotals.balance), color: "primary", icon: Wallet },
         ]} />
 
-        {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 lg:gap-3">
           <motion.div {...slideUp(0.15)} className="rounded-xl border border-border bg-card p-4 cockpit-glow">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">{t("dashboard.incomeVsExpense")}</h3>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2 h-2 rounded-full bg-fin-income" style={{ boxShadow: '0 0 6px hsl(var(--fin-income))' }} />
-                  <span className="text-[10px] text-muted-foreground">{t("kpi.income")}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2 h-2 rounded-full bg-fin-expense" style={{ boxShadow: '0 0 6px hsl(var(--fin-expense))' }} />
-                  <span className="text-[10px] text-muted-foreground">{t("kpi.expenses")}</span>
-                </div>
-              </div>
             </div>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={monthlyData} margin={{ top: 8, right: 4, left: -20, bottom: 0 }} barGap={2} barCategoryGap="20%">
@@ -196,10 +152,8 @@ const Dashboard: React.FC = () => {
                   tick={{ fill: 'hsl(220, 10%, 48%)', fontSize: 10, fontFamily: 'JetBrains Mono' }}
                   tickFormatter={formatCompact} />
                 <Tooltip content={<CockpitTooltip />} cursor={{ fill: 'hsl(var(--muted))', opacity: 0.3 }} />
-                <Bar dataKey="income" name={t("kpi.income")} fill="hsl(var(--fin-income))" radius={[4, 4, 0, 0]}
-                  opacity={0.85} animationDuration={800} />
-                <Bar dataKey="expense" name={t("kpi.expenses")} fill="hsl(var(--fin-expense))" radius={[4, 4, 0, 0]}
-                  opacity={0.85} animationDuration={800} animationBegin={200} />
+                <Bar dataKey="income" name={t("kpi.income")} fill="hsl(var(--fin-income))" radius={[4, 4, 0, 0]} opacity={0.85} animationDuration={800} />
+                <Bar dataKey="expense" name={t("kpi.expenses")} fill="hsl(var(--fin-expense))" radius={[4, 4, 0, 0]} opacity={0.85} animationDuration={800} animationBegin={200} />
               </BarChart>
             </ResponsiveContainer>
           </motion.div>
@@ -254,15 +208,6 @@ const Dashboard: React.FC = () => {
           ) : (
             <p className="text-xs text-muted-foreground text-center py-4">{t("dashboard.weeklyNoData")}</p>
           )}
-        </motion.div>
-
-        {/* AI Insights */}
-        <motion.div {...slideUp(0.3)}>
-          <FinancialInsights
-            transactions={filtered}
-            investments={{ total: investmentTotal }}
-            goals={goals}
-          />
         </motion.div>
 
         {/* Recent Transactions */}

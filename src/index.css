@@ -16,7 +16,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 25% 10%;
 
-    --primary: 217 91% 60%;
+    --primary: 0 65% 55%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 220 14% 96%;
@@ -33,7 +33,7 @@
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 217 91% 60%;
+    --ring: 0 65% 55%;
 
     --radius: 0.625rem;
 
@@ -42,7 +42,7 @@
     --fin-expense: 0 76% 58%;
     --fin-pending: 38 92% 50%;
     --fin-investment: 258 60% 52%;
-    --fin-goals: 217 91% 60%;
+    --fin-goals: 0 65% 55%;
     --fin-emergency: 25 95% 53%;
 
     /* ═══ Glass morphism ═══ */
@@ -58,12 +58,12 @@
     /* ═══ Sidebar ═══ */
     --sidebar-background: 225 30% 6%;
     --sidebar-foreground: 220 15% 75%;
-    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary: 0 65% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 220 25% 11%;
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 220 20% 14%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-ring: 0 65% 55%;
     --sidebar-muted: 220 12% 50%;
 
     /* ═══ Status / Feedback ═══ */
@@ -71,7 +71,7 @@
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
-    --info: 217 91% 60%;
+    --info: 0 65% 55%;
     --info-foreground: 0 0% 100%;
 
     /* ═══ Elevation shadows ═══ */
@@ -91,7 +91,7 @@
     --popover: 225 30% 5%;
     --popover-foreground: 220 15% 93%;
 
-    --primary: 217 91% 60%;
+    --primary: 0 65% 55%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 225 25% 10%;
@@ -108,7 +108,7 @@
 
     --border: 225 20% 12%;
     --input: 225 20% 12%;
-    --ring: 217 91% 60%;
+    --ring: 0 65% 55%;
 
     --glass-bg: 225 28% 6% / 0.7;
     --glass-border: 225 20% 16% / 0.4;
@@ -124,12 +124,12 @@
 
     --sidebar-background: 225 35% 3%;
     --sidebar-foreground: 220 12% 70%;
-    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary: 0 65% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 225 25% 8%;
     --sidebar-accent-foreground: 220 15% 93%;
     --sidebar-border: 225 22% 10%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-ring: 0 65% 55%;
     --sidebar-muted: 220 10% 42%;
 
     --success: 145 90% 48%;
