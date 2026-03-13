@@ -80,8 +80,8 @@ const Configuracoes: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [fetchingCep, setFetchingCep] = useState(false);
-  const [qrCodeImage, setQrCodeImage] = useState<string | null>(null);
-  const [qrLoading, setQrLoading] = useState(false);
+
+
 
   const handleGenerateQr = async () => {
     setQrLoading(true);
