@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ShieldCheck } from "lucide-react";
 import { GridOverlay, Particles, fadeUp } from "./LandingAnimations";
 import { LandingCTA } from "./LandingComponents";
 import { WhatsAppIcon, MobileWhatsAppPreview, IPhoneMockup } from "./WhatsAppMockup";
