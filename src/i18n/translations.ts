@@ -837,12 +837,12 @@ const pt = {
   "invType.other": "Outros",
 
   // Phone mockup
-  "mockup.userMsg1": "\"Gastei 50 de gasolina\"",
-  "mockup.botMsg1": "✅ <b>R$ 50,00</b> → <c>Transporte</c>. 15% acima do mês passado. 📊",
-  "mockup.botMsg1Short": "✅ <b>R$ 50,00</b> → <c>Transporte</c>",
-  "mockup.botMsg1Detail": "Gasto 15% acima do mês passado. 📊",
+  "mockup.userMsg1": "Gastei 50 de gasolina",
+  "mockup.botMsg1": "✅ R$ 50,00 → Transporte",
+  "mockup.botMsg1Short": "✅ R$ 50,00 → Transporte",
+  "mockup.botMsg1Detail": "15% acima do mês passado 📊",
   "mockup.userMsg2": "Onde posso cortar?",
-  "mockup.botMsg2": "💡 Delivery: R$ 380 (+40%). Cozinhar 3x/semana economiza ~R$ 250/mês.",
+  "mockup.botMsg2": "💡 Delivery: R$ 380 (+40%).\nCozinhar 3x/semana economiza ~R$ 250/mês.",
 
   // Pricing display
   "pricing.currencySymbol": "R$",
