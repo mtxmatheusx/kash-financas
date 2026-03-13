@@ -13,6 +13,7 @@ import {
   Globe, Coins,
 } from "lucide-react";
 import { ActiveDevices } from "@/components/ActiveDevices";
+import { AmandaLinkSection } from "@/components/AmandaLinkSection";
 import { toast } from "sonner";
 import { maskCPF, maskCNPJ, maskPhone, maskCEP, unmask } from "@/lib/masks";
 import { usePreferences, CURRENCIES, LANGUAGES, type CurrencyCode, type LanguageCode } from "@/contexts/PreferencesContext";
@@ -79,29 +80,11 @@ const Configuracoes: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [fetchingCep, setFetchingCep] = useState(false);
-  const [qrCodeImage, setQrCodeImage] = useState<string | null>(null);
-  const [qrLoading, setQrLoading] = useState(false);
 
-  const handleGenerateQr = async () => {
-    setQrLoading(true);
-    setQrCodeImage(null);
-    try {
-      const { data, error } = await supabase.functions.invoke("whatsapp-connect", {
-        body: { action: "generate_qr" },
-      });
-      if (error) throw error;
-      if (data?.qrCode || data?.base64) {
-        const img = data.qrCode || data.base64;
-        setQrCodeImage(img.startsWith("data:") ? img : `data:image/png;base64,${img}`);
-        toast.success("QR Code gerado! Escaneie com seu celular.");
-      } else {
-        toast.error("Não foi possível gerar o QR Code.");
-      }
-    } catch {
-      toast.error("Erro ao gerar QR Code. Tente novamente.");
-    }
-    setQrLoading(false);
-  };
+
+
+
+
 
   const handleSyncData = async () => {
     setSaving(true);
@@ -419,6 +402,9 @@ const Configuracoes: React.FC = () => {
           {/* ═══════════ Integrações ═══════════ */}
           <TabsContent value="integrations">
             <div className="space-y-6">
+              {/* Vincular Assistente Amanda */}
+              <AmandaLinkSection userId={user?.id} />
+
               <div className="rounded-xl border border-border bg-card p-6 md:p-8 space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 rounded-xl bg-primary/10">
@@ -433,44 +419,6 @@ const Configuracoes: React.FC = () => {
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Webhook className="w-4 h-4" />}
                   {t("settings.syncData")}
                 </Button>
-              </div>
-
-              <div className="rounded-xl border border-border bg-card p-6 md:p-8 space-y-6">
-                <div className="text-center space-y-2">
-                  <div className="inline-flex p-3 rounded-2xl bg-fin-income/10 mb-2">
-                    <MessageCircle className="w-8 h-8 text-fin-income" />
-                  </div>
-                  <h3 className="text-lg font-bold text-foreground font-display-fin">{t("settings.connectWhatsApp")}</h3>
-                  <p className="text-sm text-muted-foreground max-w-sm mx-auto">{t("settings.scanQr")}</p>
-                </div>
-
-                <div className="flex justify-center">
-                  <div className="w-64 h-64 rounded-xl bg-background border border-border flex items-center justify-center overflow-hidden p-2">
-                    {qrLoading ? (
-                      <div className="flex flex-col items-center gap-3">
-                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                        <p className="text-xs text-muted-foreground">{t("settings.generatingQr")}</p>
-                      </div>
-                    ) : qrCodeImage ? (
-                      <img src={qrCodeImage} alt="QR Code WhatsApp" className="w-full h-full object-contain rounded-lg" />
-                    ) : (
-                      <div className="flex flex-col items-center gap-3 text-center px-4">
-                        <QrCode className="w-12 h-12 text-muted-foreground/30" />
-                        <p className="text-xs text-muted-foreground">{t("settings.clickToGenerate")}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <Button className="w-full gap-2 bg-fin-income/90 hover:bg-fin-income text-primary-foreground" onClick={handleGenerateQr} disabled={qrLoading}>
-                    {qrLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <QrCode className="w-4 h-4" />}
-                    {qrCodeImage ? t("settings.updateQr") : t("settings.generateQr")}
-                  </Button>
-                  {qrCodeImage && (
-                    <p className="text-[10px] text-muted-foreground text-center">{t("settings.qrExpires")}</p>
-                  )}
-                </div>
               </div>
             </div>
           </TabsContent>

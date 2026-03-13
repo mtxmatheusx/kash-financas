@@ -5,8 +5,9 @@ import { cn } from "@/lib/utils";
 import { SummaryBar } from "@/components/SummaryBar";
 import { KPICard } from "@/components/KPICard";
 import { useTransactions } from "@/hooks/useTransactions";
+import { useClientProfiles } from "@/hooks/useClientProfiles";
 import { useInvestments } from "@/hooks/useInvestments";
-import { TrendingUp, TrendingDown, Wallet, PiggyBank, Activity, Calendar } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, PiggyBank, Activity, Calendar, Inbox } from "lucide-react";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { translateCategory } from "@/lib/categoryI18n";
 import {
@@ -53,9 +54,33 @@ const Dashboard: React.FC = () => {
     );
   };
 
-  const { transactions, totals } = useTransactions();
+  const { transactions: dbTransactions, totals } = useTransactions();
+  const { clientTransactions, clientLoading } = useClientProfiles();
   const { total: investmentTotal } = useInvestments();
   const { goals } = useGoals();
+
+  // Merge transactions from both tables into a unified list
+  const transactions = useMemo(() => {
+    const fromClient = clientTransactions.map(ct => ({
+      id: ct.id,
+      type: ct.type as 'income' | 'expense',
+      amount: ct.amount_cents / 100,
+      description: ct.description,
+      category: ct.category,
+      date: ct.date,
+      status: 'paid' as const,
+      account_type: 'personal' as const,
+      entry_type: 'single' as const,
+      frequency: null,
+      currency: 'BRL',
+      created_at: ct.created_at,
+      _source: 'client_profiles' as const,
+    }));
+    const fromTx = dbTransactions.map(t => ({ ...t, _source: 'transactions' as const }));
+    return [...fromTx, ...fromClient].sort((a, b) => b.date.localeCompare(a.date));
+  }, [dbTransactions, clientTransactions]);
+
+  const hasNoData = transactions.length === 0 && !clientLoading;
 
   const [dateFilter, setDateFilter] = useState<DateFilter>('all');
   const [customRange, setCustomRange] = useState<{ from?: Date; to?: Date }>({});
@@ -163,6 +188,17 @@ const Dashboard: React.FC = () => {
 
         {/* Upgrade Banner for trial users */}
         <UpgradeDashboardBanner />
+
+        {/* Empty state */}
+        {hasNoData && (
+          <motion.div {...fadeIn(0.1)} className="rounded-xl border border-dashed border-border bg-card p-8 text-center space-y-3">
+            <Inbox className="w-10 h-10 text-muted-foreground/30 mx-auto" />
+            <h3 className="text-sm font-semibold text-foreground">Aguardando primeira transação...</h3>
+            <p className="text-xs text-muted-foreground max-w-md mx-auto">
+              Adicione transações manualmente ou vincule a Assistente Amanda nas configurações para começar a ver seus dados aqui.
+            </p>
+          </motion.div>
+        )}
 
         {/* KPIs */}
         <SummaryBar items={[
