@@ -257,6 +257,10 @@ const pt = {
   "dashboard.weeklyBalance": "Saldo da Semana",
   "dashboard.weeklyTransactions": "Transações na semana",
   "dashboard.weeklyNoData": "Nenhuma transação nos últimos 7 dias",
+  "dashboard.referral.title": "🎁 Indique amigos e ganhe +60 dias grátis!",
+  "dashboard.referral.desc": "Compartilhe seu código de indicação. Quando alguém se cadastrar, você ganha +60 dias de Premium grátis!",
+  "dashboard.referral.copy": "Copiar",
+  "dashboard.referral.copied": "Copiado!",
 
   // Goals
   "goals.title": "Metas Financeiras",
