@@ -53,7 +53,7 @@ const colorMap = {
 };
 
 export const SummaryBar: React.FC<SummaryBarProps> = ({ items }) => (
-  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+  <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
     {items.map((item, i) => {
       const c = colorMap[item.color];
       const Icon = item.icon;

@@ -30,21 +30,22 @@ export const UpgradeDashboardBanner: React.FC = () => {
           <X className="w-4 h-4" />
         </button>
 
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 pr-6">
-          <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/15 flex items-center justify-center">
-            <Crown className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+        <div className="flex flex-col gap-3 pr-6 lg:flex-row lg:items-center lg:gap-4">
+          <div className="flex items-center gap-3">
+            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center">
+              <Crown className="w-5 h-5 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm font-bold text-foreground">
+                {t("dashboard.upgrade.title")}
+              </h3>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {t("dashboard.upgrade.desc")}
+              </p>
+            </div>
           </div>
 
-          <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-bold text-foreground">
-              {t("dashboard.upgrade.title")}
-            </h3>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {t("dashboard.upgrade.desc")}
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 md:gap-3 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap lg:ml-auto">
             {trialDaysLeft !== null && (
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full">
                 <Clock className="w-3.5 h-3.5" />
