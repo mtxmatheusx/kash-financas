@@ -1649,7 +1649,7 @@ const en: typeof pt = {
   "auth.login.errorInvalid": "Invalid email or password",
   "auth.login.success": "Logged in successfully!",
   "auth.signup.title": "Create account",
-  "auth.signup.description": "Start with full access for 30 days — no credit card required",
+  "auth.signup.description": "Enjoy 30 days of full Premium — no credit card needed",
   "auth.signup.trialBadge": "30 days free Premium",
   "auth.signup.noCreditCard": "No credit card required • Cancel anytime",
   "auth.signup.displayName": "Display name",
