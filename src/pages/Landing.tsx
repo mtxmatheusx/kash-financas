@@ -166,7 +166,7 @@ const MobileWhatsAppPreview: React.FC<{ t: (k: any) => string }> = ({ t }) => (
   </motion.div>
 );
 
-/* ── iPhone Mockup (desktop) ── */
+/* ── iPhone 17 Pro Mockup (desktop) ── */
 const IPhoneMockup: React.FC<{ t: (k: any) => string }> = ({ t }) => (
   <motion.div
     initial={{ opacity: 0, x: 40, rotateY: -8 }}
@@ -176,11 +176,19 @@ const IPhoneMockup: React.FC<{ t: (k: any) => string }> = ({ t }) => (
     className="relative flex items-center justify-center"
   >
     <div className="absolute w-[320px] h-[500px] rounded-full blur-[80px] bg-[hsl(160,100%,50%)/0.08]" />
-    <div className="relative w-[290px] h-[580px] rounded-[44px] border-[3px] border-[hsl(0,0%,15%)] bg-[hsl(0,0%,4%)] shadow-2xl shadow-[hsl(0,0%,0%)/0.6] overflow-hidden">
-      {/* Notch */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[110px] h-[26px] bg-[hsl(0,0%,2%)] rounded-b-2xl z-20" />
-      
-      <div className="absolute inset-[2px] rounded-[42px] overflow-hidden bg-[hsl(210,8%,7%)] flex flex-col">
+    <div className="relative w-[270px] h-[570px] rounded-[48px] border-[3px] border-[hsl(0,0%,18%)] bg-[hsl(0,0%,5%)] shadow-2xl overflow-hidden"
+      style={{ boxShadow: "0 0 0 1px hsl(0 0% 25%), 0 25px 80px -15px rgba(0,0,0,0.85)" }}
+    >
+      {/* Dynamic Island */}
+      <div className="absolute top-[10px] left-1/2 -translate-x-1/2 w-[84px] h-[24px] bg-[hsl(0,0%,2%)] rounded-full z-20" />
+      {/* Side buttons — volume + action */}
+      <div className="absolute top-[90px] -left-[2px] w-[3px] h-[30px] rounded-l bg-[hsl(0,0%,22%)]" />
+      <div className="absolute top-[135px] -left-[2px] w-[3px] h-[50px] rounded-l bg-[hsl(0,0%,22%)]" />
+      <div className="absolute top-[195px] -left-[2px] w-[3px] h-[50px] rounded-l bg-[hsl(0,0%,22%)]" />
+      {/* Power button */}
+      <div className="absolute top-[130px] -right-[2px] w-[3px] h-[64px] rounded-r bg-[hsl(0,0%,22%)]" />
+
+      <div className="absolute inset-[3px] rounded-[45px] overflow-hidden bg-[hsl(210,8%,7%)] flex flex-col">
         <WaHeader />
 
         {/* Chat area */}
@@ -202,6 +210,9 @@ const IPhoneMockup: React.FC<{ t: (k: any) => string }> = ({ t }) => (
 
         <WaInputBar />
       </div>
+
+      {/* Home indicator */}
+      <div className="absolute bottom-[7px] left-1/2 -translate-x-1/2 w-[110px] h-[4px] bg-[hsl(0,0%,30%)] rounded-full z-20" />
     </div>
   </motion.div>
 );
