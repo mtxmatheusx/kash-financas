@@ -6,7 +6,7 @@ interface SEOConfig {
   description: string;
   canonical?: string;
   ogImage?: string;
-  jsonLd?: Record<string, unknown>;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 const LANG_MAP: Record<string, string> = {
@@ -19,13 +19,9 @@ export function useSEO(config: SEOConfig) {
   const { language } = usePreferences();
 
   useEffect(() => {
-    // html lang
     document.documentElement.lang = LANG_MAP[language] || "pt-BR";
-
-    // title
     document.title = config.title;
 
-    // helpers
     const setMeta = (attr: string, key: string, content: string) => {
       let el = document.querySelector(`meta[${attr}="${key}"]`) as HTMLMetaElement | null;
       if (!el) {
@@ -36,18 +32,36 @@ export function useSEO(config: SEOConfig) {
       el.setAttribute("content", content);
     };
 
+    // Basic meta
     setMeta("name", "description", config.description);
+
+    // Open Graph — complete
+    setMeta("property", "og:type", "website");
+    setMeta("property", "og:site_name", "Faciliten");
     setMeta("property", "og:title", config.title);
     setMeta("property", "og:description", config.description);
-    setMeta("name", "twitter:title", config.title);
-    setMeta("name", "twitter:description", config.description);
-
+    if (config.canonical) setMeta("property", "og:url", config.canonical);
     if (config.ogImage) {
       setMeta("property", "og:image", config.ogImage);
+      setMeta("property", "og:image:width", "1200");
+      setMeta("property", "og:image:height", "630");
+      setMeta("property", "og:image:type", "image/png");
+      setMeta("property", "og:image:alt", config.title);
+    }
+    setMeta("property", "og:locale", language === "en" ? "en_US" : language === "es" ? "es_ES" : "pt_BR");
+
+    // Twitter Cards — complete
+    setMeta("name", "twitter:card", "summary_large_image");
+    setMeta("name", "twitter:site", "@Faciliten");
+    setMeta("name", "twitter:creator", "@Faciliten");
+    setMeta("name", "twitter:title", config.title);
+    setMeta("name", "twitter:description", config.description);
+    if (config.ogImage) {
       setMeta("name", "twitter:image", config.ogImage);
+      setMeta("name", "twitter:image:alt", config.title);
     }
 
-    // canonical
+    // Canonical
     if (config.canonical) {
       let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
       if (!link) {
@@ -58,14 +72,16 @@ export function useSEO(config: SEOConfig) {
       link.href = config.canonical;
     }
 
-    // JSON-LD
+    // JSON-LD (supports single or array)
     if (config.jsonLd) {
       const existingScript = document.querySelector('script[data-seo-jsonld]');
       if (existingScript) existingScript.remove();
       const script = document.createElement("script");
       script.type = "application/ld+json";
       script.setAttribute("data-seo-jsonld", "true");
-      script.textContent = JSON.stringify(config.jsonLd);
+      script.textContent = JSON.stringify(
+        Array.isArray(config.jsonLd) ? config.jsonLd : config.jsonLd
+      );
       document.head.appendChild(script);
       return () => { script.remove(); };
     }
