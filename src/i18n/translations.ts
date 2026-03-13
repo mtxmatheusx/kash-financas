@@ -38,6 +38,10 @@ const pt = {
   "topbar.business": "Empresarial",
 
   // Chat
+  "chat.history": "Histórico",
+  "chat.newChat": "Nova conversa",
+  "chat.noHistory": "Sem conversas anteriores",
+  "chat.deleteConversation": "Excluir conversa",
   "chat.financial.label": "Consultor Financeiro",
   "chat.financial.short": "Financeiro",
   "chat.financial.placeholder": "Pergunte ou envie uma imagem (fatura, extrato)...",
@@ -943,6 +947,10 @@ const en: typeof pt = {
   "topbar.personal": "Personal",
   "topbar.business": "Business",
 
+  "chat.history": "History",
+  "chat.newChat": "New chat",
+  "chat.noHistory": "No previous conversations",
+  "chat.deleteConversation": "Delete conversation",
   "chat.financial.label": "Financial Advisor",
   "chat.financial.short": "Financial",
   "chat.financial.placeholder": "Ask or send an image (invoice, statement)...",
@@ -1810,6 +1818,10 @@ const es: typeof pt = {
   "topbar.personal": "Personal",
   "topbar.business": "Empresarial",
 
+  "chat.history": "Historial",
+  "chat.newChat": "Nueva conversación",
+  "chat.noHistory": "Sin conversaciones anteriores",
+  "chat.deleteConversation": "Eliminar conversación",
   "chat.financial.label": "Asesor Financiero",
   "chat.financial.short": "Financiero",
   "chat.financial.placeholder": "Pregunta o envía una imagen (factura, extracto)...",

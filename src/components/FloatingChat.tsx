@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect, useMemo } from "react";
-import { Bot, TrendingUp, Mic, MicOff, ImageIcon, Check, X, Send, Plus, Minus, BarChart3, Lightbulb, LineChart, Trash2, PieChart, Target, DollarSign, ShieldAlert, Wallet, CandlestickChart, UserCheck, TrendingDown, Receipt, Users, Megaphone, BadgeDollarSign } from "lucide-react";
+import { Bot, TrendingUp, Mic, MicOff, ImageIcon, Check, X, Send, Plus, Minus, BarChart3, Lightbulb, LineChart, Trash2, PieChart, Target, DollarSign, ShieldAlert, Wallet, CandlestickChart, UserCheck, TrendingDown, Receipt, Users, Megaphone, BadgeDollarSign, History, MessageSquarePlus, ChevronLeft } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import {
@@ -64,6 +64,15 @@ type DisplayMsg = {
   content: string;
   images?: string[]; // base64 data URLs for display
 };
+
+type Conversation = {
+  id: string;
+  title: string;
+  consultant_type: string;
+  updated_at: string;
+};
+
+const MAX_CONVERSATIONS = 10;
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 const PARSE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/parse-transaction`;
@@ -163,6 +172,13 @@ async function parseTransaction(message: string): Promise<{ transaction: ParsedT
   }
 }
 
+/** Generate a short title from the first user message */
+function generateTitle(text: string): string {
+  const clean = text.replace(/\[Anexos:.*\]/g, '').trim();
+  if (clean.length <= 40) return clean || 'Nova conversa';
+  return clean.slice(0, 37) + '...';
+}
+
 export const FloatingChat: React.FC = () => {
   const { account } = useAccount();
   const { create } = useTransactions();
@@ -218,6 +234,11 @@ export const FloatingChat: React.FC = () => {
   const [countryLoaded, setCountryLoaded] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
+  // Conversation history state
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
+
   // Check disclaimers + country preference
   useEffect(() => {
     if (!user) return;
@@ -246,15 +267,70 @@ export const FloatingChat: React.FC = () => {
     checkPrefs();
   }, [user]);
 
-  // Load chat history from database
-  useEffect(() => {
+  // Load conversation list
+  const loadConversations = useCallback(async () => {
     if (!user) return;
-    const loadHistory = async () => {
+    const { data } = await supabase
+      .from('chat_conversations')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('updated_at', { ascending: false })
+      .limit(MAX_CONVERSATIONS);
+    if (data) {
+      setConversations(data as Conversation[]);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    loadConversations();
+  }, [loadConversations]);
+
+  // Load messages for active conversation
+  useEffect(() => {
+    if (!user || !activeConversationId) return;
+    const loadMessages = async () => {
+      const { data, error } = await supabase
+        .from('chat_messages')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('conversation_id', activeConversationId)
+        .order('created_at', { ascending: true })
+        .limit(100);
+
+      if (!error && data && data.length > 0) {
+        // Find the conversation's consultant type
+        const conv = conversations.find(c => c.id === activeConversationId);
+        const cType = (conv?.consultant_type || consultantType) as ConsultantType;
+        const loaded: DisplayMsg[] = [
+          { role: "assistant", content: consultantConfig[cType].greeting },
+          ...data.map(row => ({
+            role: row.role as "user" | "assistant",
+            content: row.content,
+            images: (row.images as string[] | null)?.length ? (row.images as string[]) : undefined,
+          })),
+        ];
+        setMessages(loaded);
+        if (conv && conv.consultant_type !== consultantType) {
+          setConsultantType(cType);
+        }
+      } else {
+        setMessages([{ role: "assistant", content: config.greeting }]);
+      }
+      setHistoryLoaded(true);
+    };
+    loadMessages();
+  }, [user, activeConversationId]);
+
+  // Load history for legacy (no conversation_id) — only on first mount with no active conversation
+  useEffect(() => {
+    if (!user || activeConversationId) return;
+    const loadLegacy = async () => {
       const { data, error } = await supabase
         .from('chat_messages')
         .select('*')
         .eq('user_id', user.id)
         .eq('consultant_type', consultantType)
+        .is('conversation_id', null)
         .order('created_at', { ascending: true })
         .limit(100);
 
@@ -271,20 +347,58 @@ export const FloatingChat: React.FC = () => {
       }
       setHistoryLoaded(true);
     };
-    loadHistory();
+    loadLegacy();
   }, [user, consultantType]);
 
+  // Create or get active conversation
+  const ensureConversation = useCallback(async (firstMessage?: string): Promise<string | null> => {
+    if (!user) return null;
+    if (activeConversationId) return activeConversationId;
+
+    // Check if we need to recycle
+    if (conversations.length >= MAX_CONVERSATIONS) {
+      const oldest = conversations[conversations.length - 1];
+      // Delete oldest conversation (cascade deletes its messages)
+      await supabase.from('chat_conversations').delete().eq('id', oldest.id);
+    }
+
+    const title = firstMessage ? generateTitle(firstMessage) : 'Nova conversa';
+    const { data, error } = await supabase
+      .from('chat_conversations')
+      .insert({
+        user_id: user.id,
+        consultant_type: consultantType,
+        title,
+      })
+      .select()
+      .single();
+
+    if (error || !data) return null;
+    const newConv = data as Conversation;
+    setActiveConversationId(newConv.id);
+    setConversations(prev => [newConv, ...prev].slice(0, MAX_CONVERSATIONS));
+    return newConv.id;
+  }, [user, activeConversationId, conversations, consultantType]);
+
   // Save message to database
-  const saveMessage = useCallback(async (role: "user" | "assistant", content: string, images?: string[]) => {
+  const saveMessage = useCallback(async (role: "user" | "assistant", content: string, images?: string[], convId?: string) => {
     if (!user || !content.trim()) return;
+    const conversationId = convId || activeConversationId;
     await supabase.from('chat_messages').insert({
       user_id: user.id,
       role,
       content,
       consultant_type: consultantType,
       images: images ?? [],
+      conversation_id: conversationId,
     } as any);
-  }, [user, consultantType]);
+    // Update conversation updated_at
+    if (conversationId) {
+      await supabase.from('chat_conversations')
+        .update({ updated_at: new Date().toISOString() })
+        .eq('id', conversationId);
+    }
+  }, [user, consultantType, activeConversationId]);
 
   const { isListening, transcript, start: startListening, stop: stopListening, isSupported: micSupported } = useSpeechToText({
     onResult: (text) => stageMessage(text),
@@ -338,6 +452,7 @@ export const FloatingChat: React.FC = () => {
     }
     abortRef.current?.abort();
     setConsultantType(type);
+    setActiveConversationId(null);
     setMessages([{ role: "assistant", content: consultantConfig[type].greeting }]);
     setHistoryLoaded(false);
     setPendingTx(null);
@@ -356,6 +471,7 @@ export const FloatingChat: React.FC = () => {
     // Now switch to investor
     abortRef.current?.abort();
     setConsultantType("investor");
+    setActiveConversationId(null);
     setMessages([{ role: "assistant", content: consultantConfig["investor"].greeting }]);
     setHistoryLoaded(false);
     setPendingTx(null);
@@ -434,6 +550,9 @@ export const FloatingChat: React.FC = () => {
     const { text, images } = stagedMsg;
     setStagedMsg(null);
 
+    // Ensure we have a conversation
+    const convId = await ensureConversation(text);
+
     const displayText = text || (images.length > 0 ? `📷 ${images.length} imagem(ns) enviada(s)` : "");
     const userMsg: DisplayMsg = {
       role: "user",
@@ -446,7 +565,7 @@ export const FloatingChat: React.FC = () => {
     setIsLoading(true);
 
     // Save user message to DB (don't save base64 images to avoid bloat)
-    saveMessage("user", displayText);
+    saveMessage("user", displayText, undefined, convId || undefined);
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -455,7 +574,6 @@ export const FloatingChat: React.FC = () => {
     const apiMessages = toApiMessages(updatedMessages);
     
     // Run parse-transaction in parallel — with retry
-    // Note: we pass userCountry to the chat edge function for contextualized advice
     const parseWithRetry = async (): Promise<{ transaction: ParsedTransaction | null; investment: ParsedInvestment | null }> => {
       if (!text) return { transaction: null, investment: null };
       const result = await parseTransaction(text);
@@ -483,7 +601,7 @@ export const FloatingChat: React.FC = () => {
         },
         onDone: () => {
           setIsLoading(false);
-          if (assistantSoFar.trim()) saveMessage("assistant", assistantSoFar);
+          if (assistantSoFar.trim()) saveMessage("assistant", assistantSoFar, undefined, convId || undefined);
         },
         onError: (err) => { toast.error(err); setIsLoading(false); },
       });
@@ -521,15 +639,71 @@ export const FloatingChat: React.FC = () => {
 
   const clearHistory = async () => {
     if (!user) return;
-    await supabase
-      .from('chat_messages')
-      .delete()
-      .eq('user_id', user.id)
-      .eq('consultant_type', consultantType);
+    if (activeConversationId) {
+      await supabase.from('chat_conversations').delete().eq('id', activeConversationId);
+      setConversations(prev => prev.filter(c => c.id !== activeConversationId));
+    } else {
+      await supabase
+        .from('chat_messages')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('consultant_type', consultantType)
+        .is('conversation_id', null);
+    }
+    setActiveConversationId(null);
     setMessages([{ role: "assistant", content: config.greeting }]);
     setPendingTx(null);
     setPendingInv(null);
     toast.success("Histórico limpo!");
+  };
+
+  // Start a new conversation
+  const startNewChat = () => {
+    abortRef.current?.abort();
+    setActiveConversationId(null);
+    setMessages([{ role: "assistant", content: config.greeting }]);
+    setPendingTx(null);
+    setPendingInv(null);
+    setStagedMsg(null);
+    setShowHistory(false);
+  };
+
+  // Switch to an existing conversation
+  const switchToConversation = (conv: Conversation) => {
+    abortRef.current?.abort();
+    setActiveConversationId(conv.id);
+    setHistoryLoaded(false);
+    setPendingTx(null);
+    setPendingInv(null);
+    setStagedMsg(null);
+    setShowHistory(false);
+  };
+
+  // Delete a conversation
+  const deleteConversation = async (convId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    await supabase.from('chat_conversations').delete().eq('id', convId);
+    setConversations(prev => prev.filter(c => c.id !== convId));
+    if (activeConversationId === convId) {
+      setActiveConversationId(null);
+      setMessages([{ role: "assistant", content: config.greeting }]);
+    }
+    toast.success("Conversa excluída");
+  };
+
+  // Format date for conversation list
+  const formatConvDate = (dateStr: string) => {
+    const d = new Date(dateStr);
+    const now = new Date();
+    const diff = now.getTime() - d.getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'agora';
+    if (mins < 60) return `${mins}min`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours}h`;
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days}d`;
+    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
   };
 
   return (
@@ -614,8 +788,96 @@ export const FloatingChat: React.FC = () => {
         </motion.div>
       )}
 
-      {/* Consultant Toggle + Clear */}
+      {/* History Panel Overlay */}
+      <AnimatePresence>
+        {showHistory && (
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2 }}
+            className="absolute inset-0 z-20 bg-card flex flex-col"
+          >
+            {/* History Header */}
+            <div className="flex items-center justify-between p-3 border-b border-border/50 shrink-0">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowHistory(false)}
+                  className="p-1.5 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <History className="w-4 h-4 text-primary" />
+                <span className="text-sm font-semibold text-foreground">{t("chat.history")}</span>
+              </div>
+              <button
+                onClick={startNewChat}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-primary-foreground transition-colors"
+                style={{ background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(258 60% 52%) 100%)' }}
+              >
+                <MessageSquarePlus className="w-3.5 h-3.5" />
+                {t("chat.newChat")}
+              </button>
+            </div>
+
+            {/* Conversation List */}
+            <div className="flex-1 overflow-y-auto p-2 space-y-1">
+              {conversations.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-2">
+                  <History className="w-8 h-8 opacity-30" />
+                  <p className="text-xs">{t("chat.noHistory")}</p>
+                </div>
+              ) : (
+                conversations.map((conv) => (
+                  <motion.button
+                    key={conv.id}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    onClick={() => switchToConversation(conv)}
+                    className={cn(
+                      "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left transition-colors group",
+                      activeConversationId === conv.id
+                        ? "bg-primary/10 border border-primary/20"
+                        : "hover:bg-muted/60 border border-transparent"
+                    )}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">{conv.title}</p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">
+                        {formatConvDate(conv.updated_at)}
+                      </p>
+                    </div>
+                    <button
+                      onClick={(e) => deleteConversation(conv.id, e)}
+                      className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-muted-foreground hover:text-fin-expense hover:bg-fin-expense/10 transition-all"
+                      title={t("chat.deleteConversation")}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </motion.button>
+                ))
+              )}
+            </div>
+
+            {/* Conversations count */}
+            <div className="px-3 py-2 border-t border-border/30 text-[10px] text-muted-foreground text-center">
+              {conversations.length}/{MAX_CONVERSATIONS} conversas
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Consultant Toggle + History + Clear */}
       <div className="px-4 pt-3 pb-1 flex items-center gap-2">
+        {/* History button */}
+        <button
+          onClick={() => { loadConversations(); setShowHistory(true); }}
+          className="p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+          title={t("chat.history")}
+        >
+          <History className="w-4 h-4" />
+        </button>
+
         <div className="flex-1 flex gap-1 bg-muted rounded-lg p-1">
           {(["financial", "sales", "investor"] as const).map((type) => {
             const Icon = consultantConfig[type].icon;
@@ -655,8 +917,6 @@ export const FloatingChat: React.FC = () => {
           </button>
         )}
       </div>
-
-      {/* Mic button is now in the chat controls bar */}
 
       {/* Messages */}
       <div className="flex-1 overflow-hidden">
