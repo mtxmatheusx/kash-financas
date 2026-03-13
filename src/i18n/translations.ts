@@ -1561,7 +1561,7 @@ const en: typeof pt = {
   "landing.hero.subtitle": "No more abandoned spreadsheets. Send a voice note on WhatsApp. Faciliten organizes, categorizes and gives you strategies to",
   "landing.hero.subtitleHighlight": "profit more",
   "landing.hero.cta": "Activate My Copilot (30 Days Free)",
-  "landing.hero.ctaNote": "$9.90/mo after trial. Refer a partner and earn +60 days.",
+  "landing.hero.ctaNote": "$9.90/mo after trial. Refer a partner and earn +30 days.",
   "landing.trust.subtitle": "Bank-grade infrastructure, powered by artificial intelligence",
   "landing.trust.encryption": "AES-256 Encryption",
   "landing.trust.ai": "Powered by OpenAI",
