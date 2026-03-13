@@ -2586,12 +2586,12 @@ const es: typeof pt = {
   "invType.realEstate": "Inmuebles",
   "invType.other": "Otros",
 
-  "mockup.userMsg1": "\"Gasté 50 en gasolina\"",
-  "mockup.botMsg1": "✅ <b>$50.00</b> → <c>Transporte</c>. 15% por encima del mes pasado. 📊",
-  "mockup.botMsg1Short": "✅ <b>$50.00</b> → <c>Transporte</c>",
-  "mockup.botMsg1Detail": "Gasto 15% por encima del mes pasado. 📊",
+  "mockup.userMsg1": "Gasté 50 en gasolina",
+  "mockup.botMsg1": "✅ $50.00 → Transporte",
+  "mockup.botMsg1Short": "✅ $50.00 → Transporte",
+  "mockup.botMsg1Detail": "15% por encima del mes pasado 📊",
   "mockup.userMsg2": "¿Dónde puedo recortar?",
-  "mockup.botMsg2": "💡 Delivery: $380 (+40%). Cocinar 3x/semana ahorra ~$250/mes.",
+  "mockup.botMsg2": "💡 Delivery: $380 (+40%).\nCocinar 3x/semana ahorra ~$250/mes.",
 
   "pricing.currencySymbol": "$",
   "pricing.premiumPrice": "29",
