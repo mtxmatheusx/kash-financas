@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { Lock, Brain, Database, Crown, ShieldCheck, Cpu, TrendingUp, Check, X as XIcon } from "lucide-react";
 import { WhatsAppIcon } from "./WhatsAppMockup";
