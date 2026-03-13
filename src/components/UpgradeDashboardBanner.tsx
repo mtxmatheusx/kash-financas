@@ -30,9 +30,9 @@ export const UpgradeDashboardBanner: React.FC = () => {
           <X className="w-4 h-4" />
         </button>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pr-6">
-          <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/15 flex items-center justify-center">
-            <Crown className="w-6 h-6 text-primary" />
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 pr-6">
+          <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/15 flex items-center justify-center">
+            <Crown className="w-5 h-5 md:w-6 md:h-6 text-primary" />
           </div>
 
           <div className="flex-1 min-w-0">
@@ -44,7 +44,7 @@ export const UpgradeDashboardBanner: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3 flex-wrap">
             {trialDaysLeft !== null && (
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full">
                 <Clock className="w-3.5 h-3.5" />
