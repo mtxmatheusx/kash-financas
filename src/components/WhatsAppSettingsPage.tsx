@@ -16,7 +16,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-type Status = "disconnected" | "loading" | "waiting" | "connected";
+type Status = "disconnected" | "loading" | "waiting" | "demo" | "connected";
+
+const generateFallbackQr = () =>
+  `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`faciliten-whatsapp-${Date.now()}`)}`;
+
 
 const StatCard: React.FC<{ icon: React.ElementType; label: string; value: string }> = ({
   icon: Icon,
