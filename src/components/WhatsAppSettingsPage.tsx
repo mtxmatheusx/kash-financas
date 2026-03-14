@@ -51,13 +51,6 @@ export const WhatsAppSettingsPage: React.FC = () => {
   const [status, setStatus] = useState<Status>("disconnected");
   const [qrUrl, setQrUrl] = useState<string | null>(null);
 
-  const generateFallbackQr = () => {
-    const ts = Date.now();
-    return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(
-      `KashFinanceiro-${user?.id ?? "user"}-${ts}`
-    )}`;
-  };
-
   const handleConnect = async () => {
     if (status === "connected") {
       setStatus("disconnected");
@@ -67,47 +60,46 @@ export const WhatsAppSettingsPage: React.FC = () => {
 
     setStatus("loading");
 
-    // Always generate fallback QR immediately
-    const fallbackQr = generateFallbackQr();
+    try {
+      const { data, error } = await supabase.functions.invoke("whatsapp-connect", {
+        body: { action: "generate_qr" },
+      });
 
-    // Try the Evolution API in background, but ALWAYS show QR after 2s max
-    const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 2000));
-
-    const apiCall = (async () => {
-      try {
-        const { data, error } = await supabase.functions.invoke("whatsapp-connect", {
-          body: { action: "generate_qr" },
-        });
-        if (error) return null;
-
-        const isConnected = Boolean(
-          data?.connected ||
-            data?.status === "open" ||
-            data?.raw?.instance?.status === "open" ||
-            data?.raw?.instance?.state === "open"
-        );
-
-        if (isConnected) return { connected: true };
-        if (data?.base64) return { qr: data.base64 };
-        return null;
-      } catch {
-        return null;
+      if (error) {
+        console.error("Supabase function error:", error);
+        toast.error("Erro ao conectar ao WhatsApp. Tente novamente.");
+        setStatus("disconnected");
+        return;
       }
-    })();
 
-    const result = await Promise.race([apiCall, timeout]);
+      const isConnected = Boolean(
+        data?.connected ||
+          data?.status === "open" ||
+          data?.raw?.instance?.status === "open" ||
+          data?.raw?.instance?.state === "open"
+      );
 
-    if (result && "connected" in result && result.connected) {
-      setStatus("connected");
-      setQrUrl(null);
-      toast.success("WhatsApp já está conectado!");
-      return;
+      if (isConnected) {
+        setStatus("connected");
+        setQrUrl(null);
+        toast.success("WhatsApp já está conectado!");
+        return;
+      }
+
+      const qr = data?.base64 || data?.code;
+      if (qr) {
+        setQrUrl(qr);
+        setStatus("waiting");
+      } else {
+        console.error("No QR code data received:", data);
+        toast.error("Não foi possível gerar o QR Code. Verifique a configuração.");
+        setStatus("disconnected");
+      }
+    } catch (err) {
+      console.error("WhatsApp connection error:", err);
+      toast.error("Ocorreu um erro inesperado. Tente novamente.");
+      setStatus("disconnected");
     }
-
-    // Use API QR if available, otherwise fallback — ALWAYS shows QR
-    const qr = result && "qr" in result ? result.qr : fallbackQr;
-    setQrUrl(qr);
-    setStatus("waiting");
   };
 
   const statusBadge = () => {
