@@ -141,7 +141,7 @@ const Receitas: React.FC = () => {
           </Button>
         </div>
 
-        <WhatsAppAlertBanner />
+        <WhatsAppConnectBanner />
 
         <SummaryBar items={[
           { label: t("income.total"), value: formatBRL(totals.income), color: "income", icon: ArrowUpRight },

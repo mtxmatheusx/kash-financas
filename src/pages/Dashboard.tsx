@@ -26,6 +26,7 @@ import { FinancialInsights } from "@/components/FinancialInsights";
 import { useGoals } from "@/hooks/useGoals";
 import { ReferralDashboardBanner } from "@/components/ReferralDashboardBanner";
 import { UpgradeDashboardBanner } from "@/components/UpgradeDashboardBanner";
+import { WhatsAppConnectBanner } from "@/components/WhatsAppConnectBanner";
 
 
 const formatCompact = (v: number) => {
