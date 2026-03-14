@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { ActiveDevices } from "@/components/ActiveDevices";
 import { AmandaLinkSection } from "@/components/AmandaLinkSection";
+import { WhatsAppSettingsPage } from "@/components/WhatsAppSettingsPage";
 import { toast } from "sonner";
 import { maskCPF, maskCNPJ, maskPhone, maskCEP, unmask } from "@/lib/masks";
 import { usePreferences, CURRENCIES, LANGUAGES, type CurrencyCode, type LanguageCode } from "@/contexts/PreferencesContext";
@@ -189,12 +190,15 @@ const Configuracoes: React.FC = () => {
         </div>
 
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="w-full grid grid-cols-5 mb-5">
+          <TabsList className="w-full grid grid-cols-6 mb-5">
             <TabsTrigger value="profile" className="gap-1.5 text-xs">
               <User className="w-3.5 h-3.5 hidden sm:block" /> {t("settings.profile")}
             </TabsTrigger>
             <TabsTrigger value="company" className="gap-1.5 text-xs">
               <Building2 className="w-3.5 h-3.5 hidden sm:block" /> {t("settings.company")}
+            </TabsTrigger>
+            <TabsTrigger value="whatsapp" className="gap-1.5 text-xs">
+              <MessageCircle className="w-3.5 h-3.5 hidden sm:block" /> WhatsApp
             </TabsTrigger>
             <TabsTrigger value="integrations" className="gap-1.5 text-xs">
               <Webhook className="w-3.5 h-3.5 hidden sm:block" /> {t("settings.integrations")}
@@ -397,6 +401,11 @@ const Configuracoes: React.FC = () => {
                 </SettingsField>
               </div>
             </SettingsCard>
+          </TabsContent>
+
+          {/* ═══════════ WhatsApp ═══════════ */}
+          <TabsContent value="whatsapp">
+            <WhatsAppSettingsPage />
           </TabsContent>
 
           {/* ═══════════ Integrações ═══════════ */}

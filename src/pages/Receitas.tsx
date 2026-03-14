@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { PageTransition } from "@/components/PageTransition";
-import { WhatsAppAlertBanner } from "@/components/WhatsAppAlertBanner";
+import { WhatsAppConnectBanner } from "@/components/WhatsAppConnectBanner";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useAccount } from "@/contexts/AccountContext";
 import { Plus, Search, ArrowUpRight } from "lucide-react";
@@ -141,7 +141,7 @@ const Receitas: React.FC = () => {
           </Button>
         </div>
 
-        <WhatsAppAlertBanner />
+        <WhatsAppConnectBanner />
 
         <SummaryBar items={[
           { label: t("income.total"), value: formatBRL(totals.income), color: "income", icon: ArrowUpRight },
