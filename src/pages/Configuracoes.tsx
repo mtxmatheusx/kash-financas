@@ -200,9 +200,6 @@ const Configuracoes: React.FC = () => {
             <TabsTrigger value="whatsapp" className="gap-1.5 text-xs">
               <MessageCircle className="w-3.5 h-3.5 hidden sm:block" /> WhatsApp
             </TabsTrigger>
-            <TabsTrigger value="integrations" className="gap-1.5 text-xs">
-              <Webhook className="w-3.5 h-3.5 hidden sm:block" /> {t("settings.integrations")}
-            </TabsTrigger>
             <TabsTrigger value="notifications" className="gap-1.5 text-xs">
               <Bell className="w-3.5 h-3.5 hidden sm:block" /> {t("settings.alerts")}
             </TabsTrigger>
