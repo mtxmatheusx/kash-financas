@@ -15,6 +15,35 @@ const toDataUri = (value: string) => {
   return `data:image/png;base64,${value}`;
 };
 
+async function evolutionFetch(
+  baseUrl: string,
+  path: string,
+  apiKey: string,
+  method = "GET",
+  body?: Record<string, unknown>
+): Promise<{ ok: boolean; status: number; data: Record<string, unknown>; raw: string }> {
+  const url = `${baseUrl}${path}`;
+  const opts: RequestInit = {
+    method,
+    headers: {
+      apikey: apiKey,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  };
+  if (body) opts.body = JSON.stringify(body);
+
+  const res = await fetch(url, opts);
+  const raw = await res.text();
+  let data: Record<string, unknown> = {};
+  try { data = JSON.parse(raw); } catch { data = { raw }; }
+
+  if (!res.ok) {
+    console.error(`Evolution API [${res.status}] ${method} ${url}:`, raw.slice(0, 300));
+  }
+  return { ok: res.ok, status: res.status, data, raw };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -39,86 +68,93 @@ Deno.serve(async (req) => {
         return jsonResponse({ error: "Evolution API não configurada no servidor." }, 500);
       }
 
-      const rawBaseUrl = EVOLUTION_API_URL.replace(/\/+$/, "");
-      const baseUrl = rawBaseUrl.replace(/\/manager$/i, "");
+      const baseUrl = EVOLUTION_API_URL.replace(/\/+$/, "").replace(/\/manager$/i, "");
       const instanceName = EVOLUTION_INSTANCE.includes("/")
         ? EVOLUTION_INSTANCE.split("/").filter(Boolean).pop() ?? EVOLUTION_INSTANCE
         : EVOLUTION_INSTANCE;
 
-      const baseCandidates = Array.from(
-        new Set([
-          baseUrl,
-          baseUrl.endsWith("/api") ? baseUrl : `${baseUrl}/api`,
-        ])
+      // Step 1: Check if instance exists by fetching its status
+      const fetchStatus = await evolutionFetch(baseUrl, `/instance/fetchInstances?instanceName=${encodeURIComponent(instanceName)}`, EVOLUTION_API_KEY);
+
+      const instanceExists = fetchStatus.ok && (
+        Array.isArray(fetchStatus.data) ? fetchStatus.data.length > 0 : !!fetchStatus.data?.instance
       );
 
-      const endpoints = baseCandidates.flatMap((base) => [
-        `${base}/instance/connect/${encodeURIComponent(instanceName)}`,
-        `${base}/instance/qrcode/${encodeURIComponent(instanceName)}`,
-      ]);
-
-      let lastStatus = 502;
-      let lastBodyPreview = "";
-
-      for (const endpoint of endpoints) {
-        const response = await fetch(endpoint, {
-          method: "GET",
-          headers: {
-            apikey: EVOLUTION_API_KEY,
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
+      // Step 2: Create instance if it doesn't exist
+      if (!instanceExists) {
+        console.info(`Instance "${instanceName}" not found, creating...`);
+        const createResult = await evolutionFetch(baseUrl, "/instance/create", EVOLUTION_API_KEY, "POST", {
+          instanceName,
+          integration: "WHATSAPP-BAILEYS",
+          qrcode: true,
+          reject_call: false,
+          always_online: false,
         });
 
-        const raw = await response.text();
-        lastStatus = response.status;
-        lastBodyPreview = raw.slice(0, 240);
+        if (!createResult.ok) {
+          // Try without integration field (older API versions)
+          const createResult2 = await evolutionFetch(baseUrl, "/instance/create", EVOLUTION_API_KEY, "POST", {
+            instanceName,
+            qrcode: true,
+          });
 
-        if (!response.ok) {
-          console.error(`Evolution API error [${response.status}] @ ${endpoint}:`, raw);
-          continue;
+          if (!createResult2.ok) {
+            return jsonResponse({
+              error: "Falha ao criar instância na Evolution API.",
+              details: { status: createResult2.status, preview: createResult2.raw.slice(0, 240) },
+            }, 502);
+          }
+
+          // Check if create response already has QR code
+          const qrFromCreate = extractQr(createResult2.data);
+          if (qrFromCreate) {
+            return jsonResponse({
+              base64: toDataUri(qrFromCreate),
+              connected: false,
+              status: "waiting",
+              raw: createResult2.data,
+            });
+          }
+        } else {
+          // Check if create response already has QR code
+          const qrFromCreate = extractQr(createResult.data);
+          if (qrFromCreate) {
+            return jsonResponse({
+              base64: toDataUri(qrFromCreate),
+              connected: false,
+              status: "waiting",
+              raw: createResult.data,
+            });
+          }
         }
+      }
 
-        let parsed: Record<string, unknown>;
-        try {
-          parsed = JSON.parse(raw);
-        } catch {
-          console.error(`Evolution API non-JSON response @ ${endpoint}:`, raw);
-          continue;
-        }
+      // Step 3: Try to connect and get QR code
+      const connectPaths = [
+        `/instance/connect/${encodeURIComponent(instanceName)}`,
+        `/instance/qrcode/${encodeURIComponent(instanceName)}`,
+      ];
 
-        const base64Raw =
-          (parsed.base64 as string | undefined) ??
-          ((parsed.qrcode as { base64?: string } | undefined)?.base64) ??
-          ((parsed.qr as { base64?: string } | undefined)?.base64);
+      for (const path of connectPaths) {
+        const result = await evolutionFetch(baseUrl, path, EVOLUTION_API_KEY);
+        if (!result.ok) continue;
 
-        const instanceStatus = String(
-          (parsed.instance as { status?: string; state?: string } | undefined)?.status ??
-            (parsed.instance as { status?: string; state?: string } | undefined)?.state ??
-            (parsed.status as string | undefined) ??
-            ""
-        ).toLowerCase();
-
+        const base64Raw = extractQr(result.data);
+        const instanceStatus = extractStatus(result.data);
         const connected = ["open", "connected", "online"].includes(instanceStatus);
 
         return jsonResponse({
           base64: base64Raw ? toDataUri(base64Raw) : null,
           connected,
           status: instanceStatus || null,
-          raw: parsed,
+          raw: result.data,
         });
       }
 
-      return jsonResponse(
-        {
-          error: "Falha ao gerar QR Code na Evolution API.",
-          details: {
-            status: lastStatus,
-            preview: lastBodyPreview,
-          },
-        },
-        502
-      );
+      return jsonResponse({
+        error: "Falha ao gerar QR Code na Evolution API.",
+        details: { instanceName },
+      }, 502);
     }
 
     if (action === "sync") {
@@ -141,11 +177,7 @@ Deno.serve(async (req) => {
       }
 
       let data: Record<string, unknown> = {};
-      try {
-        data = JSON.parse(raw);
-      } catch {
-        data = { raw };
-      }
+      try { data = JSON.parse(raw); } catch { data = { raw }; }
 
       return jsonResponse({ message: "Sincronização concluída!", ...data });
     }
@@ -156,3 +188,19 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: "Erro interno do servidor." }, 500);
   }
 });
+
+function extractQr(data: Record<string, unknown>): string | null {
+  return (
+    (data.base64 as string | undefined) ??
+    ((data.qrcode as Record<string, unknown> | undefined)?.base64 as string | undefined) ??
+    ((data.qr as Record<string, unknown> | undefined)?.base64 as string | undefined) ??
+    null
+  );
+}
+
+function extractStatus(data: Record<string, unknown>): string {
+  const inst = data.instance as Record<string, string> | undefined;
+  return String(
+    inst?.status ?? inst?.state ?? (data.status as string | undefined) ?? ""
+  ).toLowerCase();
+}
