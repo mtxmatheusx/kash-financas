@@ -190,12 +190,15 @@ const Configuracoes: React.FC = () => {
         </div>
 
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="w-full grid grid-cols-5 mb-5">
+          <TabsList className="w-full grid grid-cols-6 mb-5">
             <TabsTrigger value="profile" className="gap-1.5 text-xs">
               <User className="w-3.5 h-3.5 hidden sm:block" /> {t("settings.profile")}
             </TabsTrigger>
             <TabsTrigger value="company" className="gap-1.5 text-xs">
               <Building2 className="w-3.5 h-3.5 hidden sm:block" /> {t("settings.company")}
+            </TabsTrigger>
+            <TabsTrigger value="whatsapp" className="gap-1.5 text-xs">
+              <MessageCircle className="w-3.5 h-3.5 hidden sm:block" /> WhatsApp
             </TabsTrigger>
             <TabsTrigger value="integrations" className="gap-1.5 text-xs">
               <Webhook className="w-3.5 h-3.5 hidden sm:block" /> {t("settings.integrations")}
