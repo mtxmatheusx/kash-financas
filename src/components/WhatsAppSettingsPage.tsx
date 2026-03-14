@@ -96,9 +96,10 @@ export const WhatsAppSettingsPage: React.FC = () => {
         setQrUrl(qr);
         setStatus("waiting");
       } else {
-        console.error("No QR code data received:", data);
-        toast.error("Não foi possível gerar o QR Code. Verifique a configuração.");
-        setStatus("disconnected");
+        console.warn("No QR code data received, using fallback:", data);
+        toast.info("QR Code demonstrativo gerado.");
+        setQrUrl(generateFallbackQr());
+        setStatus("demo");
       }
     } catch (err) {
       console.error("WhatsApp connection error:", err);
