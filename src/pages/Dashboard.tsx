@@ -167,7 +167,8 @@ const Dashboard: React.FC = () => {
         {/* Upgrade Banner for trial users */}
         <UpgradeDashboardBanner />
 
-        {/* Empty state */}
+        {/* WhatsApp Connect Banner */}
+        <WhatsAppConnectBanner />
         {hasNoData && (
           <motion.div {...fadeIn(0.1)} className="rounded-xl border border-dashed border-border bg-card p-8 text-center space-y-3">
             <Inbox className="w-10 h-10 text-muted-foreground/30 mx-auto" />
