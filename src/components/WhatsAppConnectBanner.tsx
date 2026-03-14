@@ -32,13 +32,20 @@ export const WhatsAppConnectBanner: React.FC = () => {
       });
       if (error) throw error;
 
+      const isConnected = Boolean(
+        data?.connected ||
+        data?.status === "open" ||
+        data?.raw?.instance?.status === "open" ||
+        data?.raw?.instance?.state === "open"
+      );
+
       if (data?.base64) {
         setQrBase64(data.base64);
-      } else if (data?.instance?.status === "open") {
+      }
+
+      if (isConnected) {
         setConnected(true);
-      } else if (data?.code) {
-        // Some Evolution API versions return a 'code' field with the pairing code
-        setQrBase64(null);
+        setExpanded(false);
       }
     } catch (err) {
       console.error("QR generation failed:", err);

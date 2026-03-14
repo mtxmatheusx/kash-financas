@@ -4,6 +4,17 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const jsonResponse = (body: Record<string, unknown>, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+
+const toDataUri = (value: string) => {
+  if (value.startsWith("data:image")) return value;
+  return `data:image/png;base64,${value}`;
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -15,51 +26,106 @@ Deno.serve(async (req) => {
   const N8N_WEBHOOK_URL = Deno.env.get("N8N_WEBHOOK_URL");
 
   try {
-    const { action } = await req.json();
+    let action: string | undefined;
+    try {
+      const payload = await req.json();
+      action = payload?.action;
+    } catch {
+      return jsonResponse({ error: "Body JSON inválido." }, 400);
+    }
 
     if (action === "generate_qr") {
       if (!EVOLUTION_API_URL || !EVOLUTION_API_KEY || !EVOLUTION_INSTANCE) {
-        return new Response(
-          JSON.stringify({ error: "Evolution API não configurada no servidor." }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        return jsonResponse({ error: "Evolution API não configurada no servidor." }, 500);
       }
 
-      const response = await fetch(
-        `${EVOLUTION_API_URL}/instance/connect/${EVOLUTION_INSTANCE}`,
-        {
+      const rawBaseUrl = EVOLUTION_API_URL.replace(/\/+$/, "");
+      const baseUrl = rawBaseUrl.replace(/\/manager$/i, "");
+      const instanceName = EVOLUTION_INSTANCE.includes("/")
+        ? EVOLUTION_INSTANCE.split("/").filter(Boolean).pop() ?? EVOLUTION_INSTANCE
+        : EVOLUTION_INSTANCE;
+
+      const baseCandidates = Array.from(
+        new Set([
+          baseUrl,
+          baseUrl.endsWith("/api") ? baseUrl : `${baseUrl}/api`,
+        ])
+      );
+
+      const endpoints = baseCandidates.flatMap((base) => [
+        `${base}/instance/connect/${encodeURIComponent(instanceName)}`,
+        `${base}/instance/qrcode/${encodeURIComponent(instanceName)}`,
+      ]);
+
+      let lastStatus = 502;
+      let lastBodyPreview = "";
+
+      for (const endpoint of endpoints) {
+        const response = await fetch(endpoint, {
           method: "GET",
           headers: {
             apikey: EVOLUTION_API_KEY,
+            Accept: "application/json",
             "Content-Type": "application/json",
           },
-        }
-      );
+        });
 
-      if (!response.ok) {
-        const errBody = await response.text();
-        console.error(`Evolution API error [${response.status}]:`, errBody);
-        return new Response(
-          JSON.stringify({ error: "Falha ao gerar QR Code." }),
-          { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        const raw = await response.text();
+        lastStatus = response.status;
+        lastBodyPreview = raw.slice(0, 240);
+
+        if (!response.ok) {
+          console.error(`Evolution API error [${response.status}] @ ${endpoint}:`, raw);
+          continue;
+        }
+
+        let parsed: Record<string, unknown>;
+        try {
+          parsed = JSON.parse(raw);
+        } catch {
+          console.error(`Evolution API non-JSON response @ ${endpoint}:`, raw);
+          continue;
+        }
+
+        const base64Raw =
+          (parsed.base64 as string | undefined) ??
+          ((parsed.qrcode as { base64?: string } | undefined)?.base64) ??
+          ((parsed.qr as { base64?: string } | undefined)?.base64);
+
+        const instanceStatus = String(
+          (parsed.instance as { status?: string; state?: string } | undefined)?.status ??
+            (parsed.instance as { status?: string; state?: string } | undefined)?.state ??
+            (parsed.status as string | undefined) ??
+            ""
+        ).toLowerCase();
+
+        const connected = ["open", "connected", "online"].includes(instanceStatus);
+
+        return jsonResponse({
+          base64: base64Raw ? toDataUri(base64Raw) : null,
+          connected,
+          status: instanceStatus || null,
+          raw: parsed,
+        });
       }
 
-      const data = await response.json();
-      return new Response(JSON.stringify(data), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return jsonResponse(
+        {
+          error: "Falha ao gerar QR Code na Evolution API.",
+          details: {
+            status: lastStatus,
+            preview: lastBodyPreview,
+          },
+        },
+        502
+      );
     }
 
     if (action === "sync") {
       if (!N8N_WEBHOOK_URL) {
-        return new Response(
-          JSON.stringify({ error: "Webhook de sincronização não configurado." }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        return jsonResponse({ error: "Webhook de sincronização não configurado." }, 500);
       }
 
-      // Extract user from auth header
       const authHeader = req.headers.get("Authorization") || "";
 
       const response = await fetch(N8N_WEBHOOK_URL, {
@@ -68,31 +134,25 @@ Deno.serve(async (req) => {
         body: JSON.stringify({ action: "sync", timestamp: new Date().toISOString() }),
       });
 
+      const raw = await response.text();
       if (!response.ok) {
-        const errBody = await response.text();
-        console.error(`N8N webhook error [${response.status}]:`, errBody);
-        return new Response(
-          JSON.stringify({ error: "Falha na sincronização." }),
-          { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        console.error(`N8N webhook error [${response.status}]:`, raw);
+        return jsonResponse({ error: "Falha na sincronização." }, response.status);
       }
 
-      const data = await response.json();
-      return new Response(
-        JSON.stringify({ message: "Sincronização concluída!", ...data }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      let data: Record<string, unknown> = {};
+      try {
+        data = JSON.parse(raw);
+      } catch {
+        data = { raw };
+      }
+
+      return jsonResponse({ message: "Sincronização concluída!", ...data });
     }
 
-    return new Response(
-      JSON.stringify({ error: "Ação não reconhecida." }),
-      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return jsonResponse({ error: "Ação não reconhecida." }, 400);
   } catch (err) {
     console.error("whatsapp-connect error:", err);
-    return new Response(
-      JSON.stringify({ error: "Erro interno do servidor." }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return jsonResponse({ error: "Erro interno do servidor." }, 500);
   }
 });
