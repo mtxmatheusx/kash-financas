@@ -103,8 +103,9 @@ export const WhatsAppSettingsPage: React.FC = () => {
       }
     } catch (err) {
       console.error("WhatsApp connection error:", err);
-      toast.error("Ocorreu um erro inesperado. Tente novamente.");
-      setStatus("disconnected");
+      toast.info("Falha na conexão. Exibindo QR Code demonstrativo.");
+      setQrUrl(generateFallbackQr());
+      setStatus("demo");
     }
   };
 
