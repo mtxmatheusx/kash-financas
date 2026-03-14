@@ -1,16 +1,10 @@
-import React, { useMemo } from "react";
-import { MessageCircle, QrCode, CheckCircle2, Smartphone, ExternalLink, Zap, BarChart3, Clock, MessageSquare } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
+import React, { useState } from "react";
+import { MessageCircle, CheckCircle2, Smartphone, Zap, BarChart3, Clock, MessageSquare, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-
-const WHATSAPP_NUMBER = "5511954223325";
-
-function isMobile() {
-  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-}
 
 const StatCard: React.FC<{ icon: React.ElementType; label: string; value: string }> = ({ icon: Icon, label, value }) => (
   <div className="rounded-xl border border-border bg-card p-4 text-center space-y-1">
@@ -34,16 +28,29 @@ const StepCard: React.FC<{ step: number; title: string; desc: string }> = ({ ste
 
 export const WhatsAppSettingsPage: React.FC = () => {
   const { user } = useAuth();
-  const connected = false;
+  const [connected, setConnected] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [qrBase64, setQrBase64] = useState<string | null>(null);
 
-  const whatsappUrl = useMemo(() => {
-    const msg = `AtivarFaciliten:${user?.id ?? ""}`;
-    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-  }, [user?.id]);
+  const handleConnect = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("whatsapp-connect", {
+        body: { action: "generate_qr" },
+      });
+      if (error) throw error;
 
-  const handleOpen = () => {
-    window.open(whatsappUrl, "_blank");
-    toast.success("Vínculo iniciado! Envie a mensagem no WhatsApp para concluir.");
+      if (data?.base64) {
+        setQrBase64(data.base64);
+      } else if (data?.instance?.status === "open") {
+        setConnected(true);
+        toast.success("WhatsApp já está conectado!");
+      }
+    } catch (err) {
+      console.error("QR generation failed:", err);
+      toast.error("Erro ao gerar QR Code. Tente novamente.");
+    }
+    setLoading(false);
   };
 
   return (
@@ -74,21 +81,23 @@ export const WhatsAppSettingsPage: React.FC = () => {
 
         {/* QR Code Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {/* QR Code */}
           <div className="flex justify-center">
             <div className="w-52 h-52 rounded-xl bg-background border border-border flex items-center justify-center p-3">
-              {user?.id ? (
-                <QRCodeSVG value={whatsappUrl} size={192} bgColor="transparent" fgColor="currentColor" level="M" />
+              {loading ? (
+                <Loader2 className="w-10 h-10 animate-spin text-muted-foreground" />
+              ) : qrBase64 ? (
+                <img src={qrBase64} alt="QR Code WhatsApp" className="w-full h-full object-contain" />
               ) : (
-                <div className="text-sm text-muted-foreground text-center">Carregando...</div>
+                <div className="text-sm text-muted-foreground text-center">
+                  Clique em "Vincular" para gerar o QR Code
+                </div>
               )}
             </div>
           </div>
 
-          {/* Instructions */}
           <div className="space-y-4">
-            <StepCard step={1} title="Escaneie o QR Code" desc="Aponte a câmera do celular para o código ao lado." />
-            <StepCard step={2} title="Envie a mensagem" desc="Uma mensagem pré-preenchida será enviada para ativar a conexão." />
+            <StepCard step={1} title="Gere o QR Code" desc="Clique no botão abaixo para gerar o código de conexão." />
+            <StepCard step={2} title="Escaneie com WhatsApp" desc="Abra WhatsApp > Aparelhos conectados > Conectar aparelho." />
             <StepCard step={3} title="Comece a registrar" desc="Envie mensagens como 'Almoço R$35' ou 'Recebi salário R$5000'." />
           </div>
         </div>
@@ -97,14 +106,18 @@ export const WhatsAppSettingsPage: React.FC = () => {
         <div className="mt-6 flex flex-col gap-2">
           <Button
             className="w-full gap-2 bg-[#25D366] hover:bg-[#1ebe5a] text-white"
-            onClick={handleOpen}
-            disabled={!user?.id}
+            onClick={handleConnect}
+            disabled={loading || !user?.id}
           >
-            {isMobile() ? <Smartphone className="w-4 h-4" /> : <ExternalLink className="w-4 h-4" />}
-            {isMobile() ? "Abrir no WhatsApp" : "Vincular Assistente"}
+            {loading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Smartphone className="w-4 h-4" />
+            )}
+            {connected ? "Reconectar" : "Vincular WhatsApp"}
           </Button>
           <p className="text-[10px] text-muted-foreground text-center">
-            Escaneie o QR Code ou clique no botão para vincular seu WhatsApp.
+            A conexão é feita diretamente pelo nosso servidor seguro via Evolution API.
           </p>
         </div>
       </div>
