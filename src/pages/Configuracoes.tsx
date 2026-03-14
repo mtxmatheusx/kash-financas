@@ -405,29 +405,6 @@ const Configuracoes: React.FC = () => {
             <WhatsAppSettingsPage />
           </TabsContent>
 
-          {/* ═══════════ Integrações ═══════════ */}
-          <TabsContent value="integrations">
-            <div className="space-y-6">
-              {/* Vincular Assistente Amanda */}
-              <AmandaLinkSection userId={user?.id} />
-
-              <div className="rounded-xl border border-border bg-card p-6 md:p-8 space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-primary/10">
-                    <Webhook className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-foreground font-display-fin">{t("settings.automationCenter")}</h3>
-                    <p className="text-sm text-muted-foreground">{t("settings.automationDesc")}</p>
-                  </div>
-                </div>
-                <Button onClick={handleSyncData} disabled={saving} className="w-full gap-2 bg-primary hover:bg-destructive/80 transition-colors">
-                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Webhook className="w-4 h-4" />}
-                  {t("settings.syncData")}
-                </Button>
-              </div>
-            </div>
-          </TabsContent>
 
           {/* ═══════════ Notificações ═══════════ */}
           <TabsContent value="notifications">
