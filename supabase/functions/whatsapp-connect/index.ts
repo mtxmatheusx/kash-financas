@@ -40,10 +40,17 @@ Deno.serve(async (req) => {
       }
 
       const baseUrl = EVOLUTION_API_URL.replace(/\/+$/, "");
-      const endpoints = [
-        `${baseUrl}/instance/connect/${encodeURIComponent(EVOLUTION_INSTANCE)}`,
-        `${baseUrl}/instance/qrcode/${encodeURIComponent(EVOLUTION_INSTANCE)}`,
-      ];
+      const baseCandidates = Array.from(
+        new Set([
+          baseUrl,
+          baseUrl.endsWith("/api") ? baseUrl : `${baseUrl}/api`,
+        ])
+      );
+
+      const endpoints = baseCandidates.flatMap((base) => [
+        `${base}/instance/connect/${encodeURIComponent(EVOLUTION_INSTANCE)}`,
+        `${base}/instance/qrcode/${encodeURIComponent(EVOLUTION_INSTANCE)}`,
+      ]);
 
       let lastStatus = 502;
       let lastBodyPreview = "";
