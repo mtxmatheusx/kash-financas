@@ -71,8 +71,9 @@ export const WhatsAppSettingsPage: React.FC = () => {
 
       if (error) {
         console.error("Supabase function error:", error);
-        toast.error("Erro ao conectar ao WhatsApp. Tente novamente.");
-        setStatus("disconnected");
+        toast.info("Evolution API indisponível. Exibindo QR Code demonstrativo.");
+        setQrUrl(generateFallbackQr());
+        setStatus("demo");
         return;
       }
 
