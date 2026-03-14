@@ -209,9 +209,9 @@ export const WhatsAppSettingsPage: React.FC = () => {
         )}
 
         {/* Waiting state — QR Code + instructions */}
-        {status === "waiting" && qrUrl && (
+        {(status === "waiting" || status === "demo") && qrUrl && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex justify-center">
+            <div className="flex flex-col items-center gap-2">
               <div className="w-52 h-52 rounded-xl bg-background border border-border flex items-center justify-center p-3">
                 <img
                   src={qrUrl}
@@ -219,6 +219,11 @@ export const WhatsAppSettingsPage: React.FC = () => {
                   className="w-full h-full object-contain"
                 />
               </div>
+              {status === "demo" && (
+                <p className="text-[10px] text-orange-500 text-center">
+                  Evolution API indisponível. QR Code demonstrativo.
+                </p>
+              )}
             </div>
             <div className="space-y-4">
               <StepCard
