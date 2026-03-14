@@ -403,6 +403,11 @@ const Configuracoes: React.FC = () => {
             </SettingsCard>
           </TabsContent>
 
+          {/* ═══════════ WhatsApp ═══════════ */}
+          <TabsContent value="whatsapp">
+            <WhatsAppSettingsPage />
+          </TabsContent>
+
           {/* ═══════════ Integrações ═══════════ */}
           <TabsContent value="integrations">
             <div className="space-y-6">
