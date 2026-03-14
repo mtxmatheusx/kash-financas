@@ -16,7 +16,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-type Status = "disconnected" | "loading" | "waiting" | "connected";
+type Status = "disconnected" | "loading" | "waiting" | "demo" | "connected";
+
+const generateFallbackQr = () =>
+  `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`faciliten-whatsapp-${Date.now()}`)}`;
+
 
 const StatCard: React.FC<{ icon: React.ElementType; label: string; value: string }> = ({
   icon: Icon,
@@ -67,8 +71,9 @@ export const WhatsAppSettingsPage: React.FC = () => {
 
       if (error) {
         console.error("Supabase function error:", error);
-        toast.error("Erro ao conectar ao WhatsApp. Tente novamente.");
-        setStatus("disconnected");
+        toast.info("Evolution API indisponível. Exibindo QR Code demonstrativo.");
+        setQrUrl(generateFallbackQr());
+        setStatus("demo");
         return;
       }
 
@@ -91,14 +96,16 @@ export const WhatsAppSettingsPage: React.FC = () => {
         setQrUrl(qr);
         setStatus("waiting");
       } else {
-        console.error("No QR code data received:", data);
-        toast.error("Não foi possível gerar o QR Code. Verifique a configuração.");
-        setStatus("disconnected");
+        console.warn("No QR code data received, using fallback:", data);
+        toast.info("QR Code demonstrativo gerado.");
+        setQrUrl(generateFallbackQr());
+        setStatus("demo");
       }
     } catch (err) {
       console.error("WhatsApp connection error:", err);
-      toast.error("Ocorreu um erro inesperado. Tente novamente.");
-      setStatus("disconnected");
+      toast.info("Falha na conexão. Exibindo QR Code demonstrativo.");
+      setQrUrl(generateFallbackQr());
+      setStatus("demo");
     }
   };
 
@@ -114,6 +121,12 @@ export const WhatsAppSettingsPage: React.FC = () => {
         return (
           <Badge className="bg-amber-500/15 text-amber-600 border-amber-500/30">
             <QrCode className="w-3 h-3 mr-1" /> Aguardando
+          </Badge>
+        );
+      case "demo":
+        return (
+          <Badge className="bg-orange-500/15 text-orange-600 border-orange-500/30">
+            <QrCode className="w-3 h-3 mr-1" /> QR Demo
           </Badge>
         );
       case "loading":
@@ -196,9 +209,9 @@ export const WhatsAppSettingsPage: React.FC = () => {
         )}
 
         {/* Waiting state — QR Code + instructions */}
-        {status === "waiting" && qrUrl && (
+        {(status === "waiting" || status === "demo") && qrUrl && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex justify-center">
+            <div className="flex flex-col items-center gap-2">
               <div className="w-52 h-52 rounded-xl bg-background border border-border flex items-center justify-center p-3">
                 <img
                   src={qrUrl}
@@ -206,6 +219,11 @@ export const WhatsAppSettingsPage: React.FC = () => {
                   className="w-full h-full object-contain"
                 />
               </div>
+              {status === "demo" && (
+                <p className="text-[10px] text-orange-500 text-center">
+                  Evolution API indisponível. QR Code demonstrativo.
+                </p>
+              )}
             </div>
             <div className="space-y-4">
               <StepCard
@@ -241,7 +259,7 @@ export const WhatsAppSettingsPage: React.FC = () => {
             )}
             {status === "connected"
               ? "Reconectar"
-              : status === "waiting"
+              : status === "waiting" || status === "demo"
               ? "Gerar novo QR Code"
               : "Vincular WhatsApp"}
           </Button>
