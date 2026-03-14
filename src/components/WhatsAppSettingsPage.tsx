@@ -204,11 +204,6 @@ export const WhatsAppSettingsPage: React.FC = () => {
                   src={qrUrl}
                   alt="QR Code WhatsApp"
                   className="w-full h-full object-contain"
-                  onError={(e) => {
-                    // If even fallback fails, regenerate
-                    const target = e.target as HTMLImageElement;
-                    target.src = generateFallbackQr();
-                  }}
                 />
               </div>
             </div>
