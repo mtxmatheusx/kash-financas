@@ -403,6 +403,9 @@ const Configuracoes: React.FC = () => {
           {/* ═══════════ WhatsApp ═══════════ */}
           <TabsContent value="whatsapp">
             <WhatsAppSettingsPage />
+            <div className="mt-8">
+              <FacilitenQRActivation />
+            </div>
           </TabsContent>
 
 
