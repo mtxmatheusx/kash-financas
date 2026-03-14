@@ -259,7 +259,7 @@ export const WhatsAppSettingsPage: React.FC = () => {
             )}
             {status === "connected"
               ? "Reconectar"
-              : status === "waiting"
+              : status === "waiting" || status === "demo"
               ? "Gerar novo QR Code"
               : "Vincular WhatsApp"}
           </Button>
