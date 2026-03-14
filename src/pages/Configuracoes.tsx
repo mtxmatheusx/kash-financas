@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { ActiveDevices } from "@/components/ActiveDevices";
 import { AmandaLinkSection } from "@/components/AmandaLinkSection";
+import { WhatsAppSettingsPage } from "@/components/WhatsAppSettingsPage";
 import { toast } from "sonner";
 import { maskCPF, maskCNPJ, maskPhone, maskCEP, unmask } from "@/lib/masks";
 import { usePreferences, CURRENCIES, LANGUAGES, type CurrencyCode, type LanguageCode } from "@/contexts/PreferencesContext";
