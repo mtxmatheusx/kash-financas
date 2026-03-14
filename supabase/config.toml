@@ -23,3 +23,24 @@ verify_jwt = false
 
 [functions.daily-alerts]
 verify_jwt = false
+
+[functions.manage-sessions]
+verify_jwt = false
+
+[functions.financial-insights]
+verify_jwt = false
+
+[functions.admin-export-users]
+verify_jwt = false
+
+[functions.map-columns]
+verify_jwt = false
+
+[functions.process-audio]
+verify_jwt = false
+
+[functions.referral-reminder]
+verify_jwt = false
+
+[functions.suggest-category]
+verify_jwt = false
