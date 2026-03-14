@@ -39,7 +39,12 @@ Deno.serve(async (req) => {
         return jsonResponse({ error: "Evolution API não configurada no servidor." }, 500);
       }
 
-      const baseUrl = EVOLUTION_API_URL.replace(/\/+$/, "");
+      const rawBaseUrl = EVOLUTION_API_URL.replace(/\/+$/, "");
+      const baseUrl = rawBaseUrl.replace(/\/manager$/i, "");
+      const instanceName = EVOLUTION_INSTANCE.includes("/")
+        ? EVOLUTION_INSTANCE.split("/").filter(Boolean).pop() ?? EVOLUTION_INSTANCE
+        : EVOLUTION_INSTANCE;
+
       const baseCandidates = Array.from(
         new Set([
           baseUrl,
@@ -48,8 +53,8 @@ Deno.serve(async (req) => {
       );
 
       const endpoints = baseCandidates.flatMap((base) => [
-        `${base}/instance/connect/${encodeURIComponent(EVOLUTION_INSTANCE)}`,
-        `${base}/instance/qrcode/${encodeURIComponent(EVOLUTION_INSTANCE)}`,
+        `${base}/instance/connect/${encodeURIComponent(instanceName)}`,
+        `${base}/instance/qrcode/${encodeURIComponent(instanceName)}`,
       ]);
 
       let lastStatus = 502;
