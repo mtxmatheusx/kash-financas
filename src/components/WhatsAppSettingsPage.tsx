@@ -123,6 +123,12 @@ export const WhatsAppSettingsPage: React.FC = () => {
             <QrCode className="w-3 h-3 mr-1" /> Aguardando
           </Badge>
         );
+      case "demo":
+        return (
+          <Badge className="bg-orange-500/15 text-orange-600 border-orange-500/30">
+            <QrCode className="w-3 h-3 mr-1" /> QR Demo
+          </Badge>
+        );
       case "loading":
         return (
           <Badge variant="secondary">
